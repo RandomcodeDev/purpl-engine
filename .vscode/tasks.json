@@ -1,0 +1,66 @@
+{
+        "version": "2.0.0",
+        "tasks": [
+                {
+                        "label": "CMake build",
+                        "type": "shell",
+                        "command": "cmake -B build -S .; cmake --build build",
+                        "problemMatcher": [],
+                        "group": {
+                                "kind": "build",
+                                "isDefault": true
+                        }
+                },
+                {
+                        "label": "CMake build (no demo)",
+                        "type": "shell",
+                        "command": "cmake -B build -S . -DBUILD_PURPL_DEMO=OFF; cmake --build build",
+                        "problemMatcher": [],
+                        "group": "build"
+		},
+		{
+                        "label": "Debug CMake build",
+                        "type": "shell",
+                        "command": "cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug; cmake --build build",
+                        "problemMatcher": [],
+                        "group": {
+                                "kind": "build",
+                                "isDefault": true
+                        }
+                },
+                {
+                        "label": "Debug CMake build (no demo)",
+                        "type": "shell",
+                        "command": "cmake -B build -S . -DBUILD_PURPL_DEMO=OFF -DCMAKE_BUILD_TYPE=Debug; cmake --build build",
+                        "problemMatcher": [],
+                        "group": "build"
+                },
+                {
+                        "label": "Clean CMake cache",
+                        "type": "shell",
+                        "command": "rm -r build; mkdir build",
+                        "problemMatcher": []
+                },
+                {
+                        "type": "shell",
+                        "label": "C/C++: g++ build active file",
+                        "command": "/usr/bin/g++",
+                        "args": [
+                                "-g",
+                                "${file}",
+                                "-o",
+                                "${fileDirname}/${fileBasenameNoExtension}"
+                        ],
+                        "options": {
+                                "cwd": "${workspaceFolder}"
+                        },
+                        "problemMatcher": [
+                                "$gcc"
+                        ],
+                        "group": {
+                                "kind": "build",
+                                "isDefault": true
+                        }
+                }
+        ]
+}

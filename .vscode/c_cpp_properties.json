@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Default",
+            "includePath": [
+                "deps/cglm/include",
+                "deps/glew/include",
+                "deps/glfw/include",
+                "deps/json-c",
+                "build/deps/json-c/",
+                "deps/zlib",
+                "src/",
+                "${default}"
+            ],
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "/usr/bin/clang",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

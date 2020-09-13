@@ -1,0 +1,16 @@
+{
+    "editor.autoIndent": "full",
+    "editor.tabSize": 8,
+    "editor.tabCompletion": "on",
+    "editor.insertSpaces": false,
+    "editor.autoSurround": "languageDefined",
+    "C_Cpp.clang_format_style": ".clang-format",
+    "files.associations": {
+	"*.tcc": "cpp",
+	"fstream": "cpp",
+	"cstdlib": "cpp"
+},
+    "clangd.arguments": [
+        "--compile-commands-dir=purpl-engine"
+    ]
+}

@@ -1,0 +1,10 @@
+ 
+[submodule "cglm"]
+	path = deps/cglm
+	url = https://github.com/recp/cglm.git
+[submodule "imgui"]
+	path = deps/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "json-c"]
+	path = deps/json-c
+	url = https://github.com/json-c/json-c.git

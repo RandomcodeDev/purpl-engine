@@ -23,11 +23,11 @@
 
 namespace purpl
 {
-class __declspec(dllexport) window {
+class P_EXPORT window {
     public:
-	HWND handle;
-	MSG win_queue;
-	bool should_close;
+	HWND handle; /* The native handle for the actual window. Only use this for platform specific code. */
+	MSG win_queue; /* The queue of events for the window. Only use this for platform specific code. */
+	bool should_close; /* Whether the window should close. Set to true manually to close the window. */
 
 	/*
 	 * The window procedure.
@@ -40,19 +40,19 @@ class __declspec(dllexport) window {
 	 * This creates a window.
 	 * Defined in window.cc
 	 */
-	window(int width, int height, const wchar_t *title, bool keep_console);
+	window(int width, int height, bool keep_console, const wchar_t *title, ...);
 
 	/*
 	 * Updates the window.
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
 	 * Defined in window.cc
 	 */
-	void update(int width, int height, const wchar_t *title);
+	void update(int width, int height, const wchar_t *title, ...);
 
-	/* Closes the window.
+	/* Frees the resources for this window.
 	 * Defined in window.cc
 	 * Not needed yet.
-	~window(); */
+	~window(void); */
 
     private:
 	int width;
@@ -61,4 +61,4 @@ class __declspec(dllexport) window {
 };
 }
 
-#endif /* !PURPL_WIN#@_WINDOW_H */
+#endif /* !PURPL_WIN32_WINDOW_H */

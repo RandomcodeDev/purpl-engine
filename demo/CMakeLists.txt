@@ -4,6 +4,10 @@ set(PURPL_DEMO_SOURCES
 	main.cc
 )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	set(PURPL_DEMO_SOURCES ${PURPL_DEMO_SOURCES} purpl-demo.rc)
+endif()
+
 add_executable(purpl-demo ${PURPL_DEMO_SOURCES})
 
 target_link_libraries(purpl-demo purpl)

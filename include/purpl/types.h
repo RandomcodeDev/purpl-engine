@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <wchar.h>
 
 typedef unsigned char uchar;

@@ -8,6 +8,7 @@ set(PURPL_COMMON_SOURCES
 
 set(PURPL_WIN32_SOURCES
 	win32/window.cc
+	purpl.rc
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")

@@ -14,10 +14,11 @@
 #include <windows.h>
 #include <winuser.h>
 
-#include <purpl/log.h>
-#include <purpl/macro.h>
-#include <purpl/types.h>
-#include <purpl/util.h>
+#include "../log.h"
+#include "../macro.h"
+#include "../types.h"
+#include "../util.h"
+#include "../../src/win32/window.cc"
 
 #define WINDOW_TEXT_MAX 90
 

@@ -21,6 +21,6 @@ class engine_info {
 public:
 	window win;
 };
-};
+}
 
 #endif /* !PURPL_INST_H */

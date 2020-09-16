@@ -17,7 +17,7 @@
 #include "window.h"
 
 namespace purpl {
-class engine_info {
+class engine_inst {
 public:
 	window win;
 };

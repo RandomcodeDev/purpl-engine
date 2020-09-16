@@ -62,7 +62,81 @@ void P_EXPORT purpl::logger::set_level(int index, int level)
 	this->levels[index] = level;
 }
 
-void P_EXPORT purpl::logger::write(int index, int level, const wchar_t *fmt, ...)
+void P_EXPORT purpl::logger::write(int index, int level, const wchar_t *file, int line, const wchar_t *fmt, ...)
 {
+	va_list args;
+	wchar_t *buf;
+	time_t rawtime;
+	struct tm *timeinfo;
+
+	buf = (wchar_t *)calloc(P_MAX_TXT_BUF, sizeof(wchar_t));
+	if (!buf) {
+		errno = ENOMEM;
+		return;
+	}
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
 	
+	switch (level) {
+	case FATAL:
+		swprintf(buf, L"[fatal error] ");
+		break;
+	case ERR:
+		swprintf(buf, L"[error] ");
+		break;
+	case WARN:
+		swprintf(buf, L"[warning] ");
+		break;
+	default:
+	case INFO:
+		swprintf(buf, L"[info] ");
+		break;
+	case DEBUG:
+		swprintf(buf, L"[debug] ");
+		break;
+	}
+
+	swprintf(buf + wcslen(buf), L"[%s ", wasctime(timeinfo));
+
+#ifdef _WIN32
+	swprintf(buf + wcslen(buf) - 2, L"] [%s:%d] ",
+		 file,
+		 line);
+#else
+	swprintf(buf + wcslen(buf), L" [%s:%d] ", file, line);
+#endif
+
+	va_start(args, fmt);
+	swprintf(buf + wcslen(buf), L"%s\n", fmt_text_va(fmt, &args));
+	va_end(args);
+
+	if (this->logs[index] && this->levels[index] >= level)
+		fwprintf(this->logs[index], L"%s", buf);
+}
+
+void purpl::logger::close(int index, const wchar_t *msg, ...)
+{
+	va_list args;
+
+	va_start(args, msg);
+	this->write(index, P_DEFAULT_LOG_LEVEL, P_FILENAME, __LINE__, L"%s", fmt_text_va(msg, &args));
+	va_end(args);
+
+	if (this->logs[index])
+		fclose(this->logs[index]);
+
+	this->levels[index] = P_DEFAULT_LOG_LEVEL;
+
+	this->nlogs--;
+}
+
+purpl::logger::~logger(void)
+{
+	int i;
+
+	for (i = 0; i < P_MAX_LOGS; i++) {
+		if (this->logs[i])
+			this->close(i, L"This logger is terminating, have a nice day.");
+	}
 }

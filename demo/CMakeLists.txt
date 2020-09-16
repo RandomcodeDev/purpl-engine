@@ -12,4 +12,4 @@ add_executable(purpl-demo ${PURPL_DEMO_SOURCES})
 
 target_link_libraries(purpl-demo purpl)
 
-add_custom_command(TARGET purpl-demo POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE_NAME:purpl-demo> ${CMAKE_BINARY_DIR})
+add_custom_command(TARGET purpl-demo POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE_NAME:purpl-demo> ${CMAKE_CURRENT_LIST_DIR}/res/purpl.ico ${CMAKE_BINARY_DIR})

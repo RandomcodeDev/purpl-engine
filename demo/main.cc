@@ -8,7 +8,12 @@ int main(int argc, char *argv[])
 {
 	srand((uint)time(NULL));
 
+	int logindex = 0;
+
 	window wnd(1024, 600, false, L"A random number: %d", rand() % 10);
+	logger log(&logindex, DEBUG, L"purpl.log");
+
+	log.write(logindex, INFO, P_FILENAME, __LINE__, L"A random number: %d", rand() % 10);
 
 	while (!wnd.should_close) {
 		wnd.update(NULL, NULL, NULL);

@@ -13,8 +13,10 @@
 #include <direct.h>
 #define getcwd _getcwd
 
+#define snwprintf _snwprintf
 #define vsnwprintf _vsnwprintf
 #define wfopen _wfopen
+#define wasctime _wasctime
 #endif /* _WIN32 */
 
 #include "macro.h"

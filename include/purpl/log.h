@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 #include <wchar.h>
 
 #include "macro.h"
@@ -51,13 +52,13 @@ class P_EXPORT logger {
 	 * Write a message to the a log file. Sets errno on failure.
 	 * Defined in log.cc 
 	 */
-	void write(int index, int level, const wchar_t *fmt, ...);
+	void write(int index, int level, const wchar_t *file, int line, const wchar_t *fmt, ...);
 
 	/*
 	 * Close a log file. Sets errno on failure. 
 	 * Defined in log.cc 
 	 */
-	void close(int index); 
+	void close(int index, const wchar_t *msg, ...); 
 
 	/*
 	 * Frees the loggers resources and closes the log files.

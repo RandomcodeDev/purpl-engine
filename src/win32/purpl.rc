@@ -1,19 +1,11 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-
-#define APSTUDIO_READONLY_SYMBOLS
-
-#include "winres.h"
-
 /////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
+// English (Canada) resources
 
-/////////////////////////////////////////////////////////////////////////////
-// English (United Kingdom) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENC)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_CAN
 #pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
@@ -29,7 +21,6 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""winres.h""\r\n"
     "\0"
 END
 
@@ -41,16 +32,6 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (United Kingdom) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (Canada) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENC)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_CAN
-#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -67,20 +48,20 @@ VS_VERSION_INFO VERSIONINFO
  FILEFLAGS 0x0L
 #endif
  FILEOS 0x40004L
- FILETYPE 0x0L
+ FILETYPE 0x2L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "100904b0"
         BEGIN
-            VALUE "CompanyName", "Randomcode Dev"
-            VALUE "FileDescription", "A simple demonstration of the Purpl engine"
+            VALUE "CompanyName", "Randomcode Developers"
+            VALUE "FileDescription", "The runtime of the Purpl engine"
             VALUE "FileVersion", "0.0.0.1"
-            VALUE "InternalName", "purpl-demo.exe"
+            VALUE "InternalName", "purpl.rc"
             VALUE "LegalCopyright", "Copyright (C) Randomcode Developers 2020"
-            VALUE "OriginalFilename", "purpl-demo.rc"
-            VALUE "ProductName", "Purpl Engine Demo"
+            VALUE "OriginalFilename", "purpl.rc"
+            VALUE "ProductName", "Purpl Engine runtime"
             VALUE "ProductVersion", "0.0.0.1"
         END
     END
@@ -90,18 +71,10 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-
 #endif    // English (Canada) resources
 /////////////////////////////////////////////////////////////////////////////
 
+IDI_ICON1 ICON "purpl.ico"
 
 
 #ifndef APSTUDIO_INVOKED

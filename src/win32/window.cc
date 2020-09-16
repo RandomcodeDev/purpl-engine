@@ -1,4 +1,5 @@
 #include <purpl/win32/window.h>
+#include "resource.h"
 using namespace purpl;
 
 WNDCLASSEXW wndclass = {};
@@ -34,7 +35,7 @@ P_EXPORT purpl::window::window(int width, int height, bool keep_console,
 	wndclass.cbSize = sizeof(WNDCLASSEXW);
 	wndclass.lpfnWndProc = wndproc;
 	wndclass.hInstance = instance;
-	wndclass.hIcon = LoadIconW(0, IDI_APPLICATION);
+	wndclass.hIcon = (HICON)LoadImageW(instance, L"purpl.ico", IMAGE_ICON, 512, 512, LR_LOADFROMFILE);
 	wndclass.hCursor = LoadCursorW(0, IDC_ARROW);
 	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wndclass.lpszClassName = wndclass_name;

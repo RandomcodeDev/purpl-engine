@@ -5,6 +5,10 @@
 
 #ifdef _WIN32
 #include "win32/window.h"
-#endif /* _WIN32 */
+
+#define window win32_window
+#else
+#error "Unsupported platform, sorry"
+#endif
 
 #endif /* !PURPL_WINDOW_H */

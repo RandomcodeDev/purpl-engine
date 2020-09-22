@@ -9,7 +9,6 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
-#include <wchar.h>
 
 #include "macro.h"
 #include "types.h"
@@ -34,13 +33,13 @@ class P_EXPORT logger {
 	 * Start the logger instance.
 	 * Defined in log.cc
 	 */
-	logger(int *index, int initial_level, const wchar_t *fname, ...);
+	logger(int *index, int initial_level, const char *fname, ...);
 
 	/*
 	 * Opens another log file. Returns an error code on failure.
 	 * Defined in log.cc
 	 */
-	int open(int initial_level, const wchar_t *fname, ...);
+	int open(int initial_level, const char *fname, ...);
 
 	/* Retrieve the level of the specified index */
 	int get_level(int index);
@@ -52,13 +51,13 @@ class P_EXPORT logger {
 	 * Write a message to the a log file. Sets errno on failure.
 	 * Defined in log.cc 
 	 */
-	void write(int index, int level, const wchar_t *file, int line, const wchar_t *fmt, ...);
+	void write(int index, int level, const char *file, int line, const char *fmt, ...);
 
 	/*
 	 * Close a log file. Sets errno on failure. 
 	 * Defined in log.cc 
 	 */
-	void close(int index, const wchar_t *msg, ...); 
+	void close(int index, const char *msg, ...); 
 
 	/*
 	 * Frees the loggers resources and closes the log files.

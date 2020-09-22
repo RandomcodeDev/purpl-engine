@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <wchar.h>
+#include <errno.h>
 
 #include "macro.h"
 #include "types.h"

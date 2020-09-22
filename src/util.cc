@@ -1,33 +1,35 @@
 #include <purpl/util.h>
 
-wchar_t *purpl::fmt_text_va(const wchar_t *fmt, va_list *args)
+char *purpl::fmt_text_va(const char *fmt, va_list *args)
 {
-	wchar_t *buf;
-	int len;
+	char *buf;
+	size_t len;
 	
 	if (!args) {
 		errno = EINVAL;
 		return NULL;
 	}
 
-	len = vsnwprintf(NULL, 0, fmt, *args); /* snprintf returns the number of bytes it _would_ write */
+	len = vsnprintf(NULL, 0, fmt, *args); /* printf and co., return the number of bytes they _would_ write */
 	if (len < 0)
 		len = P_MAX_TXT_BUF;
 
-	buf = (wchar_t *)calloc(len + 1, sizeof(wchar_t));
+	buf = (char *)calloc(len + 2, sizeof(char));
 	if (!buf) {
 		errno = ENOMEM;
 		return NULL;
 	}
 
-	vsnwprintf(buf, len + 1, fmt, *args);
+	/* calloc technically already does this */
+	memset(buf, '\0', sizeof(char));
+	vsnprintf(buf, len + 1, fmt, *args);
 
 	return buf;
 }
 
-wchar_t *purpl::fmt_text(const wchar_t *fmt, ...)
+char *purpl::fmt_text(const char *fmt, ...)
 {
-	wchar_t *buf;
+	char *buf;
 	va_list args;
 
 	va_start(args, fmt);

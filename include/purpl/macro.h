@@ -4,7 +4,6 @@
 #define PURPL_MACRO_H
 
 #include <string.h>
-#include <wchar.h>
 
 #include "types.h"
 
@@ -21,10 +20,10 @@
 
 #ifdef _WIN32
 #define P_FILENAME \
-	(wcsrchr(__FILEW__, L'\\') ? wcsrchr(__FILEW__, L'\\') + 1 : __FILEW__)
+	(strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
 #define P_FILENAME \
-	(wcsrchr(__FILEW__, L'/') ? wcsrchr(__FILEW__, L'/') + 1 : __FILEW__)
+	(strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
 #define P_MAX_TXT_BUF INT16_MAX

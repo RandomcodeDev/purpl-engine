@@ -7,16 +7,14 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <wchar.h>
+#include <errno.h>
 
 #ifdef _WIN32
 #include <direct.h>
-#define getcwd _getcwd
 
-#define snwprintf _snwprintf
-#define vsnwprintf _vsnwprintf
-#define wfopen _wfopen
-#define wasctime _wasctime
+#define getcwd _getcwd /* Damn it Microsoft, nobody cares about ISO compliance as long as we can
+			* write portable code. Developers only hate you for not being POSIX compliant!
+			*/
 #endif /* _WIN32 */
 
 #include "macro.h"
@@ -29,13 +27,13 @@ namespace purpl
  * Formats text, identical to how vprintf would.
  * Defined in util.cc
  */
-wchar_t *fmt_text_va(const wchar_t *fmt, va_list *args);
+char *fmt_text_va(const char *fmt, va_list *args);
 
 /*
  * Formats text, how printf would.
  * Defined in util.cc
  */
-wchar_t *fmt_text(const wchar_t *fmt, ...);
+char *fmt_text(const char *fmt, ...);
 }
 
 #endif /* !PURPL_UTIL_H */

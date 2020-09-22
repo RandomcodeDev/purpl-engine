@@ -1,14 +1,13 @@
 #include <purpl/win32/window.h>
-#include "resource.h"
 using namespace purpl;
 
-WNDCLASSEXW wndclass = {};
+WNDCLASSEXA wndclass = {};
 
-const wchar_t wndclass_name[] = L"Purpl Engine Window Class";
+const char wndclass_name[] = "Purpl Engine Window Class";
 
-const HINSTANCE instance = GetModuleHandle(NULL);
+const HINSTANCE instance = GetModuleHandleA(NULL);
 
-LRESULT P_EXPORT CALLBACK purpl::window::wndproc(HWND wnd, UINT msg,
+LRESULT P_EXPORT CALLBACK purpl::win32_window::wndproc(HWND wnd, UINT msg,
 						 WPARAM wparam, LPARAM lparam)
 {
 	switch (msg) {
@@ -24,23 +23,23 @@ LRESULT P_EXPORT CALLBACK purpl::window::wndproc(HWND wnd, UINT msg,
 		EndPaint(wnd, &paint);
 	}
 
-	return DefWindowProcW(wnd, msg, wparam, lparam);
+	return DefWindowProcA(wnd, msg, wparam, lparam);
 }
 
-P_EXPORT purpl::window::window(int width, int height, bool keep_console,
-			       const wchar_t *title, ...)
+P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_console,
+			       const char *title, ...)
 {
 	va_list args;
 
-	wndclass.cbSize = sizeof(WNDCLASSEXW);
+	wndclass.cbSize = sizeof(WNDCLASSEXA);
 	wndclass.lpfnWndProc = wndproc;
 	wndclass.hInstance = instance;
-	wndclass.hIcon = (HICON)LoadImageW(instance, L"purpl.ico", IMAGE_ICON, 512, 512, LR_LOADFROMFILE);
-	wndclass.hCursor = LoadCursorW(0, IDC_ARROW);
+	wndclass.hIcon = (HICON)LoadImageA(instance, "purpl.ico", IMAGE_ICON, 512, 512, LR_LOADFROMFILE);
+	wndclass.hCursor = LoadCursorA(0, IDC_ARROW);
 	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wndclass.lpszClassName = wndclass_name;
 
-	RegisterClassExW(&wndclass);
+	RegisterClassExA(&wndclass);
 
 	this->width = width;
 	this->height = height;
@@ -50,18 +49,15 @@ P_EXPORT purpl::window::window(int width, int height, bool keep_console,
 	this->should_close = false;
 
 	va_start(args, title);
-
-	memset(this->title, WINDOW_TEXT_MAX, sizeof(wchar_t));
-	wcsncpy(this->title, fmt_text_va(title, &args), WINDOW_TEXT_MAX);
-
+	this->title = fmt_text_va(title, &args);
 	va_end(args);
 
-	this->handle = CreateWindowExW(0, wndclass_name, this->title,
+	this->handle = CreateWindowExA(0, wndclass_name, this->title,
 				       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
 				       CW_USEDEFAULT, this->width, this->height,
 				       NULL, NULL, instance, NULL);
 	if (!this->handle) {
-		MessageBoxW(NULL, L"Failed to create window", L"Error",
+		MessageBoxA(NULL, "Failed to create window", "Error",
 			    MB_OK | MB_ICONERROR);
 		return;
 	}
@@ -72,33 +68,33 @@ P_EXPORT purpl::window::window(int width, int height, bool keep_console,
 	ShowWindow(this->handle, SW_NORMAL);
 }
 
-void P_EXPORT purpl::window::update(int width, int height, const wchar_t *title,
+void P_EXPORT purpl::win32_window::update(int width, int height, const char *title,
 				    ...)
 {
 	RECT winrect;
 
 	if (width)
-		SendMessageW(this->handle, WM_SIZE, NULL,
+		SendMessageA(this->handle, WM_SIZE, NULL,
 			     P_CONCAT(this->height, width, int, long));
 	if (height)
-		SendMessageW(this->handle, WM_SIZE, NULL,
+		SendMessageA(this->handle, WM_SIZE, NULL,
 			     P_CONCAT(height, this->width, int, long));
 	if (title)
-		SetWindowTextW(this->handle, title);
+		SetWindowTextA(this->handle, title);
 
 	GetClientRect(this->handle, &winrect);
 	this->width = winrect.right;
 	this->height = winrect.bottom;
 
-	GetWindowTextW(this->handle, this->title, WINDOW_TEXT_MAX - 1);
+	GetWindowTextA(this->handle, this->title, P_WIN32_WINDOW_TEXT_MAX - 1);
 
-	if (!GetMessageW(&win_queue, NULL, NULL, NULL)) {
+	if (!GetMessageA(&win_queue, NULL, NULL, NULL)) {
 		should_close = true;
 		return;
 	}
 
 	TranslateMessage(&win_queue);
-	DispatchMessageW(&win_queue);
+	DispatchMessageA(&win_queue);
 }
 
 /* purpl::window::~window()

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <wchar.h>
+#include <errno.h>
 
 #include "macro.h"
 
@@ -19,11 +19,9 @@
 #include <purpl/types.h>
 #include <purpl/util.h>
 
-#define WINDOW_TEXT_MAX 90
-
 namespace purpl
 {
-class P_EXPORT window {
+class P_EXPORT win32_window {
     public:
 	HWND handle; /* The native handle for the actual window. Only use this for platform specific code. */
 	MSG win_queue; /* The queue of events for the window. Only use this for platform specific code. */
@@ -40,24 +38,24 @@ class P_EXPORT window {
 	 * This creates a window.
 	 * Defined in window.cc
 	 */
-	window(int width, int height, bool keep_console, const wchar_t *title, ...);
+	win32_window(int width = 1024, int height = 600, bool keep_console = false, const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
 	 * Defined in window.cc
 	 */
-	void update(int width, int height, const wchar_t *title, ...);
+	void update(int width, int height, const char *title, ...);
 
 	/* Frees the resources for this window.
 	 * Defined in window.cc
 	 * Not needed yet.
-	~window(void); */
+	~win32_window(void); */
 
     private:
 	int width;
 	int height;
-	wchar_t title[WINDOW_TEXT_MAX];
+	char *title;
 };
 }
 

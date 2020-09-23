@@ -12,14 +12,24 @@
 #include "macro.h"
 #include "types.h"
 
+#include "app_info.h"
 #include "log.h"
 #include "util.h"
 #include "window.h"
 
 namespace purpl {
-class engine_inst {
+class P_EXPORT engine_inst {
 public:
-	window win;
+	app_info *info;
+	window *wnd;
+
+	/* 
+	 * Basically to correctly do this you just have
+	 * to pass new <class name>(<custom args>) for each class argument.
+	 * If you want the defaults pass pass new <class name>().
+	 * Defined in inst.cc
+	 */
+	engine_inst(app_info *info = new app_info(), window *win = new window(), bool write_hello = true);
 };
 };
 

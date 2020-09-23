@@ -59,7 +59,8 @@ int P_EXPORT purpl::logger::get_level(int index)
 
 void P_EXPORT purpl::logger::set_level(int index, int level)
 {
-	this->levels[index] = level;
+	if (index < P_MAX_LOGS)
+		this->levels[index] = level;
 }
 
 void P_EXPORT purpl::logger::write(int index, int level, const char *filename, int line, const char *fmt, ...)

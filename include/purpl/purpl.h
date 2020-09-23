@@ -5,6 +5,7 @@
 
 #include "app_info.h"
 #include "inst.h"
+#include "log.h"
 #include "macro.h"
 #include "types.h"
 #include "util.h"

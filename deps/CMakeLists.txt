@@ -26,8 +26,6 @@ add_library(imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS} ${IMGUI_IMPL_SOURCES}
 
 target_link_libraries(imgui ${Vulkan_LIBRARIES})
 
-set(BUILD_SHARED_LIBS OFF)
-
 add_subdirectory(cglm)
 add_subdirectory(json-c)
 

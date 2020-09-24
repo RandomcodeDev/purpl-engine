@@ -8,6 +8,11 @@ try:
 except IndexError:
 	name = input('File name: ')
 
+try:
+	os.chdir(sys.argv[2])
+except IndexError:
+	os.chdir(input('Change to alternate directory first [current directory]: '))
+
 if pathlib.Path(name).exists() and os.stat(name).st_size: # Chech if the file is there and if not empty, in which case prompt whether to overwrite it
 	if input('File exists and is not empty, overwrite it? [no] ') == 'y' or 'Y' or 'yes' or 'Yes':
 		print('Overwriting file.\n')
@@ -16,6 +21,6 @@ if pathlib.Path(name).exists() and os.stat(name).st_size: # Chech if the file is
 		exit()
 
 with open(name, 'wb+') as file:
-	symbol = name.replace('include/', '').upper().replace('.', '_').replace('/', '_')
+	symbol = name.replace('include/', '').upper().replace('.', '_').replace('/', '_') # Generate the include guard symbol for the header, then write everything to the file
 	contents = bytes(F"#pragma once\n\n#ifndef {symbol}\n#define {symbol}\n\n#endif\n", encoding='utf8')
 	file.write(contents)

@@ -11,11 +11,13 @@ except IndexError:
 try:
 	os.chdir(sys.argv[2])
 except IndexError:
-	os.chdir(input('Change to alternate directory first [current directory]: '))
+	chdir = input('Change to alternate directory first [current directory]: ')
+	if chdir:
+		os.chdir(chdir)
 
 if pathlib.Path(name).exists() and os.stat(name).st_size: # Chech if the file is there and if not empty, in which case prompt whether to overwrite it
 	if input('File exists and is not empty, overwrite it? [no] ') == 'y' or 'Y' or 'yes' or 'Yes':
-		print('Overwriting file.\n')
+		print('Overwriting file.')
 	else:
 		print('Not overwriting file.')
 		exit()

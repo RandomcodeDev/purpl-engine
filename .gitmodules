@@ -7,3 +7,6 @@
 [submodule "json-c"]
 	path = deps/json-c
 	url = https://github.com/json-c/json-c.git
+[submodule "deps/stb"]
+	path = deps/stb
+	url = https://github.com/nothings/stb

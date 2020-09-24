@@ -21,6 +21,8 @@ if pathlib.Path(name).exists() and os.stat(name).st_size: # Chech if the file is
 		exit()
 
 with open(name, 'wb+') as file:
-	symbol = name.replace('include/', '').upper().replace('.', '_').replace('/', '_') # Generate the include guard symbol for the header, then write everything to the file
+	# Generate the include guard symbol for the header, then write everything to the file
+	symbol = name.replace('include/', '').replace('.',
+                                               '_').replace('/', '_').upper()
 	contents = bytes(F"#pragma once\n\n#ifndef {symbol}\n#define {symbol}\n\n#endif\n", encoding='utf8')
 	file.write(contents)

@@ -15,7 +15,7 @@
 #ifdef _MSC_VER
 #define P_EXPORT __declspec(dllexport)
 #else
-#define P_EXPORT
+#define P_EXPORT extern
 #endif
 
 #ifdef _WIN32

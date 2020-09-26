@@ -7,9 +7,13 @@ set(ENABLE_PURPL_DEMO ON)
 
 find_package(Vulkan REQUIRED)
 
+if (${Vulkan_FOUND})
+	set(PURPL_GRAPHICS_API "VULKAN")
+endif()
+
 include_directories(include ${Vulkan_INCLUDE_DIRS})
 
-set(CMAKE_CXX_FLAGS "-O2 -Wall") # MSVC does, in fact, support these arguments
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DP_USE_${PURPL_GRAPHICS_API}_GFX") # MSVC does, in fact, support these arguments
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	include_directories($ENV{UniversalCRTSdkDir}/include/ucrt)

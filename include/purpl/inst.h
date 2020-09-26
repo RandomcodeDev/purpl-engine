@@ -25,12 +25,12 @@ public:
 
 	/* 
 	 * Basically to correctly do this you just have
-	 * to pass new <class name>(<custom args>) for each class argument.
-	 * If you want the defaults pass pass new <class name>().
+	 * to pass new <class name>(<custom args>) for each constructor argument.
+	 * If you want the defaults pass new <class name>().
 	 * Defined in inst.cc
 	 */
 	engine_inst(app_info *info = new app_info(), window *win = new window(), bool write_hello = true);
 };
-};
+}
 
 #endif /* !PURPL_INST_H */

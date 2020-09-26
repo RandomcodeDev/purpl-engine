@@ -3,7 +3,6 @@
 #ifndef PURPL_WIN32_WINDOW_H
 #define PURPL_WIN32_WINDOW_H
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -18,6 +17,8 @@
 #include <purpl/macro.h>
 #include <purpl/types.h>
 #include <purpl/util.h>
+
+#include "graphics.h"
 
 namespace purpl
 {

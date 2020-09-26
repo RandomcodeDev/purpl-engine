@@ -8,7 +8,7 @@
 
 #define window win32_window
 #else
-#warning "Unsupported platform. Graphics will not work for this build."
+#error "Window creation is unsupported on this platform."
 #endif
 
 #endif /* !PURPL_WINDOW_H */

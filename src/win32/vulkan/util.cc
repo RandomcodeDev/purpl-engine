@@ -88,7 +88,7 @@ VkExtensionProperties *purpl::get_vulkan_exts(uint *count)
 	return exts; /* Return the buffer */
 }
 
-bool purpl::check_required_exts_avail(char **ext_names)
+char **purpl::check_required_exts_avail(void)
 {
 	int i;
 	uint ext_count;
@@ -96,13 +96,13 @@ bool purpl::check_required_exts_avail(char **ext_names)
 
 	char **names;
 
-	bool have_surface = false;
-	bool have_win32_surface = false;
+	bool have_surface = NULL;
+	bool have_win32_surface = NULL;
 
 	exts = get_vulkan_exts(&ext_count);
 
 	if (!exts)
-		return false;
+		return NULL;
 
 	for (i = 0; i < ext_count; i++) {
 		if (strcmp(exts[i].extensionName, "VK_KHR_surface") == 0)
@@ -114,23 +114,21 @@ bool purpl::check_required_exts_avail(char **ext_names)
 	names = (char **)calloc(P_REQUIRED_VULKAN_EXT_COUNT,
 			       sizeof(char *)); /* Allocate an array of pointers */
 	if (!names)
-		return false;
+		return NULL;
 
 	/* Now allocate P_REQUIRED_VULKAN_EXT_COUNT names */
 	for (i = 0; i < P_REQUIRED_VULKAN_EXT_COUNT; i++) {
 		names[i] = (char *)calloc(VK_MAX_EXTENSION_NAME_SIZE, sizeof(char));
 		if (!names[i])
-			return false;
+			return NULL;
 	}
 
 	/* Specify the names of the extensions for the caller */
 	strcpy(names[0], "VK_KHR_surface");
 	strcpy(names[1], "VK_KHR_win32_surface");
 
-	ext_names = names;
-
 	if (have_surface && have_win32_surface)
-		return true; /* We found both, success */
+		return names;
 
-	return false; /* One or both are missing in this case, fail */
+	return NULL; /* One or both are missing in this case, fail */
 }

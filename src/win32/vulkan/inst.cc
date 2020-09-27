@@ -15,16 +15,15 @@ P_EXPORT purpl::win32_vulkan_inst::win32_vulkan_inst(void)
 	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	create_info.pApplicationInfo = &info;
 
-	char **ext_names;
+	char **ext_names = NULL;
 
-	if (!check_required_exts_avail(ext_names))
-		return;
+	ext_names = check_required_exts_avail();
 
 	create_info.enabledExtensionCount = P_REQUIRED_VULKAN_EXT_COUNT;
 	create_info.ppEnabledExtensionNames = ext_names;
 	create_info.enabledLayerCount = 0;
 
-	if (!vkCreateInstance(&create_info, NULL, &this->inst))
+	if (vkCreateInstance(&create_info, NULL, &this->inst))
 		return;
 }
 

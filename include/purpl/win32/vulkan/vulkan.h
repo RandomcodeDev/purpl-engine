@@ -4,7 +4,7 @@
 #define PURPL_WIN32_VULKAN_H
 
 #include "inst.h"
-#define gfx_inst win32_vulkan_inst
+typedef gfx_inst win32_vulkan_inst;
 
 #include "util.h"
 

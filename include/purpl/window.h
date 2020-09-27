@@ -6,7 +6,7 @@
 #ifdef _WIN32
 #include "win32/window.h"
 
-#define window win32_window
+typedef win32_window window;
 #else
 #error "Window creation is unsupported on this platform."
 #endif

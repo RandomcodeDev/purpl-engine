@@ -1,0 +1,42 @@
+﻿{
+	"configurations": [
+		{
+			"name": "x64-Debug",
+			"generator": "Ninja",
+			"configurationType": "Debug",
+			"inheritEnvironments": [ "msvc_x64_x64" ],
+			"buildRoot": "${projectDir}\\build\\${name}",
+			"installRoot": "${projectDir}\\out\\install\\${name}",
+			"cmakeCommandArgs": "",
+			"buildCommandArgs": "",
+			"ctestCommandArgs": "",
+			"variables": [
+				{
+					"name": "BUILD_SHARED_LIBS",
+					"value": "True",
+					"type": "BOOL"
+				},
+				{
+					"name": "CMAKE_CXX_FLAGS",
+					"value": "/DWIN32 /D_WINDOWS /W3 /GR /EHsc",
+					"type": "STRING"
+				},
+				{
+					"name": "CMAKE_CXX_FLAGS_DEBUG",
+					"value": "/MDd /Zi /Ob0 /Od /RTC1",
+					"type": "STRING"
+				},
+				{
+					"name": "CMAKE_C_FLAGS",
+					"value": "/DWIN32 /D_WINDOWS /W3",
+					"type": "STRING"
+				},
+				{
+					"name": "CGLM_USE_TEST",
+					"value": "False",
+					"type": "BOOL"
+				}
+			]
+		}
+	]
+}

@@ -18,6 +18,10 @@
 #define P_EXPORT extern
 #endif
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+
 #ifdef _WIN32
 #define P_FILENAME \
 	(strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)

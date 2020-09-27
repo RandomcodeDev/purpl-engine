@@ -4,11 +4,8 @@
             "name": "Default",
             "includePath": [
                 "deps/cglm/include",
-                "deps/glew/include",
-                "deps/glfw/include",
                 "deps/json-c",
                 "build/deps/json-c/",
-                "deps/zlib",
                 "src/",
                 "${default}"
             ],

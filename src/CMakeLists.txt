@@ -30,17 +30,21 @@ set(PURPL_WIN32_HEADERS
 
 set(PURPL_WIN32_VULKAN_SOURCES
 	win32/vulkan/inst.cc
+	win32/vulkan/util.cc
 )
 
 set(PURPL_WIN32_VULKAN_HEADERS
 	../include/purpl/win32/vulkan/inst.h
+	../include/purpl/win32/vulkan/macro.h
+	../include/purpl/win32/vulkan/util.h
 	../include/purpl/win32/vulkan/vulkan.h
 )
 
+set(PURPL_SOURCES ${PURPL_COMMON_SOURCES} ${PURPL_WIN32_SOURCES} ${PURPL_WIN32_VULKAN_SOURCES})
+set(PURPL_HEADERS ${PURPL_COMMON_HEADERS} ${PURPL_WIN32_HEADERS} ${PURPL_WIN32_VULKAN_HEADERS})
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
-        set(PURPL_SOURCES ${PURPL_COMMON_SOURCES} ${PURPL_WIN32_SOURCES} ${PURPL_WIN32_VULKAN_SOURCES})
-        set(PURPL_HEADERS ${PURPL_COMMON_HEADERS} ${PURPL_WIN32_HEADERS} ${PURPL_WIN32_VULKAN_HEADERS})
 endif()
 
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})

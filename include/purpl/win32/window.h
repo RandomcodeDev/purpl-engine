@@ -13,10 +13,10 @@
 #include <windows.h>
 #include <winuser.h>
 
-#include <purpl/log.h>
-#include <purpl/macro.h>
-#include <purpl/types.h>
-#include <purpl/util.h>
+#include "purpl/log.h"
+#include "purpl/macro.h"
+#include "purpl/types.h"
+#include "purpl/util.h"
 
 #include "graphics.h"
 

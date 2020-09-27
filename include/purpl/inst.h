@@ -21,6 +21,7 @@ namespace purpl {
 class P_EXPORT engine_inst {
 public:
 	app_info *info;
+	gfx_inst *gfx;
 	window *wnd;
 
 	/* 
@@ -29,7 +30,7 @@ public:
 	 * If you want the defaults pass new <class name>().
 	 * Defined in inst.cc
 	 */
-	engine_inst(app_info *info = new app_info(), window *win = new window(), bool write_hello = true);
+	engine_inst(app_info *info = new app_info(), gfx_inst *gfx = new gfx_inst(), window *win = new window(), bool write_hello = true);
 };
 }
 

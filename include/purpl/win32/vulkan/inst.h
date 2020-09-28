@@ -32,7 +32,6 @@ public:
 
 private:
 	VkInstance inst;
-	VkApplicationInfo app_info;
 };
 }
 

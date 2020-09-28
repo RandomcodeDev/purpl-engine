@@ -15,7 +15,7 @@
 #ifdef _MSC_VER
 #define P_EXPORT __declspec(dllexport)
 #else
-#define P_EXPORT extern
+#define P_EXPORT
 #endif
 
 #ifdef _MSC_VER

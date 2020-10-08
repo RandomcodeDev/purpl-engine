@@ -1,4 +1,4 @@
-#include <purpl/inst.h>
+#include "purpl/inst.h"
 
 P_EXPORT purpl::engine_inst::engine_inst(app_info *info, gfx_inst *gfx, window *wnd, bool write_hello)
 {
@@ -8,4 +8,14 @@ P_EXPORT purpl::engine_inst::engine_inst(app_info *info, gfx_inst *gfx, window *
 
 	if (write_hello)
 		this->info->log->write(this->info->logindex, INFO, P_FILENAME, __LINE__, "Instance created");
+}
+
+P_EXPORT purpl::engine_inst::update(int width, int height, const char *title, ...)
+{
+	va_list args;
+
+	/* Call the window's update function, more to come later but that's it for now */
+	va_start(args, title);
+	this->wnd->update(width, height, fmt_text_va(title, &args));
+	va_end(args);
 }

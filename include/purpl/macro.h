@@ -7,10 +7,16 @@
 
 #include "types.h"
 
+/* Straightforward macros for getting the size of an array or buffer */
 #define P_ARRAYSIZE(arr) (sizeof arr / sizeof arr[0])
 #define P_BUFSIZE(buf, type) (sizeof buf / sizeof(type))
 
-#define P_CONCAT(hi, lo, type, target) ((target)hi << sizeof(type) | lo)
+/*
+ * Concatenates two values together by left shifting hi's value by the
+ * size of type in bits then ORing with lo. Optimized through the use
+ * of shifts and ORing instead of addition/multiplication.
+ */
+#define P_CONCAT(hi, lo, type, target) (((target)(hi) << (sizeof(type) << 3)) | (lo))
 
 #ifdef _MSC_VER
 #define P_EXPORT __declspec(dllexport)
@@ -22,6 +28,7 @@
 #pragma warning(disable : 4996)
 #endif
 
+/*  */
 #ifdef _WIN32
 #define P_FILENAME \
 	(strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)

@@ -1,4 +1,4 @@
-#include <purpl/app_info.h>
+#include "purpl/app_info.h"
 using namespace purpl;
 
 bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
@@ -9,10 +9,12 @@ bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
 	char *json;
 	size_t len;
 
+	/* Format the file name string */
 	va_start(args, fname);
 	buf = fmt_text_va(fname, &args);
 	va_end(args);
 
+	/* Open the file and get its length */
 	this->fp = fopen(buf, "rb");
 	if (!this->fp) {
 		errno = EIO;
@@ -23,20 +25,24 @@ bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
 	len = ftell(this->fp);
 	rewind(this->fp);
 
+	/* Allocate a buffer for the file contents */
 	json = (char *)calloc(len + 2, sizeof(char));
 	if (!json) {
 		errno = ENOMEM;
 		return false;
 	}
 
+	/* Read in the file */
 	fread(json, sizeof(char), len, this->fp);
 	if (!json) {
 		errno = EIO;
 		return false;
 	}
 
+	/* Terminate the buffer's contents */
 	json[len + 1] = '\0';
 
+	/* Get the JSON objects */
 	this->root = json_tokener_parse(json);
 	json_object_object_get_ex(this->root, "res_path", &this->res_path);
 	json_object_object_get_ex(this->root, "log_path", &this->log_path);
@@ -56,7 +62,7 @@ bool P_EXPORT purpl::app_info::validate(void)
 	 * whether the objects are present, then if they're the right type.
 	 */
 	if (!this->res_path || !this->log_path || !this->settings_path) {
-		errno = ENOENT;
+		errno = EINVAL;
 		return false;
 	}
 
@@ -100,7 +106,8 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 {
 	va_list args;
 	char *buf;
-
+	
+	/* Format the file name string */
 	va_start(args, fname);
 	buf = fmt_text_va(fname, &args);
 	va_end(args);

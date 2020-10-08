@@ -16,7 +16,8 @@
 
 namespace purpl {
 /*
- * Copied from GLFW, specifically vulkan.c, line 165.
+ * Copied from GLFW, specifically vulkan.c, line 165. GLFW authors, if you don't like
+ * this use of your code I'll take it out and write my own version, just let me know.
  * Defined in util.cc
  */
 const char *get_vulkan_err_str(VkResult result);

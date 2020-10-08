@@ -8,4 +8,9 @@
 
 #include "util.h"
 
+/* Validation layers, which are only needed if we're built in debug mode */
+#ifndef NDEBUG
+#include "validation.h"
+#endif
+
 #endif

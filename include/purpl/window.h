@@ -6,7 +6,11 @@
 #ifdef _WIN32
 #include "win32/window.h"
 
-#define window win32_window
+typedef win32_window window;
+#elif defined(__linux__)
+#include "x11/window.h"
+
+typedef x11_window window;
 #else
 #error "Window creation is unsupported on this platform."
 #endif

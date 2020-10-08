@@ -8,9 +8,10 @@
     "files.associations": {
 	"*.tcc": "cpp",
 	"fstream": "cpp",
-	"cstdlib": "cpp"
+	"cstdlib": "cpp",
+	"*.rh": "cpp"
 },
     "clangd.arguments": [
-        "--compile-commands-dir=purpl-engine"
+        "--compile-commands-dir=purpl-engine/build"
     ]
 }

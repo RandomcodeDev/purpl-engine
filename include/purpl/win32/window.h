@@ -18,8 +18,6 @@
 #include "purpl/types.h"
 #include "purpl/util.h"
 
-#include "graphics.h"
-
 namespace purpl
 {
 class P_EXPORT win32_window {
@@ -46,11 +44,12 @@ class P_EXPORT win32_window {
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
 	 * Defined in window.cc
 	 */
-	void update(int width, int height, const char *title, ...);
+	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
 
 	/* Frees the resources for this window.
 	 * Defined in window.cc
 	 * Not needed yet.
+	 *
 	~win32_window(void); */
 
     private:

@@ -1,4 +1,4 @@
-#include <purpl/log.h>
+#include "purpl/log.h"
 
 P_EXPORT purpl::logger::logger(int *index, int initial_level, const char *fname, ...)
 {

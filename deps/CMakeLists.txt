@@ -14,17 +14,24 @@ set(IMGUI_HEADERS
 	imgui/imstb_truetype.h
 )
 
-set(IMGUI_IMPL_SOURCES
+set(IMGUI_IMPL_OPENGL_SOURCES
+	imgui/examples/imgui_impl_opengl3.cpp
+)
+
+set(IMGUI_IMPL_OPENGL_HEADERS
+	imgui/examples/imgui_impl_opengl3.h
+)
+
+set(IMGUI_IMPL_VULKAN_SOURCES
 	imgui/examples/imgui_impl_vulkan.cpp
 )
 
-set(IMGUI_IMPL_HEADERS
+set(IMGUI_IMPL_VULKAN_HEADERS
 	imgui/examples/imgui_impl_vulkan.h
 )
 
-add_library(imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS} ${IMGUI_IMPL_SOURCES} ${IMGUI_IMPL_HEADERS})
-
-target_link_libraries(imgui ${Vulkan_LIBRARIES})
+add_library(imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS} ${IMGUI_IMPL_${PURPL_GRAPHICS_API}_SOURCES} ${IMGUI_IMPL_${PURPL_GRAPHICS_API}_HEADERS})
+target_link_libraries(imgui ${${PURPL_GRAPHICS_API}_LIBRARIES})
 
 add_subdirectory(cglm)
 add_subdirectory(json-c)

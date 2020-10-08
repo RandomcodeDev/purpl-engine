@@ -15,6 +15,10 @@
 #include "macro.h"
 #include "util.h"
 
+#ifndef NDEBUG
+#include "validation.h"
+#endif
+
 namespace purpl {
 class P_EXPORT win32_vulkan_inst {
 public:
@@ -32,6 +36,9 @@ public:
 
 private:
 	VkInstance inst;
+	char **exts;
+	int ext_count;
+	char **validation_layers;
 };
 }
 

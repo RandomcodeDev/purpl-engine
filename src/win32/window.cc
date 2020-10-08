@@ -1,4 +1,4 @@
-#include <purpl/win32/window.h>
+#include "purpl/win32/window.h"
 using namespace purpl;
 
 WNDCLASSEXA wndclass = {};
@@ -31,6 +31,7 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_cons
 {
 	va_list args;
 
+	/* Set up our window class */
 	wndclass.cbSize = sizeof(WNDCLASSEXA);
 	wndclass.lpfnWndProc = wndproc;
 	wndclass.hInstance = instance;
@@ -39,19 +40,25 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_cons
 	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wndclass.lpszClassName = wndclass_name;
 
+	/* Register the window class */
 	RegisterClassExA(&wndclass);
 
+	/* Copy the width and height parameters into the appropriate members */
 	this->width = width;
 	this->height = height;
 
+	/* Initialize the message queue */
 	this->win_queue = {};
 
+	/* Make sure the window doesn't just close */
 	this->should_close = false;
 
+	/* Format our title to get the final string */
 	va_start(args, title);
 	this->title = fmt_text_va(title, &args);
 	va_end(args);
 
+	/* Create a window */
 	this->handle = CreateWindowExA(0, wndclass_name, this->title,
 				       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
 				       CW_USEDEFAULT, this->width, this->height,
@@ -62,9 +69,11 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_cons
 		return;
 	}
 
+	/* If we're told to, ditch the console */
 	if (!keep_console)
 		FreeConsole();
 
+	/* Show our window */
 	ShowWindow(this->handle, SW_NORMAL);
 }
 
@@ -72,7 +81,17 @@ void P_EXPORT purpl::win32_window::update(int width, int height, const char *tit
 				    ...)
 {
 	RECT winrect;
+	va_list args;
 
+	/* Format our title string */
+	va_start(args, title);
+	this->title = fmt_text_va(title, &args);
+	va_end(args);
+
+	/* 
+	 * Handle resizing/title change. lparam gets height in
+	 * the higher half and width in the lower, so we use P_CONCAT.
+	 */
 	if (width)
 		SendMessageA(this->handle, WM_SIZE, NULL,
 			     P_CONCAT(this->height, width, int, long));
@@ -80,19 +99,23 @@ void P_EXPORT purpl::win32_window::update(int width, int height, const char *tit
 		SendMessageA(this->handle, WM_SIZE, NULL,
 			     P_CONCAT(height, this->width, int, long));
 	if (title)
-		SetWindowTextA(this->handle, title);
+		SetWindowTextA(this->handle, this->title);
 
+	/* Now we calculate the width and height of the client area of our window */
 	GetClientRect(this->handle, &winrect);
-	this->width = winrect.right;
-	this->height = winrect.bottom;
+	this->width = winrect.right - winrect.left;
+	this->height = winrect.bottom - winrect.top;
 
+	/* And retrieve the title */
 	GetWindowTextA(this->handle, this->title, P_WIN32_WINDOW_TEXT_MAX - 1);
 
+	/* Now check if we need to close the window (if we got a WM_QUIT) */
 	if (!GetMessageA(&win_queue, NULL, NULL, NULL)) {
 		should_close = true;
 		return;
 	}
 
+	/* And finally, update the message queue */
 	TranslateMessage(&win_queue);
 	DispatchMessageA(&win_queue);
 }

@@ -20,9 +20,10 @@
 namespace purpl {
 class P_EXPORT engine_inst {
 public:
-	app_info *info;
-	gfx_inst *gfx;
-	window *wnd;
+	app_info *info; /* The application info for this instance */
+	gfx_inst *gfx; /* The graphics instance for this instance */
+	window *wnd; /* This instance's window */
+	bool is_active; /* Whether the instance is active. */
 
 	/* 
 	 * Basically to correctly do this you just have
@@ -31,6 +32,13 @@ public:
 	 * Defined in inst.cc
 	 */
 	engine_inst(app_info *info = new app_info(), gfx_inst *gfx = new gfx_inst(), window *win = new window(), bool write_hello = true);
+
+	/*
+	 * Updates the instance (window, graphics, etc.).
+	 * Call this in a while loop with is_active as the condition to make your instance loop.
+	 * Defined in inst.cc
+	 */
+	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
 };
 }
 

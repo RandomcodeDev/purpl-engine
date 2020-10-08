@@ -1,8 +1,14 @@
-#include <purpl/win32/vulkan/inst.h>
+#include "purpl/win32/vulkan/inst.h"
 using namespace purpl;
 
 P_EXPORT purpl::win32_vulkan_inst::win32_vulkan_inst(void)
 {
+	/* Check for validation layers if we're in debug mode */
+#ifndef NDEBUG
+	if (!check_validation_layer_support())
+		return;
+#endif
+
 	VkApplicationInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	info.pApplicationName = "Purpl Engine";
@@ -15,12 +21,10 @@ P_EXPORT purpl::win32_vulkan_inst::win32_vulkan_inst(void)
 	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	create_info.pApplicationInfo = &info;
 
-	char **ext_names = NULL;
-
-	ext_names = check_required_exts_avail();
+	this->exts = get_vulkan_exts(&this->ext_count);
 
 	create_info.enabledExtensionCount = P_REQUIRED_VULKAN_EXT_COUNT;
-	create_info.ppEnabledExtensionNames = ext_names;
+	create_info.ppEnabledExtensionNames = check_required_exts_avail();
 	create_info.enabledLayerCount = 0;
 
 	if (vkCreateInstance(&create_info, NULL, &this->inst))

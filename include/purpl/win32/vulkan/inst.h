@@ -36,8 +36,8 @@ public:
 
 private:
 	VkInstance inst;
-	char **exts;
-	int ext_count;
+	VkExtensionProperties *exts;
+	uint ext_count;
 	char **validation_layers;
 };
 }

@@ -31,13 +31,15 @@ set(PURPL_WIN32_HEADERS
 set(PURPL_WIN32_VULKAN_SOURCES
 	win32/vulkan/inst.cc
 	win32/vulkan/util.cc
+	win32/vulkan/validation.cc
 )
 
 set(PURPL_WIN32_VULKAN_HEADERS
 	../include/purpl/win32/vulkan/inst.h
 	../include/purpl/win32/vulkan/macro.h
 	../include/purpl/win32/vulkan/util.h
-	../include/purpl/win32/vulkan/vulkan.h
+	../include/purpl/win32/vulkan/validation.h
+	../include/purpl/win32/vulkan/vulkan_graphics.h
 )
 
 set(PURPL_X11_SOURCES

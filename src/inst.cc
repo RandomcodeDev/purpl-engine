@@ -8,9 +8,11 @@ P_EXPORT purpl::engine_inst::engine_inst(app_info *info, gfx_inst *gfx, window *
 
 	if (write_hello)
 		this->info->log->write(this->info->logindex, INFO, P_FILENAME, __LINE__, "Instance created");
+
+	this->is_active = true;
 }
 
-P_EXPORT purpl::engine_inst::update(int width, int height, const char *title, ...)
+void P_EXPORT purpl::engine_inst::update(int width, int height, const char *title, ...)
 {
 	va_list args;
 
@@ -18,4 +20,7 @@ P_EXPORT purpl::engine_inst::update(int width, int height, const char *title, ..
 	va_start(args, title);
 	this->wnd->update(width, height, fmt_text_va(title, &args));
 	va_end(args);
+
+	if (this->wnd->should_close)
+		this->is_active = false;
 }

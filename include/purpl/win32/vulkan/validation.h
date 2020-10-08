@@ -14,16 +14,10 @@
 
 #include <vulkan/vulkan.h>
 
-/* We have this macro so that this can be changed by the end user */
-#define P_VULKAN_VALIDATION_LAYERS       \
-	{                                \
-		"VK_LAYER_KHRONOS_layer" \
-	}
-
 namespace purpl
 {
 /* The validation layers to use for debugging */
-const char enabled_layers[][] = P_VULKAN_VALIDATION_LAYERS;
+const char enabled_layers[][VK_MAX_EXTENSION_NAME_SIZE] = { "VK_LAYER_KHRONOS_layer" };
 
 /*
  * Checks the support for the validation layers requested.

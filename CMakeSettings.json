@@ -1,4 +1,4 @@
-{
+﻿{
 	"configurations": [
 		{
 			"name": "x64-Debug",
@@ -7,7 +7,7 @@
 			"inheritEnvironments": [ "msvc_x64_x64" ],
 			"buildRoot": "${projectDir}\\build\\${name}",
 			"installRoot": "${projectDir}\\out\\install\\${name}",
-			"cmakeCommandArgs": "",
+			"cmakeCommandArgs": "-DPURPL_GRAPHICS_API=VULKAN",
 			"buildCommandArgs": "",
 			"ctestCommandArgs": "",
 			"variables": [

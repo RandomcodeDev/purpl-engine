@@ -21,6 +21,7 @@ P_EXPORT purpl::win32_vulkan_inst::win32_vulkan_inst(void)
 	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	create_info.pApplicationInfo = &info;
 
+	/* Get the available extensions */
 	this->exts = get_vulkan_exts(&this->ext_count);
 
 	create_info.enabledExtensionCount = P_REQUIRED_VULKAN_EXT_COUNT;

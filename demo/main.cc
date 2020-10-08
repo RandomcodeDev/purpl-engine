@@ -14,10 +14,8 @@ int main(int argc, char *argv[])
 
 	inst.info->log->write(logindex, INFO, P_FILENAME, __LINE__, "A random number: %d", rand() % 10);
 
-
-
-	while (!inst.wnd->should_close) {
-		inst.wnd->update(NULL, NULL, NULL);
+	while (inst.is_active) {
+		inst.update();
 	}
 
 	return 0;

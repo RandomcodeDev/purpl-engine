@@ -83,10 +83,7 @@ void P_EXPORT purpl::win32_window::update(int width, int height, const char *tit
 	RECT winrect;
 	va_list args;
 
-	/* Format our title string */
-	va_start(args, title);
-	this->title = fmt_text_va(title, &args);
-	va_end(args);
+	char *tmp;
 
 	/* 
 	 * Handle resizing/title change. lparam gets height in
@@ -98,8 +95,19 @@ void P_EXPORT purpl::win32_window::update(int width, int height, const char *tit
 	if (height)
 		SendMessageA(this->handle, WM_SIZE, NULL,
 			     P_CONCAT(height, this->width, int, long));
-	if (title)
-		SetWindowTextA(this->handle, this->title);
+	if (title) {
+		/* Format our title string */
+		va_start(args, title);
+		tmp = fmt_text_va(title, &args);
+		va_end(args);
+
+		if (strcmp(tmp, "") == 0) {
+			SetWindowTextA(this->handle, this->title);
+		} else {
+			this->title = tmp;
+			SetWindowTextA(this->handle, tmp);
+		}
+	}
 
 	/* Now we calculate the width and height of the client area of our window */
 	GetClientRect(this->handle, &winrect);

@@ -6,7 +6,10 @@
 #ifdef _WIN32
 #include "win32/window.h"
 
-typedef win32_window window;
+namespace purpl
+{
+typedef purpl::win32_window window;
+}
 #elif defined(__linux__)
 #include "x11/window.h"
 

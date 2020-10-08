@@ -16,7 +16,8 @@
  * size of type in bits then ORing with lo. Optimized through the use
  * of shifts and ORing instead of addition/multiplication.
  */
-#define P_CONCAT(hi, lo, type, target) (((target)(hi) << (sizeof(type) << 3)) | (lo))
+#define P_CONCAT(hi, lo, type, target) \
+	((target)((hi) << (sizeof(type) << 3)) | (lo))
 
 #ifdef _MSC_VER
 #define P_EXPORT __declspec(dllexport)

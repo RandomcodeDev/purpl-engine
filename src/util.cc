@@ -4,6 +4,9 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 {
 	char *buf;
 	size_t len;
+
+	if (!fmt)
+		return "";
 	
 	if (!args) {
 		errno = EINVAL;

@@ -13,6 +13,7 @@
 #include "types.h"
 
 #include "app_info.h"
+#include "graphics.h"
 #include "log.h"
 #include "util.h"
 #include "window.h"

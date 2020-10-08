@@ -1,10 +1,13 @@
 #pragma once
 
-#ifndef PURPL_WIN32_VULKAN_H
-#define PURPL_WIN32_VULKAN_H
+#ifndef PURPL_WIN32_VULKAN_GRAPHICS_H
+#define PURPL_WIN32_VULKAN_GRAPHICS_H
 
 #include "inst.h"
-#define gfx_inst win32_vulkan_inst
+namespace purpl
+{
+typedef purpl::win32_vulkan_inst gfx_inst;
+}
 
 #include "util.h"
 

@@ -23,7 +23,11 @@
 
 #define P_MAX_LOGS 32
 
+#ifndef NDEBUG
+#define P_DEFAULT_LOG_LEVEL DEBUG
+#else
 #define P_DEFAULT_LOG_LEVEL WARN
+#endif
 
 namespace purpl
 {

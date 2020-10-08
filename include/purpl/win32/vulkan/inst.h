@@ -36,6 +36,7 @@ public:
 
 private:
 	VkInstance inst;
+	VkDebugUtilsMessengerEXT debug_messenger;
 	VkExtensionProperties *exts;
 	uint ext_count;
 	char **validation_layers;

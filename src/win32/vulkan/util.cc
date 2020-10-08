@@ -96,8 +96,9 @@ char **purpl::check_required_exts_avail(void)
 
 	char **names;
 
-	bool have_surface = NULL;
-	bool have_win32_surface = NULL;
+	bool have_surface = false;
+	bool have_win32_surface = false;
+	bool have_debug_utils = false;
 
 	exts = get_vulkan_exts(&ext_count);
 
@@ -109,6 +110,12 @@ char **purpl::check_required_exts_avail(void)
 			have_surface = true; /* We have a match */
 		if (strcmp(exts[i].extensionName, "VK_KHR_win32_surface") == 0)
 			have_win32_surface = true; /* We have another match */
+		
+		/* If we need them, enable the debug extensions */
+#ifndef NDEBUG
+		if (strcmp(exts[i].extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0)
+			have_debug_utils = true; /* And another */
+#endif
 	}
 
 	names = (char **)calloc(P_REQUIRED_VULKAN_EXT_COUNT,
@@ -127,8 +134,57 @@ char **purpl::check_required_exts_avail(void)
 	strcpy(names[0], "VK_KHR_surface");
 	strcpy(names[1], "VK_KHR_win32_surface");
 
+	/* In debug mode, this is valid */
+#ifndef NDEBUG
+	strcpy(names[2], VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+
 	if (have_surface && have_win32_surface)
 		return names;
 
 	return NULL; /* One or both are missing in this case, fail */
+}
+
+VKAPI_ATTR VkBool32 VKAPI_CALL
+purpl::debug_log(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+	  VkDebugUtilsMessageTypeFlagsEXT message_type,
+	  const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
+	  void *user_data)
+{
+	if (message_type == VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT || message_type ==  VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT)
+		printf("validation message: %s: %s\n",
+		       callback_data->pMessageIdName, callback_data->pMessage);
+
+	return false;
+}
+
+VkResult purpl::create_debug_utils_messenger_ext(
+	VkInstance instance,
+	const VkDebugUtilsMessengerCreateInfoEXT *create_info,
+	const VkAllocationCallbacks *allocator,
+	VkDebugUtilsMessengerEXT *debug_messenger)
+{
+	PFN_vkCreateDebugUtilsMessengerEXT func =
+		(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+			instance, "vkCreateDebugUtilsMessengerEXT");
+
+	if (!func)
+		return VK_ERROR_EXTENSION_NOT_PRESENT;
+	
+	return func(instance, create_info, allocator, debug_messenger);
+}
+
+void purpl::destroy_debug_utils_messenger_ext(
+ 
+	VkInstance instance, VkDebugUtilsMessengerEXT debug_messenger,
+	const VkAllocationCallbacks *allocator)
+{
+	PFN_vkDestroyDebugUtilsMessengerEXT func =
+		(PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+			instance, "vkDestroyDebugUtilsMessengerEXT");
+
+	if (!func)
+		return;
+
+	func(instance, debug_messenger, allocator);
 }

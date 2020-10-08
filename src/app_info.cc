@@ -125,7 +125,7 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 	}
 
 	/* Then start up the logger */
-	this->log = new logger(&this->logindex, DEBUG, "%s", this->get_log_path());
+	this->log = new logger(&this->logindex, P_DEFAULT_LOG_LEVEL, "%s", this->get_log_path());
 }
 
 P_EXPORT purpl::app_info::~app_info(void)

@@ -13,7 +13,7 @@ cmake --build build
 ___NOTE: In order to get the dependencies, you have to clone the repo with Git, otherwise you have to manually clone the individual repos into the `deps/` folder.___
 
 ### Coding style
-If in doubt, adapt these guidelines to fit the circumstances: https://www.kernel.org/doc/html/latest/process/coding-style.html
+Adapt these guidelines to fit the circumstances: https://www.kernel.org/doc/html/latest/process/coding-style.html
 
 ### API
 Seeing as I just restarted this whole project from scratch, there's _very_ little to document. However, as the engine gains more features, they will be documented in the `docs/` folder, as well as demonstrated and explained in the demo, which can be found in the `demo/` folder. It's also likely that I'll eventually figure out Doxygen.

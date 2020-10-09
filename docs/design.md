@@ -27,3 +27,7 @@ macro.h _Various macros and definitions_<br>
 purpl.h _A convenience header that should be included in programs wishing to use the API_<br>
 types.h _Convenience types_<br>
 window.h _Abstracts window creation across platforms_<br>
+
+Then (as one might imagine) all the files in `src/` are just implementations.
+
+### 

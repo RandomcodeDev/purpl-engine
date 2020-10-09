@@ -14,4 +14,4 @@ We use only the following from the C++ standard library, and nothing more:
 - Namespaces (only really `purpl`, nested namespaces are overrated anyway)
 - `new`/`delete`, but _ONLY_ for classes
 
-Otherwise, we use the C99 standard library, which is a mandatory part of any standard-conformant implementation, and also usually present in non-standard versions as well. I know this seems a waste, but this project was originally going to be in C, and that only changed because of how awesome ImGui is, and also because of namespaces/classes.
+Otherwise, we use the C99 standard library (`calloc`/`free` for memory, `fopen`/`fprintf`/`fread`/`fwrite`/`fclose` for files, et cetera. If you don't know C, better start Googling now), which is a mandatory part of any standard-conformant implementation, and also usually present in non-standard ones as well. I know this seems a waste, but this project was originally going to be in C, and that only changed because of how awesome ImGui is, and also because of namespaces/classes.

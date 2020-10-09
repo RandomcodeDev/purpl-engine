@@ -6,8 +6,9 @@ This diagram thingy explains it:
 
 win32 _Windows-specific stuff_<br>
 win32/graphics.h _Abstracts graphics APIs supported by Windows_<br>
-macro.h _Macros for Windows things_<br>
-window.h _The definition of the win32_window class, used for creating windows on Windows_<br>
+win32/macro.h _Macros for Windows things_<br>
+win32/window.h _The definition of the win32_window class, used for creating windows on Windows_<br>
+<br>
 win32/vulkan _Vulkan stuff_<br>
 win32/vulkan/debug.h _Functions for debug mode (when the engine is compiled for the "Debug" target)_<br>
 win32/vulkan/device.h _Functions for finding, querying, and using compute devices_<br>

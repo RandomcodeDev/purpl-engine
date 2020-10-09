@@ -12,7 +12,7 @@ P_EXPORT purpl::engine_inst::engine_inst(app_info *info, gfx_inst *gfx, window *
 	this->is_active = true;
 }
 
-void P_EXPORT purpl::engine_inst::update(int width, int height, const char *title, ...)
+P_EXPORT void purpl::engine_inst::update(int width, int height, const char *title, ...)
 {
 	va_list args;
 

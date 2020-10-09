@@ -54,7 +54,7 @@ bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
 #endif /* !P_APPINFO_USERDEF_PARSE */
 }
 
-bool P_EXPORT purpl::app_info::validate(void)
+P_EXPORT bool purpl::app_info::validate(void)
 {
 #ifndef P_APPINFO_USERDEF_PARSE
 	/*

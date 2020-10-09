@@ -4,11 +4,6 @@
 #define PURPL_WIN32_VULKAN_GRAPHICS_H
 
 #include "inst.h"
-namespace purpl
-{
-typedef purpl::win32_vulkan_inst gfx_inst;
-}
-
 #include "util.h"
 
 /* Validation layers, which are only needed if we're built in debug mode */

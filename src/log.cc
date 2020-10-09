@@ -24,7 +24,7 @@ P_EXPORT purpl::logger::logger(int *index, int initial_level, const char *fname,
 	*index = this->nlogs - 1;
 }
 
-int P_EXPORT purpl::logger::open(int initial_level, const char *fname, ...)
+P_EXPORT int purpl::logger::open(int initial_level, const char *fname, ...)
 {
 	va_list args;
 	char *buf;
@@ -52,18 +52,18 @@ int P_EXPORT purpl::logger::open(int initial_level, const char *fname, ...)
 	return this->nlogs - 1;
 }
 
-int P_EXPORT purpl::logger::get_level(int index)
+P_EXPORT int purpl::logger::get_level(int index)
 {
 	return this->levels[index];
 }
 
-void P_EXPORT purpl::logger::set_level(int index, int level)
+P_EXPORT void purpl::logger::set_level(int index, int level)
 {
 	if (index < P_MAX_LOGS)
 		this->levels[index] = level;
 }
 
-void P_EXPORT purpl::logger::write(int index, int level, const char *filename, int line, const char *fmt, ...)
+P_EXPORT void purpl::logger::write(int index, int level, const char *filename, int line, const char *fmt, ...)
 {
 	va_list args;
 	char *buf;
@@ -114,7 +114,7 @@ void P_EXPORT purpl::logger::write(int index, int level, const char *filename, i
 	}
 }
 
-void purpl::logger::close(int index, const char *msg, ...)
+P_EXPORT void purpl::logger::close(int index, const char *msg, ...)
 {
 	va_list args;
 

@@ -37,34 +37,6 @@ VkExtensionProperties *get_vulkan_exts(uint *count);
  * Defined in util.cc
  */
 char **check_required_exts_avail(void);
-
-/*
- * Logs messages from the validation layers. For debugging, so we don't care about having a logger instance.
- * Defined in util.cc
- */
-VKAPI_ATTR VkBool32 VKAPI_CALL
-debug_log(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
-	  VkDebugUtilsMessageTypeFlagsEXT message_type,
-	  const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
-	  void *user_data);
-
-/*
- * Loads in the vkCreateDebugUtilsMessengerEXT function and calls it.
- * Defined in util.cc
- */
-VkResult create_debug_utils_messenger_ext(
-	VkInstance instance,
-	const VkDebugUtilsMessengerCreateInfoEXT *create_info,
-	const VkAllocationCallbacks *allocator,
-	VkDebugUtilsMessengerEXT *debug_messenger);
-
-/*
- * Loads in the vkDestroyDebugUtilsMessengerEXT function and calls it;
- * Defined in util.cc
- */
-void destroy_debug_utils_messenger_ext(
-	VkInstance instance, VkDebugUtilsMessengerEXT debug_messenger,
-	const VkAllocationCallbacks *allocator);
 }
 
 #endif

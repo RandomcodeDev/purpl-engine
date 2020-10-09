@@ -29,16 +29,16 @@ set(PURPL_WIN32_HEADERS
 )
 
 set(PURPL_WIN32_VULKAN_SOURCES
+	win32/vulkan/debug.cc
 	win32/vulkan/inst.cc
 	win32/vulkan/util.cc
-	win32/vulkan/validation.cc
 )
 
 set(PURPL_WIN32_VULKAN_HEADERS
+	../include/purpl/win32/vulkan/debug.h
 	../include/purpl/win32/vulkan/inst.h
 	../include/purpl/win32/vulkan/macro.h
 	../include/purpl/win32/vulkan/util.h
-	../include/purpl/win32/vulkan/validation.h
 	../include/purpl/win32/vulkan/vulkan_graphics.h
 )
 
@@ -68,4 +68,4 @@ add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})
 
 target_link_libraries(purpl cglm imgui json-c ${Vulkan_LIBRARIES})
 
-add_custom_command(TARGET purpl POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl> ${CMAKE_BINARY_DIR})
+add_custom_command(TARGET purpl POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl> ${CMAKE_BINARY_DIR}/demo)

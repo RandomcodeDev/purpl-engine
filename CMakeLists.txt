@@ -28,6 +28,4 @@ add_subdirectory(src)
 
 if (${PURPL_BUILD_DEMO})
 	add_subdirectory(demo)
-	set(VS_STARTUP_PROJECT purpl-demo) # Tell Visual Studio how to run the demo in the event that it gets built
-	set_property(TARGET purpl-demo PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 endif()

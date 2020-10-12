@@ -9,15 +9,18 @@
 #include <errno.h>
 
 #ifndef NDEBUG
-#include "validation.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
+#include "debug.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
 #endif
 
+#include "physical_device.h"
 #include "macro.h"
 #include "util.h"
 
 #include <vulkan/vulkan.h>
 
+#include "purpl/log.h"
 #include "purpl/macro.h"
+#include "purpl/types.h"
 
 namespace purpl {
 class P_EXPORT win32_vulkan_inst {
@@ -29,7 +32,7 @@ public:
 	win32_vulkan_inst(void);
 
 	/*
-	 * Frees the various resources used by the instance;
+	 * Cleans up the instance;
 	 * Defined in inst.cc
 	 */
 	~win32_vulkan_inst(void);
@@ -48,11 +51,16 @@ private:
 	/* Validation layers */
 	char **validation_layers;
 
-	/* The device we use for rendering */
-	VkPhysicalDevice device;
+	/* A handle to our physical device */
+	VkPhysicalDevice physical_device;
 
-	/* The number of devices we have in the system */
-	uint device_count;
+	/* A handle to our logical device */
+	VkDevice device;
+	
+#ifndef NDEBUG
+	/* Our debug logger */
+	logger *debug_log;
+#endif
 };
 }
 

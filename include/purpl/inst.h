@@ -40,6 +40,12 @@ public:
 	 * Defined in inst.cc
 	 */
 	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
+
+	/*
+	 * Cleans up after the instance;
+	 * Defined in inst.cc
+	 */
+	~engine_inst(void);
 };
 }
 

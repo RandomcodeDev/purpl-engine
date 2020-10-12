@@ -8,7 +8,8 @@ const char wndclass_name[] = "Purpl Engine Window Class";
 const HINSTANCE instance = GetModuleHandleA(NULL);
 
 LRESULT P_EXPORT CALLBACK purpl::win32_window::wndproc(HWND wnd, UINT msg,
-						 WPARAM wparam, LPARAM lparam)
+						       WPARAM wparam,
+						       LPARAM lparam)
 {
 	switch (msg) {
 	case WM_DESTROY:
@@ -26,8 +27,8 @@ LRESULT P_EXPORT CALLBACK purpl::win32_window::wndproc(HWND wnd, UINT msg,
 	return DefWindowProcA(wnd, msg, wparam, lparam);
 }
 
-P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_console,
-			       const char *title, ...)
+P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *title,
+					   ...)
 {
 	va_list args;
 
@@ -35,7 +36,8 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_cons
 	wndclass.cbSize = sizeof(WNDCLASSEXA);
 	wndclass.lpfnWndProc = wndproc;
 	wndclass.hInstance = instance;
-	wndclass.hIcon = (HICON)LoadImageA(instance, "purpl.ico", IMAGE_ICON, 512, 512, LR_LOADFROMFILE);
+	wndclass.hIcon = (HICON)LoadImageA(instance, "purpl.ico", IMAGE_ICON,
+					   512, 512, LR_LOADFROMFILE);
 	wndclass.hCursor = LoadCursorA(0, IDC_ARROW);
 	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wndclass.lpszClassName = wndclass_name;
@@ -69,16 +71,16 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, bool keep_cons
 		return;
 	}
 
-	/* If we're told to, ditch the console */
-	if (!keep_console)
-		FreeConsole();
+#ifndef NDEBUG
+	FreeConsole();
+#endif
 
 	/* Show our window */
 	ShowWindow(this->handle, SW_NORMAL);
 }
 
-void P_EXPORT purpl::win32_window::update(int width, int height, const char *title,
-				    ...)
+void P_EXPORT purpl::win32_window::update(int width, int height,
+					  const char *title, ...)
 {
 	RECT winrect;
 	va_list args;

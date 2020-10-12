@@ -1,6 +1,6 @@
 #include "purpl/log.h"
 
-P_EXPORT purpl::logger::logger(int *index, int initial_level, const char *fname, ...)
+P_EXPORT purpl::logger::logger(int initial_level, const char *fname, ...)
 {
 	va_list args;
 	char *buf;
@@ -20,8 +20,8 @@ P_EXPORT purpl::logger::logger(int *index, int initial_level, const char *fname,
 	if (!this->logs[this->nlogs - 1] || (strcmp(buf, "stdout") == 0))
 		this->logs[this->nlogs - 1] = stdout;
 
-	/* Return the index (through a parameter */
-	*index = this->nlogs - 1;
+	/* Store the index */
+	 this->logindex = this->nlogs - 1;
 }
 
 P_EXPORT int purpl::logger::open(int initial_level, const char *fname, ...)
@@ -122,11 +122,7 @@ P_EXPORT void purpl::logger::close(int index, const char *msg, ...)
 	this->write(index, P_DEFAULT_LOG_LEVEL, P_FILENAME, __LINE__, "%s", fmt_text_va(msg, &args));
 	va_end(args);
 
-	if (this->logs[index])
-		fclose(this->logs[index]);
-
 	this->levels[index] = P_DEFAULT_LOG_LEVEL;
-
 	this->nlogs--;
 }
 

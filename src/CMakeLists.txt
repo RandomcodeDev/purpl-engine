@@ -31,13 +31,19 @@ set(PURPL_WIN32_HEADERS
 set(PURPL_WIN32_VULKAN_SOURCES
 	win32/vulkan/debug.cc
 	win32/vulkan/inst.cc
+	win32/vulkan/logical_device.cc
+	win32/vulkan/physical_device.cc
+	win32/vulkan/queuefamily.cc
 	win32/vulkan/util.cc
 )
 
 set(PURPL_WIN32_VULKAN_HEADERS
 	../include/purpl/win32/vulkan/debug.h
 	../include/purpl/win32/vulkan/inst.h
+	../include/purpl/win32/vulkan/logical_device.h
 	../include/purpl/win32/vulkan/macro.h
+	../include/purpl/win32/vulkan/physical_device.h
+	../include/purpl/win32/vulkan/queuefamily.h
 	../include/purpl/win32/vulkan/util.h
 	../include/purpl/win32/vulkan/vulkan_graphics.h
 )

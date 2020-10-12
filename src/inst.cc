@@ -24,3 +24,12 @@ P_EXPORT void purpl::engine_inst::update(int width, int height, const char *titl
 	if (this->wnd->should_close)
 		this->is_active = false;
 }
+
+P_EXPORT purpl::engine_inst::~engine_inst(void)
+{
+	this->is_active = false;
+	
+	delete this->gfx;
+	delete this->info;
+	delete this->wnd;
+}

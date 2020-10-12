@@ -8,8 +8,8 @@
 #include "types.h"
 
 /* Straightforward macros for getting the size of an array or buffer */
-#define P_ARRAYSIZE(arr) (sizeof arr / sizeof arr[0])
-#define P_BUFSIZE(buf, type) (sizeof buf / sizeof(type))
+#define P_ARRAYSIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+#define P_BUFSIZE(buf, type) (sizeof(*(buf)) / sizeof(type))
 
 /*
  * Concatenates two values together by left shifting hi's value by the

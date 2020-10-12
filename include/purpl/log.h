@@ -33,11 +33,14 @@ namespace purpl
 {
 class P_EXPORT logger {
     public:
+	/* The initial log file */
+	int logindex;
+
 	/*
 	 * Start the logger instance.
 	 * Defined in log.cc
 	 */
-	logger(int *index, int initial_level, const char *fname, ...);
+	logger(int initial_level, const char *fname, ...);
 
 	/*
 	 * Opens another log file. Returns an error code on failure.

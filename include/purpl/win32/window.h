@@ -3,6 +3,7 @@
 #ifndef PURPL_WIN32_WINDOW_H
 #define PURPL_WIN32_WINDOW_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -37,7 +38,7 @@ class P_EXPORT win32_window {
 	 * This creates a window.
 	 * Defined in window.cc
 	 */
-	win32_window(int width = 1024, int height = 600, bool keep_console = false, const char *title = "Purpl Engine", ...);
+	win32_window(int width = 1024, int height = 600, const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.

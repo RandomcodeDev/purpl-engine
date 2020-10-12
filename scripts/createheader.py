@@ -29,8 +29,8 @@ if pathlib.Path(name).exists() and os.stat(name).st_size:
 
 with open(name, 'wb+') as file:
     # Generate the include guard symbol for the header, then write everything to the file
-    symbol = name.replace('include/', '').replace('.',
-                                                  '_').replace('/', '_').upper()
+    symbol = name.replace('include/', '').replace('include\\', '').replace('.',
+                                                  '_').replace('/', '_').replace('\\', '_').upper()
     contents = bytes(
         F"#pragma once\n\n#ifndef {symbol}\n#define {symbol}\n\n#endif /* !{symbol} */\n", encoding='utf8')
     file.write(contents)

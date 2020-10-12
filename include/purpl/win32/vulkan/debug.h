@@ -17,20 +17,20 @@
 namespace purpl
 {
 /* The validation layers to use for debugging */
-const char enabled_layers[][VK_MAX_EXTENSION_NAME_SIZE] = { "VK_LAYER_KHRONOS_layer" };
+const char enabled_layers[][VK_MAX_EXTENSION_NAME_SIZE] = { "VK_LAYER_KHRONOS_validation" };
 
 /*
  * Checks the support for the validation layers requested.
  * Defined in debug.cc
  */
-bool check_validation_layer_support(void);
+char **get_required_validation_layers(void);
 
 /*
- * Logs messages from the validation layers. For debugging, so we don't care about having a logger instance.
+ * Logs to debug.log.
  * Defined in debug.cc
  */
 VKAPI_ATTR VkBool32 VKAPI_CALL
-debug_log(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+debug_msg(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
 	  VkDebugUtilsMessageTypeFlagsEXT message_type,
 	  const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
 	  void *user_data);

@@ -33,7 +33,7 @@ VkExtensionProperties *get_vulkan_exts(uint *count);
 
 /*
  * Checks if the required extensions are present (VK_KHR_surface and VK_KHR_win32_surface)
- * If they aren't, returns false.
+ * If they aren't, returns NULL.
  * Defined in util.cc
  */
 char **check_required_exts_avail(void);

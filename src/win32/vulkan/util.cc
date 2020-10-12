@@ -113,7 +113,7 @@ char **purpl::check_required_exts_avail(void)
 		
 		/* If we need them, enable the debug extensions */
 #ifndef NDEBUG
-		if (strcmp(exts[i].extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0)
+		if (strcmp(exts[i].extensionName, "VK_EXT_debug_utils") == 0)
 			have_debug_utils = true; /* And another */
 #endif
 	}
@@ -136,11 +136,16 @@ char **purpl::check_required_exts_avail(void)
 
 	/* In debug mode, this is valid */
 #ifndef NDEBUG
-	strcpy(names[2], VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+	strcpy(names[2], "VK_EXT_debug_utils");
 #endif
 
+#ifndef NDEBUG
+	if (have_surface && have_win32_surface && have_debug_utils)
+		return names;
+#else
 	if (have_surface && have_win32_surface)
 		return names;
+#endif
 
 	return NULL; /* One or both are missing in this case, fail */
 }

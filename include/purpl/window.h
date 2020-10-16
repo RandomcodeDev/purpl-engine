@@ -10,8 +10,8 @@ namespace purpl
 {
 typedef purpl::win32_window window;
 }
-#elif defined(__linux__)
-#include "x11/window.h"
+#elif __linux__
+#include "x11/window.h" /* This may not be a great idea, but X11 is the most popular anyway */
 
 typedef x11_window window;
 #else

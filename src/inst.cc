@@ -2,9 +2,14 @@
 
 P_EXPORT purpl::engine_inst::engine_inst(app_info *info, gfx_inst *gfx, window *wnd, bool write_hello)
 {
+	this->is_active = false;
+
 	this->info = info;
-	this->gfx = gfx;
+	this->gfx = new gfx_inst(wnd);
 	this->wnd = wnd;
+
+	if (!this->gfx->init_success)
+		return;
 
 	if (write_hello)
 		this->info->log->write(this->info->logindex, INFO, P_FILENAME, __LINE__, "Instance created");

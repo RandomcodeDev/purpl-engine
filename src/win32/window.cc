@@ -71,7 +71,7 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *ti
 		return;
 	}
 
-#ifndef NDEBUG
+#ifdef NDEBUG
 	FreeConsole();
 #endif
 
@@ -91,12 +91,8 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 	 * Handle resizing/title change. lparam gets height in
 	 * the higher half and width in the lower, so we use P_CONCAT.
 	 */
-	if (width)
-		SendMessageA(this->handle, WM_SIZE, NULL,
-			     P_CONCAT(this->height, width, int, long));
-	if (height)
-		SendMessageA(this->handle, WM_SIZE, NULL,
-			     P_CONCAT(height, this->width, int, long));
+	SendMessageA(this->handle, WM_SIZE, NULL,
+			     P_CONCAT((height) ? height : this->height, (width) ? width : this->width, int, long));
 	if (title) {
 		/* Format our title string */
 		va_start(args, title);

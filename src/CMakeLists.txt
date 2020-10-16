@@ -24,28 +24,31 @@ set(PURPL_WIN32_SOURCES
 )
 
 set(PURPL_WIN32_HEADERS
-	../include/purpl/win32/graphics.h
 	../include/purpl/win32/window.h
 )
 
-set(PURPL_WIN32_VULKAN_SOURCES
-	win32/vulkan/debug.cc
-	win32/vulkan/inst.cc
-	win32/vulkan/logical_device.cc
-	win32/vulkan/physical_device.cc
-	win32/vulkan/queuefamily.cc
-	win32/vulkan/util.cc
+set(PURPL_VULKAN_SOURCES
+	vulkan/debug.cc
+	vulkan/inst.cc
+	vulkan/logical_device.cc
+	vulkan/physical_device.cc
+	vulkan/queuefamily.cc
+	vulkan/surface.cc
+	vulkan/swapchain.cc
+	vulkan/util.cc
 )
 
-set(PURPL_WIN32_VULKAN_HEADERS
-	../include/purpl/win32/vulkan/debug.h
-	../include/purpl/win32/vulkan/inst.h
-	../include/purpl/win32/vulkan/logical_device.h
-	../include/purpl/win32/vulkan/macro.h
-	../include/purpl/win32/vulkan/physical_device.h
-	../include/purpl/win32/vulkan/queuefamily.h
-	../include/purpl/win32/vulkan/util.h
-	../include/purpl/win32/vulkan/vulkan_graphics.h
+set(PURPL_VULKAN_HEADERS
+	../include/purpl/vulkan/debug.h
+	../include/purpl/vulkan/inst.h
+	../include/purpl/vulkan/logical_device.h
+	../include/purpl/vulkan/macro.h
+	../include/purpl/vulkan/physical_device.h
+	../include/purpl/vulkan/queuefamily.h
+	../include/purpl/vulkan/surface.h
+	../include/purpl/vulkan/swapchain.h
+	../include/purpl/vulkan/util.h
+	../include/purpl/vulkan/vulkan_graphics.h
 )
 
 set(PURPL_X11_SOURCES
@@ -56,18 +59,18 @@ set(PURPL_X11_HEADERS
 	../include/purpl/x11/window.h
 )
 
-set(PURPL_SOURCES ${PURPL_COMMON_SOURCES})
-set(PURPL_HEADERS ${PURPL_COMMON_HEADERS})
+set(PURPL_SOURCES ${PURPL_COMMON_SOURCES} ${PURPL_${PURPL_GRAPHICS_API}_SOURCES})
+set(PURPL_HEADERS ${PURPL_COMMON_HEADERS} ${PURPL_${PURPL_GRAPHICS_API}_HEADERS})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
-	list(APPEND PURPL_SOURCES ${PURPL_WIN32_SOURCES} ${PURPL_WIN32_${PURPL_GRAPHICS_API}_SOURCES})
-	list(APPEND PURPL_HEADERS ${PURPL_WIN32_HEADERS} ${PURPL_WIN32_${PURPL_GRAPHICS_API}_HEADERS})
+	list(APPEND PURPL_SOURCES ${PURPL_WIN32_SOURCES})
+	list(APPEND PURPL_HEADERS ${PURPL_WIN32_HEADERS})
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	list(APPEND PURPL_SOURCES ${PURPL_X11_SOURCES} ${PURPL_X11_${PURPL_GRAPHICS_API}_SOURCES})
-	list(APPEND PURPL_HEADERS ${PURPL_X11_HEADERS} ${PURPL_X11_${PURPL_GRAPHICS_API}_HEADERS})
+	list(APPEND PURPL_SOURCES ${PURPL_X11_SOURCES})
+	list(APPEND PURPL_HEADERS ${PURPL_X11_HEADERS})
 endif()
 
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})

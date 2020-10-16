@@ -1,5 +1,5 @@
-#include "purpl/win32/vulkan/debug.h"
-#include "purpl/win32/vulkan/inst.h"
+#include "purpl/vulkan/debug.h"
+#include "purpl/vulkan/inst.h"
 using namespace purpl;
 
 char **purpl::get_required_validation_layers(void)

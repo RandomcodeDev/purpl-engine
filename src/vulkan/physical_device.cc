@@ -1,4 +1,4 @@
-#include "purpl/win32/vulkan/physical_device.h"
+#include "purpl/vulkan/physical_device.h"
 using namespace purpl;
 
 uint purpl::score_device(VkPhysicalDevice device)
@@ -25,14 +25,13 @@ uint purpl::score_device(VkPhysicalDevice device)
 	return score;
 }
 
-VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst)
+VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR surface, struct queue_family_indices *indices, struct swapchain_details *details)
 {
 	uint i;
 	uint device_count;
 	VkPhysicalDevice *devices;
 	uint best_score;
-	VkPhysicalDevice ret;
-	struct queue_family_indices indices;
+	VkPhysicalDevice best;
 
 	/* Determine how many devices are present */
 	vkEnumeratePhysicalDevices(inst, &device_count, NULL);
@@ -51,12 +50,22 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst)
 
 	/* Check our first device */
 	best_score = score_device(devices[0]);
-
-	ret = devices[0];
+	best = devices[0];
 
 	/* Now find the best device */
 	for (i = 1; i < device_count; i++) {
 		uint last_score;
+		
+		/* Prevent a device without the necessary queue families from being chosen */
+		*indices = find_queue_families(best, surface);
+		if (!indices->has_graphics_family ||
+		    !indices->has_present_family)
+			continue;
+
+		/* Also prevent a device without needed swap chain feature support from being chosen */
+		*details = get_swapchain_details(devices[i], surface);
+		if (!details->formats || !details->present_modes)
+			continue;
 
 		/* Score the current device */
 		last_score = score_device(devices[i]);
@@ -64,7 +73,7 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst)
 		/* If this is better than the last device score, make it the best score and remember which device it was */
 		if (last_score > best_score) {
 			best_score = last_score;
-			ret = devices[i];
+			best = devices[i];
 		}
 	}
 
@@ -72,11 +81,6 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst)
 	if (!best_score)
 		return NULL;
 
-	/* Check if the queue families we want are present */
-	indices = find_queue_families(ret);
-	if (!indices.has_graphics_family)
-		return NULL;
-
 	/* ret will now be the highest scoring device, so return it */
-	return ret;
+	return best;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef PURPL_WIN32_VULKAN_GRAPHICS_H
-#define PURPL_WIN32_VULKAN_GRAPHICS_H
+#ifndef PURPL_VULKAN_GRAPHICS_H
+#define PURPL_VULKAN_GRAPHICS_H
 
 /* Validation layers, which are only needed if we're built in debug mode */
 #ifndef NDEBUG
@@ -9,7 +9,10 @@
 #endif
 
 #include "inst.h"
+#include "logical_device.h"
+#include "macro.h"
 #include "physical_device.h"
+#include "queuefamily.h"
 #include "util.h"
 
 #endif

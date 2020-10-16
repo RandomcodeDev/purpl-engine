@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef PURPL_WIN32_VULKAN_DEBUG_H
-#define PURPL_WIN32_VULKAN_DEBUG_H
+#ifndef PURPL_VULKAN_DEBUG_H
+#define PURPL_VULKAN_DEBUG_H
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -54,4 +54,4 @@ void destroy_debug_utils_messenger_ext(VkInstance instance,
 				       const VkAllocationCallbacks *allocator);
 }
 
-#endif /* !PURPL_WIN32_VULKAN_DEBUG_H */
+#endif /* !PURPL_VULKAN_DEBUG_H */

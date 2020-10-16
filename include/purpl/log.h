@@ -12,7 +12,6 @@
 
 #include "macro.h"
 #include "types.h"
-
 #include "util.h"
 
 #define FATAL 0
@@ -37,7 +36,7 @@ class P_EXPORT logger {
 	int logindex;
 
 	/*
-	 * Start the logger instance.
+	 * Starts the logger instance.
 	 * Defined in log.cc
 	 */
 	logger(int initial_level, const char *fname, ...);

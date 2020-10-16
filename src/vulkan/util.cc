@@ -1,4 +1,4 @@
-#include "purpl/win32/vulkan/util.h"
+#include "purpl/vulkan/util.h"
 using namespace purpl;
 
 const char *purpl::get_vulkan_err_str(VkResult result)
@@ -66,19 +66,21 @@ VkExtensionProperties *purpl::get_vulkan_exts(uint *count)
 		return NULL;
 	}
 
-	err = vkEnumerateInstanceExtensionProperties(NULL, &ext_count, NULL); /* Ask how many extensions there are */
-
+	err = vkEnumerateInstanceExtensionProperties(
+		NULL, &ext_count, NULL); /* Ask how many extensions there are */
 	if (err) { /* An error occured, return NULL to indicate this */
 		*count = err;
 		return NULL;
 	}
 
 	exts = (VkExtensionProperties *)calloc(
-		ext_count, sizeof(VkExtensionProperties)); /* We know how many extensions we have now, allocate a buffer */
+		ext_count,
+		sizeof(VkExtensionProperties)); /* We know how many extensions we have now, allocate a buffer */
 	if (!exts) /* Usually this doesn't happen */
 		return NULL;
 
-	err = vkEnumerateInstanceExtensionProperties(NULL, &ext_count, exts); /* Now fill in the buffer */
+	err = vkEnumerateInstanceExtensionProperties(
+		NULL, &ext_count, exts); /* Now fill in the buffer */
 	if (err) {
 		*count = err;
 		return NULL;
@@ -87,6 +89,13 @@ VkExtensionProperties *purpl::get_vulkan_exts(uint *count)
 	*count = ext_count; /* Set the pointer's memory to the number of extensions we found */
 	return exts; /* Return the buffer */
 }
+
+/* Man, I can't believe how lazy this is */
+#ifdef _WIN32
+#define have_gud_surface have_win32_surface
+#elif __linux__
+#define P_VULKAN_SURFACE_TYPE have_x11_surface
+#endif
 
 char **purpl::check_required_exts_avail(void)
 {
@@ -97,8 +106,8 @@ char **purpl::check_required_exts_avail(void)
 	char **names;
 
 	bool have_surface = false;
-	bool have_win32_surface = false;
 	bool have_debug_utils = false;
+	bool have_gud_surface = false;
 
 	exts = get_vulkan_exts(&ext_count);
 
@@ -108,31 +117,43 @@ char **purpl::check_required_exts_avail(void)
 	for (i = 0; i < ext_count; i++) {
 		if (strcmp(exts[i].extensionName, "VK_KHR_surface") == 0)
 			have_surface = true; /* We have a match */
+#ifdef _WIN32
 		if (strcmp(exts[i].extensionName, "VK_KHR_win32_surface") == 0)
-			have_win32_surface = true; /* We have another match */
-		
-		/* If we need them, enable the debug extensions */
+			have_gud_surface = true; /* We have another match */
+#elif __linux__
+		if (strcmp(exts[i].extensionName, "VK_KHR_xlib_surface") == 0)
+			P_VULKAN_SURFACE_TYPE =
+				true; /* We have another match */
+#endif
+			/* If we need them, enable the debug extensions */
 #ifndef NDEBUG
 		if (strcmp(exts[i].extensionName, "VK_EXT_debug_utils") == 0)
 			have_debug_utils = true; /* And another */
 #endif
 	}
 
-	names = (char **)calloc(P_REQUIRED_VULKAN_EXT_COUNT,
-			       sizeof(char *)); /* Allocate an array of pointers */
+	names = (char **)calloc(
+		P_REQUIRED_VULKAN_EXT_COUNT,
+		sizeof(char *)); /* Allocate an array of pointers */
 	if (!names)
 		return NULL;
 
 	/* Now allocate P_REQUIRED_VULKAN_EXT_COUNT names */
 	for (i = 0; i < P_REQUIRED_VULKAN_EXT_COUNT; i++) {
-		names[i] = (char *)calloc(VK_MAX_EXTENSION_NAME_SIZE, sizeof(char));
+		names[i] = (char *)calloc(VK_MAX_EXTENSION_NAME_SIZE,
+					  sizeof(char));
 		if (!names[i])
 			return NULL;
 	}
 
 	/* Specify the names of the extensions for the caller */
 	strcpy(names[0], "VK_KHR_surface");
+
+#ifdef _WIN32
 	strcpy(names[1], "VK_KHR_win32_surface");
+#elif __linux__
+	strcpy(names[1], "VK_KHR_xlib_surface");
+#endif
 
 	/* In debug mode, this is valid */
 #ifndef NDEBUG
@@ -140,12 +161,88 @@ char **purpl::check_required_exts_avail(void)
 #endif
 
 #ifndef NDEBUG
-	if (have_surface && have_win32_surface && have_debug_utils)
+	if (have_surface && have_gud_surface && have_debug_utils)
 		return names;
 #else
-	if (have_surface && have_win32_surface)
+	if (have_surface && have_gud_surface)
 		return names;
 #endif
+
+	return NULL; /* One or both are missing in this case, fail */
+}
+
+VkExtensionProperties *purpl::get_vulkan_device_exts(VkPhysicalDevice device, uint *count)
+{
+	VkExtensionProperties *exts;
+	uint ext_count;
+	int err;
+
+	if (!count) { /* Caller passed an invalid pointer, set errno and return */
+		errno = EINVAL;
+		return NULL;
+	}
+
+	err = vkEnumerateDeviceExtensionProperties(device, NULL, &ext_count, NULL); /* Ask how many extensions there are */
+	if (err) { /* An error occured, return NULL to indicate this */
+		*count = err;
+		return NULL;
+	}
+
+	exts = (VkExtensionProperties *)calloc(
+		ext_count,
+		sizeof(VkExtensionProperties)); /* We know how many extensions we have now, allocate a buffer */
+	if (!exts) /* Usually this doesn't happen */
+		return NULL;
+
+	err = vkEnumerateDeviceExtensionProperties(device, NULL, &ext_count, exts); /* Now fill in the buffer */
+	if (err) {
+		*count = err;
+		return NULL;
+	}
+
+	*count = ext_count; /* Set the pointer's memory to the number of extensions we found */
+	return exts; /* Return the buffer */
+}
+
+char **purpl::check_required_device_exts_avail(VkPhysicalDevice device)
+{
+	int i;
+	uint ext_count;
+	VkExtensionProperties *exts;
+
+	char **names;
+
+	bool have_swapchain = false;
+
+	exts = get_vulkan_device_exts(device, &ext_count);
+
+	if (!exts)
+		return NULL;
+
+	for (i = 0; i < ext_count; i++) {
+		if (strcmp(exts[i].extensionName, "VK_KHR_swapchain") == 0)
+			have_swapchain = true;
+	}
+
+	names = (char **)calloc(
+		P_REQUIRED_VULKAN_DEVICE_EXT_COUNT,
+		sizeof(char *)); /* Allocate an array of pointers */
+	if (!names)
+		return NULL;
+
+	/* Now allocate P_REQUIRED_VULKAN_EXT_COUNT names */
+	for (i = 0; i < P_REQUIRED_VULKAN_DEVICE_EXT_COUNT; i++) {
+		names[i] = (char *)calloc(VK_MAX_EXTENSION_NAME_SIZE,
+					  sizeof(char));
+		if (!names[i])
+			return NULL;
+	}
+
+	/* Specify the names of the extensions for the caller */
+	strcpy(names[0], "VK_KHR_swapchain");
+
+	if (have_swapchain)
+		return names;
 
 	return NULL; /* One or both are missing in this case, fail */
 }

@@ -7,9 +7,8 @@
 
 #include "types.h"
 
-/* Straightforward macros for getting the size of an array or buffer */
+/* Straightforward macro for getting the size of an array */
 #define P_ARRAYSIZE(arr) (sizeof(arr) / sizeof(arr[0]))
-#define P_BUFSIZE(buf, type) (sizeof(*(buf)) / sizeof(type))
 
 /*
  * Concatenates two values together by left shifting hi's value by the
@@ -27,10 +26,11 @@
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
+#pragma warning(disable : 26812)
 #endif
 
-/*  */
-#ifdef _WIN32
+/* The base name and extension of the current file. */
+#if _WIN32 && _MSC_VER /* This isn't guaranteed to work, but it should cover it */
 #define P_FILENAME \
 	(strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else

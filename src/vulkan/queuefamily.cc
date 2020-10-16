@@ -1,10 +1,10 @@
-#include "purpl/win32/vulkan/queuefamily.h"
+#include "purpl/vulkan/queuefamily.h"
 using namespace purpl;
 
-struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device)
+struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
 	VkQueueFamilyProperties *queue_families;
-	struct queue_family_indices indices = {0};
+	struct queue_family_indices indices{};
 	uint queue_family_count = 0;
 	uint i;
 
@@ -13,6 +13,9 @@ struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device)
 	if (!queue_family_count) {
 		indices.graphics_family = 0;
 		indices.has_graphics_family = false;
+
+		indices.present_family = 0;
+		indices.has_present_family = false;
 	}
 
 	/* Allocate a buffer */
@@ -21,6 +24,9 @@ struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device)
 	if (!queue_families) { /* Check our buffer */
 		indices.graphics_family = 0;
 		indices.has_graphics_family = false;
+
+		indices.present_family = 0;
+		indices.has_present_family = false;
 	}
 
 	/* Now get the queue families */
@@ -28,10 +34,16 @@ struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device)
 						 queue_families);
 
 	/* Check for the ones we need */
-	for (i = 0; i < queue_family_count && indices.has_graphics_family; i++) {
+	for (i = 0; i < queue_family_count && !indices.has_graphics_family && !indices.has_present_family; i++) {
 		if (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 			indices.graphics_family = i;
 			indices.has_graphics_family = true;
+		}
+
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &indices.has_present_family);
+		if (indices.has_present_family) {
+			indices.present_family = i;
+			indices.has_present_family = true;
 		}
 	}
 

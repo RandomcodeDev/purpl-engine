@@ -9,14 +9,14 @@
 #include <string.h>
 #include <errno.h>
 
-#include "macro.h"
-#include "types.h"
 
-#include "app_info.h"
-#include "graphics.h"
-#include "log.h"
-#include "util.h"
-#include "window.h"
+#include  "app_info.h"
+#include  "graphics.h"
+#include  "log.h"
+#include  "macro.h"
+#include  "types.h"
+#include  "util.h"
+#include  "window.h"
 
 namespace purpl {
 class P_EXPORT engine_inst {
@@ -32,7 +32,7 @@ public:
 	 * If you want the defaults pass new <class name>().
 	 * Defined in inst.cc
 	 */
-	engine_inst(app_info *info = new app_info(), gfx_inst *gfx = new gfx_inst(), window *win = new window(), bool write_hello = true);
+	engine_inst(app_info *info = new app_info(), gfx_inst *gfx = NULL, window *wnd = new window(), bool write_hello = true);
 
 	/*
 	 * Updates the instance (window, graphics, etc.).

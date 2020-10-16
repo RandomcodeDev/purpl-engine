@@ -12,7 +12,8 @@
 #ifdef _WIN32
 #include <direct.h>
 
-#define getcwd _getcwd /* Damn it Microsoft, nobody cares about ISO compliance as long as we can
+#define getcwd _getcwd /* Note: This comment was originally rude to Microsoft, but what purpose does that serve? <sarcastic comment here :)>
+			* Dear Microsoft, nobody cares about ISO compliance as long as we can
 			* write portable code. Developers only hate you for not being POSIX compliant!
 			*/
 #endif /* _WIN32 */

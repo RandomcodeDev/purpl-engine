@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef PURPL_WIN32_VULKAN_PHYSICAL_DEVICE_H
-#define PURPL_WIN32_VULKAN_PHYSICAL_DEVICE_H
+#ifndef PURPL_VULKAN_PHYSICAL_DEVICE_H
+#define PURPL_VULKAN_PHYSICAL_DEVICE_H
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -9,6 +9,7 @@
 #include <errno.h>
 
 #include "queuefamily.h"
+#include "swapchain.h"
 
 #include <vulkan/vulkan.h>
 
@@ -28,7 +29,10 @@ uint score_device(VkPhysicalDevice device);
  * Returns a pointer to the highest ranking device capable of rendering, or NULL if one can't be fount.
  * Defined in device.cc
  */
-VkPhysicalDevice locate_suitable_device(VkInstance inst);
+VkPhysicalDevice
+locate_suitable_device(VkInstance inst, VkSurfaceKHR surface,
+			      struct queue_family_indices *indices,
+			      struct swapchain_details *details);
 }
 
-#endif /* !PURPL_WIN32_VULKAN_PHYSICAL_DEVICE_H */
+#endif /* !PURPL_VULKAN_PHYSICAL_DEVICE_H */

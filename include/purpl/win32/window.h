@@ -26,6 +26,9 @@ class P_EXPORT win32_window {
 	HWND handle; /* The native handle for the actual window. Only use this for platform specific code. */
 	MSG win_queue; /* The queue of events for the window. Only use this for platform specific code. */
 	bool should_close; /* Whether the window should close. Set to true manually to close the window. */
+	int width; /* Current width */
+	int height; /* Current height */
+	char *title; /* Current title */
 
 	/*
 	 * The window procedure.
@@ -52,11 +55,6 @@ class P_EXPORT win32_window {
 	 * Not needed yet.
 	 *
 	~win32_window(void); */
-
-    private:
-	int width;
-	int height;
-	char *title;
 };
 }
 

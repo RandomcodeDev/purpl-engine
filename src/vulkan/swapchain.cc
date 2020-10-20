@@ -11,8 +11,8 @@ struct swapchain_details purpl::get_swapchain_details(VkPhysicalDevice device,
 						  &details.capabilities);
 
 	/* Now get information about supported formats */
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &details.format_count,
-					     NULL);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface,
+					     &details.format_count, NULL);
 	if (!details.format_count)
 		return { details.capabilities, NULL, 0, NULL, 0 };
 
@@ -21,12 +21,12 @@ struct swapchain_details purpl::get_swapchain_details(VkPhysicalDevice device,
 	if (!details.formats)
 		return { details.capabilities, NULL, 0, NULL, 0 };
 
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &details.format_count,
-					     details.formats);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(
+		device, surface, &details.format_count, details.formats);
 
 	/* Now get information about how many present modes there are */
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface,
-						  &details.present_mode_count, NULL);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(
+		device, surface, &details.present_mode_count, NULL);
 	if (!details.present_mode_count)
 		return { details.capabilities, NULL, 0, NULL, 0 };
 
@@ -35,8 +35,9 @@ struct swapchain_details purpl::get_swapchain_details(VkPhysicalDevice device,
 	if (!details.present_modes)
 		return { details.capabilities, NULL, 0, NULL, 0 };
 
-	vkGetPhysicalDeviceSurfacePresentModesKHR(
-		device, surface, &details.present_mode_count, details.present_modes);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface,
+						  &details.present_mode_count,
+						  details.present_modes);
 
 	return details;
 }
@@ -80,11 +81,11 @@ purpl::choose_best_present_mode(VkPresentModeKHR *available_modes,
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D purpl::choose_extent(VkSurfaceCapabilitiesKHR capabilities, uint width,
-			 uint height)
+VkExtent2D purpl::choose_extent(VkSurfaceCapabilitiesKHR capabilities,
+				uint width, uint height)
 {
 	VkExtent2D extent;
-	
+
 	/* Check if we have to do anything */
 	if (capabilities.currentExtent.width != UINT32_MAX)
 		return capabilities.currentExtent;
@@ -103,9 +104,11 @@ VkExtent2D purpl::choose_extent(VkSurfaceCapabilitiesKHR capabilities, uint widt
 	return extent;
 }
 
-VkSwapchainKHR
-purpl::create_a_freaking_swap_chain(VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface, uint current_width,
-			     uint current_height, struct queue_family_indices indices)
+VkSwapchainKHR purpl::create_a_freaking_swap_chain(
+	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
+	uint current_width, uint current_height,
+	struct queue_family_indices indices, VkFormat *swapchain_format,
+	VkExtent2D *swapchain_extent, VkImage *swapchain_images)
 {
 	struct swapchain_details details;
 	VkSwapchainKHR swapchain;
@@ -114,10 +117,12 @@ purpl::create_a_freaking_swap_chain(VkPhysicalDevice physical_device, VkDevice d
 	VkExtent2D extent;
 	uint image_count;
 
-	uint indices_arr[] = { indices.graphics_family, indices.present_family };
+	uint indices_arr[] = { indices.graphics_family,
+			       indices.present_family };
 
-	/* Avoid using invalid indices */
-	if (!indices.has_graphics_family || !indices.has_present_family) {
+	/* Avoid using invalid indices, and also invalid value-returning pointers */
+	if (!indices.has_graphics_family || !indices.has_present_family ||
+	    !swapchain_format || !swapchain_extent || !swapchain_images) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -128,20 +133,31 @@ purpl::create_a_freaking_swap_chain(VkPhysicalDevice physical_device, VkDevice d
 		return NULL;
 
 	/* No need to check the return values for these, the conditions are already checked or don't matter that much */
-	surface_format = choose_best_surface_format(details.formats, details.format_count);
-	present_mode = choose_best_present_mode(details.present_modes, details.present_mode_count);
+	surface_format = choose_best_surface_format(details.formats,
+						    details.format_count);
+	present_mode = choose_best_present_mode(details.present_modes,
+						details.present_mode_count);
+
+	/* Give the image format to the caller */
+	*swapchain_format = surface_format->format;
 
 	/* Determine the resolution our images will have */
-	extent = choose_extent(details.capabilities, current_width, current_height);
+	extent = choose_extent(details.capabilities, current_width,
+			       current_height);
+
+	/* Give the image extent to the caller */
+	*swapchain_extent = extent;
 
 	/* Now determine how many images our chain can hold */
 	image_count = details.capabilities.minImageCount + 1;
-	if (details.capabilities.maxImageCount > 0 && image_count > details.capabilities.maxImageCount)
+	if (details.capabilities.maxImageCount > 0 &&
+	    image_count > details.capabilities.maxImageCount)
 		image_count = details.capabilities.maxImageCount;
 
 	/* Fill out our swap chain creation info structure */
 	VkSwapchainCreateInfoKHR swapchain_create_info{};
-	swapchain_create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	swapchain_create_info.sType =
+		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	swapchain_create_info.surface = surface;
 	swapchain_create_info.minImageCount = image_count;
 	swapchain_create_info.imageFormat = surface_format->format;
@@ -152,23 +168,38 @@ purpl::create_a_freaking_swap_chain(VkPhysicalDevice physical_device, VkDevice d
 
 	/* Check if the graphics and present families are the same, and fill in that part of the creation info accordingly */
 	if (indices.graphics_family != indices.present_family) {
-		swapchain_create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		swapchain_create_info.imageSharingMode =
+			VK_SHARING_MODE_CONCURRENT;
 		swapchain_create_info.queueFamilyIndexCount = 2;
 		swapchain_create_info.pQueueFamilyIndices = indices_arr;
 	} else {
-		swapchain_create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		swapchain_create_info.imageSharingMode =
+			VK_SHARING_MODE_EXCLUSIVE;
 		swapchain_create_info.queueFamilyIndexCount = 0;
 		swapchain_create_info.pQueueFamilyIndices = NULL;
 	}
 
-	swapchain_create_info.preTransform = details.capabilities.currentTransform;
-	swapchain_create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	swapchain_create_info.preTransform =
+		details.capabilities.currentTransform;
+	swapchain_create_info.compositeAlpha =
+		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	swapchain_create_info.presentMode = present_mode;
-	swapchain_create_info.clipped = true; /* True is actually equivalent to 1 when assigned to an integer */
+	swapchain_create_info.clipped =
+		true; /* True is actually equivalent to 1 when assigned to an integer */
 	swapchain_create_info.oldSwapchain = NULL;
 
-	if (vkCreateSwapchainKHR(device, &swapchain_create_info, NULL, &swapchain) != VK_SUCCESS)
+	if (vkCreateSwapchainKHR(device, &swapchain_create_info, NULL,
+				 &swapchain) != VK_SUCCESS)
 		return NULL;
+
+	/* Now we need to create a buffer for our swap chain's images and also retrieve said images */
+	vkGetSwapchainImagesKHR(device, swapchain, &image_count, NULL);
+	
+	swapchain_images = (VkImage *)calloc(image_count, sizeof(VkImage));
+	if (!swapchain_images)
+		return NULL;
+
+	vkGetSwapchainImagesKHR(device, swapchain, &image_count, swapchain_images);
 
 	return swapchain;
 }

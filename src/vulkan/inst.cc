@@ -102,7 +102,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	this->swapchain = create_a_freaking_swap_chain(this->physical_device, this->device,
 							this->surface,
 							wnd->width, wnd->height,
-							this->queue_indices);
+							this->queue_indices, this->swapchain_images);
 	if (!this->swapchain)
 		return;
 

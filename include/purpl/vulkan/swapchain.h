@@ -53,20 +53,24 @@ choose_best_surface_format(VkSurfaceFormatKHR *available_formats,
  * Chooses the best presentation mode from the buffer passed for available_modes.
  * Defined in swapchain.cc
  */
-VkPresentModeKHR choose_best_present_mode(VkPresentModeKHR *available_modes, uint mode_count);
+VkPresentModeKHR choose_best_present_mode(VkPresentModeKHR *available_modes,
+					  uint mode_count);
 
 /*
  * Chooses the extent for the swap chain.
  * Defined in swapchain.cc
  */
-VkExtent2D choose_extent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height);
+VkExtent2D choose_extent(VkSurfaceCapabilitiesKHR capabilities, uint width,
+			 uint height);
 
 /*
  * Creates a swap chain.
  * Defined in swapchain.cc
  */
-VkSwapchainKHR create_a_freaking_swap_chain(VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
-					    uint current_width,
-					    uint current_height, struct queue_family_indices indices);
+VkSwapchainKHR create_a_freaking_swap_chain(
+	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
+	uint current_width, uint current_height,
+	struct queue_family_indices indices, VkFormat *swapchain_format,
+	VkExtent2D *swapchain_extent, VkImage *swapchain_images);
 }
 #endif /* !PURPL_VULKAN_SWAPCHAIN_H */

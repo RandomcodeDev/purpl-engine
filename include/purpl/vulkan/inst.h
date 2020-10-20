@@ -75,6 +75,7 @@ private:
 	/* Swap chain stuff */
 	struct swapchain_details swapchain_features; /* The features of the swap chain */
 	VkSwapchainKHR swapchain; /* The actual swap chain */
+	VkImage *swapchain_images; /* The images in the swap chain */
 
 #ifndef NDEBUG
 	/* Our debug logger */

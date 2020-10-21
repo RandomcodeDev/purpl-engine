@@ -20,7 +20,7 @@ namespace purpl
 {
 class P_EXPORT app_info {
     public:
-	int logindex;
+	uint logindex;
 	logger *log;
 	FILE *fp;
 

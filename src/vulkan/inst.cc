@@ -13,7 +13,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	char **required_layers;
 
 	/* Start our logger */
-	this->debug_log = new logger(DEBUG, "debug.log");
+	this->debug_log = new logger(NULL, DEBUG, "vulkan.log");
 
 	/* Check for validation layers if we're in debug mode */
 	required_layers = get_required_validation_layers();
@@ -101,8 +101,8 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	/* Create a swap chain */
 	this->swapchain = create_a_freaking_swap_chain(this->physical_device, this->device,
 							this->surface,
-							wnd->width, wnd->height,
-							this->queue_indices, this->swapchain_images);
+							wnd->width, wnd->height, this->queue_indices, &this->swapchain_format,
+							&this->swapchain_extent, this->swapchain_images);
 	if (!this->swapchain)
 		return;
 

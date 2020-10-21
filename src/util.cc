@@ -13,7 +13,7 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 		return NULL;
 	}
 
-	len = vsnprintf(NULL, 0, fmt, *args); /* printf and co., return the number of bytes they _would_ write */
+	len = vsnprintf(NULL, 0, fmt, *args); /* printf and co. return the number of bytes they _would_ write */
 	if (len < 0)
 		len = P_MAX_TXT_BUF;
 
@@ -24,7 +24,7 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 	}
 
 	/* calloc technically already does this */
-	memset(buf, '\0', sizeof(char));
+	memset(buf, 0, sizeof(char));
 	vsnprintf(buf, len + 1, fmt, *args);
 
 	return buf;

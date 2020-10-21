@@ -23,6 +23,7 @@
 
 namespace purpl
 {
+/* The buffers returned by these functions last until you free them, and if you don't you get a memory leak. */
 
 /*
  * Formats text, identical to how vprintf would.

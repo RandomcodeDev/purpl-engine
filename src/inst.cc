@@ -1,6 +1,6 @@
 #include "purpl/inst.h"
 
-P_EXPORT purpl::engine_inst::engine_inst(app_info *info, gfx_inst *gfx, window *wnd, bool write_hello)
+P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd, bool write_hello)
 {
 	this->is_active = false;
 

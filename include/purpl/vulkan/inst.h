@@ -75,6 +75,8 @@ private:
 	/* Swap chain stuff */
 	struct swapchain_details swapchain_features; /* The features of the swap chain */
 	VkSwapchainKHR swapchain; /* The actual swap chain */
+	VkFormat swapchain_format; /* The format of the swap chain */
+	VkExtent2D swapchain_extent; /* The resolution of the images in the swap chain */
 	VkImage *swapchain_images; /* The images in the swap chain */
 
 #ifndef NDEBUG

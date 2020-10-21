@@ -48,6 +48,9 @@ bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
 	json_object_object_get_ex(this->root, "log_path", &this->log_path);
 	json_object_object_get_ex(this->root, "settings_path", &this->settings_path);
 
+	/* Free our buffer */
+	free(buf);
+
 	return true;
 #else
 	return this->userdef_parse();
@@ -124,9 +127,11 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 		return;
 	}
 
+	/* Free the buffer */
+	free(buf);
+
 	/* Then start up the logger */
-	this->log = new logger(P_DEFAULT_LOG_LEVEL, "%s", this->get_log_path());
-	this->logindex = this->log->logindex;
+	this->log = new logger(&this->logindex, P_DEFAULT_LOG_LEVEL, "%s", this->get_log_path());
 }
 
 P_EXPORT purpl::app_info::~app_info(void)

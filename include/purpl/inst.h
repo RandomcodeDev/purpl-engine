@@ -32,7 +32,7 @@ public:
 	 * If you want the defaults pass new <class name>().
 	 * Defined in inst.cc
 	 */
-	engine_inst(app_info *info = new app_info(), gfx_inst *gfx = NULL, window *wnd = new window(), bool write_hello = true);
+	engine_inst(app_info *info = new app_info(), window *wnd = new window(), bool write_hello = true);
 
 	/*
 	 * Updates the instance (window, graphics, etc.).

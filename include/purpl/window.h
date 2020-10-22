@@ -13,7 +13,10 @@ typedef purpl::win32_window window;
 #elif __linux__
 #include "x11/window.h" /* This may not be a great idea, but X11 is the most popular anyway */
 
+namespace purpl
+{
 typedef x11_window window;
+}
 #else
 #error "Window creation is unsupported on this platform."
 #endif

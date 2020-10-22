@@ -17,9 +17,13 @@
 
 namespace purpl{
 class P_EXPORT x11_window {
+public:
 	Window handle; /* The native handle for the actual window. Only use this for platfrom specific code */
 	XEvent win_queue; /* The queue of events for the window. Only use this for platform specific code */
 	bool should_close; /* Whether the window should close. Set to true manually to close the window. */
+	int width;
+	int height;
+	char *title;
 
 	/*
 	 * This creates the window.

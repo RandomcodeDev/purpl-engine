@@ -94,7 +94,7 @@ VkExtensionProperties *purpl::get_vulkan_exts(uint *count)
 #ifdef _WIN32
 #define have_gud_surface have_win32_surface
 #elif __linux__
-#define P_VULKAN_SURFACE_TYPE have_x11_surface
+#define have_gud_surface have_x11_surface
 #endif
 
 char **purpl::check_required_exts_avail(void)
@@ -122,8 +122,7 @@ char **purpl::check_required_exts_avail(void)
 			have_gud_surface = true; /* We have another match */
 #elif __linux__
 		if (strcmp(exts[i].extensionName, "VK_KHR_xlib_surface") == 0)
-			P_VULKAN_SURFACE_TYPE =
-				true; /* We have another match */
+			have_gud_surface = true; /* We have another match */
 #endif
 			/* If we need them, enable the debug extensions */
 #ifndef NDEBUG

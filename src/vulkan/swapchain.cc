@@ -95,11 +95,11 @@ VkExtent2D purpl::choose_extent(VkSurfaceCapabilitiesKHR capabilities,
 
 	/* Get the best size within the capabilities of the surface */
 	extent.width =
-		max(capabilities.minImageExtent.width,
-		    min(capabilities.maxImageExtent.width, extent.width));
+		fmax(capabilities.minImageExtent.width,
+		    fmin(capabilities.maxImageExtent.width, extent.width));
 	extent.height =
-		max(capabilities.minImageExtent.height,
-		    min(capabilities.maxImageExtent.height, extent.height));
+		fmax(capabilities.minImageExtent.height,
+		    fmin(capabilities.maxImageExtent.height, extent.height));
 
 	return extent;
 }

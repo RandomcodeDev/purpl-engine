@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
+#include <math.h>
 
 #include "macro.h"
 #include "queuefamily.h"

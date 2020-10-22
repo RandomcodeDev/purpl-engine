@@ -20,7 +20,17 @@ VkSurfaceKHR purpl::create_surface(VkInstance instance, window *wnd)
 
 	if (vkCreateWin32SurfaceKHR(instance, &surface_create_info, NULL, &surface) != VK_SUCCESS)
 		return NULL;
-#endif
+#elif __linux__
+	PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
 
-	return surface;
-}
+	vkCreateXlibSurfaceKHR =
+		(PFN_vkCreateXlibSurfaceKHR)vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR");
+	if (!vkCreateXlibSurfaceKHR)
+		return NULL;
+	
+	VkXlibSurfaceCreateInfoKHR surface_create_info{};
+	surface_create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	surface_create_info.window = wnd->handle;
+	surface_create_info.dpy = XOpenDisplay(NULL);
+
+	if (vkCreateXlibSurfaceKHR(i

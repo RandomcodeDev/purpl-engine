@@ -6,7 +6,7 @@
                 "deps/cglm/include",
                 "deps/json-c",
                 "build/deps/json-c/",
-                "src/",
+                "include/",
                 "${default}"
             ],
             "intelliSenseMode": "clang-x64",

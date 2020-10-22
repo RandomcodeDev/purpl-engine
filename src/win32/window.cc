@@ -72,7 +72,7 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *ti
 	}
 
 #ifdef NDEBUG
-	FreeConsole();
+	FreeConsole(); /* This seems like the best way of handling this, but who knows? */
 #endif
 
 	/* Show our window */

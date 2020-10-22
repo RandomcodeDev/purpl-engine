@@ -194,12 +194,13 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 
 	/* Now we need to create a buffer for our swap chain's images and also retrieve said images */
 	vkGetSwapchainImagesKHR(device, swapchain, &image_count, NULL);
-	
+
 	swapchain_images = (VkImage *)calloc(image_count, sizeof(VkImage));
 	if (!swapchain_images)
 		return NULL;
 
-	vkGetSwapchainImagesKHR(device, swapchain, &image_count, swapchain_images);
+	vkGetSwapchainImagesKHR(device, swapchain, &image_count,
+				swapchain_images);
 
 	return swapchain;
 }

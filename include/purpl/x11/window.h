@@ -22,10 +22,10 @@ class P_EXPORT x11_window {
 	bool should_close; /* Whether the window should close. Set to true manually to close the window. */
 
 	/*
-	 * This creates the window. keep_console is ignored on Linux for obvious reasons.
+	 * This creates the window.
 	 * Defined in window.cc
 	 */
-	x11_window(int width = 1024, int height = 600, bool keep_console = true, const char *title = "Purpl Engine", ...);
+	x11_window(int width = 1024, int height = 600, const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.

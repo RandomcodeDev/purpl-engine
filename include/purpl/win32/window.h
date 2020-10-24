@@ -26,9 +26,9 @@ class P_EXPORT win32_window {
 	HWND handle; /* The native handle for the actual window. Only use this for platform specific code. */
 	MSG win_queue; /* The queue of events for the window. Only use this for platform specific code. */
 	bool should_close; /* Whether the window should close. Set to true manually to close the window. */
-	int width; /* Current width */
-	int height; /* Current height */
-	char *title; /* Current title */
+	uint width; /* Current width */
+	uint height; /* Current height */
+	char title[P_WIN32_WINDOW_TEXT_MAX]; /* Current title */
 
 	/*
 	 * The window procedure.
@@ -50,11 +50,11 @@ class P_EXPORT win32_window {
 	 */
 	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
 
-	/* Frees the resources for this window.
+	/* 
+	 * Frees the resources for this window.
 	 * Defined in window.cc
-	 * Not needed yet.
-	 *
-	~win32_window(void); */
+	 */
+	~win32_window(void);
 };
 }
 

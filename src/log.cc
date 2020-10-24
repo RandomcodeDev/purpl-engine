@@ -1,6 +1,7 @@
 #include "purpl/log.h"
 
-P_EXPORT purpl::logger::logger(uint *index, uint initial_level, const char *fname, ...)
+P_EXPORT purpl::logger::logger(uint *index, uint initial_level,
+			       const char *fname, ...)
 {
 	va_list args;
 	char *buf;
@@ -54,11 +55,11 @@ P_EXPORT uint purpl::logger::open(uint initial_level, const char *fname, ...)
 	this->logs[this->nlogs - 1] = fopen(buf, "wb+");
 	if (!this->logs[this->nlogs - 1]) {
 		this->levels[this->nlogs - 1] = NULL;
-		this->logs[this->nlogs - 1] = NULL;
-	
+		memset(&this->logs[this->nlogs - 1], 0, sizeof(FILE *));
+
 		/* Free our buffer */
 		free(buf);
-	
+
 		this->nlogs--;
 		return EIO;
 	}
@@ -83,7 +84,8 @@ P_EXPORT void purpl::logger::set_level(uint index, uint level)
 		this->levels[index] = level;
 }
 
-P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename, uint line, const char *fmt, ...)
+P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename,
+				   uint line, const char *fmt, ...)
 {
 	va_list args;
 	char *buf;
@@ -100,7 +102,7 @@ P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename,
 	/* Get the time */
 	time(&rawtime);
 	timeinfo = localtime(&rawtime);
-	
+
 	/* Prepend the log level text to the message */
 	switch (level) {
 	case FATAL:
@@ -125,9 +127,7 @@ P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename,
 	sprintf(buf + strlen(buf), "[%s ", asctime(timeinfo));
 
 	/* Now the file and line number */
-	sprintf(buf + strlen(buf) - 2, "] [%s:%d] ",
-		 filename,
-		 line);
+	sprintf(buf + strlen(buf) - 2, "] [%s:%d] ", filename, line);
 
 	/* Now for the message */
 	va_start(args, fmt);
@@ -141,14 +141,16 @@ P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename,
 	}
 }
 
-P_EXPORT void purpl::logger::close(uint index, bool write_goodbye, const char *msg, ...)
+P_EXPORT void purpl::logger::close(uint index, bool write_goodbye,
+				   const char *msg, ...)
 {
 	va_list args;
 
 	/* Optionally write a message to the log */
 	if (write_goodbye) {
 		va_start(args, msg);
-		this->write(index, P_DEFAULT_LOG_LEVEL, P_FILENAME, __LINE__, "%s", fmt_text_va(msg, &args));
+		this->write(index, P_DEFAULT_LOG_LEVEL, P_FILENAME, __LINE__,
+			    "%s", fmt_text_va(msg, &args));
 		va_end(args);
 	}
 
@@ -171,6 +173,8 @@ purpl::logger::~logger(void)
 	for (i = 0; i < P_MAX_LOGS; i++) {
 		if (this->logs[i])
 
-			this->close(i, true, "This logger is terminating, have a nice day.");
+			this->close(
+				i, true,
+				"This logger is terminating, have a nice day.");
 	}
 }

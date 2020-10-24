@@ -7,24 +7,28 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 
 	if (!fmt)
 		return "";
-	
+
 	if (!args) {
 		errno = EINVAL;
-		return NULL;
+		return "";
 	}
 
-	len = vsnprintf(NULL, 0, fmt, *args); /* printf and co. return the number of bytes they _would_ write */
+	len = vsnprintf(
+		NULL, 0, fmt,
+		*args); /* printf and co. return the number of bytes they _would_ write */
 	if (len < 0)
 		len = P_MAX_TXT_BUF;
 
 	buf = (char *)calloc(len + 2, sizeof(char));
 	if (!buf) {
 		errno = ENOMEM;
-		return NULL;
+		return "";
 	}
 
 	/* calloc technically already does this */
 	memset(buf, 0, sizeof(char));
+
+	/* Copy the text */
 	vsnprintf(buf, len + 1, fmt, *args);
 
 	return buf;

@@ -1,6 +1,7 @@
 #include "purpl/inst.h"
 
-P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd, bool write_hello)
+P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd,
+					 bool write_hello)
 {
 	this->is_active = false;
 
@@ -12,12 +13,14 @@ P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd, bool write
 		return;
 
 	if (write_hello)
-		this->info->log->write(this->info->logindex, INFO, P_FILENAME, __LINE__, "Instance created");
+		this->info->log->write(this->info->logindex, INFO, P_FILENAME,
+				       __LINE__, "Instance created");
 
 	this->is_active = true;
 }
 
-P_EXPORT void purpl::engine_inst::update(int width, int height, const char *title, ...)
+P_EXPORT void purpl::engine_inst::update(int width, int height,
+					 const char *title, ...)
 {
 	va_list args;
 
@@ -33,7 +36,7 @@ P_EXPORT void purpl::engine_inst::update(int width, int height, const char *titl
 P_EXPORT purpl::engine_inst::~engine_inst(void)
 {
 	this->is_active = false;
-	
+
 	delete this->gfx;
 	delete this->info;
 	delete this->wnd;

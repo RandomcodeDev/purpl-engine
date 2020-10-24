@@ -8,7 +8,13 @@
 #include <string.h>
 #include <errno.h>
 
+#ifdef NDEBUG
+/* Used so we can detatch from the console in non-debug mode */
+#include <unistd.h>
+#endif
+
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include "purpl/log.h"
 #include "purpl/macro.h"
@@ -18,12 +24,13 @@
 namespace purpl{
 class P_EXPORT x11_window {
 public:
+	Display *display; /* The display that our window is using */
 	Window handle; /* The native handle for the actual window. Only use this for platfrom specific code */
 	XEvent win_queue; /* The queue of events for the window. Only use this for platform specific code */
 	bool should_close; /* Whether the window should close. Set to true manually to close the window. */
-	int width;
-	int height;
-	char *title;
+	uint width;
+	uint height;
+	char title[90]; /* A buffer of arbitrary length for the window title */
 
 	/*
 	 * This creates the window.
@@ -41,9 +48,8 @@ public:
 	/*
 	 * Frees the resources for this window.
 	 * Defined in window.cc
-	 * Not needed yet.
-	 *
-	~x11_window(void); */
+	 */
+	~x11_window(void);
 };
 }
 

@@ -14,6 +14,10 @@
 #include <windows.h>
 
 #define VK_USE_PLATFORM_WIN32_KHR
+#elif __linux__
+#include <xcb/xcb.h>
+
+#define VK_USE_PLATFORM_XLIB_KHR
 #endif
 
 #include <vulkan/vulkan.h>

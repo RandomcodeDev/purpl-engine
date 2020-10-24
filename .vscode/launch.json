@@ -8,10 +8,10 @@
 			"name": "Run debug CMake build",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/purpl-demo",
+			"program": "${workspaceFolder}/build/demo/purpl-demo",
 			"args": [],
 			"stopAtEntry": false,
-			"cwd": "${workspaceFolder}/build",
+			"cwd": "${workspaceFolder}/build/demo",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
@@ -22,7 +22,7 @@
 					"ignoreFailures": true
 				}
 			],
-			"preLaunchTask": "Debug CMake build",
+			"preLaunchTask": "Debug CMake cache",
 			"miDebuggerPath": "/usr/bin/gdb"
 		}
 	]

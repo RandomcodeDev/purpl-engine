@@ -46,7 +46,8 @@ bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
 	this->root = json_tokener_parse(json);
 	json_object_object_get_ex(this->root, "res_path", &this->res_path);
 	json_object_object_get_ex(this->root, "log_path", &this->log_path);
-	json_object_object_get_ex(this->root, "settings_path", &this->settings_path);
+	json_object_object_get_ex(this->root, "settings_path",
+				  &this->settings_path);
 
 	/* Free our buffer */
 	free(buf);
@@ -109,7 +110,7 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 {
 	va_list args;
 	char *buf;
-	
+
 	/* Format the file name string */
 	va_start(args, fname);
 	buf = fmt_text_va(fname, &args);
@@ -121,7 +122,7 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 		return;
 	}
 
-	/* Now make sure they're correct */ 
+	/* Now make sure they're correct */
 	if (!this->validate()) {
 		errno = EINVAL;
 		return;
@@ -131,12 +132,13 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 	free(buf);
 
 	/* Then start up the logger */
-	this->log = new logger(&this->logindex, P_DEFAULT_LOG_LEVEL, "%s", this->get_log_path());
+	this->log = new logger(&this->logindex, P_DEFAULT_LOG_LEVEL, "%s",
+			       this->get_log_path());
 }
 
 P_EXPORT purpl::app_info::~app_info(void)
 {
 	delete log;
 
-	fclose(this->fp);	
+	fclose(this->fp);
 }

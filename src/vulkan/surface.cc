@@ -31,6 +31,11 @@ VkSurfaceKHR purpl::create_surface(VkInstance instance, window *wnd)
 	VkXlibSurfaceCreateInfoKHR surface_create_info{};
 	surface_create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	surface_create_info.window = wnd->handle;
-	surface_create_info.dpy = XOpenDisplay(NULL);
+	surface_create_info.dpy = wnd->display;
 
-	if (vkCreateXlibSurfaceKHR(i
+	if (vkCreateXlibSurfaceKHR(instance, &surface_create_info, NULL, &surface) != VK_SUCCESS)
+		return NULL;
+#endif
+
+	return surface;
+}

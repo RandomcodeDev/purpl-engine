@@ -18,7 +18,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	/* Check for validation layers if we're in debug mode */
 	required_layers = get_required_validation_layers();
 
-	VkDebugUtilsMessengerCreateInfoEXT debug_msngr_create_info = { 0 };
+	VkDebugUtilsMessengerCreateInfoEXT debug_msngr_create_info{};
 	debug_msngr_create_info.sType =
 		VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 	debug_msngr_create_info.messageSeverity =

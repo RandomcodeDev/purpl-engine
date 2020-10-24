@@ -31,6 +31,7 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *ti
 					   ...)
 {
 	va_list args;
+	char *tmp;
 
 	/* Set up our window class */
 	wndclass.cbSize = sizeof(WNDCLASSEXA);
@@ -57,8 +58,14 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *ti
 
 	/* Format our title to get the final string */
 	va_start(args, title);
-	this->title = fmt_text_va(title, &args);
+	tmp = fmt_text_va(title, &args);
 	va_end(args);
+
+	/* Copy the title into the member */
+	strcpy(this->title, tmp);
+
+	/* Free the memory from fmt_text_va */
+	free(tmp);
 
 	/* Create a window */
 	this->handle = CreateWindowExA(0, wndclass_name, this->title,
@@ -102,8 +109,9 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 		if (strcmp(tmp, "") == 0) {
 			SetWindowTextA(this->handle, this->title);
 		} else {
-			this->title = tmp;
-			SetWindowTextA(this->handle, tmp);
+			strcpy(this->title, tmp);
+			SetWindowTextA(this->handle, this->title);
+			free(tmp);
 		}
 	}
 
@@ -117,7 +125,7 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 
 	/* Now check if we need to close the window (if we got a WM_QUIT) */
 	if (!GetMessageA(&win_queue, NULL, NULL, NULL)) {
-		should_close = true;
+		this->should_close = true;
 		return;
 	}
 
@@ -126,7 +134,7 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 	DispatchMessageA(&win_queue);
 }
 
-/* purpl::window::~window()
+P_EXPORT purpl::window::~window()
 {
-	This isn't needed yet
-} */
+	free(this->title);
+}

@@ -134,7 +134,5 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 	DispatchMessageA(&win_queue);
 }
 
-P_EXPORT purpl::window::~window()
-{
-	free(this->title);
-}
+P_EXPORT purpl::win32_window::~win32_window()
+{}

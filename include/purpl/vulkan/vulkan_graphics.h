@@ -8,11 +8,14 @@
 #include "debug.h"
 #endif
 
+#include "image.h"
 #include "inst.h"
 #include "logical_device.h"
 #include "macro.h"
 #include "physical_device.h"
 #include "queuefamily.h"
+#include "surface.h"
+#include "swapchain.h"
 #include "util.h"
 
 #endif

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(PURPL_COMMON_SOURCES app_info.cc inst.cc log.cc util.cc)
+set(PURPL_COMMON_SOURCES
+	app_info.cc
+	inst.cc
+	log.cc
+	util.cc
+)
 
 set(PURPL_COMMON_HEADERS 
 	../include/purpl/app_info.h../
@@ -14,7 +19,9 @@ set(PURPL_COMMON_HEADERS
 	../include/purpl/window.h
 )
 
-set(PURPL_WIN32_SOURCES win32 / window.cc)
+set(PURPL_WIN32_SOURCES
+	win32/window.cc
+)
 
 set(PURPL_WIN32_HEADERS
 	../include/purpl/win32/window.h
@@ -22,6 +29,7 @@ set(PURPL_WIN32_HEADERS
 
 set(PURPL_VULKAN_SOURCES
 	vulkan/debug.cc
+	vulkan/image.cc
 	vulkan/inst.cc
 	vulkan/logical_device.cc
 	vulkan/physical_device.cc
@@ -33,6 +41,7 @@ set(PURPL_VULKAN_SOURCES
 
 set(PURPL_VULKAN_HEADERS
 	../include/purpl/vulkan/debug.h
+	../include/purpl/vulkan/image.h
 	../include/purpl/vulkan/inst.h
 	../include/purpl/vulkan/logical_device.h
 	../include/purpl/vulkan/macro.h

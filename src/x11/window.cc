@@ -86,7 +86,5 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 
 P_EXPORT purpl::x11_window::~x11_window(void)
 {
-	free(this->title);
-
 	XCloseDisplay(this->display);
 }

@@ -96,10 +96,10 @@ VkExtent2D purpl::choose_extent(VkSurfaceCapabilitiesKHR capabilities,
 	/* Get the best size within the capabilities of the surface */
 	extent.width =
 		fmax(capabilities.minImageExtent.width,
-		    fmin(capabilities.maxImageExtent.width, extent.width));
+		     fmin(capabilities.maxImageExtent.width, extent.width));
 	extent.height =
 		fmax(capabilities.minImageExtent.height,
-		    fmin(capabilities.maxImageExtent.height, extent.height));
+		     fmin(capabilities.maxImageExtent.height, extent.height));
 
 	return extent;
 }
@@ -108,7 +108,8 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
 	uint current_width, uint current_height,
 	struct queue_family_indices indices, VkFormat *swapchain_format,
-	VkExtent2D *swapchain_extent, VkImage *swapchain_images)
+	VkExtent2D *swapchain_extent, VkImage **swapchain_images,
+	uint *swapchain_image_count)
 {
 	struct swapchain_details details;
 	VkSwapchainKHR swapchain;
@@ -116,13 +117,15 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 	VkPresentModeKHR present_mode;
 	VkExtent2D extent;
 	uint image_count;
+	uint i;
 
 	uint indices_arr[] = { indices.graphics_family,
 			       indices.present_family };
 
 	/* Avoid using invalid indices, and also invalid value-returning pointers */
 	if (!indices.has_graphics_family || !indices.has_present_family ||
-	    !swapchain_format || !swapchain_extent || !swapchain_images) {
+	    !swapchain_format || !swapchain_extent || !swapchain_images ||
+	    !swapchain_image_count) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -153,6 +156,9 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 	if (details.capabilities.maxImageCount > 0 &&
 	    image_count > details.capabilities.maxImageCount)
 		image_count = details.capabilities.maxImageCount;
+
+	/* Same thing for the image capacity */
+	*swapchain_image_count = image_count;
 
 	/* Fill out our swap chain creation info structure */
 	VkSwapchainCreateInfoKHR swapchain_create_info{};
@@ -195,12 +201,12 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 	/* Now we need to create a buffer for our swap chain's images and also retrieve said images */
 	vkGetSwapchainImagesKHR(device, swapchain, &image_count, NULL);
 
-	swapchain_images = (VkImage *)calloc(image_count, sizeof(VkImage));
-	if (!swapchain_images)
+	*swapchain_images = (VkImage *)calloc(image_count, sizeof(VkImage));
+	if (!*swapchain_images)
 		return NULL;
 
 	vkGetSwapchainImagesKHR(device, swapchain, &image_count,
-				swapchain_images);
+				*swapchain_images);
 
 	return swapchain;
 }

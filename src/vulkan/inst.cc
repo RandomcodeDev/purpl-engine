@@ -99,12 +99,18 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 		return;
 
 	/* Create a swap chain */
-	this->swapchain = create_a_freaking_swap_chain(this->physical_device, this->device,
-							this->surface,
-							wnd->width, wnd->height, this->queue_indices, &this->swapchain_format,
-							&this->swapchain_extent, this->swapchain_images);
+	this->swapchain = create_a_freaking_swap_chain(
+		this->physical_device, this->device, this->surface, wnd->width,
+		wnd->height, this->queue_indices, &this->swapchain_format,
+		&this->swapchain_extent, &this->swapchain_images,
+		&this->swapchain_image_count);
 	if (!this->swapchain)
 		return;
+
+	/* Create image views for the images */
+	this->swapchain_image_views = create_image_views(
+		this->swapchain_images, this->swapchain_image_count,
+		this->swapchain_format, this->device);
 
 	/* Avoid a memory leak */
 	for (i = 0; i < P_REQUIRED_VULKAN_EXT_COUNT; i++)
@@ -123,6 +129,12 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 
 P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 {
+	uint i;
+
+	for (i = 0; i < this->swapchain_image_count; i++)
+		vkDestroyImageView(this->device, this->swapchain_image_views[i],
+				   NULL);
+
 	vkDestroySwapchainKHR(this->device, this->swapchain, NULL);
 	vkDestroyDevice(this->device, NULL);
 	vkDestroySurfaceKHR(this->inst, this->surface, NULL);

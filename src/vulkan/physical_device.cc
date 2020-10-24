@@ -22,6 +22,11 @@ uint purpl::score_device(VkPhysicalDevice device)
 	score += device_properties.limits.maxMemoryAllocationCount;
 	score += device_properties.limits.maxComputeSharedMemorySize;
 
+#ifndef NDEBUG
+	printf("Device \'%s\' has a score of %d\n", device_properties.deviceName,
+	       score); /* Print the scores of the devices in debug mode */
+#endif
+
 	return score;
 }
 
@@ -77,10 +82,17 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR sur
 		}
 	}
 
+#ifndef NDEBUG
+	VkPhysicalDeviceProperties properties;
+	vkGetPhysicalDeviceProperties(best, &properties);
+
+	printf("Using device \'%s\'\n", properties.deviceName);
+#endif
+
 	/* Make sure this has a score above zero */
 	if (!best_score)
 		return NULL;
 
-	/* ret will now be the highest scoring device, so return it */
+	/* best will now be the highest scoring device, so return it */
 	return best;
 }

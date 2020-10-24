@@ -12,6 +12,7 @@
 #include "debug.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
 #endif
 
+#include "image.h"
 #include "logical_device.h"
 #include "macro.h"
 #include "physical_device.h"
@@ -78,6 +79,8 @@ private:
 	VkFormat swapchain_format; /* The format of the swap chain */
 	VkExtent2D swapchain_extent; /* The resolution of the images in the swap chain */
 	VkImage *swapchain_images; /* The images in the swap chain */
+	uint swapchain_image_count; /* The number of images in the swap chain */
+	VkImageView *swapchain_image_views; /* Image views of the images in the swap chain */
 
 #ifndef NDEBUG
 	/* Our debug logger */

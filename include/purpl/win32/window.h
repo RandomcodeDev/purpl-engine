@@ -19,6 +19,8 @@
 #include "purpl/types.h"
 #include "purpl/util.h"
 
+int purpl_winmain(int argc, char *argv[]);
+
 namespace purpl
 {
 class P_EXPORT win32_window {

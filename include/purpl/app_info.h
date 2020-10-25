@@ -28,7 +28,7 @@ class P_EXPORT app_info {
 	 * Parses the JSON file.
 	 * Defined in app_info.cc
 	 */
-	bool parse(const char *fname =  "app.json", ...);
+	bool parse(void);
 
 	/*
 	 * Ensures the JSON fields are correct.

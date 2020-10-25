@@ -36,6 +36,18 @@ char *fmt_text_va(const char *fmt, va_list *args);
  * Defined in util.cc
  */
 char *fmt_text(const char *fmt, ...);
+
+/*
+ * Reads the contents of a file into a buffer.
+ * Defined in util.cc
+ */
+char *read_file_fp(FILE *fp);
+
+/*
+ * Reads the contents of a file into a buffer.
+ * Defined in util.cc
+ */
+char *read_file(const char *name);
 }
 
 #endif /* !PURPL_UTIL_H */

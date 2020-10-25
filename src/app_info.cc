@@ -1,46 +1,15 @@
 #include "purpl/app_info.h"
 using namespace purpl;
 
-bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
+bool P_EXPORT purpl::app_info::parse(void)
 {
 #ifndef P_APPINFO_USERDEF_PARSE
-	va_list args;
-	char *buf;
 	char *json;
-	size_t len;
 
-	/* Format the file name string */
-	va_start(args, fname);
-	buf = fmt_text_va(fname, &args);
-	va_end(args);
-
-	/* Open the file and get its length */
-	this->fp = fopen(buf, "rb");
-	if (!this->fp) {
-		errno = EIO;
+	/* Get the file's contents */
+	json = read_file_fp(this->fp);
+	if (!json)
 		return false;
-	}
-
-	fseek(this->fp, 0L, SEEK_END);
-	len = ftell(this->fp);
-	rewind(this->fp);
-
-	/* Allocate a buffer for the file contents */
-	json = (char *)calloc(len + 2, sizeof(char));
-	if (!json) {
-		errno = ENOMEM;
-		return false;
-	}
-
-	/* Read in the file */
-	fread(json, sizeof(char), len, this->fp);
-	if (!json) {
-		errno = EIO;
-		return false;
-	}
-
-	/* Terminate the buffer's contents */
-	json[len + 1] = '\0';
 
 	/* Get the JSON objects */
 	this->root = json_tokener_parse(json);
@@ -50,7 +19,7 @@ bool P_EXPORT purpl::app_info::parse(const char *fname, ...)
 				  &this->settings_path);
 
 	/* Free our buffer */
-	free(buf);
+	free(json);
 
 	return true;
 #else
@@ -116,8 +85,12 @@ P_EXPORT purpl::app_info::app_info(const char *fname, ...)
 	buf = fmt_text_va(fname, &args);
 	va_end(args);
 
+	this->fp = fopen(buf, "rb");
+	if (!this->fp)
+		return;
+
 	/* Fill in the JSON objects */
-	if (!this->parse("%s", buf)) {
+	if (!this->parse()) {
 		errno = EFAULT;
 		return;
 	}

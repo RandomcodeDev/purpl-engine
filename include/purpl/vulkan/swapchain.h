@@ -16,6 +16,7 @@
 #include <vulkan/vulkan.h>
 
 #include "purpl/macro.h"
+#include "purpl/types.h"
 #include "purpl/util.h"
 
 namespace purpl

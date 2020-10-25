@@ -16,6 +16,10 @@
 
 namespace purpl
 {
+/*
+ * Creates a graphics pipeline.
+ * Defined in pipeline.cc
+ */
 VkPipeline create_graphics_pipeline();
 }
 

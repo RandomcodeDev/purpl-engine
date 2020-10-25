@@ -89,7 +89,6 @@ if (${PURPL_GRAPHICS_API} MATCHES "VULKAN")
 endif()
 
 add_custom_command(
-	TARGET purpl 
-	POST_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl> ${SHADER_BINARIES} ${CMAKE_BINARY_DIR}/demo
+	TARGET purpl POST_BUILD 
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl> ${CMAKE_BINARY_DIR}/demo
 )

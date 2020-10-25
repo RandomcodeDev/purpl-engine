@@ -13,6 +13,7 @@
 #include "logical_device.h"
 #include "macro.h"
 #include "physical_device.h"
+#include "pipeline.h"
 #include "queuefamily.h"
 #include "surface.h"
 #include "swapchain.h"

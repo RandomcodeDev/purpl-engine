@@ -13,6 +13,7 @@ find_package(X11 REQUIRED)
 
 if(${Vulkan_FOUND})
 	set(VULKAN_LIBRARIES ${Vulkan_LIBRARIES})
+	set(PURPL_GRAPHICS_API "VULKAN")
 endif()
 
 include_directories(include ${Vulkan_INCLUDE_DIRS})

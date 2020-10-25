@@ -78,9 +78,18 @@ endif()
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	target_link_libraries(purpl xcb)
+	target_link_libraries(purpl Xlib xcb)
 endif()
 
 target_link_libraries(purpl cglm imgui json-c ${Vulkan_LIBRARIES})
 
-add_custom_command(TARGET purpl	POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl> ${CMAKE_BINARY_DIR}/demo)
+if (${PURPL_GRAPHICS_API} MATCHES "VULKAN")
+	add_subdirectory(vulkan/shaders)
+	add_dependencies(purpl purpl_vulkan_shaders)
+endif()
+
+add_custom_command(
+	TARGET purpl 
+	POST_BUILD 
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl> ${SHADER_BINARIES} ${CMAKE_BINARY_DIR}/demo
+)

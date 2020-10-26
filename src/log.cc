@@ -89,8 +89,14 @@ P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename,
 {
 	va_list args;
 	char *buf;
+	char *tmp;
 	time_t rawtime;
 	struct tm *timeinfo;
+
+	if (!fmt) {
+		errno = EINVAL;
+		return;
+	}
 
 	/* Allocate a buffer */
 	buf = (char *)calloc(P_MAX_TXT_BUF, sizeof(char));
@@ -131,14 +137,20 @@ P_EXPORT void purpl::logger::write(uint index, uint level, const char *filename,
 
 	/* Now for the message */
 	va_start(args, fmt);
-	sprintf(buf + strlen(buf), "%s\n", fmt_text_va(fmt, &args));
+	tmp = fmt_text_va(fmt, &args);
 	va_end(args);
+
+	if (strlen(tmp))
+		sprintf(buf + strlen(buf), "%s\n", tmp);
 
 	/* Now try to write to the log file, if it exists */
 	if (this->logs[index] && this->levels[index] >= level) {
 		fprintf(this->logs[index], "%s", buf);
 		fflush(this->logs[index]);
 	}
+
+	free(buf);
+	free(tmp);
 }
 
 P_EXPORT void purpl::logger::close(uint index, bool write_goodbye,

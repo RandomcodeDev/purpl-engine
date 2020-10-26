@@ -2,11 +2,11 @@
 	"configurations": [
 		{
 			"name": "x64-Debug",
-			"generator": "Ninja",
+			"generator": "Visual Studio 16 2019",
 			"configurationType": "Debug",
 			"inheritEnvironments": [ "msvc_x64_x64" ],
-			"buildRoot": "${projectDir}\\build\\${name}",
-			"installRoot": "${projectDir}\\out\\install\\${name}",
+			"buildRoot": "${cmake.projectDir}\\build\\${name}",
+			"installRoot": "${cmake.projectDir}\\build\\install\\${name}",
 			"cmakeCommandArgs": "-DPURPL_GRAPHICS_API=\"VULKAN\"",
 			"buildCommandArgs": "",
 			"ctestCommandArgs": "",
@@ -40,10 +40,10 @@
 		},
 		{
 			"name": "x64-Release",
-			"generator": "Ninja",
+			"generator": "Visual Studio 16 2019",
 			"configurationType": "Release",
 			"buildRoot": "${projectDir}\\build\\${name}",
-			"installRoot": "${projectDir}\\out\\install\\${name}",
+			"installRoot": "${projectDir}\\build\\install\\${name}",
 			"cmakeCommandArgs": "-DPURPL_GRAPHICS_API=\"VULKAN\"",
 			"buildCommandArgs": "",
 			"ctestCommandArgs": "",

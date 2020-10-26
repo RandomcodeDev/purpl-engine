@@ -71,7 +71,7 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 	}
 
 	/* Retrieve the various information about the window that we need */
-	XGetGeometry(this->display, this->handle, NULL, NULL, NULL, this->width, this->height, NULL, NULL);
+	XGetGeometry(this->display, this->handle, NULL, NULL, NULL, &this->width, &this->height, NULL, NULL);
 	XGetWMName(this->display, this->handle, &text_property);
 
 	strcpy(this->title, (char *)text_property.value);

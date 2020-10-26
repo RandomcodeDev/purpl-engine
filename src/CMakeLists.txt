@@ -78,7 +78,7 @@ endif()
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	target_link_libraries(purpl Xlib xcb)
+	target_link_libraries(purpl X11 xcb)
 endif()
 
 target_link_libraries(purpl cglm imgui json-c ${Vulkan_LIBRARIES})

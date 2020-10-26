@@ -3,17 +3,13 @@ cmake_minimum_required(VERSION 3.10)
 # Much of the logic here borrows from https://gist.github.com/evilactually/a0d191701cb48f157b05be7f74d79396
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+	if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64" OR ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 		set(GLSL_COMPILER "$ENV{VULKAN_SDK}/Bin/glslc.exe")
 	else()
 		set(GLSL_COMPILER "$ENV{VULKAN_SDK}/Bin32/glslc.exe")
 	endif()
 else()
-	if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAl "AMD64")
-		set(GLSL_COMPILER "$ENV{VULKAN_SDK}/Bin/glslc")
-	else()
-		set(GLSL_COMPILER "$ENV{VULKAN_SDK}/Bin32/glslc")
-	endif()
+	set(GLSL_COMPILER "$ENV{VULKAN_SDK}/bin/glslc")
 endif()
 
 set(PURPL_SHADER_SOURCES

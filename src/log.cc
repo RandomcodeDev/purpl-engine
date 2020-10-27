@@ -54,7 +54,7 @@ P_EXPORT uint purpl::logger::open(uint initial_level, const char *fname, ...)
 	/* Open the file */
 	this->logs[this->nlogs - 1] = fopen(buf, "wb+");
 	if (!this->logs[this->nlogs - 1]) {
-		this->levels[this->nlogs - 1] = NULL;
+        this->levels[this->nlogs - 1] = P_DEFAULT_LOG_LEVEL;
 		this->logs[this->nlogs - 1] = NULL;
 
 		/* Free our buffer */

@@ -50,7 +50,7 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	handle = this->handle;
 
 	/* Ensure we have a decent chance of knowing the window is dead */
-	//XSetErrorHandler(check_window_continued_existence);
+	XSetErrorHandler(check_window_continued_existence);
 
 	/* Set the window's title */
 	XStoreName(this->display, this->handle, this->title);
@@ -73,7 +73,7 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 	XWindowAttributes window_attrs;
 
 	/* Set the width/height/title of the window */
-	XResizeWindow(this->display, this->handle, (width) ? width : this->width, (height) ? width : this->width);
+	//XResizeWindow(this->display, this->handle, (width) ? width : this->width, (height) ? width : this->width);
 	if (title) {
 		/* Format our title string */
 		va_start(args, title);

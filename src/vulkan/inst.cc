@@ -132,19 +132,26 @@ P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 {
 	uint i;
 
-	for (i = 0; i < this->swapchain_image_count; i++)
-		vkDestroyImageView(this->device, this->swapchain_image_views[i],
-				   NULL);
+	for (i = 0; i < this->swapchain_image_count; i++) {
+		if (this->swapchain_image_views[i])
+			vkDestroyImageView(this->device, this->swapchain_image_views[i],
+					   NULL);
+	}
 
-	vkDestroySwapchainKHR(this->device, this->swapchain, NULL);
-	vkDestroyDevice(this->device, NULL);
-	vkDestroySurfaceKHR(this->inst, this->surface, NULL);
+	if (this->swapchain)
+		vkDestroySwapchainKHR(this->device, this->swapchain, NULL);
+	if (this->device)
+		vkDestroyDevice(this->device, NULL);
+	if (this->surface)
+		vkDestroySurfaceKHR(this->inst, this->surface, NULL);
 
 #ifndef NDEBUG
-	destroy_debug_utils_messenger_ext(this->inst, this->debug_messenger,
+	if (this->debug_messenger)
+		destroy_debug_utils_messenger_ext(this->inst, this->debug_messenger,
 					  NULL);
 	
 	delete this->debug_log;
 #endif
-	vkDestroyInstance(this->inst, NULL);
+	if (this->inst)
+		vkDestroyInstance(this->inst, NULL);
 }

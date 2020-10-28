@@ -53,6 +53,9 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR sur
 	/* Now get a list of devices */
 	vkEnumeratePhysicalDevices(inst, &device_count, devices);
 
+	*indices = find_queue_families(devices[0], surface);
+	*details = get_swapchain_details(devices[0], surface);
+	
 	/* Check our first device */
 	best_score = score_device(devices[0]);
 	best = devices[0];
@@ -62,7 +65,7 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR sur
 		uint last_score;
 		
 		/* Prevent a device without the necessary queue families from being chosen */
-		*indices = find_queue_families(best, surface);
+		*indices = find_queue_families(devices[i], surface);
 		if (!indices->has_graphics_family ||
 		    !indices->has_present_family)
 			continue;

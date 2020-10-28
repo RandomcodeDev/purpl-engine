@@ -9,7 +9,7 @@ P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd,
 	this->gfx = new gfx_inst(wnd);
 	this->wnd = wnd;
 
-	if (!this->gfx->init_success)
+	if (!this->gfx->init_success || this->wnd->should_close)
 		return;
 
 	if (write_hello)
@@ -31,6 +31,8 @@ P_EXPORT void purpl::engine_inst::update(int width, int height,
 
 	if (this->wnd->should_close)
 		this->is_active = false;
+	else
+		this->is_active = true;
 }
 
 P_EXPORT purpl::engine_inst::~engine_inst(void)

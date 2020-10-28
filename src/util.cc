@@ -2,6 +2,7 @@
 
 char *purpl::fmt_text_va(const char *fmt, va_list *args)
 {
+	va_list tmpargs;
 	char *buf;
 	size_t len;
 
@@ -13,9 +14,11 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 		return "";
 	}
 
+	va_copy(tmpargs, *args);
+
 	len = vsnprintf(
 		NULL, 0, fmt,
-		*args); /* printf and co. return the number of bytes they _would_ write */
+		tmpargs); /* printf and co. return the number of bytes they _would_ write */
 	if (len < 0)
 		len = P_MAX_TXT_BUF;
 

@@ -143,7 +143,8 @@ P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 #ifndef NDEBUG
 	destroy_debug_utils_messenger_ext(this->inst, this->debug_messenger,
 					  NULL);
-	this->debug_log->~logger();
+	
+	delete this->debug_log;
 #endif
 	vkDestroyInstance(this->inst, NULL);
 }

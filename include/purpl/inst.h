@@ -9,7 +9,6 @@
 #include <string.h>
 #include <errno.h>
 
-
 #include  "app_info.h"
 #include  "graphics.h"
 #include  "log.h"

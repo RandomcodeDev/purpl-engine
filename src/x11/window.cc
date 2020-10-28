@@ -1,8 +1,18 @@
 #include "purpl/x11/window.h"
 using namespace purpl;
 
+bool should_close = true;
+Window handle;
+
 /* Get the default screen */
 int screen = DefaultScreen(XOpenDisplay(NULL));
+
+/* This function is specifically for checking if the window still exists */
+int check_window_continued_existence(Display * displau, XErrorEvent *error_event)
+{
+	if (error_event->error_code == BadWindow && error_event->resourceid == handle)
+		should_close = true;
+}
 
 P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title, ...)
 {
@@ -10,7 +20,7 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	char *tmp;
 
 	/* Similar to Vulkan init, we set this to false only when initialization succeeds */
-	this->should_close = true;
+	this->should_close = should_close;
 
 	/* Format our title to get the final string */
 	va_start(args, title);
@@ -37,6 +47,11 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 		return;
 	}
 
+	handle = this->handle;
+
+	/* Ensure we have a decent chance of knowing the window is dead */
+	XSetErrorHandler(check_window_continued_existence);
+
 	/* Set the window's title */
 	XStoreName(this->display, this->handle, this->title);
 
@@ -45,6 +60,9 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 
 	/* Map our window to the screen */
 	XMapWindow(this->display, this->handle);
+
+	should_close = false;
+	this->should_close = should_close;
 }
 
 void P_EXPORT purpl::x11_window::update(int width, int height, const char *title, ...)
@@ -52,6 +70,7 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 	va_list args;
 	char *tmp;
 	XTextProperty text_property;
+	XWindowAttributes window_attrs;
 
 	/* Set the width/height/title of the window */
 	XResizeWindow(this->display, this->handle, (width) ? width : this->width, (height) ? width : this->width);
@@ -71,7 +90,9 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 	}
 
 	/* Retrieve the various information about the window that we need */
-	XGetGeometry(this->display, this->handle, NULL, NULL, NULL, &this->width, &this->height, NULL, NULL);
+	XGetWindowAttributes(this->display, this->handle, &window_attrs);
+	this->width = window_attrs.width;
+	this->height = window_attrs.height;
 	XGetWMName(this->display, this->handle, &text_property);
 
 	strcpy(this->title, (char *)text_property.value);
@@ -82,9 +103,13 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 	default:
 		break;
 	}
+
+	this->should_close = should_close;
+	handle = this->handle;
 }
 
 P_EXPORT purpl::x11_window::~x11_window(void)
 {
+	this->should_close = true;
 	XCloseDisplay(this->display);
 }

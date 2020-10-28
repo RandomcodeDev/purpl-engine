@@ -60,5 +60,7 @@ VkDevice purpl::create_logical_device(VkPhysicalDevice physical_device,
 			free(exts[i]);
 	}
 
+	free(exts);
+
 	return device;
 }

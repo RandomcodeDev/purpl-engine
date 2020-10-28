@@ -50,7 +50,7 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	handle = this->handle;
 
 	/* Ensure we have a decent chance of knowing the window is dead */
-	XSetErrorHandler(check_window_continued_existence);
+	//XSetErrorHandler(check_window_continued_existence);
 
 	/* Set the window's title */
 	XStoreName(this->display, this->handle, this->title);

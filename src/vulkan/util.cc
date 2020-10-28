@@ -151,7 +151,7 @@ char **purpl::check_required_exts_avail(void)
 #ifdef _WIN32
 	strcpy(names[1], "VK_KHR_win32_surface");
 #elif __linux__
-	strcpy(names[1], "VK_KHR_xcb_surface");
+	strcpy(names[1], "VK_KHR_xlib_surface");
 #endif
 
 	/* In debug mode, this is valid */

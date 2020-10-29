@@ -34,7 +34,9 @@ endforeach(CURRENT_FILE)
 
 add_custom_target(
 	purpl_vulkan_shaders
+	COMMENT "Compiling Vulkan shaders"
 	DEPENDS ${PURPL_SHADER_BINARIES}
+	SOURCES ${PURPL_SHADER_SOURCES}
 )
 
 add_custom_command(

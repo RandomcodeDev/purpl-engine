@@ -42,7 +42,7 @@ struct swapchain_details get_swapchain_details(VkPhysicalDevice device,
  * Defined in swapchain.cc
  */
 VkSurfaceFormatKHR *
-choose_best_surface_format(VkSurfaceFormatKHR **available_formats,
+choose_best_surface_format(VkSurfaceFormatKHR *available_formats,
 			   uint format_count);
 
 /*

@@ -43,7 +43,7 @@ struct swapchain_details purpl::get_swapchain_details(VkPhysicalDevice device,
 }
 
 VkSurfaceFormatKHR *
-purpl::choose_best_surface_format(VkSurfaceFormatKHR **available_formats,
+purpl::choose_best_surface_format(VkSurfaceFormatKHR *available_formats,
 				  uint format_count)
 {
 	uint i;
@@ -54,13 +54,13 @@ purpl::choose_best_surface_format(VkSurfaceFormatKHR **available_formats,
 	}
 
 	for (i = 0; i < format_count; i++) {
-		if (available_formats[i]->format == VK_FORMAT_B8G8R8A8_SRGB &&
-		    available_formats[i]->colorSpace ==
+		if (available_formats[i].format == VK_FORMAT_B8G8R8A8_SRGB &&
+		    available_formats[i].colorSpace ==
 			    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
-			return available_formats[i];
+			return &available_formats[i];
 	}
 
-	return *available_formats; /* Go with the first format if we don't find the 32-bit SRGB one, because it'll be good enough */
+	return available_formats; /* Go with the first format if we don't find the 32-bit SRGB one, because it'll be good enough */
 }
 
 VkPresentModeKHR
@@ -136,7 +136,7 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 		return NULL;
 
 	/* No need to check the return values for these, the conditions are already checked or don't matter that much */
-	surface_format = choose_best_surface_format(&details.formats,
+	surface_format = choose_best_surface_format(details.formats,
 						    details.format_count);
 	present_mode = choose_best_present_mode(details.present_modes,
 						details.present_mode_count);

@@ -58,10 +58,11 @@ purpl::debug_msg(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
 		 const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
 		 void *user_data)
 {
-	((logger *)user_data)
-		->write(((logger *)user_data)->logindex, DEBUG, P_FILENAME,
-			__LINE__, "validation layer: %s: %s",
-			callback_data->pMessageIdName, callback_data->pMessage);
+	if (user_data)
+		((logger *)user_data)
+			->write(((logger *)user_data)->logindex, DEBUG, P_FILENAME,
+				__LINE__, "%s: %s",
+				callback_data->pMessageIdName, callback_data->pMessage);
 
 	return false;
 }

@@ -180,13 +180,40 @@ P_EXPORT void purpl::logger::close(uint index, bool write_goodbye,
 purpl::logger::~logger(void)
 {
 	uint i;
+	char msg[60];
+	time_t rawtime;
+	struct tm *timeinfo;
+
+	strcpy(msg, "This logger instance is terminating, have a ");
+
+	/* Get the time */
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	/* Seed the RNG */
+	srand(rawtime);
+
+	/* Fake randomness */
+	if ((rand() % 100) > 50)
+		strcpy(msg + strlen(msg), "nice ");
+	else
+		strcpy(msg + strlen(msg), "good ");
+
+	/* Put the appropriate time of day if we can */
+	if (!timeinfo)
+		strcpy(msg + strlen(msg), "day.");
+	else if (timeinfo->tm_hour < 12)
+		strcpy(msg + strlen(msg), "morning.");
+	else if (timeinfo->tm_hour > 12 && timeinfo->tm_hour < 18)
+		strcpy(msg + strlen(msg), "afternoon.");
+	else if (timeinfo->tm_hour > 18)
+		strcpy(msg + strlen(msg), "evening.");
 
 	/* Close all the open logs */
 	for (i = 0; i < P_MAX_LOGS; i++) {
 		if (this->logs[i])
-
 			this->close(
 				i, true,
-				"This logger is terminating, have a nice day.");
+				msg);
 	}
 }

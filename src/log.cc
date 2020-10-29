@@ -193,7 +193,7 @@ purpl::logger::~logger(void)
 	/* Seed the RNG */
 	srand(rawtime);
 
-	/* Fake randomness */
+	/* Choose an adjective randomly */
 	if ((rand() % 100) > 50)
 		strcpy(msg + strlen(msg), "nice ");
 	else

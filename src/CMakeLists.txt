@@ -32,8 +32,10 @@ set(PURPL_VULKAN_SOURCES
 	vulkan/image.cc
 	vulkan/inst.cc
 	vulkan/logical_device.cc
+	vulkan/pipeline.cc
 	vulkan/physical_device.cc
 	vulkan/queuefamily.cc
+	vulkan/spirv.cc
 	vulkan/surface.cc
 	vulkan/swapchain.cc
 	vulkan/util.cc
@@ -45,8 +47,10 @@ set(PURPL_VULKAN_HEADERS
 	../include/purpl/vulkan/inst.h
 	../include/purpl/vulkan/logical_device.h
 	../include/purpl/vulkan/macro.h
+	../include/purpl/vulkan/pipeline.h
 	../include/purpl/vulkan/physical_device.h
 	../include/purpl/vulkan/queuefamily.h
+	../include/purpl/vulkan/spirv.h
 	../include/purpl/vulkan/surface.h
 	../include/purpl/vulkan/swapchain.h
 	../include/purpl/vulkan/util.h

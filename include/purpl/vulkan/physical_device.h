@@ -8,14 +8,14 @@
 #include <string.h>
 #include <errno.h>
 
-#include "queuefamily.h"
-#include "swapchain.h"
-
 #include <vulkan/vulkan.h>
 
 #include "purpl/macro.h"
 #include "purpl/types.h"
 #include "purpl/util.h"
+
+#include "queuefamily.h"
+#include "swapchain.h"
 
 namespace purpl
 {

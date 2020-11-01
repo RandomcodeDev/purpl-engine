@@ -9,11 +9,11 @@
 #include <string.h>
 #include <errno.h>
 
-#include "macro.h"
-
 #include <vulkan/vulkan.h>
 
 #include "purpl/macro.h"
+
+#include "macro.h"
 
 namespace purpl
 {

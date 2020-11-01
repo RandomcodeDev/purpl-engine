@@ -15,6 +15,7 @@
 #include "physical_device.h"
 #include "pipeline.h"
 #include "queuefamily.h"
+#include "spirv.h"
 #include "surface.h"
 #include "swapchain.h"
 #include "util.h"

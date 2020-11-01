@@ -9,15 +9,15 @@
 #include <errno.h>
 #include <math.h>
 
-#include "macro.h"
-#include "queuefamily.h"
-#include "surface.h"
-
 #include <vulkan/vulkan.h>
 
 #include "purpl/macro.h"
 #include "purpl/types.h"
 #include "purpl/util.h"
+
+#include "macro.h"
+#include "queuefamily.h"
+#include "surface.h"
 
 namespace purpl
 {

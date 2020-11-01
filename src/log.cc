@@ -177,7 +177,7 @@ P_EXPORT void purpl::logger::close(uint index, bool write_goodbye,
 	}
 }
 
-purpl::logger::~logger(void)
+P_EXPORT purpl::logger::~logger(void)
 {
 	uint i;
 	char msg[60];

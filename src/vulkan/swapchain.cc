@@ -161,7 +161,7 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 	*swapchain_image_count = image_count;
 
 	/* Fill out our swap chain creation info structure */
-	VkSwapchainCreateInfoKHR swapchain_create_info{};
+	VkSwapchainCreateInfoKHR swapchain_create_info = {};
 	swapchain_create_info.sType =
 		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	swapchain_create_info.surface = surface;

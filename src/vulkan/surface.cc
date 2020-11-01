@@ -13,7 +13,7 @@ VkSurfaceKHR purpl::create_surface(VkInstance instance, window *wnd)
 	if (!vkCreateWin32SurfaceKHR)
 		return NULL;
 
-	VkWin32SurfaceCreateInfoKHR surface_create_info{};
+	VkWin32SurfaceCreateInfoKHR surface_create_info = {};
 	surface_create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	surface_create_info.hwnd = wnd->handle;
 	surface_create_info.hinstance = GetModuleHandleA(NULL);
@@ -28,7 +28,7 @@ VkSurfaceKHR purpl::create_surface(VkInstance instance, window *wnd)
 	if (!vkCreateXlibSurfaceKHR)
 		return NULL;
 	
-	VkXlibSurfaceCreateInfoKHR surface_create_info{};
+	VkXlibSurfaceCreateInfoKHR surface_create_info = {};
 	surface_create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	surface_create_info.window = wnd->handle;
 	surface_create_info.dpy = wnd->display;

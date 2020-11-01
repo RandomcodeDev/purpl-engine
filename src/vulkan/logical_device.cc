@@ -20,14 +20,14 @@ VkDevice purpl::create_logical_device(VkPhysicalDevice physical_device,
 	queue_priority = 1.0f;
 
 	/* Request a graphics queue */
-	VkDeviceQueueCreateInfo graphics_queue_create_info{};
+	VkDeviceQueueCreateInfo graphics_queue_create_info = {};
 	graphics_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	graphics_queue_create_info.queueFamilyIndex = indices.graphics_family;
 	graphics_queue_create_info.queueCount = 1;
 	graphics_queue_create_info.pQueuePriorities = &queue_priority;
 
 	/* And a present queue */
-	VkDeviceQueueCreateInfo present_queue_create_info{};
+	VkDeviceQueueCreateInfo present_queue_create_info = {};
 	present_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	present_queue_create_info.queueFamilyIndex = indices.present_family;
 	present_queue_create_info.queueCount = 1;
@@ -36,7 +36,7 @@ VkDevice purpl::create_logical_device(VkPhysicalDevice physical_device,
 	VkPhysicalDeviceFeatures device_features{};
 
 	/* Fill the create info struct */
-	VkDeviceCreateInfo device_create_info{};
+	VkDeviceCreateInfo device_create_info = {};
 	device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	device_create_info.pQueueCreateInfos = &graphics_queue_create_info;
 	device_create_info.queueCreateInfoCount = 1;

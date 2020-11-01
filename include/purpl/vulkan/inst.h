@@ -8,18 +8,6 @@
 #include <string.h>
 #include <errno.h>
 
-#ifndef NDEBUG
-#include "debug.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
-#endif
-
-#include "image.h"
-#include "logical_device.h"
-#include "macro.h"
-#include "physical_device.h"
-#include "surface.h"
-#include "swapchain.h"
-#include "util.h"
-
 #include <vulkan/vulkan.h>
 
 #include "purpl/log.h"
@@ -27,9 +15,23 @@
 #include "purpl/types.h"
 #include "purpl/window.h"
 
-namespace purpl {
+#ifndef NDEBUG
+#include "debug.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
+#endif
+
+#include "image.h"
+#include "logical_device.h"
+#include "macro.h"
+#include "pipeline.h"
+#include "physical_device.h"
+#include "surface.h"
+#include "swapchain.h"
+#include "util.h"
+
+namespace purpl
+{
 class P_EXPORT vulkan_inst {
-public:
+    public:
 	/* Used to indicate whether initialization failed */
 	bool init_success;
 
@@ -37,7 +39,8 @@ public:
 	 * Initializes *everything* for the instance.
 	 * Defined in inst.cc
 	 */
-	vulkan_inst(window *wnd);
+	vulkan_inst(window *wnd, const char *vert_shader_path,
+		    const char *frag_shader_path);
 
 	/*
 	 * Cleans up the instance;
@@ -45,7 +48,7 @@ public:
 	 */
 	~vulkan_inst(void);
 
-private:
+    private:
 	/* Our Vulkan instance */
 	VkInstance inst;
 
@@ -55,7 +58,7 @@ private:
 	/* Extensions */
 	VkExtensionProperties *exts;
 	uint ext_count; /* Number of extensions */
-	
+
 	/* Validation layers */
 	char **validation_layers;
 
@@ -68,19 +71,28 @@ private:
 	/* Queue family related stuff */
 	VkQueue graphics_queue; /* The graphics queue */
 	VkQueue present_queue; /* The presentation queue */
-	struct queue_family_indices queue_indices; /* Where each queue family resides */
+	struct queue_family_indices
+		queue_indices; /* Where each queue family resides */
 
 	/* Our surface */
 	VkSurfaceKHR surface;
 
 	/* Swap chain stuff */
-	struct swapchain_details swapchain_features; /* The features of the swap chain */
+	struct swapchain_details
+		swapchain_features; /* The features of the swap chain */
 	VkSwapchainKHR swapchain; /* The actual swap chain */
 	VkFormat swapchain_format; /* The format of the swap chain */
-	VkExtent2D swapchain_extent; /* The resolution of the images in the swap chain */
+	VkExtent2D
+		swapchain_extent; /* The resolution of the images in the swap chain */
 	VkImage *swapchain_images; /* The images in the swap chain */
 	uint swapchain_image_count; /* The number of images in the swap chain */
-	VkImageView *swapchain_image_views; /* Image views of the images in the swap chain */
+	VkImageView *
+		swapchain_image_views; /* Image views of the images in the swap chain */
+
+	/* Graphics pipelines and related stuff */
+	VkPipeline main_pipeline;
+	VkPipelineLayout main_pipeline_layout;
+	VkRenderPass render_pass;
 
 #ifndef NDEBUG
 	/* Our debug logger */

@@ -6,7 +6,16 @@ P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd,
 	this->is_active = false;
 
 	this->info = info;
-	this->gfx = new gfx_inst(wnd);
+
+#ifdef P_USE_VULKAN_GFX
+	char vert_path[260];
+	char frag_path[260];
+
+	strcpy(vert_path, this->info->get_res_path());
+	strcpy(frag_path, this->info->get_res_path());
+
+	this->gfx = new gfx_inst(wnd, strcat(vert_path, "shaders/triangle.vert.spv"), strcat(frag_path, "shaders/triangle.frag.spv"));
+#endif
 	this->wnd = wnd;
 
 	if (!this->gfx->init_success || this->wnd->should_close)

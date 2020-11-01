@@ -8,6 +8,12 @@
 #include <string.h>
 #include <errno.h>
 
+#include <vulkan/vulkan.h>
+
+#include "purpl/macro.h"
+#include "purpl/types.h"
+#include "purpl/util.h"
+
 #ifndef NDEBUG
 #include "debug.h"
 #endif
@@ -15,12 +21,6 @@
 #include "macro.h"
 #include "queuefamily.h"
 #include "util.h"
-
-#include <vulkan/vulkan.h>
-
-#include "purpl/macro.h"
-#include "purpl/types.h"
-#include "purpl/util.h"
 
 namespace purpl
 {

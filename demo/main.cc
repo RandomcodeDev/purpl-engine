@@ -14,14 +14,18 @@ int main(int argc, char *argv[])
 	uint logindex = 0;
 
 	/* Create a new engine instance, passing the constructors for the arguments as is the preferred way of using this constructor */
-	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "A random number: %d", rand() % 10));
+	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo"));
 
 	/* Ensure we have the correct log index */
 	logindex = inst.info->logindex;
 
+	/* Write a message into the log */
 	inst.info->log->write(logindex, INFO, P_FILENAME, __LINE__, "A random number: %d", rand() % 10);
 
+	/* Our main loop */
 	while (inst.is_active) {
+		/* TODO: add graphics usage/ImGui menus to demonstrate available features */
+		
 		inst.update();
 	}
 

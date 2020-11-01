@@ -8,8 +8,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "macro.h"
-
 #ifdef _WIN32
 #include <windows.h>
 
@@ -25,6 +23,8 @@
 #include "purpl/macro.h"
 #include "purpl/types.h"
 #include "purpl/window.h"
+
+#include "macro.h"
 
 namespace purpl
 {

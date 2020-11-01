@@ -46,7 +46,7 @@ char *purpl::fmt_text(const char *fmt, ...)
 	return buf;
 }
 
-char *purpl::read_file_fp(FILE *fp)
+char *purpl::read_file_fp(FILE *fp, uint *len_ret)
 {
 	char *buf;
 	size_t len;
@@ -79,10 +79,13 @@ char *purpl::read_file_fp(FILE *fp)
 	/* Terminate the buffer's contents */
 	buf[len + 1] = '\0';
 
+	if (len_ret)
+		*len_ret = len + 1;
+
 	return buf;
 }
 
-char *purpl::read_file(const char *name)
+char *purpl::read_file(const char *name, uint *len_ret)
 {
 	FILE *fp;
 
@@ -99,5 +102,5 @@ char *purpl::read_file(const char *name)
 	}
 
 	/* Read the file */
-	return read_file_fp(fp);
+	return read_file_fp(fp, len_ret);
 }

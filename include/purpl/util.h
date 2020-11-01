@@ -38,16 +38,16 @@ char *fmt_text_va(const char *fmt, va_list *args);
 char *fmt_text(const char *fmt, ...);
 
 /*
- * Reads the contents of a file into a buffer.
+ * Reads the contents of a file into a buffer. len_ret is optional.
  * Defined in util.cc
  */
-char *read_file_fp(FILE *fp);
+char *read_file_fp(FILE *fp, uint *len_ret);
 
 /*
- * Reads the contents of a file into a buffer.
+ * Reads the contents of a file into a buffer. len_ret is optional.
  * Defined in util.cc
  */
-char *read_file(const char *name);
+char *read_file(const char *name, uint *len_ret);
 }
 
 #endif /* !PURPL_UTIL_H */

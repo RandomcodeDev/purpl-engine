@@ -1,7 +1,9 @@
 #include "purpl/vulkan/inst.h"
 using namespace purpl;
 
-P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
+P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd,
+					 const char *vert_shader_path,
+					 const char *frag_shader_path)
 {
 	uint i;
 	char **required_exts;
@@ -18,7 +20,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	/* Check for validation layers if we're in debug mode */
 	required_layers = get_required_validation_layers();
 
-	VkDebugUtilsMessengerCreateInfoEXT debug_msngr_create_info{};
+	VkDebugUtilsMessengerCreateInfoEXT debug_msngr_create_info = {};
 	debug_msngr_create_info.sType =
 		VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 	debug_msngr_create_info.messageSeverity =
@@ -34,7 +36,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	debug_msngr_create_info.pUserData = this->debug_log;
 #endif
 
-	VkApplicationInfo info{};
+	VkApplicationInfo info = {};
 	info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	info.pApplicationName = "Purpl Engine";
 	info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -112,6 +114,22 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	this->swapchain_image_views = create_image_views(
 		this->swapchain_images, this->swapchain_image_count,
 		this->swapchain_format, this->device);
+	if (!this->swapchain_image_views)
+		return;
+
+	/* Create a render pass */
+	this->render_pass =
+		create_render_pass(this->device, this->swapchain_format);
+	if (!this->render_pass)
+		return;
+
+	/* Now make a graphics pipeline */
+	this->main_pipeline = create_graphics_pipeline(
+		this->device, this->swapchain_extent, this->render_pass,
+		vert_shader_path, frag_shader_path,
+		&this->main_pipeline_layout);
+	if (!this->main_pipeline || !this->main_pipeline_layout)
+		return;
 
 	/* Avoid a memory leak */
 	for (i = 0; i < P_REQUIRED_VULKAN_EXT_COUNT; i++)
@@ -132,9 +150,18 @@ P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 {
 	uint i;
 
+	if (this->main_pipeline)
+		vkDestroyPipeline(this->device, this->main_pipeline, NULL);
+	if (this->main_pipeline_layout)
+		vkDestroyPipelineLayout(this->device,
+					this->main_pipeline_layout, NULL);
+	if (this->render_pass)
+		vkDestroyRenderPass(this->device, this->render_pass, NULL);
+
 	for (i = 0; i < this->swapchain_image_count; i++) {
 		if (this->swapchain_image_views[i])
-			vkDestroyImageView(this->device, this->swapchain_image_views[i],
+			vkDestroyImageView(this->device,
+					   this->swapchain_image_views[i],
 					   NULL);
 	}
 
@@ -147,12 +174,12 @@ P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 
 #ifndef NDEBUG
 	if (this->debug_messenger)
-		destroy_debug_utils_messenger_ext(this->inst, this->debug_messenger,
-					  NULL);
+		destroy_debug_utils_messenger_ext(this->inst,
+						  this->debug_messenger, NULL);
 #endif
 	if (this->inst)
 		vkDestroyInstance(this->inst, NULL);
-	
+
 #ifndef NDEBUG
 	delete this->debug_log;
 #endif

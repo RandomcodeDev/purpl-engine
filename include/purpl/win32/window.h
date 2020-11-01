@@ -9,8 +9,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "macro.h"
-
 #include <windows.h>
 #include <winuser.h>
 
@@ -19,7 +17,7 @@
 #include "purpl/types.h"
 #include "purpl/util.h"
 
-int purpl_winmain(int argc, char *argv[]);
+#include "macro.h"
 
 namespace purpl
 {

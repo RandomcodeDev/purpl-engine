@@ -19,31 +19,27 @@ VkImageView *purpl::create_image_views(VkImage *images, uint image_count,
 		return NULL;
 	}
 
+	/* Define the main info for our image views */
+	VkImageViewCreateInfo image_view_create_info = {};
+	image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	image_view_create_info.format = image_format;
+
+	image_view_create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+	image_view_create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+	image_view_create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+	image_view_create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+	image_view_create_info.subresourceRange.aspectMask =
+		VK_IMAGE_ASPECT_COLOR_BIT;
+	image_view_create_info.subresourceRange.baseArrayLayer = 0;
+	image_view_create_info.subresourceRange.baseMipLevel = 0;
+	image_view_create_info.subresourceRange.layerCount = 1;
+	image_view_create_info.subresourceRange.levelCount = 1;
+
 	/* Iterate through all the image views and create them */
 	for (i = 0; i < image_count; i++) {
-		VkImageViewCreateInfo image_view_create_info{};
-		image_view_create_info.sType =
-			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		image_view_create_info.image = images[i];
-
-		image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		image_view_create_info.format = image_format;
-
-		image_view_create_info.components.r =
-			VK_COMPONENT_SWIZZLE_IDENTITY;
-		image_view_create_info.components.g =
-			VK_COMPONENT_SWIZZLE_IDENTITY;
-		image_view_create_info.components.b =
-			VK_COMPONENT_SWIZZLE_IDENTITY;
-		image_view_create_info.components.a =
-			VK_COMPONENT_SWIZZLE_IDENTITY;
-
-		image_view_create_info.subresourceRange.aspectMask =
-			VK_IMAGE_ASPECT_COLOR_BIT;
-		image_view_create_info.subresourceRange.baseArrayLayer = 0;
-		image_view_create_info.subresourceRange.baseMipLevel = 0;
-		image_view_create_info.subresourceRange.layerCount = 1;
-		image_view_create_info.subresourceRange.levelCount = 1;
 
 		if (vkCreateImageView(device, &image_view_create_info, NULL,
 				      &image_views[i]) != VK_SUCCESS)

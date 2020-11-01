@@ -117,7 +117,6 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 	VkPresentModeKHR present_mode;
 	VkExtent2D extent;
 	uint image_count;
-	uint i;
 
 	uint indices_arr[] = { indices.graphics_family,
 			       indices.present_family };

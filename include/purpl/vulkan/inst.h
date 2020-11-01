@@ -19,6 +19,7 @@
 #include "debug.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
 #endif
 
+#include "framebuffer.h"
 #include "image.h"
 #include "logical_device.h"
 #include "macro.h"
@@ -93,6 +94,9 @@ class P_EXPORT vulkan_inst {
 	VkPipeline main_pipeline;
 	VkPipelineLayout main_pipeline_layout;
 	VkRenderPass render_pass;
+
+	/* The framebuffers for our images */
+	VkFramebuffer *framebuffers;
 
 #ifndef NDEBUG
 	/* Our debug logger */

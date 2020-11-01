@@ -131,6 +131,12 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd,
 	if (!this->main_pipeline || !this->main_pipeline_layout)
 		return;
 
+	/* Create framebuffers to render to */
+	this->framebuffers =
+		create_framebuffers(this->device, this->swapchain_image_views,
+				    this->swapchain_image_count,
+				    this->swapchain_extent, this->render_pass);
+
 	/* Avoid a memory leak */
 	for (i = 0; i < P_REQUIRED_VULKAN_EXT_COUNT; i++)
 		free(required_exts[i]);
@@ -149,6 +155,11 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd,
 P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 {
 	uint i;
+
+	for (i = 0; i < this->swapchain_image_count; i++) {
+		if (this->framebuffers[i])
+			vkDestroyFramebuffer(this->device, this->framebuffers[i], NULL);
+	}
 
 	if (this->main_pipeline)
 		vkDestroyPipeline(this->device, this->main_pipeline, NULL);

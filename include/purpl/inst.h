@@ -9,17 +9,18 @@
 #include <string.h>
 #include <errno.h>
 
-#include  "app_info.h"
-#include  "graphics.h"
-#include  "log.h"
-#include  "macro.h"
-#include  "types.h"
-#include  "util.h"
-#include  "window.h"
+#include "app_info.h"
+#include "graphics.h"
+#include "log.h"
+#include "macro.h"
+#include "types.h"
+#include "util.h"
+#include "window.h"
 
-namespace purpl {
+namespace purpl
+{
 class P_EXPORT engine_inst {
-public:
+    public:
 	app_info *info; /* The application info for this instance */
 	gfx_inst *gfx; /* The graphics instance for this instance */
 	window *wnd; /* This instance's window */
@@ -31,14 +32,18 @@ public:
 	 * If you want the defaults pass new <class name>().
 	 * Defined in inst.cc
 	 */
-	engine_inst(app_info *info = new app_info(), window *wnd = new window(), bool write_hello = true);
+	engine_inst(app_info *info = new app_info(), window *wnd = new window(),
+		    bool write_hello = true,
+		    const char *vert_shader_name = "triangle.vert",
+		    const char *frag_shader_name = "triangle.frag");
 
 	/*
 	 * Updates the instance (window, graphics, etc.).
 	 * Call this in a while loop with is_active as the condition to make your instance loop.
 	 * Defined in inst.cc
 	 */
-	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
+	void update(int width = NULL, int height = NULL,
+		    const char *title = NULL, ...);
 
 	/*
 	 * Cleans up after the instance;

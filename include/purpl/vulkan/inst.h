@@ -15,6 +15,8 @@
 #include "purpl/types.h"
 #include "purpl/window.h"
 
+#include "command.h"
+
 #ifndef NDEBUG
 #include "debug.h" /* Include our definitions and stuff for using validation layers when we're in debug mode */
 #endif
@@ -31,17 +33,25 @@
 
 namespace purpl
 {
+extern char vert_path[260]; /* The vertex shader to use */
+extern char frag_path[260]; /* The fragment shader to use */
+
 class P_EXPORT vulkan_inst {
     public:
-	/* Used to indicate whether initialization failed */
-	bool init_success;
+	/* Used to indicate whether instance is alive */
+	bool is_active;
 
 	/*
 	 * Initializes *everything* for the instance.
 	 * Defined in inst.cc
 	 */
-	vulkan_inst(window *wnd, const char *vert_shader_path,
-		    const char *frag_shader_path);
+	vulkan_inst(window *wnd);
+
+	/*
+	 * Does some stuff to present rendered images.
+	 * Defined in inst.cc
+	 */
+	void update(window *wnd);
 
 	/*
 	 * Cleans up the instance;
@@ -97,6 +107,18 @@ class P_EXPORT vulkan_inst {
 
 	/* The framebuffers for our images */
 	VkFramebuffer *framebuffers;
+
+	/* The command pool */
+	VkCommandPool command_pool;
+
+	/* Command buffers */
+	VkCommandBuffer *command_buffers;
+
+	/* Objects used for synchronization during rendering */
+	VkSemaphore *image_avail_sem;
+	VkSemaphore *render_finished_sem;
+	VkFence *in_flight_fences;
+	VkFence *images_in_flight;
 
 #ifndef NDEBUG
 	/* Our debug logger */

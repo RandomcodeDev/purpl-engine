@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	uint logindex = 0;
 
 	/* Create a new engine instance, passing the constructors for the arguments as is the preferred way of using this constructor */
-	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo"));
+	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo"), true);
 
 	/* Ensure we have the correct log index */
 	logindex = inst.info->logindex;

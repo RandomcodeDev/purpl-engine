@@ -3,6 +3,8 @@
 #ifndef PURPL_VULKAN_GRAPHICS_H
 #define PURPL_VULKAN_GRAPHICS_H
 
+#include "command.h"
+
 /* Validation layers, which are only needed if we're built in debug mode */
 #ifndef NDEBUG
 #include "debug.h"

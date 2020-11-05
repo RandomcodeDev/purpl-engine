@@ -24,12 +24,22 @@ VkRenderPass purpl::create_render_pass(VkDevice device, VkFormat image_format)
 	subpass.colorAttachmentCount = 1;
 	subpass.pColorAttachments = &color_attachment_ref;
 
+	VkSubpassDependency dependency = {};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass = NULL;
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = NULL;
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
 	VkRenderPassCreateInfo render_pass_info = {};
 	render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 	render_pass_info.attachmentCount = 1;
 	render_pass_info.pAttachments = &color_attachment;
 	render_pass_info.subpassCount = 1;
 	render_pass_info.pSubpasses = &subpass;
+	render_pass_info.dependencyCount = 1;
+	render_pass_info.pDependencies = &dependency;
 
 	if (vkCreateRenderPass(device, &render_pass_info, NULL, &render_pass) !=
 	    VK_SUCCESS)
@@ -63,6 +73,10 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 		errno = EINVAL;
 		return NULL;
 	}
+
+#ifndef NDEBUG
+	printf("Using vertex shader \'%s\' and fragment shader \'%s\'\n", vert_shader_path, frag_shader_path);
+#endif
 
 	/* Read our shaders */
 	vert_shader_bytecode = read_file(vert_shader_path, &vert_shader_len);
@@ -175,6 +189,7 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 	/* Color blending config */
 	VkPipelineColorBlendAttachmentState color_blend_attachment = {};
 	color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+						VK_COLOR_COMPONENT_G_BIT |
 						VK_COLOR_COMPONENT_B_BIT |
 						VK_COLOR_COMPONENT_A_BIT;
 	color_blend_attachment.blendEnable = true;
@@ -235,7 +250,7 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 
 	/* Create our graphics pipeline */
 	if (vkCreateGraphicsPipelines(device, NULL, 1, &pipeline_info, NULL,
-				      &pipeline))
+				      &pipeline) != VK_SUCCESS)
 		return NULL;
 
 	/* Clean up our shader modules */

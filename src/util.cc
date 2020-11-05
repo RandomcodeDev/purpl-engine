@@ -80,7 +80,7 @@ char *purpl::read_file_fp(FILE *fp, uint *len_ret)
 	buf[len + 1] = '\0';
 
 	if (len_ret)
-		*len_ret = len + 1;
+		*len_ret = len;
 
 	return buf;
 }

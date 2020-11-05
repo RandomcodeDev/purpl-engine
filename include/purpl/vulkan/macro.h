@@ -16,4 +16,6 @@
 #define P_REQUIRED_VULKAN_LAYER_COUNT 1
 #endif
 
+#define P_VULKAN_MAX_FRAMES_IN_FLIGHT 2
+
 #endif

@@ -41,7 +41,7 @@ P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *ti
 	wndclass.hIcon = (HICON)LoadImageA(instance, "purpl.ico", IMAGE_ICON,
 					   512, 512, LR_LOADFROMFILE);
 	wndclass.hCursor = LoadCursorA(0, IDC_ARROW);
-	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wndclass.hbrBackground = (HBRUSH)8;
 	wndclass.lpszClassName = wndclass_name;
 
 	/* Register the window class */

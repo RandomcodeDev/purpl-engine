@@ -190,7 +190,7 @@ VkSwapchainKHR purpl::create_a_freaking_swap_chain(
 		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	swapchain_create_info.presentMode = present_mode;
 	swapchain_create_info.clipped =
-		true; /* True is actually equivalent to 1 when assigned to an integer */
+		true; /* true is actually equivalent to 1 when assigned to an integer */
 	swapchain_create_info.oldSwapchain = NULL;
 
 	if (vkCreateSwapchainKHR(device, &swapchain_create_info, NULL,

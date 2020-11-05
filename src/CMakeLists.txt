@@ -8,7 +8,7 @@ set(PURPL_COMMON_SOURCES
 )
 
 set(PURPL_COMMON_HEADERS 
-	../include/purpl/app_info.h../
+	../include/purpl/app_info.h
 	../include/purpl/graphics.h
 	../include/purpl/inst.h
 	../include/purpl/log.h
@@ -29,6 +29,7 @@ set(PURPL_WIN32_HEADERS
 )
 
 set(PURPL_VULKAN_SOURCES
+	vulkan/command.cc
 	vulkan/debug.cc
 	vulkan/framebuffer.cc
 	vulkan/image.cc
@@ -44,6 +45,7 @@ set(PURPL_VULKAN_SOURCES
 )
 
 set(PURPL_VULKAN_HEADERS
+	../include/purpl/vulkan/command.h
 	../include/purpl/vulkan/debug.h
 	../include/purpl/vulkan/framebuffer.h
 	../include/purpl/vulkan/image.h
@@ -85,14 +87,23 @@ endif()
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	target_link_libraries(purpl X11 xcb)
+	target_link_libraries(purpl X11)
 endif()
 
-target_link_libraries(purpl cglm imgui json-c ${Vulkan_LIBRARIES})
+target_link_libraries(purpl cglm imgui json-c)
 
-if (${PURPL_GRAPHICS_API} MATCHES "VULKAN")
+if(${PURPL_GRAPHICS_API} MATCHES "VULKAN")
+	target_link_libraries(purpl ${Vulkan_LIBRARIES})
+endif()
+
+if(${PURPL_GRAPHICS_API} MATCHES "VULKAN")
 	add_subdirectory(vulkan/shaders)
 	add_dependencies(purpl purpl_vulkan_shaders)
+else()
+	add_custom_command(
+		TARGET purpl POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different vulkan/shaders/triangle.vert vulkan/shaders/triangle.frag ${CMAKE_BINARY_DIR}/demo/res/shaders
+	)
 endif()
 
 add_custom_command(

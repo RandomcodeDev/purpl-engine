@@ -20,7 +20,8 @@ namespace purpl
  * Creates image views for the passed array of images.
  * Defined in image.cc
  */
-VkImageView *create_image_views(VkImage *images, uint image_count, VkFormat image_format, VkDevice device);
+VkImageView *create_image_views(VkDevice device, VkImage *images,
+				uint image_count, VkFormat image_format);
 }
 
 #endif /* !PURPL_VULKAN_IMAGE_H */

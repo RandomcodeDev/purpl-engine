@@ -1,8 +1,8 @@
 #include "purpl/vulkan/image.h"
 using namespace purpl;
 
-VkImageView *purpl::create_image_views(VkImage *images, uint image_count,
-				       VkFormat image_format, VkDevice device)
+VkImageView *purpl::create_image_views(VkDevice device, VkImage *images, uint image_count,
+				       VkFormat image_format)
 {
 	VkImageView *image_views;
 	uint i;

@@ -1,6 +1,97 @@
 #include "purpl/vulkan/inst.h"
 using namespace purpl;
 
+VkSwapchainKHR purpl::recreate_swap_chain(
+	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
+	uint new_width, uint new_height, queue_family_indices indices,
+	VkFormat *swapchain_format, VkExtent2D *swapchain_extent,
+	VkImage **swapchain_images, uint *image_count,
+	VkSwapchainKHR *swapchain, VkImageView **image_views,
+	VkRenderPass *render_pass, const char *vert_shader_path,
+	const char *frag_shader_path, VkPipeline *pipeline,
+	VkPipelineLayout *pipeline_layout, VkFramebuffer **framebuffers,
+	VkCommandPool command_pool, VkCommandBuffer **command_buffers)
+{
+	uint i;
+
+	/* Check all 19 of our parameters */
+	if (!physical_device || !device || !surface || !new_width ||
+	    !new_height || !indices.has_graphics_family ||
+	    !indices.has_present_family || !swapchain_format ||
+	    !swapchain_extent || !swapchain_images || !image_count ||
+	    !swapchain || !image_views || !render_pass || !vert_shader_path ||
+	    !frag_shader_path || !pipeline || !pipeline_layout ||
+	    !framebuffers || !command_pool || !command_buffers) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	/* Finish up any work still being done */
+	vkDeviceWaitIdle(device);
+
+	for (i = 0; i < *image_count; i++) {
+		if ((*framebuffers)[i])
+			vkDestroyFramebuffer(device, (*framebuffers)[i], NULL);
+	}
+	if (*command_buffers)
+		vkFreeCommandBuffers(device, command_pool, *image_count,
+				     *command_buffers);
+
+	if (*pipeline)
+		vkDestroyPipeline(device, *pipeline, NULL);
+	if (*pipeline_layout)
+		vkDestroyPipelineLayout(device, *pipeline_layout, NULL);
+	if (*render_pass)
+		vkDestroyRenderPass(device, *render_pass, NULL);
+
+	for (i = 0; i < *image_count; i++) {
+		if ((*image_views)[i])
+			vkDestroyImageView(device, (*image_views)[i], NULL);
+	}
+
+	if (*swapchain)
+		vkDestroySwapchainKHR(device, *swapchain, NULL);
+
+	/* Recreate the swap chain */
+	*swapchain = create_a_freaking_swap_chain(
+		physical_device, device, surface, new_width, new_height,
+		indices, swapchain_format, swapchain_extent, swapchain_images,
+		image_count);
+	if (!swapchain)
+		return NULL;
+
+	/* Now the image views */
+	*image_views = create_image_views(device, *swapchain_images,
+					  *image_count, *swapchain_format);
+	if (!*image_views)
+		return NULL;
+
+	/* Next we have the render pass */
+	*render_pass = create_render_pass(device, *swapchain_format);
+	if (!*render_pass)
+		return NULL;
+
+	/* And then the graphics pipeline */
+	*pipeline = create_graphics_pipeline(device, *swapchain_extent,
+					     *render_pass, vert_shader_path,
+					     frag_shader_path, pipeline_layout);
+	if (!*pipeline)
+		return NULL;
+
+	*framebuffers = create_framebuffers(device, *image_views, *image_count,
+					    *swapchain_extent, *render_pass);
+	if (!*framebuffers)
+		return NULL;
+
+	*command_buffers = allocate_command_buffers(
+		device, command_pool, *image_count, *render_pass, *framebuffers,
+		*swapchain_extent, *pipeline);
+	if (!*command_buffers)
+		return NULL;
+
+	return *swapchain;
+}
+
 P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 {
 	uint i;
@@ -40,7 +131,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	info.pEngineName = "No Engine";
 	info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	info.apiVersion = VK_API_VERSION_1_2;
+	info.apiVersion = VK_API_VERSION_1_0;
 
 	VkInstanceCreateInfo create_info{};
 	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -110,8 +201,8 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 
 	/* Create image views for the images */
 	this->swapchain_image_views = create_image_views(
-		this->swapchain_images, this->swapchain_image_count,
-		this->swapchain_format, this->device);
+		this->device, this->swapchain_images,
+		this->swapchain_image_count, this->swapchain_format);
 	if (!this->swapchain_image_views)
 		return;
 
@@ -151,7 +242,10 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 		return;
 
 	if (create_sync_objects(this->device, &this->image_avail_sem,
-			      &this->render_finished_sem, &this->in_flight_fences, &this->images_in_flight, swapchain_image_count) != VK_SUCCESS)
+				&this->render_finished_sem,
+				&this->in_flight_fences,
+				&this->images_in_flight,
+				swapchain_image_count) != VK_SUCCESS)
 		return;
 
 	/* Avoid a memory leak */
@@ -172,6 +266,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 {
 	uint image_index;
+	uint err;
 	uint current_frame = 0;
 
 	VkPipelineStageFlags wait_stages[] = {
@@ -180,16 +275,36 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 
 	if (!wnd->should_close) {
 		/* Wait for our fences to complete */
-		vkWaitForFences(this->device, 1, &this->in_flight_fences[current_frame], true, UINT64_MAX);
+		vkWaitForFences(this->device, 1,
+				&this->in_flight_fences[current_frame], true,
+				UINT64_MAX);
 
 		/* Acquire the next image */
-		vkAcquireNextImageKHR(this->device, this->swapchain, UINT64_MAX,
-				      this->image_avail_sem[current_frame], NULL,
-				      &image_index);
+		if (vkAcquireNextImageKHR(
+			    this->device, this->swapchain, UINT64_MAX,
+			    this->image_avail_sem[current_frame], NULL,
+			    &image_index) == VK_ERROR_OUT_OF_DATE_KHR ||
+		    this->swapchain_extent.width != wnd->width ||
+		    this->swapchain_extent.height != wnd->height)
+			recreate_swap_chain(
+				this->physical_device, this->device,
+				this->surface, wnd->width, wnd->height,
+				this->queue_indices, &this->swapchain_format,
+				&this->swapchain_extent,
+				&this->swapchain_images,
+				&this->swapchain_image_count, &this->swapchain,
+				&this->swapchain_image_views,
+				&this->render_pass, vert_path, frag_path,
+				&this->main_pipeline,
+				&this->main_pipeline_layout,
+				&this->framebuffers, this->command_pool,
+				&this->command_buffers);
 
 		/* See whether this image is in use */
 		if (this->images_in_flight[image_index])
-			vkWaitForFences(this->device, 1, &images_in_flight[image_index], true, UINT64_MAX);
+			vkWaitForFences(this->device, 1,
+					&images_in_flight[image_index], true,
+					UINT64_MAX);
 
 		/* Now mark the current image as in use */
 		this->images_in_flight[image_index] =
@@ -199,35 +314,57 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 		VkSubmitInfo submit_info = {};
 		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit_info.waitSemaphoreCount = 1;
-		submit_info.pWaitSemaphores = &this->image_avail_sem[current_frame];
+		submit_info.pWaitSemaphores =
+			&this->image_avail_sem[current_frame];
 		submit_info.pWaitDstStageMask = wait_stages;
 		submit_info.commandBufferCount = 1;
 		submit_info.pCommandBuffers =
 			&this->command_buffers[image_index];
 		submit_info.signalSemaphoreCount = 1;
-		submit_info.pSignalSemaphores = &this->render_finished_sem[current_frame];
+		submit_info.pSignalSemaphores =
+			&this->render_finished_sem[current_frame];
 
 		/* Reset our fences */
 		vkResetFences(this->device, 1,
 			      &this->in_flight_fences[current_frame]);
 
 		/* Submit the command buffer */
-		vkQueueSubmit(this->graphics_queue, 1, &submit_info, this->in_flight_fences[current_frame]);
+		vkQueueSubmit(this->graphics_queue, 1, &submit_info,
+			      this->in_flight_fences[current_frame]);
 
 		VkPresentInfoKHR present_info = {};
 		present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		present_info.waitSemaphoreCount = 1;
-		present_info.pWaitSemaphores = &this->render_finished_sem[current_frame];
+		present_info.pWaitSemaphores =
+			&this->render_finished_sem[current_frame];
 		present_info.swapchainCount = 1;
 		present_info.pSwapchains = &this->swapchain;
 		present_info.pImageIndices = &image_index;
 		present_info.pResults = NULL;
 
 		/* Present the image */
-		vkQueuePresentKHR(this->present_queue, &present_info);
+		err = vkQueuePresentKHR(this->present_queue, &present_info);
+		if (err == VK_ERROR_OUT_OF_DATE_KHR ||
+		    err == VK_SUBOPTIMAL_KHR ||
+		    this->swapchain_extent.width != wnd->width ||
+		    this->swapchain_extent.height != wnd->height)
+			recreate_swap_chain(
+				this->physical_device, this->device,
+				this->surface, wnd->width, wnd->height,
+				this->queue_indices, &this->swapchain_format,
+				&this->swapchain_extent,
+				&this->swapchain_images,
+				&this->swapchain_image_count, &this->swapchain,
+				&this->swapchain_image_views,
+				&this->render_pass, vert_path, frag_path,
+				&this->main_pipeline,
+				&this->main_pipeline_layout,
+				&this->framebuffers, this->command_pool,
+				&this->command_buffers);
 
 		/* Increment the frame */
-		current_frame = (current_frame + 1) % P_VULKAN_MAX_FRAMES_IN_FLIGHT;
+		current_frame =
+			(current_frame + 1) % P_VULKAN_MAX_FRAMES_IN_FLIGHT;
 	}
 
 	vkDeviceWaitIdle(this->device);
@@ -245,7 +382,8 @@ P_EXPORT purpl::vulkan_inst::~vulkan_inst(void)
 			vkDestroySemaphore(this->device,
 					   this->image_avail_sem[i], NULL);
 		if (this->in_flight_fences[i])
-			vkDestroyFence(this->device, this->in_flight_fences[i], NULL);
+			vkDestroyFence(this->device, this->in_flight_fences[i],
+				       NULL);
 	}
 
 	if (this->command_pool)

@@ -67,6 +67,7 @@ VkSwapchainKHR create_a_freaking_swap_chain(
 	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
 	uint current_width, uint current_height,
 	struct queue_family_indices indices, VkFormat *swapchain_format,
-	VkExtent2D *swapchain_extent, VkImage **swapchain_images, uint *image_count);
+	VkExtent2D *swapchain_extent, VkImage **swapchain_images,
+	uint *image_count);
 }
 #endif /* !PURPL_VULKAN_SWAPCHAIN_H */

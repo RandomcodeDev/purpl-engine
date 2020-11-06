@@ -28,7 +28,8 @@ struct queue_family_indices {
  * Retrieves indices of the queue families listed in the queue_family_indices struct, which are necessary for the engine to work correctly.
  * Defined in queuefamily.cc
  */
-struct queue_family_indices find_queue_families(VkPhysicalDevice device, VkSurfaceKHR surface);
+struct queue_family_indices find_queue_families(VkPhysicalDevice device,
+						VkSurfaceKHR surface);
 }
 
 #endif /* !PURPL_VULKAN_QUEUEFAMILY_H */

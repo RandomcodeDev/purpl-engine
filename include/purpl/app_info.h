@@ -11,10 +11,10 @@
 
 #include <json.h>
 
-#include  "log.h"
-#include  "macro.h"
-#include  "types.h"
-#include  "util.h"
+#include "log.h"
+#include "macro.h"
+#include "types.h"
+#include "util.h"
 
 namespace purpl
 {
@@ -53,12 +53,12 @@ class P_EXPORT app_info {
 	 * Defined in app_info.cc
 	 */
 	const char *get_settings_path(void);
-	
+
 	/*
 	 * Sets up the members in order to use the info in the class.
 	 * Defined in app_info.cc
 	 */
-	app_info(const char *fname =  "app.json", ...);
+	app_info(const char *fname = "app.json", ...);
 
 	/* 
 	 * Function pointers that are enabled if P_APPINFO_USERDEF_PARSE/P_APPINFO_USERDEF_VALIDATE are defined.

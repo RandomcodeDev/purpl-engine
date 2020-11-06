@@ -20,6 +20,7 @@ namespace purpl
  * Creates a shader module from the contents of a SPIR-V binary.
  * Defined in spirv.cc
  */
-VkShaderModule create_shader_module(VkDevice device, const char *spirv, uint len);
+VkShaderModule create_shader_module(VkDevice device, const char *spirv,
+				    uint len);
 }
 #endif /* !PURPL_VULKAN_SPIRV_H */

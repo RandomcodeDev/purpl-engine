@@ -17,7 +17,9 @@
 namespace purpl
 {
 /* The validation layers to use for debugging */
-const char enabled_layers[][VK_MAX_EXTENSION_NAME_SIZE] = { "VK_LAYER_KHRONOS_validation" };
+const char enabled_layers[][VK_MAX_EXTENSION_NAME_SIZE] = {
+	"VK_LAYER_KHRONOS_validation"
+};
 
 /*
  * Checks the support for the validation layers requested.

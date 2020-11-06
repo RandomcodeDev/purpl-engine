@@ -57,27 +57,28 @@ class P_EXPORT logger {
 	 * Write a message to the a log file. Sets errno on failure.
 	 * Defined in log.cc 
 	 */
-	void write(uint index, uint level, const char *file, uint line, const char *fmt, ...);
+	void write(uint index, uint level, const char *file, uint line,
+		   const char *fmt, ...);
 
 	/*
 	 * Close a log file. Sets errno on failure. 
 	 * Defined in log.cc 
 	 */
-	void close(uint index, bool write_goodbye, const char *msg, ...); 
+	void close(uint index, bool write_goodbye, const char *msg, ...);
 
 	/*
 	 * Frees the loggers resources and closes the log files.
 	 * Defined in log.cc
 	 */
 	~logger(void);
-    
+
     private:
 	/* The log files that are open. */
 	FILE *logs[P_MAX_LOGS];
-	
+
 	/* The number of log files opened */
 	uint nlogs;
-	
+
 	/*
 	 * The log level for each log file. Any message with a level less than or equal to
 	 * this will be logged, and everything else will be ignored.

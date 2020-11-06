@@ -41,14 +41,16 @@ class P_EXPORT win32_window {
 	 * This creates a window.
 	 * Defined in window.cc
 	 */
-	win32_window(int width = 1024, int height = 600, const char *title = "Purpl Engine", ...);
+	win32_window(int width = 1024, int height = 600,
+		     const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
 	 * Defined in window.cc
 	 */
-	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
+	void update(int width = NULL, int height = NULL,
+		    const char *title = NULL, ...);
 
 	/* 
 	 * Frees the resources for this window.

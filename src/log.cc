@@ -54,7 +54,7 @@ P_EXPORT uint purpl::logger::open(uint initial_level, const char *fname, ...)
 	/* Open the file */
 	this->logs[this->nlogs - 1] = fopen(buf, "wb+");
 	if (!this->logs[this->nlogs - 1]) {
-        this->levels[this->nlogs - 1] = P_DEFAULT_LOG_LEVEL;
+		this->levels[this->nlogs - 1] = P_DEFAULT_LOG_LEVEL;
 		this->logs[this->nlogs - 1] = NULL;
 
 		/* Free our buffer */
@@ -212,8 +212,6 @@ P_EXPORT purpl::logger::~logger(void)
 	/* Close all the open logs */
 	for (i = 0; i < P_MAX_LOGS; i++) {
 		if (this->logs[i])
-			this->close(
-				i, true,
-				msg);
+			this->close(i, true, msg);
 	}
 }

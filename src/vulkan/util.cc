@@ -86,7 +86,8 @@ VkExtensionProperties *purpl::get_vulkan_exts(uint *count)
 		return NULL;
 	}
 
-	*count = ext_count; /* Set the pointer's memory to the number of extensions we found */
+	*count =
+		ext_count; /* Set the pointer's memory to the number of extensions we found */
 	return exts; /* Return the buffer */
 }
 
@@ -170,7 +171,8 @@ char **purpl::check_required_exts_avail(void)
 	return NULL; /* One or both are missing in this case, fail */
 }
 
-VkExtensionProperties *purpl::get_vulkan_device_exts(VkPhysicalDevice device, uint *count)
+VkExtensionProperties *purpl::get_vulkan_device_exts(VkPhysicalDevice device,
+						     uint *count)
 {
 	VkExtensionProperties *exts;
 	uint ext_count;
@@ -181,7 +183,9 @@ VkExtensionProperties *purpl::get_vulkan_device_exts(VkPhysicalDevice device, ui
 		return NULL;
 	}
 
-	err = vkEnumerateDeviceExtensionProperties(device, NULL, &ext_count, NULL); /* Ask how many extensions there are */
+	err = vkEnumerateDeviceExtensionProperties(
+		device, NULL, &ext_count,
+		NULL); /* Ask how many extensions there are */
 	if (err) { /* An error occured, return NULL to indicate this */
 		*count = err;
 		return NULL;
@@ -193,13 +197,15 @@ VkExtensionProperties *purpl::get_vulkan_device_exts(VkPhysicalDevice device, ui
 	if (!exts) /* Usually this doesn't happen */
 		return NULL;
 
-	err = vkEnumerateDeviceExtensionProperties(device, NULL, &ext_count, exts); /* Now fill in the buffer */
+	err = vkEnumerateDeviceExtensionProperties(
+		device, NULL, &ext_count, exts); /* Now fill in the buffer */
 	if (err) {
 		*count = err;
 		return NULL;
 	}
 
-	*count = ext_count; /* Set the pointer's memory to the number of extensions we found */
+	*count =
+		ext_count; /* Set the pointer's memory to the number of extensions we found */
 	return exts; /* Return the buffer */
 }
 

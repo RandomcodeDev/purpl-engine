@@ -40,17 +40,16 @@ extern char frag_path[260]; /* The fragment shader to use */
  * Recreates the swapchain (used when the window resizes).
  * Defined in inst.cc
  */
-VkSwapchainKHR
-recreate_swap_chain(VkPhysicalDevice physical_device, VkDevice device,
-		    VkSurfaceKHR surface, uint new_width, uint new_height,
-		    struct queue_family_indices indices,
-		    VkFormat *swapchain_format, VkExtent2D *swapchain_extent,
-		    VkImage **swapchain_images, uint *image_count, VkSwapchainKHR *swapchain,
-		    VkImageView **image_views, VkRenderPass *render_pass,
-		    const char *vert_shader_path, const char *frag_shader_path,
-		    VkPipeline *pipeline, VkPipelineLayout *pipeline_layout,
-		    VkFramebuffer **framebuffers, VkCommandPool command_pool,
-		    VkCommandBuffer **command_buffers);
+VkSwapchainKHR recreate_swap_chain(
+	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
+	uint new_width, uint new_height, struct queue_family_indices indices,
+	VkFormat *swapchain_format, VkExtent2D *swapchain_extent,
+	VkImage **swapchain_images, uint *image_count,
+	VkSwapchainKHR *swapchain, VkImageView **image_views,
+	VkRenderPass *render_pass, const char *vert_shader_path,
+	const char *frag_shader_path, VkPipeline *pipeline,
+	VkPipelineLayout *pipeline_layout, VkFramebuffer **framebuffers,
+	VkCommandPool command_pool, VkCommandBuffer **command_buffers);
 
 class P_EXPORT vulkan_inst {
     public:

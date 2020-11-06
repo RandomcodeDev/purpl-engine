@@ -106,7 +106,9 @@ purpl::allocate_command_buffers(VkDevice device, VkCommandPool command_pool,
 }
 
 uint purpl::create_sync_objects(VkDevice device, VkSemaphore **image_available,
-			      VkSemaphore **render_finished, VkFence **in_flight, VkFence **images_in_flight, uint image_count)
+				VkSemaphore **render_finished,
+				VkFence **in_flight, VkFence **images_in_flight,
+				uint image_count)
 {
 	VkResult err;
 	uint i;
@@ -117,10 +119,11 @@ uint purpl::create_sync_objects(VkDevice device, VkSemaphore **image_available,
 
 	/* Allocate memory for our semaphores */
 	*image_available = (VkSemaphore *)calloc(P_VULKAN_MAX_FRAMES_IN_FLIGHT,
-						sizeof(VkSemaphore));
+						 sizeof(VkSemaphore));
 	*render_finished = (VkSemaphore *)calloc(P_VULKAN_MAX_FRAMES_IN_FLIGHT,
-						sizeof(VkSemaphore));
-	*in_flight = (VkFence *)calloc(P_VULKAN_MAX_FRAMES_IN_FLIGHT, sizeof(VkFence));
+						 sizeof(VkSemaphore));
+	*in_flight = (VkFence *)calloc(P_VULKAN_MAX_FRAMES_IN_FLIGHT,
+				       sizeof(VkFence));
 	*images_in_flight = (VkFence *)calloc(image_count, sizeof(VkFence));
 
 	VkSemaphoreCreateInfo semaphore_info = {};
@@ -145,7 +148,8 @@ uint purpl::create_sync_objects(VkDevice device, VkSemaphore **image_available,
 		if (err != VK_SUCCESS)
 			return err;
 
-		err = vkCreateFence(device, &fence_info, NULL, *images_in_flight);
+		err = vkCreateFence(device, &fence_info, NULL,
+				    *images_in_flight);
 		if (err != VK_SUCCESS)
 			return err;
 	}

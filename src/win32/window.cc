@@ -28,8 +28,8 @@ LRESULT P_EXPORT CALLBACK purpl::win32_window::wndproc(HWND wnd, UINT msg,
 	return DefWindowProcA(wnd, msg, wparam, lparam);
 }
 
-P_EXPORT purpl::win32_window::win32_window(int width, int height, const char *title,
-					   ...)
+P_EXPORT purpl::win32_window::win32_window(int width, int height,
+					   const char *title, ...)
 {
 	va_list args;
 	char *tmp;
@@ -100,7 +100,8 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 	 * the higher half and width in the lower, so we use P_CONCAT.
 	 */
 	SendMessageA(this->handle, WM_SIZE, NULL,
-			     P_CONCAT((height) ? height : this->height, (width) ? width : this->width, int, long));
+		     P_CONCAT((height) ? height : this->height,
+			      (width) ? width : this->width, int, long));
 	if (title) {
 		/* Format our title string */
 		va_start(args, title);
@@ -136,4 +137,5 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 }
 
 P_EXPORT purpl::win32_window::~win32_window()
-{}
+{
+}

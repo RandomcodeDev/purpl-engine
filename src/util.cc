@@ -27,7 +27,7 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 		errno = ENOMEM;
 		return "";
 	}
-	
+
 	/* Copy the text */
 	vsnprintf(buf, len + 1, fmt, *args);
 

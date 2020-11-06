@@ -15,8 +15,8 @@ char **purpl::get_required_validation_layers(void)
 		return NULL;
 
 	/* Allocate a buffer for the layer query */
-	layers = (VkLayerProperties *)calloc(
-		layer_count, sizeof(VkLayerProperties));
+	layers = (VkLayerProperties *)calloc(layer_count,
+					     sizeof(VkLayerProperties));
 	if (!layers)
 		return NULL;
 
@@ -32,8 +32,8 @@ char **purpl::get_required_validation_layers(void)
 
 	/* Now allocate memory for each of the layer names */
 	for (i = 0; i < P_ARRAYSIZE(enabled_layers); i++) {
-		required_layer_names[i] =
-			(char *)calloc(VK_MAX_EXTENSION_NAME_SIZE, sizeof(char));
+		required_layer_names[i] = (char *)calloc(
+			VK_MAX_EXTENSION_NAME_SIZE, sizeof(char));
 		if (!required_layer_names[i])
 			return NULL;
 	}
@@ -43,7 +43,8 @@ char **purpl::get_required_validation_layers(void)
 		for (j = 0; j < layer_count; j++) {
 			if (strcmp(enabled_layers[i], layers[j].layerName) ==
 			    0) {
-				strcpy(required_layer_names[i], layers[j].layerName);
+				strcpy(required_layer_names[i],
+				       layers[j].layerName);
 				break; /* Avoid extra iterations */
 			}
 		}
@@ -60,9 +61,10 @@ purpl::debug_msg(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
 {
 	if (user_data)
 		((logger *)user_data)
-			->write(((logger *)user_data)->logindex, DEBUG, P_FILENAME,
-				__LINE__, "%s: %s",
-				callback_data->pMessageIdName, callback_data->pMessage);
+			->write(((logger *)user_data)->logindex, DEBUG,
+				P_FILENAME, __LINE__, "%s: %s",
+				callback_data->pMessageIdName,
+				callback_data->pMessage);
 
 	return false;
 }
@@ -73,8 +75,9 @@ VkResult purpl::create_debug_utils_messenger_ext(
 	const VkAllocationCallbacks *allocator,
 	VkDebugUtilsMessengerEXT *debug_messenger)
 {
-	PFN_vkCreateDebugUtilsMessengerEXT func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-		instance, "vkCreateDebugUtilsMessengerEXT");
+	PFN_vkCreateDebugUtilsMessengerEXT func =
+		(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+			instance, "vkCreateDebugUtilsMessengerEXT");
 
 	if (func != NULL)
 		return func(instance, create_info, allocator, debug_messenger);

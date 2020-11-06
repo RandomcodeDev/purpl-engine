@@ -68,14 +68,15 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 					    VK_DYNAMIC_STATE_LINE_WIDTH };
 
 	/* Check the parameters we've gotten */
-	if (!device || !render_pass || !vert_shader_path ||
-	    !frag_shader_path || !pipeline_layout) {
+	if (!device || !render_pass || !vert_shader_path || !frag_shader_path ||
+	    !pipeline_layout) {
 		errno = EINVAL;
 		return NULL;
 	}
 
 #ifndef NDEBUG
-	printf("Using vertex shader \'%s\' and fragment shader \'%s\'\n", vert_shader_path, frag_shader_path);
+	printf("Using vertex shader \'%s\' and fragment shader \'%s\'\n",
+	       vert_shader_path, frag_shader_path);
 #endif
 
 	/* Read our shaders */
@@ -188,10 +189,9 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 
 	/* Color blending config */
 	VkPipelineColorBlendAttachmentState color_blend_attachment = {};
-	color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-						VK_COLOR_COMPONENT_G_BIT |
-						VK_COLOR_COMPONENT_B_BIT |
-						VK_COLOR_COMPONENT_A_BIT;
+	color_blend_attachment.colorWriteMask =
+		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+		VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	color_blend_attachment.blendEnable = true;
 	color_blend_attachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
 	color_blend_attachment.dstColorBlendFactor =

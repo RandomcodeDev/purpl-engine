@@ -8,13 +8,15 @@ Window handle;
 int screen = DefaultScreen(XOpenDisplay(NULL));
 
 /* This function is specifically for checking if the window still exists */
-int check_window_continued_existence(Display * displau, XErrorEvent *error_event)
+int check_window_continued_existence(Display *displau, XErrorEvent *error_event)
 {
-	if (error_event->error_code == BadWindow && error_event->resourceid == handle)
+	if (error_event->error_code == BadWindow &&
+	    error_event->resourceid == handle)
 		should_close = true;
 }
 
-P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title, ...)
+P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
+				       ...)
 {
 	va_list args;
 	char *tmp;
@@ -41,7 +43,11 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	}
 
 	/* Create our window */
-	this->handle = XCreateSimpleWindow(this->display, RootWindow(this->display, screen), 10, 10, width, height, 1, BlackPixel(this->display, screen), WhitePixel(this->display, screen));
+	this->handle = XCreateSimpleWindow(this->display,
+					   RootWindow(this->display, screen),
+					   10, 10, width, height, 1,
+					   BlackPixel(this->display, screen),
+					   WhitePixel(this->display, screen));
 	if (!this->handle) {
 		fprintf(stderr, "Failed to create window\n");
 		return;
@@ -65,7 +71,8 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	this->should_close = should_close;
 }
 
-void P_EXPORT purpl::x11_window::update(int width, int height, const char *title, ...)
+void P_EXPORT purpl::x11_window::update(int width, int height,
+					const char *title, ...)
 {
 	va_list args;
 	char *tmp;
@@ -73,14 +80,17 @@ void P_EXPORT purpl::x11_window::update(int width, int height, const char *title
 	XWindowAttributes window_attrs;
 
 	/* Set the width/height/title of the window */
-	XResizeWindow(this->display, this->handle, (width) ? width : this->width, (height) ? width : this->width);
+	XResizeWindow(this->display, this->handle,
+		      (width) ? width : this->width,
+		      (height) ? width : this->width);
 	if (title) {
 		/* Format our title string */
 		va_start(args, title);
 		tmp = fmt_text_va(title, &args);
 		va_end(args);
 
-		if (strcmp(tmp, "") == 0) { /* This means that fmt_text_va got an invalid string */
+		if (strcmp(tmp, "") ==
+		    0) { /* This means that fmt_text_va got an invalid string */
 			XStoreName(this->display, this->handle, this->title);
 		} else {
 			strcpy(this->title, tmp);

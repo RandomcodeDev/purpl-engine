@@ -11,7 +11,8 @@ VkShaderModule purpl::create_shader_module(VkDevice device, const char *spirv,
 	module_create_info.codeSize = len;
 	module_create_info.pCode = (u32 *)spirv;
 
-	if (vkCreateShaderModule(device, &module_create_info, NULL, &shader) != VK_SUCCESS)
+	if (vkCreateShaderModule(device, &module_create_info, NULL, &shader) !=
+	    VK_SUCCESS)
 		return NULL;
 
 	return shader;

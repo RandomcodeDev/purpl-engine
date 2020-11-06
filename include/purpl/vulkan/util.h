@@ -44,7 +44,7 @@ char **check_required_exts_avail(void);
  * Defined in util.cc
  */
 VkExtensionProperties *get_vulkan_device_exts(VkPhysicalDevice device,
-						     uint *count);
+					      uint *count);
 
 /*
  * Checks if the required device extensions are present (VK_KHR_swapchain)

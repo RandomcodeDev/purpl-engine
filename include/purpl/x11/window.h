@@ -21,9 +21,10 @@
 #include "purpl/types.h"
 #include "purpl/util.h"
 
-namespace purpl{
+namespace purpl
+{
 class P_EXPORT x11_window {
-public:
+    public:
 	Display *display; /* The display that our window is using */
 	Window handle; /* The native handle for the actual window. Only use this for platfrom specific code */
 	XEvent win_queue; /* The queue of events for the window. Only use this for platform specific code */
@@ -36,14 +37,16 @@ public:
 	 * This creates the window.
 	 * Defined in window.cc
 	 */
-	x11_window(int width = 1024, int height = 600, const char *title = "Purpl Engine", ...);
+	x11_window(int width = 1024, int height = 600,
+		   const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
 	 * Defined in window.cc
 	 */
-	void update(int width = NULL, int height = NULL, const char *title = NULL, ...);
+	void update(int width = NULL, int height = NULL,
+		    const char *title = NULL, ...);
 
 	/*
 	 * Frees the resources for this window.

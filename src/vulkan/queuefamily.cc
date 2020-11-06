@@ -1,15 +1,18 @@
 #include "purpl/vulkan/queuefamily.h"
 using namespace purpl;
 
-struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device, VkSurfaceKHR surface)
+struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device,
+						       VkSurfaceKHR surface)
 {
 	VkQueueFamilyProperties *queue_families;
-	struct queue_family_indices indices{};
+	struct queue_family_indices indices {
+	};
 	uint queue_family_count = 0;
 	uint i;
 
 	/* Get the number of devices */
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, NULL);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count,
+						 NULL);
 	if (!queue_family_count) {
 		indices.graphics_family = 0;
 		indices.has_graphics_family = false;
@@ -19,8 +22,8 @@ struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device, 
 	}
 
 	/* Allocate a buffer */
-	queue_families =
-		(VkQueueFamilyProperties *)calloc(queue_family_count, sizeof(VkQueueFamilyProperties));
+	queue_families = (VkQueueFamilyProperties *)calloc(
+		queue_family_count, sizeof(VkQueueFamilyProperties));
 	if (!queue_families) { /* Check our buffer */
 		indices.graphics_family = 0;
 		indices.has_graphics_family = false;
@@ -34,13 +37,16 @@ struct queue_family_indices purpl::find_queue_families(VkPhysicalDevice device, 
 						 queue_families);
 
 	/* Check for the ones we need */
-	for (i = 0; i < queue_family_count && !indices.has_graphics_family && !indices.has_present_family; i++) {
+	for (i = 0; i < queue_family_count && !indices.has_graphics_family &&
+		    !indices.has_present_family;
+	     i++) {
 		if (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 			indices.graphics_family = i;
 			indices.has_graphics_family = true;
 		}
 
-		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &indices.has_present_family);
+		vkGetPhysicalDeviceSurfaceSupportKHR(
+			device, i, surface, &indices.has_present_family);
 		if (indices.has_present_family) {
 			indices.present_family = i;
 			indices.has_present_family = true;

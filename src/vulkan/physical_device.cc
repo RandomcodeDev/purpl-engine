@@ -12,7 +12,8 @@ uint purpl::score_device(VkPhysicalDevice device)
 	vkGetPhysicalDeviceFeatures(device, &device_features);
 
 	/* Discrete GPUs can't possibly be worse than iGPUs, so make sure that's reflected */
-	if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+	if (device_properties.deviceType ==
+	    VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 		score += 1000;
 
 	/* We just want the max texture resolution and some other stuff, we don't need the rest */
@@ -23,14 +24,18 @@ uint purpl::score_device(VkPhysicalDevice device)
 	score += device_properties.limits.maxComputeSharedMemorySize;
 
 #ifndef NDEBUG
-	printf("Device \'%s\' has a score of %d\n", device_properties.deviceName,
+	printf("Device \'%s\' has a score of %d\n",
+	       device_properties.deviceName,
 	       score); /* Print the scores of the devices in debug mode */
 #endif
 
 	return score;
 }
 
-VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR surface, struct queue_family_indices *indices, struct swapchain_details *details)
+VkPhysicalDevice
+purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR surface,
+			      struct queue_family_indices *indices,
+			      struct swapchain_details *details)
 {
 	uint i;
 	uint device_count;
@@ -44,7 +49,8 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR sur
 		return NULL;
 
 	/* Allocate a buffer for our device handles */
-	devices = (VkPhysicalDevice *)calloc(device_count, sizeof(VkPhysicalDevice));
+	devices = (VkPhysicalDevice *)calloc(device_count,
+					     sizeof(VkPhysicalDevice));
 	if (!devices) {
 		errno = ENOMEM;
 		return NULL;
@@ -55,7 +61,7 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR sur
 
 	*indices = find_queue_families(devices[0], surface);
 	*details = get_swapchain_details(devices[0], surface);
-	
+
 	/* Check our first device */
 	best_score = score_device(devices[0]);
 	best = devices[0];
@@ -63,7 +69,7 @@ VkPhysicalDevice purpl::locate_suitable_device(VkInstance inst, VkSurfaceKHR sur
 	/* Now find the best device */
 	for (i = 1; i < device_count; i++) {
 		uint last_score;
-		
+
 		/* Prevent a device without the necessary queue families from being chosen */
 		*indices = find_queue_families(devices[i], surface);
 		if (!indices->has_graphics_family ||

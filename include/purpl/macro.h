@@ -30,7 +30,8 @@
 #endif
 
 /* The base name and extension of the current file. */
-#if _WIN32 && _MSC_VER /* This isn't guaranteed to work, but it should cover it */
+#if _WIN32 && \
+	_MSC_VER /* This isn't guaranteed to work, but it should cover it */
 #define P_FILENAME \
 	(strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else

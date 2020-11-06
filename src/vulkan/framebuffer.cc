@@ -35,7 +35,8 @@ VkFramebuffer *purpl::create_framebuffers(VkDevice device,
 	for (i = 0; i < image_view_count; i++) {
 		framebuffer_info.pAttachments = &image_views[i];
 
-		if (vkCreateFramebuffer(device, &framebuffer_info, NULL, &buffers[i]) != VK_SUCCESS)
+		if (vkCreateFramebuffer(device, &framebuffer_info, NULL,
+					&buffers[i]) != VK_SUCCESS)
 			return NULL;
 	}
 

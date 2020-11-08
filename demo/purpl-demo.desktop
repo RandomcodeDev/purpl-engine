@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Purpl Demo
+Comment=Demo of the Purpl game engine
+Exec=purpl-demo
+Icon=purpl.ico
+Terminal=true
+Type=Application
+Categories=Miscellaneous;
+

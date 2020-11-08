@@ -37,7 +37,7 @@ extern char vert_path[260]; /* The vertex shader to use */
 extern char frag_path[260]; /* The fragment shader to use */
 
 /*
- * Recreates the swapchain (used when the window resizes).
+ * Recreates the swapchain (used when the window resizes and the like).
  * Defined in inst.cc
  */
 VkSwapchainKHR recreate_swap_chain(

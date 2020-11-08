@@ -35,6 +35,9 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	/* Free the memory from fmt_text_va */
 	free(tmp);
 
+	/* Initialize threading so X11 doesn't freak out when we pass our window over to Vulkan */ 
+	XInitThreads();
+
 	/* Open the display */
 	this->display = XOpenDisplay(NULL);
 	if (!this->display) {
@@ -80,9 +83,10 @@ void P_EXPORT purpl::x11_window::update(int width, int height,
 	XWindowAttributes window_attrs;
 
 	/* Set the width/height/title of the window */
-	XResizeWindow(this->display, this->handle,
-		      (width) ? width : this->width,
-		      (height) ? width : this->width);
+	if (width)
+		XResizeWindow(this->display, this->handle, width, this->height);
+	if (height)
+		XResizeWindow(this->display, this->handle, this->width, height);
 	if (title) {
 		/* Format our title string */
 		va_start(args, title);

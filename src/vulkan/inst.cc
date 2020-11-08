@@ -285,7 +285,7 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 			    this->image_avail_sem[current_frame], NULL,
 			    &image_index) == VK_ERROR_OUT_OF_DATE_KHR ||
 		    this->swapchain_extent.width != wnd->width ||
-		    this->swapchain_extent.height != wnd->height)
+		    this->swapchain_extent.height != wnd->height) {
 			recreate_swap_chain(
 				this->physical_device, this->device,
 				this->surface, wnd->width, wnd->height,
@@ -299,6 +299,9 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 				&this->main_pipeline_layout,
 				&this->framebuffers, this->command_pool,
 				&this->command_buffers);
+
+			return;
+		}
 
 		/* See whether this image is in use */
 		if (this->images_in_flight[image_index])
@@ -347,7 +350,7 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 		if (err == VK_ERROR_OUT_OF_DATE_KHR ||
 		    err == VK_SUBOPTIMAL_KHR ||
 		    this->swapchain_extent.width != wnd->width ||
-		    this->swapchain_extent.height != wnd->height)
+		    this->swapchain_extent.height != wnd->height) {
 			recreate_swap_chain(
 				this->physical_device, this->device,
 				this->surface, wnd->width, wnd->height,
@@ -361,6 +364,9 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 				&this->main_pipeline_layout,
 				&this->framebuffers, this->command_pool,
 				&this->command_buffers);
+
+			return;
+		}
 
 		/* Increment the frame */
 		current_frame =

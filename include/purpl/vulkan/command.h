@@ -45,12 +45,6 @@ allocate_command_buffers(VkDevice device, VkCommandPool command_pool,
 uint create_sync_objects(VkDevice device, VkSemaphore **image_available,
 			 VkSemaphore **render_finished, VkFence **in_flight,
 			 VkFence **images_in_flight, uint image_count);
-
-/*
- * Renders a buffer.
- * Defined in command.cc
- */
-//uint draw_buffer(VkRenderPass render_pass, VkExtent2D extent, VkFramebuffer *framebuffers, VkCommandBuffer *command_buffers, VkPipeline pipeline, vec4 *vert_buffer, vec4 *color_buffer, int vert_count);
 }
 
 #endif /* !PURPL_VULKAN_COMMAND_POOL_H */

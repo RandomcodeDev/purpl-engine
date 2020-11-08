@@ -29,6 +29,7 @@ set(PURPL_WIN32_HEADERS
 )
 
 set(PURPL_VULKAN_SOURCES
+	vulkan/buffer.cc
 	vulkan/command.cc
 	vulkan/debug.cc
 	vulkan/framebuffer.cc
@@ -45,6 +46,7 @@ set(PURPL_VULKAN_SOURCES
 )
 
 set(PURPL_VULKAN_HEADERS
+	../include/purpl/vulkan/buffer.h
 	../include/purpl/vulkan/command.h
 	../include/purpl/vulkan/debug.h
 	../include/purpl/vulkan/framebuffer.h

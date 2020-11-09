@@ -6,7 +6,8 @@ You need the Vulkan SDK. Assuming you have it, you can run the following command
 git submodule init
 git submodule update
 
-cmake -S. -Bbuild
+# Only Vulkan is supported at the moment
+cmake -S. -Bbuild -DPURPL_GRAPHICS_API=VULKAN -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 

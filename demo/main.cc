@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	uint logindex = 0;
 
 	/* Create a new engine instance, passing the constructors for the arguments as is the preferred way of using this constructor */
-	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo"), true);
+	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo"), true, "triangle_predef.vert", "triangle.frag");
 
 	/* Ensure we have the correct log index */
 	logindex = inst.info->logindex;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	/* Our main loop */
 	while (inst.is_active) {
 		/* TODO: add graphics usage/ImGui menus to demonstrate available features */
-		
+
 		inst.update();
 	}
 

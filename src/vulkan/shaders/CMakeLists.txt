@@ -14,7 +14,7 @@ else()
 	set(GLSL_COMPILER "$ENV{VULKAN_SDK}/bin/glslc")
 endif()
 
-set(PURPL_SHADER_SOURCES triangle.frag triangle.vert)
+set(PURPL_SHADER_SOURCES triangle.frag triangle.vert triangle_predef.vert)
 
 foreach(CURRENT_FILE ${PURPL_SHADER_SOURCES})
 	get_filename_component(CURRENT_FILE_NAME ${CURRENT_FILE} NAME)

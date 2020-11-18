@@ -18,3 +18,5 @@ Adapt these guidelines to fit the circumstances: https://www.kernel.org/doc/html
 
 ### API
 See the `docs/api*.md` files, and also look at the demo's code, as it has some useful comments. Also, I try my best to put explanatory comments stating what each bit of code does in the various functions, so look at those. [`docs/design.md`](docs/design.md) goes over its design.
+
+Note that this project is maintained by a 13-year-old, so there may be some significant bugs/oversights.

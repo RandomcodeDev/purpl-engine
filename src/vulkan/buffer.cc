@@ -11,8 +11,9 @@ VkVertexInputBindingDescription purpl::get_vert_input_binding_desc(struct vert_i
 	return binding_description;
 }
 
-VkVertexInputAttributeDescription *purpl::get_vert_input_attrib_desc(struct vert_info vert)
+VkVertexInputAttributeDescription *purpl::get_vert_input_attrib_descs(struct vert_info vert)
 {
 	VkVertexInputAttributeDescription *attrib_descs = {};
 
+	return attrib_descs;
 }

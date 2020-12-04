@@ -8,18 +8,22 @@ project(
 # Building the demo should be the default
 option(PURPL_BUILD_DEMO "Whether to build the demo" ON)
 
-find_package(Vulkan REQUIRED)
-find_package(X11 REQUIRED)
+find_package(Vulkan)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	find_package(X11 REQUIRED)
+endif()
 
 if(${Vulkan_FOUND})
 	set(VULKAN_LIBRARIES ${Vulkan_LIBRARIES})
 	set(PURPL_GRAPHICS_API "VULKAN")
+else()
+	find_package(OpenGL)
 endif()
 
 include_directories(include ${Vulkan_INCLUDE_DIRS})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DP_USE_${PURPL_GRAPHICS_API}_GFX"
-)# MSVC does, in fact, support these arguments
+list(APPEND CMAKE_CXX_FLAGS "-O2 -DP_USE_${PURPL_GRAPHICS_API}_GFX") # MSVC does, in fact, support these arguments
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	include_directories($ENV{UniversalCRTSdkDir}/include/ucrt)

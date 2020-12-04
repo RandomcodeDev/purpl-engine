@@ -28,6 +28,14 @@ set(PURPL_WIN32_HEADERS
 	../include/purpl/win32/window.h
 )
 
+set(PURPL_WIN32_OPENGL_SOURCES
+	win32/opengl.cc
+)
+
+set(PURPL_WIN32_OPENGL_HEADERS
+	../include/purpl/win32/opengl.h
+)
+
 set(PURPL_VULKAN_SOURCES
 	vulkan/buffer.cc
 	vulkan/command.cc
@@ -72,18 +80,32 @@ set(PURPL_X11_HEADERS
 	../include/purpl/x11/window.h
 )
 
-set(PURPL_SOURCES ${PURPL_COMMON_SOURCES} ${PURPL_${PURPL_GRAPHICS_API}_SOURCES})
-set(PURPL_HEADERS ${PURPL_COMMON_HEADERS} ${PURPL_${PURPL_GRAPHICS_API}_HEADERS})
+set(PURPL_SOURCES ${PURPL_COMMON_SOURCES})
+set(PURPL_HEADERS ${PURPL_COMMON_HEADERS})
+
+if(${PURPL_GRAPHICS_API} STREQUAL "VULKAN")
+	list(APPEND PURPL_SOURCES ${PURPL_VULKAN_SOURCES})
+	list(APPEND PURPL_HEADERS ${PURPL_VULKAN_HEADERS})
+	source_group("Vulkan" FILES ${PURPL_VULKAN_SOURCES} ${PURPL_VULKAN_HEADERS})
+endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 	list(APPEND PURPL_SOURCES ${PURPL_WIN32_SOURCES})
 	list(APPEND PURPL_HEADERS ${PURPL_WIN32_HEADERS})
+	source_group("Platform" FILES ${PURPL_WIN32_SOURCES} ${PURPL_WIN32_HEADERS})
+
+	if(${PURPL_GRAPHICS_API} STREQUAL "OPENGL")
+		list(APPEND PURPL_SOURCES ${PURPL_WIN32_OPENGL_SOURCES})
+		list(APPEND PURPL_SOURCES ${PURPL_WIN32_OPENGL_HEADERS})
+		source_group("OpenGL" FILES ${PURPL_WIN32_OPENGL_SOURCES} ${PURPL_WIN32_OPENGL_HEADERS})
+	endif()
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	list(APPEND PURPL_SOURCES ${PURPL_X11_SOURCES})
 	list(APPEND PURPL_HEADERS ${PURPL_X11_HEADERS})
+	source_group("Platform" FILES ${PURPL_X11_SOURCES} ${PURPL_X11_HEADERS})
 endif()
 
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})
@@ -94,11 +116,11 @@ endif()
 
 target_link_libraries(purpl cglm imgui json-c)
 
-if(${PURPL_GRAPHICS_API} MATCHES "VULKAN")
+if(${PURPL_GRAPHICS_API} STREQUAL "VULKAN")
 	target_link_libraries(purpl ${Vulkan_LIBRARIES})
 endif()
 
-if(${PURPL_GRAPHICS_API} MATCHES "VULKAN")
+if(${PURPL_GRAPHICS_API} STREQUAL "VULKAN")
 	add_subdirectory(vulkan/shaders)
 	add_dependencies(purpl purpl_vulkan_shaders)
 else()
@@ -110,9 +132,12 @@ else()
 )
 endif()
 
-add_custom_command(
-	TARGET purpl
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl>
-	${CMAKE_BINARY_DIR}/demo
-)
+# Copy the library for the engine so the demo can run
+if(${PURPL_BUILD_DEMO})
+	add_custom_command(
+		TARGET purpl
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:purpl>
+		${CMAKE_BINARY_DIR}/demo
+	)
+endif()

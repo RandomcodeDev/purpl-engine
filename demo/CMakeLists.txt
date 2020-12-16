@@ -20,3 +20,8 @@ add_custom_command(
 	TARGET purpl-demo POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_LIST_DIR}/app.json $<TARGET_FILE:purpl-demo> $<TARGET_FILE:cglm> $<TARGET_FILE:imgui> $<TARGET_FILE:json-c> ${CMAKE_CURRENT_LIST_DIR}/res/purpl.ico ${CMAKE_CURRENT_LIST_DIR}/purpl-demo.desktop ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+add_custom_command(
+	TARGET purpl-demo POST_BUILD
+	COMMAND "echo asdf > ${CMAKE_CURRENT_BINARY_DIR}/test"
+)

@@ -8,8 +8,8 @@
 int main(int argc, char *argv[])
 {
 	FILE *fp;
-	char *test_file;
-	size_t test_file_len;
+	char *test_file = NULL;
+	size_t test_file_len = 0;
 	
 	/* Seed the RNG for our window title and a log message */
 	srand((uint)time(NULL));
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	uint logindex = 0;
 
 	/* Create a new engine instance, passing the constructors for the arguments as is the preferred way of using this constructor */
-	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo (a random number: %d)", rand() % 10, true, "triangle_predef.vert", "triangle.frag"));
+	purpl::engine_inst inst = purpl::engine_inst(new purpl::app_info(), new purpl::window(1024, 600, "Purpl Demo (a random number: %d)", rand() % 10), true, "triangle_predef.vert", "triangle.frag");
 
 	/* Ensure we have the correct log index */
 	logindex = inst.info->logindex;

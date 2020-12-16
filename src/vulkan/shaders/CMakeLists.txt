@@ -45,3 +45,5 @@ add_custom_command(
 	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_BINARY_DIR}/shaders"
 	"${CMAKE_BINARY_DIR}/demo/res/shaders" DEPENDS purpl_vulkan_shaders
 )
+
+source_group("Source Files" FILES ${PURPL_SHADER_SOURCES})

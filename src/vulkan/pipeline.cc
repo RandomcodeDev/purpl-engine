@@ -61,8 +61,8 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 	VkShaderModule frag_shader;
 	char *vert_shader_bytecode;
 	char *frag_shader_bytecode;
-	uint vert_shader_len;
-	uint frag_shader_len;
+	size_t vert_shader_len;
+	size_t frag_shader_len;
 
 	VkDynamicState dynamic_states[] = { VK_DYNAMIC_STATE_VIEWPORT,
 					    VK_DYNAMIC_STATE_LINE_WIDTH };
@@ -80,8 +80,8 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 #endif
 
 	/* Read our shaders */
-	vert_shader_bytecode = read_file(vert_shader_path, &vert_shader_len);
-	frag_shader_bytecode = read_file(frag_shader_path, &frag_shader_len);
+	vert_shader_bytecode = read_file(vert_shader_path, false, &vert_shader_len);
+	frag_shader_bytecode = read_file(frag_shader_path, false, &frag_shader_len);
 
 	/* Check that we succeeded in reading the shaders */
 	if (!vert_shader_bytecode || !frag_shader_bytecode ||
@@ -98,7 +98,7 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 	if (!vert_shader || !frag_shader)
 		return NULL;
 
-	/* Free our shader file contents, we don't need them */
+	/* Free our shader file contents, we don't need them anymore */
 	free(vert_shader_bytecode);
 	free(frag_shader_bytecode);
 

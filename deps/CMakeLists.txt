@@ -24,4 +24,4 @@ add_subdirectory(cglm)
 add_subdirectory(json-c)
 
 include_directories(cglm/include imgui imgui/examples
-		    ${CMAKE_CURRENT_BINARY_DIR}/deps/json-c/ json-c/include)
+		    ${CMAKE_CURRENT_BINARY_DIR}/deps/json-c/ json-c/include stb)

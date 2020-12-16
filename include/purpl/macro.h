@@ -18,6 +18,12 @@
 #define P_CONCAT(hi, lo, type, target) \
 	((target)((hi) << (sizeof(type) << 3)) | (lo))
 
+/* Gets the higher half of a value */
+#define HIGH(val, target) ((target)((val) >> (sizeof(val) << 3)))
+
+/* Gets the lower half of a value */
+#define LOW(val, target) ((target)((val) & ((1 << (sizeof(val) << 3)) - 1)))
+
 #ifdef _MSC_VER
 #define P_EXPORT __declspec(dllexport)
 #else
@@ -31,7 +37,7 @@
 
 /* The base name and extension of the current file. */
 #if _WIN32 && \
-	_MSC_VER /* This isn't guaranteed to work, but it should cover it */
+	_MSC_VER /* MSVC is the only Windows compiler that uses backslashes in __FILE__ */
 #define P_FILENAME \
 	(strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else

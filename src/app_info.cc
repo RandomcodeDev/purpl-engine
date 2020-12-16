@@ -7,7 +7,7 @@ bool P_EXPORT purpl::app_info::parse(void)
 	char *json;
 
 	/* Get the file's contents */
-	json = read_file_fp(this->fp, NULL);
+	json = load_file_fp(this->fp, false, NULL);
 	if (!json)
 		return false;
 

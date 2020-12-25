@@ -32,5 +32,5 @@ with open(name, 'wb+') as file:
     symbol = name.replace('include/', '').replace('include\\', '').replace('.',
                                                   '_').replace('/', '_').replace('\\', '_').upper()
     contents = bytes(
-        F"#pragma once\n\n#ifndef {symbol}\n#define {symbol}\n\n#endif /* !{symbol} */\n", encoding='utf8')
+        F"#pragma once\n\n#ifndef {symbol}\n#define {symbol} 1\n\n#endif /* !{symbol} */\n", encoding='utf8')
     file.write(contents)

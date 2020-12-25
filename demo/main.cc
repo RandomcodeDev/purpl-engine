@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	FILE *fp;
 	char *test_file = NULL;
 	size_t test_file_len = 0;
-	
+
 	/* Seed the RNG for our window title and a log message */
 	srand((uint)time(NULL));
 

@@ -91,7 +91,7 @@ int purpl::map_file(FILE *fp, size_t *len_ret, char **buf)
 	mapped = (char *)MapViewOfFile(mapping, FILE_MAP_WRITE, 0, 0, len);
 #elif __linux__
 	/* This is way simpler than Win32 */
-	mapped = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
+	mapped = (char *)mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
 	if (!mapped)
 		return EIO;
 #endif

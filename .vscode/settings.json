@@ -12,6 +12,6 @@
 	"*.rh": "cpp"
 },
     "clangd.arguments": [
-        "--compile-commands-dir=purpl-engine/build"
+        "--compile-commands-dir=/home/mobslicer152/builds/purpl-engine"
     ]
 }

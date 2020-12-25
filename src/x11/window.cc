@@ -7,14 +7,6 @@ Window handle;
 /* Get the default screen */
 int screen = DefaultScreen(XOpenDisplay(NULL));
 
-/* This function is specifically for checking if the window still exists */
-int check_window_continued_existence(Display *displau, XErrorEvent *error_event)
-{
-	if (error_event->error_code == BadWindow &&
-	    error_event->resourceid == handle)
-		should_close = true;
-}
-
 P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 				       ...)
 {
@@ -35,7 +27,7 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	/* Free the memory from fmt_text_va */
 	free(tmp);
 
-	/* Initialize threading so X11 doesn't freak out when we pass our window over to Vulkan */ 
+	/* Initialize threading so X11 doesn't freak out when we pass our window over to Vulkan */
 	XInitThreads();
 
 	/* Open the display */
@@ -57,9 +49,6 @@ P_EXPORT purpl::x11_window::x11_window(int width, int height, const char *title,
 	}
 
 	handle = this->handle;
-
-	/* Ensure we have a decent chance of knowing the window is dead */
-	XSetErrorHandler(check_window_continued_existence);
 
 	/* Set the window's title */
 	XStoreName(this->display, this->handle, this->title);
@@ -114,6 +103,15 @@ void P_EXPORT purpl::x11_window::update(int width, int height,
 	/* Process events */
 	XNextEvent(this->display, &this->win_queue);
 	switch (this->win_queue.type) {
+	case ClientMessage:
+		/* This checks if the window is being deleted, borrowed from GLFW */
+		if (this->win_queue.xclient.message_type == 
+		    XInternAtom(XOpenDisplay(NULL), "WM_PROTOCOLS", 0))
+			if (this->win_queue.xclient.data.l[0] ==
+			    XInternAtom(XOpenDisplay(NULL), "WM_DELETE_WINDOW", 0))
+				should_close = true;
+
+
 	default:
 		break;
 	}

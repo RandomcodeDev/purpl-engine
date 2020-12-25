@@ -22,6 +22,9 @@
 		 * Dear Microsoft, nobody cares about ISO compliance as long as we can
 		 * write portable code. Developers only hate you for not being POSIX compliant!
 		 */
+#elif __linux__
+#include <unistd.h>
+#include <sys/mman.h>
 #endif /* _WIN32 */
 
 #include "macro.h"
@@ -29,7 +32,7 @@
 
 namespace purpl
 {
-/* 
+/*
  * The buffers returned by these functions last until you free them,
  * and if you don't you get a memory leak.
  */

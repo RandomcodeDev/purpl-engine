@@ -48,12 +48,10 @@ VkRenderPass purpl::create_render_pass(VkDevice device, VkFormat image_format)
 	return render_pass;
 }
 
-VkPipeline purpl::create_graphics_pipeline(VkDevice device,
-					   VkExtent2D viewport_extent,
-					   VkRenderPass render_pass,
-					   const char *vert_shader_path,
-					   const char *frag_shader_path,
-					   VkPipelineLayout *pipeline_layout)
+VkPipeline purpl::create_graphics_pipeline(
+	VkDevice device, VkExtent2D viewport_extent, VkRenderPass render_pass,
+	const char *vert_shader_path, const char *frag_shader_path,
+	VkPipelineLayout *pipeline_layout)
 {
 	VkPipeline pipeline;
 	VkPipelineShaderStageCreateInfo shader_stages[2];
@@ -63,13 +61,14 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 	char *frag_shader_bytecode;
 	size_t vert_shader_len;
 	size_t frag_shader_len;
+	size_t i;
 
 	VkDynamicState dynamic_states[] = { VK_DYNAMIC_STATE_VIEWPORT,
 					    VK_DYNAMIC_STATE_LINE_WIDTH };
 
 	/* Check the parameters we've gotten */
 	if (!device || !render_pass || !vert_shader_path || !frag_shader_path ||
-	    !pipeline_layout) {
+	    !verts || !vert_count || !pipeline_layout) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -80,8 +79,10 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 #endif
 
 	/* Read our shaders */
-	vert_shader_bytecode = read_file(vert_shader_path, false, &vert_shader_len);
-	frag_shader_bytecode = read_file(frag_shader_path, false, &frag_shader_len);
+	vert_shader_bytecode =
+		read_file(vert_shader_path, false, &vert_shader_len);
+	frag_shader_bytecode =
+		read_file(frag_shader_path, false, &frag_shader_len);
 
 	/* Check that we succeeded in reading the shaders */
 	if (!vert_shader_bytecode || !frag_shader_bytecode ||
@@ -123,13 +124,18 @@ VkPipeline purpl::create_graphics_pipeline(VkDevice device,
 	shader_stages[1] = frag_shader_stage_info;
 
 	/* Now set up the vertex input */
+	VkVertexInputBindingDescription vert_binding_desc =
+		get_vert_input_binding_desc();
+	VkVertexInputAttributeDescription *vert_attrib_descs =
+		get_vert_input_attrib_descs();
+
 	VkPipelineVertexInputStateCreateInfo vert_input_info = {};
 	vert_input_info.sType =
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vert_input_info.vertexBindingDescriptionCount = 0;
-	vert_input_info.pVertexBindingDescriptions = NULL;
-	vert_input_info.vertexAttributeDescriptionCount = 0;
-	vert_input_info.pVertexAttributeDescriptions = NULL;
+	vert_input_info.vertexBindingDescriptionCount = 1;
+	vert_input_info.pVertexBindingDescriptions = &vert_binding_desc;
+	vert_input_info.vertexAttributeDescriptionCount = 2;
+	vert_input_info.pVertexAttributeDescriptions = vert_attrib_descs;
 
 	/* Tell Vulkan we're drawing triangles */
 	VkPipelineInputAssemblyStateCreateInfo input_asm_info = {};

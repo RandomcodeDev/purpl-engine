@@ -7,7 +7,9 @@ char purpl::frag_path[260];
 P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd,
 					 bool write_hello,
 					 const char *vert_shader_name,
-					 const char *frag_shader_name)
+					 const char *frag_shader_name,
+					 struct vert_info *verts,
+					 size_t vert_count)
 {
 	this->is_active = false;
 
@@ -46,7 +48,7 @@ P_EXPORT void purpl::engine_inst::update(int width, int height,
 {
 	va_list args;
 
-	/* Call the window's update function, more to come later but that's it for now */
+	/* Call the window's update function */
 	va_start(args, title);
 	this->wnd->update(width, height, fmt_text_va(title, &args));
 	va_end(args);

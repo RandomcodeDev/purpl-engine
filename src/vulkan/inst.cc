@@ -8,20 +8,22 @@ VkSwapchainKHR purpl::recreate_swap_chain(
 	VkImage **swapchain_images, uint *image_count,
 	VkSwapchainKHR *swapchain, VkImageView **image_views,
 	VkRenderPass *render_pass, const char *vert_shader_path,
-	const char *frag_shader_path, VkPipeline *pipeline,
+	const char *frag_shader_path, struct vert_info *verts,
+	size_t vert_count, VkPipeline *pipeline,
 	VkPipelineLayout *pipeline_layout, VkFramebuffer **framebuffers,
 	VkCommandPool command_pool, VkCommandBuffer **command_buffers)
 {
 	uint i;
 
-	/* Check all 19 of our parameters */
+	/* Check all 21 of our parameters */
 	if (!physical_device || !device || !surface || !new_width ||
 	    !new_height || !indices.has_graphics_family ||
 	    !indices.has_present_family || !swapchain_format ||
 	    !swapchain_extent || !swapchain_images || !image_count ||
 	    !swapchain || !image_views || !render_pass || !vert_shader_path ||
-	    !frag_shader_path || !pipeline || !pipeline_layout ||
-	    !framebuffers || !command_pool || !command_buffers) {
+	    !frag_shader_path || !verts || !vert_count || !pipeline ||
+	    !pipeline_layout || !framebuffers || !command_pool ||
+	    !command_buffers) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -92,7 +94,8 @@ VkSwapchainKHR purpl::recreate_swap_chain(
 	return *swapchain;
 }
 
-P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
+P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd, struct vert_info *verts,
+					 size_t vert_count)
 {
 	uint i;
 	char **required_exts;
@@ -215,7 +218,8 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	/* Now make a graphics pipeline */
 	this->main_pipeline = create_graphics_pipeline(
 		this->device, this->swapchain_extent, this->render_pass,
-		vert_path, frag_path, &this->main_pipeline_layout);
+		vert_path, frag_path,
+		&this->main_pipeline_layout);
 	if (!this->main_pipeline || !this->main_pipeline_layout)
 		return;
 
@@ -263,7 +267,8 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 	this->is_active = true;
 }
 
-void P_EXPORT purpl::vulkan_inst::update(window *wnd)
+void P_EXPORT purpl::vulkan_inst::update(window *wnd, struct vert_info *verts,
+					 size_t vert_count)
 {
 	uint image_index;
 	uint err;
@@ -294,8 +299,8 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 				&this->swapchain_images,
 				&this->swapchain_image_count, &this->swapchain,
 				&this->swapchain_image_views,
-				&this->render_pass, vert_path, frag_path,
-				&this->main_pipeline,
+				&this->render_pass, vert_path, frag_path, verts,
+				vert_count, &this->main_pipeline,
 				&this->main_pipeline_layout,
 				&this->framebuffers, this->command_pool,
 				&this->command_buffers);
@@ -359,8 +364,7 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 				&this->swapchain_images,
 				&this->swapchain_image_count, &this->swapchain,
 				&this->swapchain_image_views,
-				&this->render_pass, vert_path, frag_path,
-				&this->main_pipeline,
+				&this->render_pass, vert_path, frag_path, &this->main_pipeline,
 				&this->main_pipeline_layout,
 				&this->framebuffers, this->command_pool,
 				&this->command_buffers);

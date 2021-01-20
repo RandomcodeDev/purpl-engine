@@ -3,6 +3,7 @@
 #ifndef PURPL_VULKAN_GRAPHICS_H
 #define PURPL_VULKAN_GRAPHICS_H
 
+#include "buffer.h"
 #include "command.h"
 
 /* Validation layers, which are only needed if we're built in debug mode */
@@ -10,6 +11,7 @@
 #include "debug.h"
 #endif
 
+#include "framebuffer.h"
 #include "image.h"
 #include "inst.h"
 #include "logical_device.h"

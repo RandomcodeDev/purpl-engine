@@ -16,13 +16,6 @@ LRESULT P_EXPORT CALLBACK purpl::win32_window::wndproc(HWND wnd, UINT msg,
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
-	case WM_PAINT:
-		PAINTSTRUCT paint;
-		HDC hdc = BeginPaint(wnd, &paint);
-
-		//FillRect(hdc, &paint.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-
-		EndPaint(wnd, &paint);
 	}
 
 	return DefWindowProcA(wnd, msg, wparam, lparam);
@@ -136,6 +129,6 @@ void P_EXPORT purpl::win32_window::update(int width, int height,
 	DispatchMessageA(&win_queue);
 }
 
-P_EXPORT purpl::win32_window::~win32_window()
+P_EXPORT purpl::win32_window::~win32_window(void)
 {
 }

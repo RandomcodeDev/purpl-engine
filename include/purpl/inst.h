@@ -9,6 +9,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include <cglm/call.h>
+
 #include "app_info.h"
 #include "graphics.h"
 #include "log.h"
@@ -32,18 +34,18 @@ class P_EXPORT engine_inst {
 	 * If you want the defaults pass new <class name>().
 	 * Defined in inst.cc
 	 */
-	engine_inst(app_info *info = new app_info(), window *wnd = new window(),
-		    bool write_hello = true,
-		    const char *vert_shader_name = "triangle.vert",
-		    const char *frag_shader_name = "triangle.frag");
+	engine_inst(app_info *info, window *wnd,
+		    bool write_hello,
+		    const char *vert_shader_name,
+		    const char *frag_shader_name, struct vert_info *verts, size_t vert_count);
 
 	/*
 	 * Updates the instance (window, graphics, etc.).
 	 * Call this in a while loop with is_active as the condition to make your instance loop.
 	 * Defined in inst.cc
 	 */
-	void update(int width = NULL, int height = NULL,
-		    const char *title = NULL, ...);
+	void update(int width, int height, struct vert_info *verts,
+		    size_t vert_count, const char *title, ...);
 
 	/*
 	 * Cleans up after the instance;

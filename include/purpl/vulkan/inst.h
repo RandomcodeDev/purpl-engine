@@ -42,12 +42,13 @@ extern char frag_path[260]; /* The fragment shader to use */
  */
 VkSwapchainKHR recreate_swap_chain(
 	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
-	uint new_width, uint new_height, struct queue_family_indices indices,
+	uint new_width, uint new_height, queue_family_indices indices,
 	VkFormat *swapchain_format, VkExtent2D *swapchain_extent,
 	VkImage **swapchain_images, uint *image_count,
 	VkSwapchainKHR *swapchain, VkImageView **image_views,
 	VkRenderPass *render_pass, const char *vert_shader_path,
-	const char *frag_shader_path, VkPipeline *pipeline,
+	const char *frag_shader_path, struct vert_info *verts,
+	size_t vert_count, VkPipeline *pipeline,
 	VkPipelineLayout *pipeline_layout, VkFramebuffer **framebuffers,
 	VkCommandPool command_pool, VkCommandBuffer **command_buffers);
 
@@ -60,13 +61,13 @@ class P_EXPORT vulkan_inst {
 	 * Initializes *everything* for the instance.
 	 * Defined in inst.cc
 	 */
-	vulkan_inst(window *wnd);
+	vulkan_inst(window *wnd, struct vert_info *verts, size_t vert_count);
 
 	/*
 	 * Does some stuff to present rendered images.
 	 * Defined in inst.cc
 	 */
-	void update(window *wnd);
+	void update(window *wnd, struct vert_info *verts, size_t vert_count);
 
 	/*
 	 * Cleans up the instance;

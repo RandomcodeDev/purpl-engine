@@ -7,9 +7,7 @@ char purpl::frag_path[260];
 P_EXPORT purpl::engine_inst::engine_inst(app_info *info, window *wnd,
 					 bool write_hello,
 					 const char *vert_shader_name,
-					 const char *frag_shader_name,
-					 struct vert_info *verts,
-					 size_t vert_count)
+					 const char *frag_shader_name)
 {
 	this->is_active = false;
 
@@ -55,10 +53,7 @@ P_EXPORT void purpl::engine_inst::update(int width, int height,
 
 	this->gfx->update(this->wnd);
 
-	if (this->wnd->should_close || !this->gfx->is_active)
-		this->is_active = false;
-	else
-		this->is_active = true;
+	this->is_active = !this->wnd->should_close && this->gfx->is_active;
 }
 
 P_EXPORT purpl::engine_inst::~engine_inst(void)

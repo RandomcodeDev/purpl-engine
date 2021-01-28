@@ -8,8 +8,7 @@ VkSwapchainKHR purpl::recreate_swap_chain(
 	VkImage **swapchain_images, uint *image_count,
 	VkSwapchainKHR *swapchain, VkImageView **image_views,
 	VkRenderPass *render_pass, const char *vert_shader_path,
-	const char *frag_shader_path, struct vert_info *verts,
-	size_t vert_count, VkPipeline *pipeline,
+	const char *frag_shader_path, VkPipeline *pipeline,
 	VkPipelineLayout *pipeline_layout, VkFramebuffer **framebuffers,
 	VkCommandPool command_pool, VkCommandBuffer **command_buffers)
 {
@@ -21,7 +20,7 @@ VkSwapchainKHR purpl::recreate_swap_chain(
 	    !indices.has_present_family || !swapchain_format ||
 	    !swapchain_extent || !swapchain_images || !image_count ||
 	    !swapchain || !image_views || !render_pass || !vert_shader_path ||
-	    !frag_shader_path || !verts || !vert_count || !pipeline ||
+	    !frag_shader_path || !pipeline ||
 	    !pipeline_layout || !framebuffers || !command_pool ||
 	    !command_buffers) {
 		errno = EINVAL;
@@ -94,8 +93,7 @@ VkSwapchainKHR purpl::recreate_swap_chain(
 	return *swapchain;
 }
 
-P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd, struct vert_info *verts,
-					 size_t vert_count)
+P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd)
 {
 	uint i;
 	char **required_exts;
@@ -267,8 +265,7 @@ P_EXPORT purpl::vulkan_inst::vulkan_inst(window *wnd, struct vert_info *verts,
 	this->is_active = true;
 }
 
-void P_EXPORT purpl::vulkan_inst::update(window *wnd, struct vert_info *verts,
-					 size_t vert_count)
+void P_EXPORT purpl::vulkan_inst::update(window *wnd)
 {
 	uint image_index;
 	uint err;
@@ -299,8 +296,7 @@ void P_EXPORT purpl::vulkan_inst::update(window *wnd, struct vert_info *verts,
 				&this->swapchain_images,
 				&this->swapchain_image_count, &this->swapchain,
 				&this->swapchain_image_views,
-				&this->render_pass, vert_path, frag_path, verts,
-				vert_count, &this->main_pipeline,
+				&this->render_pass, vert_path, frag_path, &this->main_pipeline,
 				&this->main_pipeline_layout,
 				&this->framebuffers, this->command_pool,
 				&this->command_buffers);

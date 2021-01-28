@@ -19,10 +19,10 @@
 	((target)((hi) << (sizeof(type) << 3)) | (lo))
 
 /* Gets the higher half of a value */
-#define HIGH(val, target) ((target)((val) >> (sizeof(val) << 3)))
+#define P_HIGH(val, target) ((target)((val) >> (sizeof(val) << 3)))
 
 /* Gets the lower half of a value */
-#define LOW(val, target) ((target)((val) & ((1 << (sizeof(val) << 3)) - 1)))
+#define P_LOW(val, target) ((target)((val) & ((1 << (sizeof(val) << 3)) - 1)))
 
 #ifdef _MSC_VER
 #define P_EXPORT __declspec(dllexport)
@@ -31,7 +31,10 @@
 #endif
 
 #ifdef _MSC_VER
+#pragma warning(disable : 4820)
 #pragma warning(disable : 4996)
+#pragma warning(disable : 26452)
+#pragma warning(disable : 26495)
 #pragma warning(disable : 26812)
 #endif
 

@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	uint logindex = 0;
 
 	/* The vertices for the triangle */
-	triangle = (struct purpl::vert_info *)calloc(
+	/*triangle = (struct purpl::vert_info *)calloc(
 		3, sizeof(struct purpl::vert_info));
 	triangle[0].pos[0] = 0.0;
 	triangle[0].pos[1] = -0.5;
@@ -41,20 +41,20 @@ int main(int argc, char *argv[])
 	for (i = 0; i < 3; i++) {
 		triangle[i].colour[i] = 1;
 		triangle[i].colour[3] = 1;
-	}
+	}*/
 
 	/* Create a new engine instance, passing the constructors for the arguments as is the preferred way of using this constructor */
 	purpl::engine_inst inst = purpl::engine_inst(
 		new purpl::app_info(),
 		new purpl::window(1024, 600, "Purpl Demo"), true,
-		"triangle.vert", "triangle.frag", triangle, 3);
+		"triangle.vert", "triangle.frag");
 
 	/* Ensure we have the correct log index */
 	logindex = inst.info->logindex;
 
 	/* Write a message into the log */
 	inst.info->log->write(logindex, INFO, P_FILENAME, __LINE__,
-			      "Another random number: %d", rand() % 10);
+			      "A random number: %d", rand() % 10);
 
 	/* Open our test file */
 	fp = fopen("test", "rb+");
@@ -77,8 +77,7 @@ int main(int argc, char *argv[])
 	while (inst.is_active) {
 		/* TODO: add graphics usage/ImGui menus to demonstrate available features */
 
-		inst.update(inst.wnd->width, inst.wnd->height, triangle, 3,
-			    "Purpl Demo (%llu)", time(NULL));
+		inst.update(inst.wnd->width, inst.wnd->height, "Purpl Demo (%llu)", time(NULL));
 	}
 
 	return 0;

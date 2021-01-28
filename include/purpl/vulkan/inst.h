@@ -8,10 +8,11 @@
 #include <string.h>
 #include <errno.h>
 
+#include "purpl/macro.h"
+
 #include <vulkan/vulkan.h>
 
 #include "purpl/log.h"
-#include "purpl/macro.h"
 #include "purpl/types.h"
 #include "purpl/window.h"
 
@@ -47,8 +48,7 @@ VkSwapchainKHR recreate_swap_chain(
 	VkImage **swapchain_images, uint *image_count,
 	VkSwapchainKHR *swapchain, VkImageView **image_views,
 	VkRenderPass *render_pass, const char *vert_shader_path,
-	const char *frag_shader_path, struct vert_info *verts,
-	size_t vert_count, VkPipeline *pipeline,
+	const char *frag_shader_path, VkPipeline *pipeline,
 	VkPipelineLayout *pipeline_layout, VkFramebuffer **framebuffers,
 	VkCommandPool command_pool, VkCommandBuffer **command_buffers);
 
@@ -61,13 +61,13 @@ class P_EXPORT vulkan_inst {
 	 * Initializes *everything* for the instance.
 	 * Defined in inst.cc
 	 */
-	vulkan_inst(window *wnd, struct vert_info *verts, size_t vert_count);
+	vulkan_inst(window *wnd);
 
 	/*
 	 * Does some stuff to present rendered images.
 	 * Defined in inst.cc
 	 */
-	void update(window *wnd, struct vert_info *verts, size_t vert_count);
+	void update(window *wnd);
 
 	/*
 	 * Cleans up the instance;

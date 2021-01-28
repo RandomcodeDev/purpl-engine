@@ -37,15 +37,14 @@ class P_EXPORT engine_inst {
 	engine_inst(app_info *info, window *wnd,
 		    bool write_hello,
 		    const char *vert_shader_name,
-		    const char *frag_shader_name, struct vert_info *verts, size_t vert_count);
+		    const char *frag_shader_name);
 
 	/*
 	 * Updates the instance (window, graphics, etc.).
 	 * Call this in a while loop with is_active as the condition to make your instance loop.
 	 * Defined in inst.cc
 	 */
-	void update(int width, int height, struct vert_info *verts,
-		    size_t vert_count, const char *title, ...);
+	void update(int width, int height, const char *title, ...);
 
 	/*
 	 * Cleans up after the instance;

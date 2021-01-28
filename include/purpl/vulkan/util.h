@@ -9,9 +9,9 @@
 #include <string.h>
 #include <errno.h>
 
-#include <vulkan/vulkan.h>
-
 #include "purpl/macro.h"
+
+#include <vulkan/vulkan.h>
 
 #include "macro.h"
 

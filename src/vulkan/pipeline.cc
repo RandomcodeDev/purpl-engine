@@ -67,8 +67,7 @@ VkPipeline purpl::create_graphics_pipeline(
 					    VK_DYNAMIC_STATE_LINE_WIDTH };
 
 	/* Check the parameters we've gotten */
-	if (!device || !render_pass || !vert_shader_path || !frag_shader_path ||
-	    !verts || !vert_count || !pipeline_layout) {
+	if (!device || !render_pass || !vert_shader_path || !frag_shader_path || !pipeline_layout) {
 		errno = EINVAL;
 		return NULL;
 	}

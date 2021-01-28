@@ -6,7 +6,7 @@ purpl::get_vert_input_binding_desc(void)
 {
 	VkVertexInputBindingDescription binding_desc = {};
 	binding_desc.binding = 0;
-	binding_desc.stride = sizeof(vert);
+	binding_desc.stride = sizeof(struct vert_info);
 	binding_desc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	return binding_desc;

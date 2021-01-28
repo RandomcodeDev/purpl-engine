@@ -36,6 +36,22 @@ set(PURPL_WIN32_OPENGL_HEADERS
 	../include/purpl/win32/opengl.h
 )
 
+set(PURPL_X11_SOURCES
+	x11/window.cc
+)
+
+set(PURPL_X11_HEADERS
+	../include/purpl/x11/window.h
+)
+
+set(PURPL_X11_OPENGL_SOURCES
+	x11/opengl.cc
+)
+
+set(PURPL_X11_OPENGL_HEADERS
+	../include/purpl/x11/opengl.h
+)
+
 set(PURPL_VULKAN_SOURCES
 	vulkan/buffer.cc
 	vulkan/command.cc
@@ -72,14 +88,6 @@ set(PURPL_VULKAN_HEADERS
 	../include/purpl/vulkan/vulkan_graphics.h
 )
 
-set(PURPL_X11_SOURCES
-	x11/window.cc
-)
-
-set(PURPL_X11_HEADERS
-	../include/purpl/x11/window.h
-)
-
 set(PURPL_SOURCES ${PURPL_COMMON_SOURCES})
 set(PURPL_HEADERS ${PURPL_COMMON_HEADERS})
 
@@ -95,7 +103,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	list(APPEND PURPL_SOURCES ${PURPL_WIN32_SOURCES})
 	list(APPEND PURPL_HEADERS ${PURPL_WIN32_HEADERS})
 	source_group("Windows" FILES ${PURPL_WIN32_SOURCES} ${PURPL_WIN32_HEADERS})
-	
+
 	if(${PURPL_GRAPHICS_API} STREQUAL "OPENGL")
 		list(APPEND PURPL_SOURCES ${PURPL_WIN32_OPENGL_SOURCES})
 		list(APPEND PURPL_SOURCES ${PURPL_WIN32_OPENGL_HEADERS})
@@ -107,8 +115,15 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	list(APPEND PURPL_SOURCES ${PURPL_X11_SOURCES})
 	list(APPEND PURPL_HEADERS ${PURPL_X11_HEADERS})
 	source_group("Linux" FILES ${PURPL_X11_SOURCES} ${PURPL_X11_HEADERS})
+
+	if(${PURPL_GRAPHICS_API} STREQUAL "OPENGL")
+		list(APPEND PURPL_SOURCES ${PURPL_X11_OPENGL_SOURCES})
+		list(APPEND PURPL_SOURCES ${PURPL_X11_OPENGL_HEADERS})
+		source_group("Linux/OpenGL" FILES ${PURPL_X11_OPENGL_SOURCES} ${PURPL_X11_OPENGL_HEADERS})
+	endif()
 endif()
 
+# This is intended to be the only shared library.
 add_library(purpl SHARED ${PURPL_SOURCES} ${PURPL_HEADERS})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -119,6 +134,12 @@ target_link_libraries(purpl cglm imgui json-c)
 
 if(${PURPL_GRAPHICS_API} STREQUAL "VULKAN")
 	target_link_libraries(purpl ${Vulkan_LIBRARIES})
+elseif(${PURPL_GRAPHICS_API} STREQUAL "OPENGL")
+	target_link_libraries(purpl OpenGL::OpenGL)
+
+	if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+		target_link_libraries(purpl OpenGL::GLX)
+	endif()
 endif()
 
 if(${PURPL_GRAPHICS_API} STREQUAL "VULKAN")

@@ -11,9 +11,10 @@
 
 #include <cglm/types.h>
 
+#include "purpl/macro.h"
+
 #include <vulkan/vulkan.h>
 
-#include "purpl/macro.h"
 #include "purpl/types.h"
 #include "purpl/util.h"
 

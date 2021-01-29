@@ -1,5 +1,12 @@
 #include "purpl/util.h"
 
+/*
+ * Because we use these functions here, say
+ * that the implementations should be put here
+ */
+#define STB_SPRINTF_IMPLEMENTATION
+#include <stb_sprintf.h>
+
 char *purpl::fmt_text_va(const char *fmt, va_list *args)
 {
 	va_list tmpargs;
@@ -16,11 +23,11 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 
 	va_copy(tmpargs, *args);
 
-	len = vsnprintf(
+	len = stbsp_vsnprintf(
 		NULL, 0, fmt,
 		tmpargs); /* printf and co. return the number of bytes they _would_ write */
 	if (len < 0)
-		len = P_MAX_TXT_BUF;
+		len = P_MAX_TXT_BUF; /* This is a failsafe because this function is used everywhere */
 
 	buf = (char *)calloc(len + 2, sizeof(char));
 	if (!buf) {
@@ -29,7 +36,7 @@ char *purpl::fmt_text_va(const char *fmt, va_list *args)
 	}
 
 	/* Copy the text */
-	vsnprintf(buf, len + 1, fmt, *args);
+	stbsp_vsnprintf(buf, len + 1, fmt, *args);
 
 	return buf;
 }
@@ -63,12 +70,12 @@ int purpl::map_file(FILE *fp, size_t *len_ret, char **buf)
 
 	/*
 	 * For the mapping process, we need a file descriptor, which is, somehow,
-	 * both platform independent and always necessary.
+	 * both platform independent and always necessary, which was unexpected.
 	 */
 	fd = fileno(fp);
 
 	/*
-	 * This next bit deals with the fact that this involves a system call.
+	 * This next bit deals with the fact that this involves a system call type of thing.
 	 * The process is to get the length and a file descriptor/handle from fp,
 	 * then do the system call to map the file here.
 	 */
@@ -167,7 +174,7 @@ char *purpl::load_file_fp(FILE *fp, bool map, size_t *len_ret)
 	return buf;
 }
 
-char *purpl::read_file(const char *name, bool map, size_t *len_ret)
+char *purpl::load_file(const char *name, bool map, size_t *len_ret)
 {
 	FILE *fp;
 

@@ -12,11 +12,11 @@ cmake -S. -Bbuild -DPURPL_GRAPHICS_API=VULKAN -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-___NOTE: In order to get the dependencies, you have to clone the repo with Git, otherwise you have to manually clone the individual repos into the `deps/` folder.
+___NOTE: In order to get the dependencies, you have to clone the repo with Git, otherwise you have to manually clone the individual repos into the `deps/` folder.___
 
-NOTE 2: Run `make`/`mingw32-make` in `deps/glew/auto` to generate the GLEW sources when you're building the OpenGL version of the engine
+___NOTE 2: Run `make`/`mingw32-make` in `deps/glew/auto` to generate the GLEW sources when you're building the OpenGL version of the engine___
 
-NOTE 3: Make sure to put the repo and your build directory somewhere with execute permissions when you're building on Linux___
+___NOTE 3: Make sure to put the repo and your build directory somewhere with execute permissions when you're building on Linux___
 
 ### Supported graphics API names
 This table has the values to set `PURPL_GRAPHICS_API` to that will be recognized:

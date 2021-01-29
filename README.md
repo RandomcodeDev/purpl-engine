@@ -16,9 +16,7 @@ ___NOTE: In order to get the dependencies, you have to clone the repo with Git, 
 
 NOTE 2: Run `make`/`mingw32-make` in `deps/glew/auto` to generate the GLEW sources when you're building the OpenGL version of the engine
 
-NOTE 3: Make sure to put the repo and your build directory somewhere with execute permissions when you're building on Linux
-___
-
+NOTE 3: Make sure to put the repo and your build directory somewhere with execute permissions when you're building on Linux___
 
 ### Supported graphics API names
 This table has the values to set `PURPL_GRAPHICS_API` to that will be recognized:

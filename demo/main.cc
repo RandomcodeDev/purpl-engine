@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	while (inst.is_active) {
 		/* TODO: add graphics usage/ImGui menus to demonstrate available features */
 
-		inst.update(inst.wnd->width, inst.wnd->height, "Purpl Demo (%llu)", time(NULL));
+		inst.update(inst.wnd->width, inst.wnd->height, "Purpl Demo (%b)", time(NULL));
 	}
 
 	return 0;

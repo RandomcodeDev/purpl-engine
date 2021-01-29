@@ -41,8 +41,7 @@ endif()
 set(CMAKE_CXX_FLAGS "-O2 -Wall -DP_USE_${PURPL_GRAPHICS_API}_GFX") # MSVC does, in fact, support these arguments
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	include_directories($ENV{UniversalCRTSdkDir}/include/ucrt)
-	include_directories(
+	include_directories($ENV{UniversalCRTSdkDir}/include/ucrt 
 		$ENV{UniversalCRTSdkDir}/include/${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}/ucrt
 	)
 endif()

@@ -25,10 +25,7 @@ struct queue_family_indices {
 	uint has_present_family; /* Whether we have a present family (int rather than bool for Vulkan reasons) */
 };
 
-/*
- * Retrieves indices of the queue families listed in the queue_family_indices struct, which are necessary for the engine to work correctly.
- * Defined in queuefamily.cc
- */
+/* Retrieves indices of the queue families listed in the queue_family_indices struct, which are necessary for the engine to work correctly. */
 struct queue_family_indices find_queue_families(VkPhysicalDevice device,
 						VkSurfaceKHR surface);
 }

@@ -33,25 +33,18 @@ class P_EXPORT x11_window {
 	uint height;
 	char title[90]; /* A buffer of arbitrary length for the window title */
 
-	/*
-	 * This creates the window.
-	 * Defined in window.cc
-	 */
+	/* This creates the window. */
 	x11_window(int width = 1024, int height = 600,
 		   const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
-	 * Defined in window.cc
 	 */
 	void update(int width = NULL, int height = NULL,
 		    const char *title = NULL, ...);
 
-	/*
-	 * Frees the resources for this window.
-	 * Defined in window.cc
-	 */
+	/* Frees the resources for this window. */
 	~x11_window(void);
 };
 }

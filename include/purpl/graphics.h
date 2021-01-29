@@ -11,7 +11,7 @@ namespace purpl
 typedef purpl::vulkan_inst gfx_inst;
 }
 #elif defined(P_USE_OPENGL_GFX)
-#include "opengl/opengl.h"
+#include "opengl/opengl_graphics.h"
 
 #if defined _WIN32 || defined __linux__
 namespace purpl

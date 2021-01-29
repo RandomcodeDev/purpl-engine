@@ -20,16 +20,10 @@
 
 namespace purpl
 {
-/*
- * Scores a device based on its available features.
- * Defined in device.cc
- */
+/* Scores a device based on its available features. */
 uint score_device(VkPhysicalDevice device);
 
-/*
- * Returns a pointer to the highest ranking device capable of rendering, or NULL if one can't be fount.
- * Defined in device.cc
- */
+/* Returns a pointer to the highest ranking device capable of rendering, or NULL if one can't be fount. */
 VkPhysicalDevice locate_suitable_device(VkInstance inst, VkSurfaceKHR surface,
 					struct queue_family_indices *indices,
 					struct swapchain_details *details);

@@ -30,32 +30,22 @@ class P_EXPORT win32_window {
 	uint height; /* Current height */
 	char title[P_WIN32_WINDOW_TEXT_MAX]; /* Current title */
 
-	/*
-	 * The window procedure.
-	 * Defined in window.cc
-	 */
+	/* The window procedure. */
 	static LRESULT CALLBACK wndproc(HWND window, uint msg, WPARAM wparam,
 					LPARAM lparam);
 
-	/* 
-	 * This creates a window.
-	 * Defined in window.cc
-	 */
+	/* This creates a window. */
 	win32_window(int width = 1024, int height = 600,
 		     const char *title = "Purpl Engine", ...);
 
 	/*
 	 * Updates the window.
 	 * Pass NULL for any of the parameters to leave it unchanged/use the default.
-	 * Defined in window.cc
 	 */
 	void update(int width = NULL, int height = NULL,
 		    const char *title = NULL, ...);
 
-	/* 
-	 * Frees the resources for this window.
-	 * Defined in window.cc
-	 */
+	/* Frees the resources for this window. */
 	~win32_window(void);
 };
 }

@@ -29,10 +29,7 @@
 
 namespace purpl
 {
-/*
- * Handles the creation of a surface suitable for rendering to.
- * Defined in surface.cc
- */
+/* Handles the creation of a surface suitable for rendering to. */
 VkSurfaceKHR create_surface(VkInstance instance, window *wnd);
 }
 

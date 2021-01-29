@@ -26,16 +26,10 @@ struct vert_info {
 	vec4 colour;
 };
 
-/*
- * Gets the binding description for a vertex input buffer.
- * Defined in buffer.cc
- */
+/* Gets the binding description for a vertex input buffer. */
 VkVertexInputBindingDescription get_vert_input_binding_desc(void);
 
-/*
- * Gets the attribute descriptions for a vertex input buffer.
- * Defined in buffer.cc
- */
+/* Gets the attribute descriptions for a vertex input buffer. */
 VkVertexInputAttributeDescription *get_vert_input_attrib_descs(void);
 }
 

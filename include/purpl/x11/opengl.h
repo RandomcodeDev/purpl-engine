@@ -22,7 +22,11 @@
 
 namespace purpl {
 class P_EXPORT x11_opengl_inst {
+    public:
+	/* Used to indicate whether the instance is alive */
+	bool is_active;
 
+	/
 };
 }
 

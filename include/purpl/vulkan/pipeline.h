@@ -20,16 +20,10 @@
 
 namespace purpl
 {
-/*
- * Creates a render pass.
- * Defined in pipeline.cc
- */
+/* Creates a render pass. */
 VkRenderPass create_render_pass(VkDevice device, VkFormat image_format);
 
-/*
- * Creates a graphics pipeline.
- * Defined in pipeline.cc
- */
+/* Creates a graphics pipeline. */
 VkPipeline create_graphics_pipeline(
 	VkDevice device, VkExtent2D viewport_extent, VkRenderPass render_pass,
 	const char *vert_shader_path, const char *frag_shader_path,

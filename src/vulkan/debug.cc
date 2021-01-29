@@ -2,6 +2,10 @@
 #include "purpl/vulkan/inst.h"
 using namespace purpl;
 
+char enabled_layers[][VK_MAX_EXTENSION_NAME_SIZE] = {
+	"VK_LAYER_KHRONOS_validation"
+};
+
 char **purpl::get_required_validation_layers(void)
 {
 	uint i, j;

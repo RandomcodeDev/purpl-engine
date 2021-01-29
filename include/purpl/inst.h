@@ -32,7 +32,7 @@ class P_EXPORT engine_inst {
 	 * Basically to correctly do this you just have
 	 * to pass new <class name>(<custom args>) for each constructor argument.
 	 * If you want the defaults pass new <class name>().
-	 * Defined in inst.cc
+	
 	 */
 	engine_inst(app_info *info, window *wnd,
 		    bool write_hello,
@@ -42,14 +42,10 @@ class P_EXPORT engine_inst {
 	/*
 	 * Updates the instance (window, graphics, etc.).
 	 * Call this in a while loop with is_active as the condition to make your instance loop.
-	 * Defined in inst.cc
 	 */
 	void update(int width, int height, const char *title, ...);
 
-	/*
-	 * Cleans up after the instance;
-	 * Defined in inst.cc
-	 */
+	/* Cleans up after the instance */
 	~engine_inst(void);
 };
 }

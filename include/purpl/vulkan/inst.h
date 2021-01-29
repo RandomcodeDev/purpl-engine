@@ -37,10 +37,7 @@ namespace purpl
 extern char vert_path[260]; /* The vertex shader to use */
 extern char frag_path[260]; /* The fragment shader to use */
 
-/*
- * Recreates the swapchain (used when the window resizes and the like).
- * Defined in inst.cc
- */
+/* Recreates the swapchain (used when the window resizes and the like). */
 VkSwapchainKHR recreate_swap_chain(
 	VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface,
 	uint new_width, uint new_height, queue_family_indices indices,
@@ -57,22 +54,13 @@ class P_EXPORT vulkan_inst {
 	/* Used to indicate whether instance is alive */
 	bool is_active;
 
-	/*
-	 * Initializes *everything* for the instance.
-	 * Defined in inst.cc
-	 */
+	/* Initializes *everything* for the instance. */
 	vulkan_inst(window *wnd);
 
-	/*
-	 * Does some stuff to present rendered images.
-	 * Defined in inst.cc
-	 */
+	/* Does some stuff to present rendered images. */
 	void update(window *wnd);
 
-	/*
-	 * Cleans up the instance;
-	 * Defined in inst.cc
-	 */
+	/* Cleans up the instance */
 	~vulkan_inst(void);
 
     private:

@@ -25,10 +25,7 @@
 
 namespace purpl
 {
-/*
- * Creates a logical device with the specified queue families.
- * Defined in logical_device.cc
- */
+/* Creates a logical device with the specified queue families. */
 VkDevice create_logical_device(VkPhysicalDevice physical_device,
 			       struct queue_family_indices indices,
 			       VkQueue *graphics_queue_handle,

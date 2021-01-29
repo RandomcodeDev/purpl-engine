@@ -22,27 +22,18 @@
 
 namespace purpl
 {
-/*
- * Creates a command pool for rendering.
- * Defined in command.cc
- */
+/* Creates a command pool for rendering. */
 VkCommandPool create_command_pool(VkDevice device,
 				  struct queue_family_indices indices);
 
-/*
- * Allocates command buffers for rendering.
- * Defined in command.cc
- */
+/* Allocates command buffers for rendering. */
 VkCommandBuffer *
 allocate_command_buffers(VkDevice device, VkCommandPool command_pool,
 			 uint buffer_count, VkRenderPass render_pass,
 			 VkFramebuffer *framebuffers, VkExtent2D extent,
 			 VkPipeline pipeline);
 
-/*
- * Creates the semaphores for synchronizing presentation steps.
- * Defined in command.cc
- */
+/* Creates the semaphores for synchronizing presentation steps. */
 uint create_sync_objects(VkDevice device, VkSemaphore **image_available,
 			 VkSemaphore **render_finished, VkFence **in_flight,
 			 VkFence **images_in_flight, uint image_count);

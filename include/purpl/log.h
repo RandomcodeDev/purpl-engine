@@ -35,16 +35,10 @@ class P_EXPORT logger {
 	/* The initial log file */
 	uint logindex;
 
-	/*
-	 * Starts the logger instance.
-	 * Defined in log.cc
-	 */
+	/* Starts the logger instance. */
 	logger(uint *index, uint initial_level, const char *fname, ...);
 
-	/*
-	 * Opens another log file. Returns an error code on failure.
-	 * Defined in log.cc
-	 */
+	/* Opens another log file. Returns an error code on failure. */
 	uint open(uint initial_level, const char *fname, ...);
 
 	/* Retrieve the level of the specified index */
@@ -53,23 +47,14 @@ class P_EXPORT logger {
 	/* Set the level of the specified index */
 	void set_level(uint index, uint level);
 
-	/*
-	 * Write a message to the a log file. Sets errno on failure.
-	 * Defined in log.cc 
-	 */
+	/* Write a message to the a log file. Sets errno on failure. */
 	void write(uint index, uint level, const char *file, uint line,
 		   const char *fmt, ...);
 
-	/*
-	 * Close a log file. Sets errno on failure. 
-	 * Defined in log.cc 
-	 */
+	/* Close a log file. Sets errno on failure. */
 	void close(uint index, bool write_goodbye, const char *msg, ...);
 
-	/*
-	 * Frees the loggers resources and closes the log files.
-	 * Defined in log.cc
-	 */
+	/* Frees the logger's resources and closes the log files. */
 	~logger(void);
 
     private:

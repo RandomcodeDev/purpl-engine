@@ -17,10 +17,7 @@
 
 namespace purpl
 {
-/*
- * Creates framebuffers from the supplied image views.
- * Defined in framebuffer.cc
- */
+/* Creates framebuffers from the supplied image views. */
 VkFramebuffer *create_framebuffers(VkDevice device, VkImageView *image_views,
 				   uint image_view_count, VkExtent2D extent,
 				   VkRenderPass render_pass);

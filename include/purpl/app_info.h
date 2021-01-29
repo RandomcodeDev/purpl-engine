@@ -24,46 +24,25 @@ class P_EXPORT app_info {
 	logger *log;
 	FILE *fp;
 
-	/* 
-	 * Parses the JSON file.
-	 * Defined in app_info.cc
-	 */
+	/* Parses the JSON file. */
 	bool parse(void);
 
-	/*
-	 * Ensures the JSON fields are correct.
-	 * Defined in app_info.cc
-	 */
+	/* Ensures the JSON fields are correct. */
 	bool validate(void);
 
-	/* 
-	 * Gets the resource path.
-	 * Defined in app_info.cc
-	 */
+	/* Gets the resource path. */
 	const char *get_res_path(void);
 
-	/* 
-	 * Gets the log path.
-	 * Defined in app_info.cc
-	 */
+	/* Gets the log path. */
 	const char *get_log_path(void);
 
-	/* 
-	 * Gets the settings path
-	 * Defined in app_info.cc
-	 */
+	/* Gets the settings path */
 	const char *get_settings_path(void);
 
-	/*
-	 * Sets up the members in order to use the info in the class.
-	 * Defined in app_info.cc
-	 */
+	/* Sets up the members in order to use the info in the class. */
 	app_info(const char *fname = "app.json", ...);
 
-	/* 
-	 * Function pointers that are enabled if P_APPINFO_USERDEF_PARSE/P_APPINFO_USERDEF_VALIDATE are defined.
-	 * Defined in app_info.cc
-	 */
+	/* Function pointers that are enabled if P_APPINFO_USERDEF_PARSE/P_APPINFO_USERDEF_VALIDATE are defined. */
 #ifdef P_APPINFO_USERDEF_PARSE
 	bool (*userdef_parse)(void);
 #endif /* P_APPINFO_PARSE */

@@ -1,5 +1,7 @@
 # purpl-engine
 
+## This repo is abandoned, for its replacement see [https://github.com/MobSlicer152/purpl-engine]()
+
 ### Build instructions
 You need the Vulkan SDK if you're building the Vulkan version of the engine, otherwise you need the headers for WGL/GLX and the other OpenGL headers. Assuming you have that stuff, you can run the following commands:
 ```bash

@@ -314,6 +314,16 @@ typedef struct RENDER_SYSTEM_INTERFACE
     (*DestroyFont)(
         _In_ PRENDER_FONT Font
         );
+
+    VOID
+    (*DrawGlyph)(
+        _In_ PRENDER_FONT Font,
+        _In_ FLOAT Scale,
+        _In_ vec4 Colour,
+        _In_ vec2 Position,
+        _In_ PGLYPH Glyph,
+        _In_ SIZE_T Offset
+        );
 } RENDER_SYSTEM_INTERFACE, *PRENDER_SYSTEM_INTERFACE;
 
 extern RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount];
@@ -528,6 +538,16 @@ RenderAddMaterial(
     );
 
 //
+// Delete a material
+//
+
+extern
+VOID
+RenderDeleteMaterial(
+    _In_opt_ PCSTR Name
+    );
+
+//
 // Get a material
 //
 
@@ -566,6 +586,61 @@ extern
 VOID
 RenderDestroyFont(
     _In_opt_ PCSTR Name
+    );
+
+//
+// Get a font
+//
+
+extern
+PRENDER_FONT
+RenderGetFont(
+    _In_opt_ PCSTR Name
+    );
+
+//
+// Options for drawing text
+//
+
+typedef struct RENDER_TEXT_OPTIONS
+{
+    vec2 TopLeft;
+    FLOAT Scale;
+    vec4 Colour;
+    vec2 Padding;
+
+    // TODO: implement these
+    BOOLEAN Wrap;
+    BOOLEAN CutOff;
+    vec2 BottomRight;
+} RENDER_TEXT_OPTIONS, *PRENDER_TEXT_OPTIONS;
+
+//
+// Draw a character
+//
+
+extern
+FLOAT
+RenderDrawCharacter(
+    _In_ PCSTR FontName,
+    _In_ FLOAT Scale,
+    _In_ vec4 Colour,
+    _In_ vec2 Position,
+    _In_ WCHAR Character
+    );
+
+//
+// Draw a string
+// TODO: Add way more options, maybe a struct?
+//
+
+extern
+VOID
+RenderDrawString(
+    _In_ PCSTR FontName,
+    _In_ PRENDER_TEXT_OPTIONS Options,
+    _In_ PCSTR Format,
+    ...
     );
 
 //

@@ -56,6 +56,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .DestroyFont = NULL,
 
         .DrawModel = NULL,
+        .DrawGlyph = NULL,
 #endif
     },
     {
@@ -84,6 +85,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .DestroyFont = NULL,
 
         .DrawModel = DirectX9DrawModel,
+        .DrawGlyph = NULL,
 #endif
     },
     {
@@ -112,6 +114,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .DestroyFont = VulkanDestroyFont,
 
         .DrawModel = VulkanDrawModel,
+        .DrawGlyph = VulkanDrawGlyph,
 #endif
     }
 };
@@ -166,6 +169,9 @@ Return Value:
     LogTrace("\t.LoadTexture = 0x%llX,", RenderInterfaces[RenderApi].LoadTexture);
     LogTrace("\t.UseTexture = 0x%llX,", RenderInterfaces[RenderApi].UseTexture);
     LogTrace("\t.DestroyTexture = 0x%llX,", RenderInterfaces[RenderApi].DestroyTexture);
+    LogTrace("\t.UseFont = 0x%llX,", RenderInterfaces[RenderApi].UseFont);
+    LogTrace("\t.DestroyFont = 0x%llX,", RenderInterfaces[RenderApi].DestroyFont);
+    LogTrace("\t.DrawGlyph = 0x%llX,", RenderInterfaces[RenderApi].DrawGlyph);
     LogTrace("\t.DrawModel = 0x%llX,", RenderInterfaces[RenderApi].DrawModel);
     LogTrace("}");
 
@@ -938,6 +944,28 @@ RenderAddMaterial(
         );
 }
 
+VOID
+RenderDeleteMaterial(
+    _In_opt_ PCSTR Name
+    )
+{
+    stbds_shdel(
+        Materials,
+        Name
+        );
+}
+
+PMATERIAL
+RenderGetMaterial(
+    _In_opt_ PCSTR Name
+    )
+{
+    return stbds_shget(
+        Materials,
+        Name
+        );
+}
+
 BOOLEAN
 RenderLoadFont(
     _In_ PCSTR Name
@@ -1093,15 +1121,198 @@ RenderDestroyFont(
     PURPL_FREE(Font);
 }
 
-PMATERIAL
-RenderGetMaterial(
+PRENDER_FONT
+RenderGetFont(
     _In_opt_ PCSTR Name
     )
 {
     return stbds_shget(
-        Materials,
+        Fonts,
         Name
         );
+}
+
+static CONST RENDER_TEXT_OPTIONS DefaultTextOptions =
+{
+    .TopLeft = {0.0f, 0.0f},
+    .Scale = 1.0f,
+    .Colour = {1.0f, 1.0f, 1.0f, 1.0f},
+    .Padding = {0.0f, 0.0f},
+
+    .Wrap = TRUE,
+    .CutOff = FALSE,
+    .BottomRight = {-1.0f, -1.0f},
+};
+
+static
+VOID
+DrawCharacterInternal(
+    _In_ PRENDER_FONT Font,
+    _In_ FLOAT Scale,
+    _In_ vec4 Colour,
+    _In_ vec2 Position,
+    _In_ PGLYPH Glyph,
+    _In_ SIZE_T GlyphIndex
+    )
+{
+
+    if ( RenderInterfaces[RenderApi].DrawGlyph )
+    {
+        RenderInterfaces[RenderApi].DrawGlyph(
+            Font,
+            Scale,
+            Colour,
+            Position,
+            Glyph,
+            GlyphIndex
+            );
+    }
+}
+
+FLOAT
+RenderDrawCharacter(
+    _In_ PCSTR FontName,
+    _In_ FLOAT Scale,
+    _In_ vec4 Colour,
+    _In_ vec2 Position,
+    _In_ WCHAR Character
+    )
+{
+    PRENDER_FONT Font;
+    PGLYPH Glyph;
+    SIZE_T GlyphIndex;
+
+    if ( !FontName )
+    {
+        return 0.0f;
+    }
+
+    Font = RenderGetFont(FontName);
+    if ( !Font )
+    {
+        return 0.0f;
+    }
+
+    GlyphIndex = stbds_hmgeti(
+        Font->Font->Glyphs,
+        Character
+        );
+    Glyph = &Font->Font->Glyphs[GlyphIndex].value;
+
+    DrawCharacterInternal(
+        Font,
+        Scale,
+        Colour,
+        Position,
+        Glyph,
+        GlyphIndex
+        );
+
+    // top right - top left = width
+    return (Glyph->Corners[1][0] - Glyph->Corners[0][0]) * Scale;
+}
+
+VOID
+RenderDrawString(
+    _In_ PCSTR FontName,
+    _In_ PRENDER_TEXT_OPTIONS Options,
+    _In_ PCSTR Format,
+    ...
+    )
+{
+    PRENDER_FONT Font;
+    PCHAR Message;
+    PWCHAR WideMessage;
+    va_list Arguments;
+    FLOAT CurrentX;
+    FLOAT CurrentY;
+    PRENDER_TEXT_OPTIONS RealOptions;
+    PGLYPH Glyph;
+    SIZE_T GlyphIndex;
+    SIZE_T i;
+
+    if ( !FontName || !Format )
+    {
+        return;
+    }
+
+    Font = RenderGetFont(FontName);
+    if ( !Font )
+    {
+        return;
+    }
+
+    RealOptions = Options ? Options : &DefaultTextOptions;
+
+    va_start(
+        Arguments,
+        Format
+        );
+    Message = CommonFormatStringVarArgs(
+        Format,
+        Arguments
+        );
+    va_end(Arguments);
+
+    WideMessage = PURPL_ALLOC(
+        strlen(Message) + 1,
+        sizeof(WCHAR)
+        );
+    if ( !WideMessage )
+    {
+        LogError("Failed to allocate memory for string: %s", strerror(errno));
+        PURPL_FREE(Message);
+        return;
+    }
+
+    mbstowcs(
+        WideMessage,
+        Message,
+        strlen(Message) + 1
+        );
+    PURPL_FREE(Message);
+
+    // TODO: add RTL support?
+
+    CurrentX = RealOptions->TopLeft[0];
+    CurrentY = RealOptions->TopLeft[1];
+    for ( i = 0; i < wcslen(WideMessage); i++ )
+    {
+        GlyphIndex = stbds_hmgeti(
+            Font->Font->Glyphs,
+            WideMessage[i]
+            );
+        Glyph = &Font->Font->Glyphs[GlyphIndex].value;
+
+        // TODO: handle other options
+        switch ( WideMessage[i] )
+        {
+        default:
+        {
+            DrawCharacterInternal(
+                Font,
+                RealOptions->Scale,
+                RealOptions->Colour,
+                &(vec2){CurrentX, CurrentY},
+                Glyph,
+                GlyphIndex
+                );
+            // top right - top left + padding
+            CurrentX += (Glyph->Corners[0][0] - Glyph->Corners[1][0]) * RealOptions->Scale + RealOptions->Padding[0];
+            break;
+        }
+        case L'\n':
+            CurrentX = 0;
+            // glyph size * scale + y padding
+            CurrentY += Font->Font->GlyphSize * RealOptions->Scale + RealOptions->Padding[1];
+            break;
+        case L'\r':
+            CurrentX = 0;
+            break;
+        }
+    }
+
+    PURPL_FREE(WideMessage);
 }
 
 ecs_entity_t ecs_id(RENDERABLE);

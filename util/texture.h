@@ -100,7 +100,6 @@ typedef struct TEXTURE
     UINT32 Width;
     UINT32 Height;
 
-
     // In memory only
     BOOLEAN DataSeparate;
     union

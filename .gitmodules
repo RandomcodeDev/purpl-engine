@@ -1,0 +1,30 @@
+[submodule "deps/DirectX-Headers"]
+	path = deps/DirectX-Headers
+	url = https://github.com/microsoft/DirectX-Headers
+[submodule "deps/Vulkan-Headers"]
+	path = deps/Vulkan-Headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers
+[submodule "deps/volk"]
+	path = deps/volk
+	url = https://github.com/zeux/volk
+[submodule "deps/VulkanMemoryAllocator"]
+	path = deps/VulkanMemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+[submodule "deps/stb"]
+	path = deps/stb
+	url = https://github.com/nothings/stb
+[submodule "deps/cglm"]
+	path = deps/cglm
+	url = https://github.com/recp/cglm
+[submodule "deps/mimalloc"]
+	path = deps/mimalloc
+	url = https://github.com/microsoft/mimalloc
+[submodule "deps/glslang"]
+	path = deps/glslang
+	url = https://github.com/KhronosGroup/glslang
+[submodule "deps/zstd"]
+	path = deps/zstd
+	url = https://github.com/facebook/zstd
+[submodule "assets"]
+	path = assets
+	url = https://git.randomcode.dev/mobslicer152/purpl-assets.git

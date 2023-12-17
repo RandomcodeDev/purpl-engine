@@ -1,0 +1,82 @@
+trigger:
+- main
+
+strategy:
+  matrix:
+    windows-msvc-dist:
+      imageName: 'windows-2022'
+      config: 'MinSizeRel'
+      platform: 'gdk'
+    windows-msvc-release:
+      imageName: 'windows-2022'
+      config: 'RelWithDebInfo'
+      platform: 'gdk'
+    windows-msvc-debug:
+      imageName: 'windows-2022'
+      config: 'Debug'
+      platform: 'gdk'
+    # macos-dist:
+    #   imageName: 'macOS-12'
+    #   config: 'MinSizeRel'
+    # macos-release:
+    #   imageName: 'macOS-12'
+    #   config: 'RelWithDebInfo'
+    # macos-debug:
+    #   imageName: 'macOS-12'
+    #   config: 'Debug'
+    linux-dist:
+      imageName: 'ubuntu-22.04'
+      config: 'MinSizeRel'
+      platform: 'unix'
+    linux-release:
+      imageName: 'ubuntu-22.04'
+      config: 'RelWithDebInfo'
+      platform: 'unix'
+    linux-debug:
+      imageName: 'ubuntu-22.04'
+      config: 'Debug'
+      platform: 'unix'
+
+pool:
+  vmImage: '$(imageName)'
+
+variables:
+  artifactArchive: $(Build.ArtifactStagingDirectory)/purpl-$(imageName)-$(platform)-$(config).zip
+
+steps:
+  - checkout: self
+
+  - script: |
+      git submodule update --recursive --init
+    displayName: Update submodules
+
+  - script: |
+      call build.bat $(config)
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    displayName: GDK $(config) build
+
+  - script: |
+      sudo apt update -qq
+      sudo apt install -y libx11-xcb-dev mold ninja-build
+    condition: eq(variables['Agent.OS'], 'Linux')
+    displayName: Install dependencies
+
+  - script: |
+      chmod a+x build.sh
+      ./build.sh $(config)
+    condition: eq(variables['Agent.OS'], 'Linux')
+    displayName: Linux $(config) build
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: build-$(platform)/install
+      archiveFile: $(artifactArchive)
+      includeRootFolder: false
+      archiveType: zip
+      replaceExistingArchive: true
+      verbose: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: $(artifactArchive)
+      artifactName: $(imageName)-$(platform)-$(config)

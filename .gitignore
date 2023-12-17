@@ -1,0 +1,15 @@
+.*cache*
+
+.xmake/
+*build*/
+vsxmake*/
+*out*
+compile_commands.json
+neovim.json
+
+.idea
+
+*.log
+
+imgui.ini
+

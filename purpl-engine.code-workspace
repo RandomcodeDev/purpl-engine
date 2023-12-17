@@ -1,0 +1,18 @@
+{
+    "folders": [
+        {
+            "name": "Public",
+            "path": "."
+        },
+        {
+            "name": "Private",
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "*.rh": "c",
+            "log.h": "c"
+        }
+    }
+}

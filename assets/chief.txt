@@ -1,0 +1,2 @@
+I use this guy's Master Chief model for testing, I mangled it a bit so it only uses one texture image (due to implementation laziness):
+https://sketchfab.com/3d-models/halo-infinite-master-chief-rigged-0ad7b1431a6748959d691e9c171c6e2c

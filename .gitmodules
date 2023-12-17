@@ -19,9 +19,6 @@
 [submodule "deps/mimalloc"]
 	path = deps/mimalloc
 	url = https://github.com/microsoft/mimalloc
-[submodule "deps/glslang"]
-	path = deps/glslang
-	url = https://github.com/KhronosGroup/glslang
 [submodule "deps/zstd"]
 	path = deps/zstd
 	url = https://github.com/facebook/zstd

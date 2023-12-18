@@ -12,7 +12,7 @@ This is a game engine I'm making.
   ![untextured diffuse lit Master Chief and Doom Guy models](https://randomcode.dev/programs/purpl_chief_doomguy_1.gif)
 - Diffuse textured 3D models using custom simple formats about as efficient as OBJ and PNG
 
-  ![textured Master Chief model](https://randomcode.dev/programs/purpl_chief_textured.png)
+  ![textured Master Chief model](https://randomcode.dev/files/programs/purpl_chief_textured.png)
 - Tools for converting to the engine's formats
 - Decent Vulkan backend (and it's nearly 4000 lines long!)
 - Partial DirectX 9 backend (for supporting operating systems older than I am like Windows XP)

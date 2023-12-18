@@ -299,7 +299,7 @@ Return Value:
         LogTrace("Calling RenderInterfaces[%s].Shutdown()", RenderInterfaces[RenderApi].Name);
         RenderInterfaces[RenderApi].Shutdown();
     }
-    
+
     stbds_shfree(Fonts);
     stbds_shfree(Models);
     stbds_shfree(Materials);
@@ -565,7 +565,7 @@ RenderGetShader(
     _In_opt_ PCSTR Name
     )
 {
-    return stbds_hmget(
+    return stbds_shget(
         Shaders,
         Name
         );
@@ -890,7 +890,7 @@ RenderGetTexture(
     _In_opt_ PCSTR Name
     )
 {
-    return stbds_hmget(
+    return stbds_shget(
         Textures,
         Name
         );
@@ -990,7 +990,7 @@ Return Value:
     PCSTR AtlasPath;
     PCSTR AtlasIndexPath;
     BOOLEAN Succeeded;
-    
+
     AtlasPath = CommonFormatString(ASSETS_PREFIX "fonts/%s.ptex", Name);
     AtlasIndexPath = CommonFormatString(ASSETS_PREFIX "fonts/%s.json", Name);
 
@@ -1193,7 +1193,7 @@ RenderDrawCharacter(
         return 0.0f;
     }
 
-    GlyphIndex = stbds_hmgeti(
+    GlyphIndex = stbds_shgeti(
         Font->Font->Glyphs,
         Character
         );

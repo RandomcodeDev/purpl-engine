@@ -20,6 +20,8 @@ function fix_target(target)
             target:set("extension", ".nrs")
         end
     else
+        -- Of course POSIX or GNU or whoever gets to have "libutil.a" be a reserved name
+        -- Other systems don't need this, since they have less common default library names
         if target:kind() == "static" then
             target:set("suffixname", "-purpl")
         end
@@ -27,10 +29,14 @@ function fix_target(target)
 end
 
 function setup_shared(root)
+    set_version("0.0.0")
+
     set_warnings("everything")
 
     add_defines("_CRT_SECURE_NO_WARNINGS")
     add_defines("_GNU_SOURCE")
+
+    set_languages("gnu11", "cxx23")
 
     if is_plat("windows") then
         add_defines("PURPL_WIN32")

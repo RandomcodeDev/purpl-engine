@@ -67,6 +67,7 @@ typedef struct RENDER_MODEL_UNIFORM_DATA RENDER_MODEL_UNIFORM_DATA, *PRENDER_MOD
 typedef struct SHADER SHADER, *PSHADER;
 typedef struct RENDER_TEXTURE RENDER_TEXTURE, *PRENDER_TEXTURE;
 typedef struct RENDER_FONT RENDER_FONT, *PRENDER_FONT;
+typedef struct GLYPH GLYPH, *PGLYPH;
 typedef struct MODEL MODEL, *PMODEL;
 
 //
@@ -185,6 +186,7 @@ VulkanDestroyTexture(
 // Use a font
 //
 
+extern
 VOID
 VulkanUseFont(
     _In_ PRENDER_FONT SourceFont
@@ -194,6 +196,7 @@ VulkanUseFont(
 // Use a font
 //
 
+extern
 VOID
 VulkanDestroyFont(
     _In_ PRENDER_FONT Font
@@ -203,6 +206,7 @@ VulkanDestroyFont(
 // Draw a glyph
 //
 
+extern
 VOID
 VulkanDrawGlyph(
     _In_ PRENDER_FONT Font,

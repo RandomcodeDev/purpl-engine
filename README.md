@@ -68,6 +68,9 @@ git submodule update --recursive --init
 Make sure to clone the submodules. See below for requirements.
 
 ```sh
+# On Unix-like systems (Linux, macOS, etc)
+chmod +x tools/<platform</<arch>/*
+
 # Build the tools first
 pushd util
 xmake f -P . -m release # xmake defaults to release, but just in case that changes, this command doesn't hurt

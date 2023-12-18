@@ -33,6 +33,7 @@ Abstract:
 #include <stdalign.h>
 #include <stdlib.h>
 #include <time.h>
+#include <wchar.h>
 
 #ifdef PURPL_WIN32
 #if __STDC_VERSION__ <= 201100l

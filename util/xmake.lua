@@ -1,7 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
 set_project("purpl-engine-tools")
-set_version("0.0.0")
 
 add_requires("assimp")
 

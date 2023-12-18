@@ -4011,3 +4011,17 @@ VulkanDestroyFont(
     PURPL_FREE(FontData);
     Font->Handle = NULL;
 }
+
+VOID
+VulkanDrawGlyph(
+    _In_ PRENDER_FONT Font,
+    _In_ FLOAT Scale,
+    _In_ vec4 Colour,
+    _In_ vec2 Position,
+    _In_ PGLYPH Glyph,
+    _In_ SIZE_T Offset
+    )
+{
+
+}
+

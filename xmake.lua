@@ -1,12 +1,9 @@
 add_rules("mode.debug", "mode.release", "plugin.vsxmake.autoupdate")
 
 set_project("purpl-engine")
-set_version("0.0.0")
 
 set_allowedplats("gdk", "gdkx", "linux", "freebsd", "switch")
 set_allowedarchs("gdk|x64", "gdkx|x64", "switch|arm64")
-
-set_languages("c11", "cxx23")
 
 if os.isfile("../platform/switch/toolchain.lua") then
     includes("../platform/switch/toolchain.lua")

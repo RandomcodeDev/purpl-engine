@@ -70,7 +70,8 @@ Make sure to clone the submodules. See below for requirements.
 ```sh
 # Build the tools first
 pushd util
-xmake build
+xmake f -P . -m release # xmake defaults to release, but just in case that changes, this command doesn't hurt
+xmake build -P .
 popd
 
 # Build the assets

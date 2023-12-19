@@ -1247,7 +1247,7 @@ RenderDrawCharacter(
         );
 
     // top right - top left = width
-    return (Glyph->Corners[1][0] - Glyph->Corners[0][0]) * Scale;
+    return (Glyph->Corners[1].Position[0] - Glyph->Corners[0].Position[0]) * Scale;
 }
 
 VOID
@@ -1336,7 +1336,7 @@ RenderDrawString(
                 GlyphIndex
                 );
             // top right - top left + padding
-            CurrentX += (Glyph->Corners[0][0] - Glyph->Corners[1][0]) * RealOptions->Scale + RealOptions->Padding[0];
+            CurrentX += (Glyph->Corners[0].Position[0] - Glyph->Corners[1].Position[0]) * RealOptions->Scale + RealOptions->Padding[0];
             break;
         }
         case L'\n':

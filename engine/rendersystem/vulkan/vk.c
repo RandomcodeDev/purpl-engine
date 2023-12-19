@@ -2802,13 +2802,13 @@ CreateSharedFontObjects(
 {
     LogDebug("Creating shared font glyph index buffer");
 
-    CONST INT32 FontGlyphIndices[] = {
+    CONST UINT32 FontGlyphIndices[] = {
         0, 1, 2,
         1, 2, 3
     };
 
     AllocateBufferWithData(
-        FontGlyphIndices,
+        (PVOID)FontGlyphIndices,
         sizeof(FontGlyphIndices),
         VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -3186,7 +3186,42 @@ VulkanDrawGlyph(
     _In_ SIZE_T Offset
     )
 {
+    PVULKAN_FONT_DATA FontData;
+    VkDeviceSize VertexBufferOffset;
 
+    if ( Resized )
+    {
+        return;
+    }
+
+    FontData = Font->Handle;
+
+    VertexBufferOffset = Offset;
+    vkCmdBindVertexBuffers(
+        CommandBuffers[FrameIndex],
+        0,
+        1,
+        &FontData->VertexBuffer.Buffer,
+        &VertexBufferOffset
+        );
+    vkCmdBindIndexBuffer(
+        CommandBuffers[FrameIndex],
+        FontGlyphIndexBuffer.Buffer,
+        0,
+        VK_INDEX_TYPE_UINT32
+        );
+
+    BindTexture(Font->Atlas);
+    BindShader(RenderGetShader("font"));
+
+    vkCmdDrawIndexed(
+        CommandBuffers[FrameIndex],
+        6,
+        1,
+        0,
+        (INT32)VertexBufferOffset,
+        0
+        );
 }
 
 VOID

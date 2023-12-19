@@ -36,7 +36,10 @@ Return Value:
 
 --*/
 {
-    
+    //PURPL_ASSERT(RenderLoadShader(
+    //    "ui",
+    //    ShaderTypeUi
+    //    ));
 }
 
 VOID
@@ -59,5 +62,5 @@ Return Value:
 
 --*/
 {
-
+    RenderDestroyShader("ui");
 }

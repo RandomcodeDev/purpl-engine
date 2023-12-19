@@ -21,13 +21,22 @@ Abstract:
 #include "texture.h"
 
 //
+// A vertex of a glyph
+//
+
+typedef struct GLYPH_VERTEX
+{
+    vec3 Position;
+    vec2 TextureCoordinate;
+} GLYPH_VERTEX, *PGLYPH_VERTEX;
+
+//
 // A glyph of a font
 //
 
 typedef struct GLYPH
 {
-    vec3 Corners[4];
-    vec2 TextureCoordinates[4];
+    GLYPH_VERTEX Corners[4];
 } GLYPH, *PGLYPH;
 
 //

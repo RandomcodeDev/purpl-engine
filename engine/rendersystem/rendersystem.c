@@ -203,6 +203,12 @@ Return Value:
         LogTrace("Calling RenderInterfaces[%s].Initialize()", RenderInterfaces[RenderApi].Name);
         RenderInterfaces[RenderApi].Initialize();
     }
+
+    PURPL_ASSERT(RenderLoadShader(
+        "font",
+        ShaderTypeFont
+        ));
+
     RenderedFrames = 0;
 
     LogInfo("Render system initialization succeeded");
@@ -338,7 +344,8 @@ RenderCreateShader(
     _In_reads_(VertexLength) PVOID VertexData,
     _In_ SIZE_T VertexLength,
     _In_reads_(FragmentLength) PVOID FragmentData,
-    _In_ SIZE_T FragmentLength
+    _In_ SIZE_T FragmentLength,
+    _In_ SHADER_TYPE ShaderType
     )
 /*++
 
@@ -358,6 +365,8 @@ Arguments:
 
     FragmentLength - The length of FragmentData.
 
+    ShaderType - The type of the shader.
+
 Return Value:
 
     TRUE - The shader was successfully created.
@@ -374,7 +383,7 @@ Return Value:
         return FALSE;
     }
 
-    LogInfo("Creating shader %s", Name);
+    LogInfo("Creating type %d shader %s", ShaderType, Name);
 
     Shader = PURPL_ALLOC(
         1,
@@ -407,6 +416,8 @@ Return Value:
         FragmentLength
         );
 
+    Shader->Type = ShaderType;
+
     if ( RenderInterfaces[RenderApi].CreateShader )
     {
         LogTrace("Calling RenderInterfaces[%s].CreateShader(\"%s\")", RenderInterfaces[RenderApi].Name, Name);
@@ -427,7 +438,8 @@ Return Value:
 
 BOOLEAN
 RenderLoadShader(
-    _In_ PCSTR Name
+    _In_ PCSTR Name,
+    _In_ SHADER_TYPE ShaderType
     )
 /*++
 
@@ -438,6 +450,8 @@ Routine Description:
 Arguments:
 
     Name - The name of the shader.
+
+    ShaderType - The type of the shader.
 
 Return Value:
 
@@ -512,7 +526,7 @@ Return Value:
     }
     }
 
-    LogInfo("Loading shader %s", Name);
+    LogInfo("Loading type %d shader %s", ShaderType, Name);
 
     VertexLength = 0;
     VertexData = FsReadFile(
@@ -545,7 +559,8 @@ Return Value:
         VertexData,
         VertexLength,
         FragmentData,
-        FragmentLength
+        FragmentLength,
+        ShaderType
         );
     PURPL_FREE(VertexData);
     PURPL_FREE(FragmentData);

@@ -57,7 +57,10 @@ Return Value:
 
     PURPL_ASSERT(RenderLoadFont("purpl-regular"));
 
-    PURPL_ASSERT(RenderLoadShader("basic"));
+    PURPL_ASSERT(RenderLoadShader(
+        "basic",
+        ShaderTypeMesh
+        ));
     PURPL_ASSERT(RenderLoadTexture("chief"));
     RenderAddMaterial(
         "chief",

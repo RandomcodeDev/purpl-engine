@@ -63,16 +63,15 @@ extern RENDER_API RenderApi;
 extern UINT64 RenderedFrames;
 
 //
-// Shader type
+// Shader type, controls vertex input format
 //
 
 typedef enum SHADER_TYPE
 {
-    ShaderTypeNone,
-    ShaderTypeVertex,
-    ShaderTypeFragment,
-    ShaderTypeCompute,
-    ShaderTypeCount
+    ShaderTypeMesh,
+    ShaderTypeFont,
+    ShaderTypeUi,
+    ShaderTypePostProcess
 } SHADER_TYPE, *PSHADER_TYPE;
 
 //
@@ -87,6 +86,8 @@ typedef struct SHADER
     SIZE_T VertexLength;
     PVOID FragmentData;
     SIZE_T FragmentLength;
+
+    SHADER_TYPE Type;
 
     PVOID Handle;
 } SHADER, *PSHADER;
@@ -380,7 +381,8 @@ RenderCreateShader(
     _In_reads_(VertexLength) PVOID VertexData,
     _In_ SIZE_T VertexLength,
     _In_reads_(FragmentLength) PVOID FragmentData,
-    _In_ SIZE_T FragmentLength
+    _In_ SIZE_T FragmentLength,
+    _In_ SHADER_TYPE ShaderType
     );
 
 //
@@ -390,7 +392,8 @@ RenderCreateShader(
 extern
 BOOLEAN
 RenderLoadShader(
-    _In_ PCSTR Name
+    _In_ PCSTR Name,
+    _In_ SHADER_TYPE ShaderType
     );
 
 //

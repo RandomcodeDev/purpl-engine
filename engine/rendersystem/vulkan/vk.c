@@ -2794,6 +2794,28 @@ CreateDescriptorSets(
     }
 }
 
+static
+VOID
+CreateSharedFontObjects(
+    VOID
+    )
+{
+    LogDebug("Creating shared font glyph index buffer");
+
+    CONST INT32 FontGlyphIndices[] = {
+        0, 1, 2,
+        1, 2, 3
+    };
+
+    AllocateBufferWithData(
+        FontGlyphIndices,
+        sizeof(FontGlyphIndices),
+        VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        &FontGlyphIndexBuffer
+        );
+}
+
 VOID
 VulkanInitialize(
     VOID
@@ -2838,21 +2860,7 @@ Return Value:
     CreateDescriptorSets();
     CreateRenderPass();
     CreateFramebuffers();
-
-    LogDebug("Creating shared font glyph index buffer");
-
-    CONST INT32 FontGlyphIndices[] = {
-        0, 1, 2,
-        1, 2, 3
-    };
-
-    AllocateBufferWithData(
-        FontGlyphIndices,
-        sizeof(FontGlyphIndices),
-        VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        &FontGlyphIndexBuffer
-        );
+    CreateSharedFontObjects();
 
     FrameIndex = 0;
     VulkanInitialized = TRUE;
@@ -3169,6 +3177,19 @@ VulkanDrawModel(
 }
 
 VOID
+VulkanDrawGlyph(
+    _In_ PRENDER_FONT Font,
+    _In_ FLOAT Scale,
+    _In_ vec4 Colour,
+    _In_ vec2 Position,
+    _In_ PGLYPH Glyph,
+    _In_ SIZE_T Offset
+    )
+{
+
+}
+
+VOID
 VulkanPresentFrame(
     VOID
     )
@@ -3468,6 +3489,48 @@ Return Value:
     LogDebug("Vulkan shutdown succeeded");
 }
 
+static CONST VkVertexInputAttributeDescription MeshVertexAttributeDescriptions[4] = {
+    {
+        .binding = 0,
+        .location = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(VERTEX, Position),
+    },
+    {
+        .binding = 0,
+        .location = 1,
+        .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+        .offset = offsetof(VERTEX, Colour),
+    },
+    {
+        .binding = 0,
+        .location = 2,
+        .format = VK_FORMAT_R32G32_SFLOAT,
+        .offset = offsetof(VERTEX, TextureCoordinate),
+    },
+    {
+        .binding = 0,
+        .location = 3,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(VERTEX, Normal),
+    }
+};
+
+static CONST VkVertexInputAttributeDescription FontVertexAttributeDescriptions[2] = {
+    {
+        .binding = 0,
+        .location = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = offsetof(GLYPH_VERTEX, Position),
+    },
+    {
+        .binding = 0,
+        .location = 1,
+        .format = VK_FORMAT_R32G32_SFLOAT,
+        .offset = offsetof(GLYPH_VERTEX, TextureCoordinate),
+    },
+};
+
 VOID
 VulkanCreateShader(
     _In_ PSHADER SourceShader
@@ -3491,8 +3554,10 @@ Return Value:
     VkResult Result;
     VkShaderModule VertexModule;
     VkShaderModule FragmentModule;
+    CONST VkVertexInputAttributeDescription* VertexAttributeDescriptions;
+    SIZE_T VertexAttributeCount;
 
-    LogDebug("Loading Vulkan shader %s", SourceShader->Name);
+    LogDebug("Loading type %d Vulkan shader %s", SourceShader->Type, SourceShader->Name);
 
     VkShaderModuleCreateInfo VertexCreateInformation = {0};
     VertexCreateInformation.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -3552,27 +3617,21 @@ Return Value:
     VertexBindingDescription.stride = sizeof(VERTEX);
     VertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
-    // TODO: Make this configurable per-shader for better vertex buffer efficiency
-    VkVertexInputAttributeDescription VertexAttributeDescriptions[4] = {0};
-    VertexAttributeDescriptions[0].binding = 0;
-    VertexAttributeDescriptions[0].location = 0;
-    VertexAttributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-    VertexAttributeDescriptions[0].offset = offsetof(VERTEX, Position);
-
-    VertexAttributeDescriptions[1].binding = 0;
-    VertexAttributeDescriptions[1].location = 1;
-    VertexAttributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-    VertexAttributeDescriptions[1].offset = offsetof(VERTEX, Colour);
-
-    VertexAttributeDescriptions[2].binding = 0;
-    VertexAttributeDescriptions[2].location = 2;
-    VertexAttributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-    VertexAttributeDescriptions[2].offset = offsetof(VERTEX, TextureCoordinate);
-
-    VertexAttributeDescriptions[3].binding = 0;
-    VertexAttributeDescriptions[3].location = 3;
-    VertexAttributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
-    VertexAttributeDescriptions[3].offset = offsetof(VERTEX, Normal);
+    switch ( SourceShader->Type )
+    {
+    case ShaderTypeMesh:
+        VertexAttributeDescriptions = MeshVertexAttributeDescriptions;
+        VertexAttributeCount = PURPL_ARRAYSIZE(MeshVertexAttributeDescriptions);
+        break;
+    case ShaderTypeFont:
+        VertexAttributeDescriptions = FontVertexAttributeDescriptions;
+        VertexAttributeCount = PURPL_ARRAYSIZE(FontVertexAttributeDescriptions);
+        break;
+    //case ShaderTypeUi:
+    //    VertexAttributeDescriptions = UiVertexAttributeDescriptions;
+    //    VertexAttributeCount = PURPL_ARRAYSIZE(UiVertexAttributeDescriptions);
+    //    break;
+    }
 
     VkPipelineInputAssemblyStateCreateInfo InputAssemblyState = {0};
     InputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -3602,7 +3661,7 @@ Return Value:
     VertexInputInformation.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     VertexInputInformation.vertexBindingDescriptionCount = 1;
     VertexInputInformation.pVertexBindingDescriptions = &VertexBindingDescription;
-    VertexInputInformation.vertexAttributeDescriptionCount = 4;
+    VertexInputInformation.vertexAttributeDescriptionCount = VertexAttributeCount;
     VertexInputInformation.pVertexAttributeDescriptions = VertexAttributeDescriptions;
 
     VkPipelineRasterizationStateCreateInfo RasterizationState = {0};
@@ -4011,17 +4070,3 @@ VulkanDestroyFont(
     PURPL_FREE(FontData);
     Font->Handle = NULL;
 }
-
-VOID
-VulkanDrawGlyph(
-    _In_ PRENDER_FONT Font,
-    _In_ FLOAT Scale,
-    _In_ vec4 Colour,
-    _In_ vec2 Position,
-    _In_ PGLYPH Glyph,
-    _In_ SIZE_T Offset
-    )
-{
-
-}
-

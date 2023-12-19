@@ -28,7 +28,7 @@ function fix_target(target)
     end
 end
 
-function setup_shared(root)
+function setup_shared(root, vulkan)
     set_version("0.0.0")
 
     set_warnings("everything")
@@ -66,7 +66,7 @@ function setup_shared(root)
         add_requires("glfw")
     end
 
-    if is_plat("gdk", "linux", "freebsd", "switch") then
+    if vulkan then
         add_defines("PURPL_VULKAN")
 
         add_includedirs(

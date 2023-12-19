@@ -5,7 +5,7 @@ set_project("purpl-engine-tools")
 add_requires("assimp")
 
 includes("../shared.lua")
-setup_shared("$(scriptdir)/..")
+setup_shared("$(scriptdir)/..", false)
 
 target("meshtool")
     set_kind("binary")

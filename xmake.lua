@@ -14,13 +14,14 @@ else
     function add_switch_links() end
     function add_switch_vulkan_links() end
     function switch_postbuild(target) end
+    function add_switch_rendersystem() end
 end
 
-includes("shared.lua")
-setup_shared("$(scriptdir)")
-
 directx = is_plat("gdk", "gdkx")
-vulkan = is_plat("gdk", "linux", "freebsd", "switch")
+vulkan = is_plat("gdk", "linux", "freebsd")
+
+includes("shared.lua")
+setup_shared("$(scriptdir)", vulkan)
 
 --target("imgui")
 --    set_kind("static")
@@ -71,12 +72,10 @@ target("rendersystem")
         add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/rendersystem/vulkan/*.h")
         add_files("engine/rendersystem/vulkan/*.c", "engine/rendersystem/vulkan/*.cpp")
 
-        if is_plat("switch") then
-            add_switch_vulkan_links()
-        else
-            add_files("deps/volk/volk.c")
-        end
+        add_files("deps/volk/volk.c")
     end
+
+    add_switch_rendersystem()
 
     on_load(fix_target)
 

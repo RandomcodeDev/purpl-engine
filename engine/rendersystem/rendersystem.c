@@ -28,7 +28,30 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
 {
     {
         RenderApiNone,
-        "None"
+        "None",
+
+        .Initialize = NULL,
+        .BeginCommands = NULL,
+
+        .Present = NULL,
+        .Shutdown = NULL,
+
+        .CreateShader = NULL,
+        .DestroyShader = NULL,
+
+        .LoadModel = NULL,
+        .UseMesh = NULL,
+        .DestroyModel = NULL,
+
+        .LoadTexture = NULL,
+        .UseTexture = NULL,
+        .DestroyTexture = NULL,
+
+        .UseFont = NULL,
+        .DestroyFont = NULL,
+
+        .DrawModel = NULL,
+        .DrawGlyph = NULL,
     },
     {
         RenderApiDX12,

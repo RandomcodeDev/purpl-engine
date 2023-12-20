@@ -1862,7 +1862,7 @@ Return Value:
     // TODO: maybe think about per-object uniform buffers instead of this, if it becomes an issue
     VkPushConstantRange PushConstantRange = {0};
     PushConstantRange.offset = 0;
-    PushConstantRange.size = sizeof(RENDER_MODEL_UNIFORM_DATA);
+    PushConstantRange.size = sizeof(mat4) * 4; // This should be enough for any struct that's likely to be needed
     PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
     VkPipelineLayoutCreateInfo PipelineLayoutCreateInformation = {0};
@@ -3179,9 +3179,8 @@ VulkanDrawModel(
 VOID
 VulkanDrawGlyph(
     _In_ PRENDER_FONT Font,
-    _In_ FLOAT Scale,
     _In_ vec4 Colour,
-    _In_ vec2 Position,
+    _In_ mat4 Transform,
     _In_ PGLYPH Glyph,
     _In_ SIZE_T Offset
     )
@@ -3193,6 +3192,15 @@ VulkanDrawGlyph(
     {
         return;
     }
+
+    vkCmdPushConstants(
+        CommandBuffers[FrameIndex],
+        PipelineLayout,
+        VK_SHADER_STAGE_VERTEX_BIT,
+        0,
+        sizeof(mat4),
+        Transform
+        );
 
     FontData = Font->Handle;
 
@@ -3317,11 +3325,13 @@ Return Value:
     UINT32 i;
 
     LogDebug("Shutting down Vulkan");
+
+    RenderDestroyShader("font");
+
     VulkanInitialized = FALSE;
     vkDeviceWaitIdle(Device);
 
     DestroyFramebuffers();
-
     FreeBuffer(&FontGlyphIndexBuffer);
 
     if ( RenderPass )

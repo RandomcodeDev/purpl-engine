@@ -319,9 +319,8 @@ typedef struct RENDER_SYSTEM_INTERFACE
     VOID
     (*DrawGlyph)(
         _In_ PRENDER_FONT Font,
-        _In_ FLOAT Scale,
         _In_ vec4 Colour,
-        _In_ vec2 Position,
+        _In_ mat4 Transform,
         _In_ PGLYPH Glyph,
         _In_ SIZE_T Offset
         );

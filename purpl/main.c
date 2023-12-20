@@ -112,6 +112,24 @@ Return Value:
         {RenderableTypeModel, RenderGetModel("chief")}
         );
 
+    ecs_entity_t MasterChief2 = EngineCreateEntity("chief2");
+    ecs_add(
+        EngineGetEcsWorld(),
+        MasterChief,
+        TRANSFORM
+        );
+    ecs_add(
+        EngineGetEcsWorld(),
+        MasterChief,
+        RENDERABLE
+        );
+    ecs_set(
+        EngineGetEcsWorld(),
+        MasterChief,
+        RENDERABLE,
+        {RenderableTypeModel, RenderGetModel("chief")}
+        );
+
     Running = TRUE;
     FLOAT Rotation = 90.0;
     while ( Running )
@@ -129,6 +147,12 @@ Return Value:
             MasterChief,
             TRANSFORM,
             {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
+            );
+        ecs_set(
+            EngineGetEcsWorld(),
+            MasterChief2,
+            TRANSFORM,
+            {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
             );
         EngineUpdate();
     }

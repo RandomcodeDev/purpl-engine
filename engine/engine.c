@@ -198,6 +198,12 @@ Return Value:
 
     RenderBeginCommands();
 
+    RenderDrawString(
+        "purpl-regular",
+        NULL,
+        "asdf"
+        );
+
     ecs_progress(
         EngineGetEcsWorld(),
         (FLOAT)Delta

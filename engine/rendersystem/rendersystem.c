@@ -1193,16 +1193,25 @@ DrawCharacterInternal(
     _In_ SIZE_T GlyphIndex
     )
 {
+    mat4 TransformMatrix;
+
+    MathCreateTransformMatrix(
+        &(TRANSFORM){
+            {Position[0], Position[1], 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {Scale, Scale, 0.0f}
+        },
+        TransformMatrix
+        );
 
     if ( RenderInterfaces[RenderApi].DrawGlyph )
     {
         RenderInterfaces[RenderApi].DrawGlyph(
             Font,
-            Scale,
             Colour,
-            Position,
+            TransformMatrix,
             Glyph,
-            GlyphIndex
+            GlyphIndex * sizeof(GLYPH_VERTEX)
             );
     }
 }

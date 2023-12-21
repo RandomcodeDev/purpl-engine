@@ -140,22 +140,18 @@ Return Value:
             // (left, top, 0)
             Glyph.Corners[0].Position[0] = 0.0f;
             Glyph.Corners[0].Position[1] = -Advance;
-            Glyph.Corners[0].Position[2] = 0.0f;
 
             // (right, top, 0)
             Glyph.Corners[1].Position[0] = Advance;
             Glyph.Corners[1].Position[1] = -Advance;
-            Glyph.Corners[1].Position[2] = 0.0f;
 
             // (left, bottom, 0)
             Glyph.Corners[2].Position[0] = 0.0f;
             Glyph.Corners[2].Position[1] = 0.0f;
-            Glyph.Corners[2].Position[2] = 0.0f;
 
             // (right, bottom, 0)
             Glyph.Corners[3].Position[0] = Advance;
             Glyph.Corners[3].Position[1] = -Advance;
-            Glyph.Corners[3].Position[2] = 0.0f;
 
             for ( j = 0; j < PURPL_ARRAYSIZE(Glyph.Corners); j++ )
             {
@@ -198,22 +194,18 @@ Return Value:
             // (left, top, 0)
             Glyph.Corners[0].Position[0] = Rectangle[0];
             Glyph.Corners[0].Position[1] = Rectangle[1];
-            Glyph.Corners[0].Position[2] = 0.0f;
 
             // (right, top, 0)
             Glyph.Corners[1].Position[0] = Rectangle[2];
             Glyph.Corners[1].Position[1] = Rectangle[1];
-            Glyph.Corners[1].Position[2] = 0.0f;
 
             // (left, bottom, 0)
             Glyph.Corners[2].Position[0] = Rectangle[0];
             Glyph.Corners[2].Position[1] = Rectangle[3];
-            Glyph.Corners[2].Position[2] = 0.0f;
 
             // (right, bottom, 0)
             Glyph.Corners[3].Position[0] = Rectangle[2];
             Glyph.Corners[3].Position[1] = Rectangle[3];
-            Glyph.Corners[3].Position[2] = 0.0f;
 
             // Same with texture coordinates
             AtlasBounds = cJSON_GetObjectItemCaseSensitive(

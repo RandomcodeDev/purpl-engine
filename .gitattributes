@@ -1,2 +1,2 @@
-* binary eol=lf
+* text eol=lf
 tools/** binary eol=lf mode=0755

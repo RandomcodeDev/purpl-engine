@@ -26,7 +26,7 @@ Abstract:
 
 typedef struct GLYPH_VERTEX
 {
-    vec3 Position;
+    vec2 Position;
     vec2 TextureCoordinate;
 } GLYPH_VERTEX, *PGLYPH_VERTEX;
 

@@ -52,7 +52,7 @@ FsCreateDirectory(
     _In_ PCSTR Path
     )
 {
-    LogTrace("Creating directory %s");
+    LogTrace("Creating directory %s", Path);
     return PlatformCreateDirectory(Path);
 }
 

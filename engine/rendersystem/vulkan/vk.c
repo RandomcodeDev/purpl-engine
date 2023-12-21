@@ -1070,9 +1070,15 @@ Return Value:
     VkPhysicalDeviceFeatures DeviceFeatures = {0};
     DeviceFeatures.samplerAnisotropy = TRUE;
 
+    VkPhysicalDeviceDescriptorIndexingFeatures DescriptorIndexingFeatures = {0};
+    DescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+    DescriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind = TRUE;
+    DescriptorIndexingFeatures.descriptorBindingSampledImageUpdateAfterBind = TRUE;
+
     VkPhysicalDeviceRobustness2FeaturesEXT DeviceRobustness2Features = {0};
     DeviceRobustness2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
     DeviceRobustness2Features.nullDescriptor = TRUE;
+    DeviceRobustness2Features.pNext = &DescriptorIndexingFeatures;
 
     DeviceCreateInformation.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     DeviceCreateInformation.pQueueCreateInfos = QueueCreateInfos;
@@ -3559,7 +3565,7 @@ static CONST VkVertexInputAttributeDescription FontVertexAttributeDescriptions[2
     {
         .binding = 0,
         .location = 0,
-        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .format = VK_FORMAT_R32G32_SFLOAT,
         .offset = offsetof(GLYPH_VERTEX, Position),
     },
     {
@@ -4044,6 +4050,7 @@ VulkanUseFont(
     SourceFont->Handle = FontData;
 
     GlyphsSize = stbds_hmlenu(SourceFont->Font->Glyphs) * sizeof(GLYPH);
+    LogTrace("Creating %zu-byte vertex buffer for font %s", GlyphsSize, SourceFont->Name);
 
     AllocateBuffer(
         GlyphsSize,
@@ -4064,10 +4071,11 @@ VulkanUseFont(
         StagingBuffer.Allocation,
         &StagingBufferAddress
         );
+    LogTrace("Copying %zu glyphs to mapped staging buffer at 0x%llX", stbds_hmlenu(SourceFont->Font->Glyphs), StagingBufferAddress);
     for ( i = 0; i < stbds_hmlenu(SourceFont->Font->Glyphs); i++ )
     {
         memcpy(
-            (PGLYPH)StagingBufferAddress + i,
+            &((PGLYPH)StagingBufferAddress)[i],
             &SourceFont->Font->Glyphs[i].value,
             sizeof(GLYPH)
             );

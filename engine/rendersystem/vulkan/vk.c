@@ -38,6 +38,8 @@ typedef struct VULKAN_MODEL_DATA
 {
     VULKAN_BUFFER VertexBuffer;
     VULKAN_BUFFER IndexBuffer;
+    VkDescriptorSet DescriptorSet;
+    UINT8 LastFrameUsed;
 } VULKAN_MODEL_DATA, *PVULKAN_MODEL_DATA;
 
 //
@@ -58,6 +60,8 @@ typedef struct VULKAN_TEXTURE_DATA
 typedef struct VULKAN_FONT_DATA
 {
     VULKAN_BUFFER VertexBuffer;
+    VkDescriptorSet DescriptorSet;
+    UINT8 LastFrameUsed;
 } VULKAN_FONT_DATA, *PVULKAN_FONT_DATA;
 
 //
@@ -274,7 +278,6 @@ static VkFramebuffer Framebuffers[VULKAN_FRAME_COUNT];
 
 static VkDescriptorPool DescriptorPool;
 static VkDescriptorSetLayout DescriptorSetLayout;
-static VkDescriptorSet SharedDescriptorSets[VULKAN_FRAME_COUNT];
 
 //
 // Shared pipeline information
@@ -1830,9 +1833,8 @@ Return Value:
 
     VkDescriptorSetLayoutBinding SamplerLayoutBinding = {0};
     SamplerLayoutBinding.binding = 2;
-    SamplerLayoutBinding.descriptorCount = 1;
     SamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    SamplerLayoutBinding.pImmutableSamplers = NULL;
+    SamplerLayoutBinding.descriptorCount = 1;
     SamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
     VkDescriptorSetLayoutBinding DescriptorSetLayoutBindings[] = {
@@ -1841,10 +1843,21 @@ Return Value:
         SamplerLayoutBinding
     };
 
+    VkDescriptorBindingFlags BindingFlags[] = {
+        VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT,
+        VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT
+    };
+    VkDescriptorSetLayoutBindingFlagsCreateInfo LayoutBindingFlagsInformation = {0};
+    LayoutBindingFlagsInformation.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+    LayoutBindingFlagsInformation.bindingCount = PURPL_ARRAYSIZE(DescriptorSetLayoutBindings);
+    LayoutBindingFlagsInformation.pBindingFlags = BindingFlags;
+
     VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutCreateInformation = {0};
     DescriptorSetLayoutCreateInformation.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    DescriptorSetLayoutCreateInformation.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
     DescriptorSetLayoutCreateInformation.pBindings = DescriptorSetLayoutBindings;
     DescriptorSetLayoutCreateInformation.bindingCount = PURPL_ARRAYSIZE(DescriptorSetLayoutBindings);
+    DescriptorSetLayoutCreateInformation.pNext = &LayoutBindingFlagsInformation;
 
     LogTrace("Calling vkCreateDescriptorSetLayout");
     VULKAN_CHECK(vkCreateDescriptorSetLayout(
@@ -2612,7 +2625,7 @@ CreateImageWithData(
     TransitionImageLayout(
         *Image,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        TargetLayout
         );
 
     FreeBuffer(&StagingBuffer);
@@ -2644,7 +2657,7 @@ CreateDescriptorPool(
     };
 
     CreateInformation.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    CreateInformation.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    CreateInformation.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
     CreateInformation.poolSizeCount = (UINT32)PURPL_ARRAYSIZE(PoolSizes);
     CreateInformation.maxSets = 1000 * CreateInformation.poolSizeCount;
     CreateInformation.pPoolSizes = PoolSizes;
@@ -2676,7 +2689,8 @@ CreateUniformBuffers(
         AllocateBuffer(
             sizeof(RENDER_GLOBAL_UNIFORM_DATA),
             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
             &UniformBuffers[i]
             );
         vmaMapMemory(
@@ -2733,65 +2747,28 @@ CreateSampler(
 }
 
 static
-VOID
-CreateDescriptorSets(
+VkDescriptorSet
+CreateDescriptorSet(
     VOID
     )
 {
-    VkDescriptorSetLayout Layouts[VULKAN_FRAME_COUNT] = {0};
-    UINT i;
+    VkDescriptorSet DescriptorSet;
 
-    LogDebug("Allocating %d descriptor sets", VULKAN_FRAME_COUNT);
-
-    for ( i = 0; i < VULKAN_FRAME_COUNT; i++ )
-    {
-        Layouts[i] = DescriptorSetLayout;
-    }
+    LogDebug("Allocating descriptor set");
 
     VkDescriptorSetAllocateInfo DescriptorSetAllocateInformation = {0};
     DescriptorSetAllocateInformation.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     DescriptorSetAllocateInformation.descriptorPool = DescriptorPool;
-    DescriptorSetAllocateInformation.descriptorSetCount = VULKAN_FRAME_COUNT;
-    DescriptorSetAllocateInformation.pSetLayouts = Layouts;
+    DescriptorSetAllocateInformation.descriptorSetCount = 1;
+    DescriptorSetAllocateInformation.pSetLayouts = &DescriptorSetLayout;
 
     VULKAN_CHECK(vkAllocateDescriptorSets(
         Device,
         &DescriptorSetAllocateInformation,
-        SharedDescriptorSets
+        &DescriptorSet
         ));
 
-    VkDescriptorBufferInfo DescriptorBufferInformation = {0};
-    DescriptorBufferInformation.offset = 0;
-    DescriptorBufferInformation.range = sizeof(RENDER_GLOBAL_UNIFORM_DATA);
-
-    VkWriteDescriptorSet DescriptorSetWrites[1] = {0};
-    DescriptorSetWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    DescriptorSetWrites[0].dstBinding = 0;
-    DescriptorSetWrites[0].dstArrayElement = 0;
-    DescriptorSetWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    DescriptorSetWrites[0].descriptorCount = 1;
-    DescriptorSetWrites[0].pBufferInfo = &DescriptorBufferInformation;
-
-    LogTrace("Updating descriptor sets");
-    for ( i = 0; i < VULKAN_FRAME_COUNT; i++ )
-    {
-        DescriptorBufferInformation.buffer = UniformBuffers[i].Buffer;
-        DescriptorSetWrites[0].dstSet = SharedDescriptorSets[i];
-        SetObjectName(
-            SharedDescriptorSets[i],
-            VK_OBJECT_TYPE_DESCRIPTOR_SET,
-            "Descriptor set %u",
-            i
-            );
-
-        vkUpdateDescriptorSets(
-            Device,
-            PURPL_ARRAYSIZE(DescriptorSetWrites),
-            DescriptorSetWrites,
-            0,
-            NULL
-            );
-    }
+    return DescriptorSet;
 }
 
 static
@@ -2857,7 +2834,6 @@ Return Value:
     CreateDescriptorPool();
     CreateUniformBuffers();
     CreateSampler();
-    CreateDescriptorSets();
     CreateRenderPass();
     CreateFramebuffers();
     CreateSharedFontObjects();
@@ -3061,10 +3037,54 @@ Return Value:
 
 static
 VOID
-BindShader(
-    _In_ PSHADER Shader
+BindMaterial(
+    _In_ PRENDER_TEXTURE Texture,
+    _In_ PSHADER Shader,
+    _In_ VkDescriptorSet DescriptorSet,
+    _In_ PUINT8 LastFrameUsed
     )
 {
+    PVULKAN_TEXTURE_DATA TextureData;
+
+    TextureData = Texture->Handle;
+    VkDescriptorImageInfo DescriptorImageInformation = { 0 };
+    DescriptorImageInformation.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    DescriptorImageInformation.imageView = TextureData->ImageView;
+    DescriptorImageInformation.sampler = Sampler;
+
+    VkDescriptorBufferInfo DescriptorBufferInformation = {0};
+    DescriptorBufferInformation.offset = 0;
+    DescriptorBufferInformation.range = sizeof(RENDER_GLOBAL_UNIFORM_DATA);
+    DescriptorBufferInformation.buffer = UniformBuffers[FrameIndex].Buffer;
+
+    VkWriteDescriptorSet DescriptorSetWrites[2] = { 0 };
+    DescriptorSetWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    DescriptorSetWrites[0].dstBinding = 0;
+    DescriptorSetWrites[0].dstArrayElement = 0;
+    DescriptorSetWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    DescriptorSetWrites[0].descriptorCount = 1;
+    DescriptorSetWrites[0].pBufferInfo = &DescriptorBufferInformation;
+    DescriptorSetWrites[0].dstSet = DescriptorSet;
+    DescriptorSetWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    DescriptorSetWrites[1].dstBinding = 2;
+    DescriptorSetWrites[1].dstArrayElement = 0;
+    DescriptorSetWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    DescriptorSetWrites[1].descriptorCount = 1;
+    DescriptorSetWrites[1].pImageInfo = &DescriptorImageInformation;
+    DescriptorSetWrites[1].dstSet = DescriptorSet;
+
+    if ( *LastFrameUsed != FrameIndex )
+    {
+        vkUpdateDescriptorSets(
+            Device,
+            PURPL_ARRAYSIZE(DescriptorSetWrites),
+            DescriptorSetWrites,
+            0,
+            NULL
+            );
+        *LastFrameUsed = FrameIndex;
+    }
+
     if ( LastShader != Shader )
     {
         vkCmdBindPipeline(
@@ -3081,39 +3101,7 @@ BindShader(
         PipelineLayout,
         0,
         1,
-        &SharedDescriptorSets[FrameIndex],
-        0,
-        NULL
-        );
-}
-
-static
-VOID
-BindTexture(
-    _In_ PRENDER_TEXTURE Texture
-    )
-{
-    PVULKAN_TEXTURE_DATA TextureData;
-
-    TextureData = Texture->Handle;
-    VkDescriptorImageInfo DescriptorImageInformation = { 0 };
-    DescriptorImageInformation.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    DescriptorImageInformation.imageView = TextureData->ImageView;
-    DescriptorImageInformation.sampler = Sampler;
-
-    VkWriteDescriptorSet DescriptorSetWrite = { 0 };
-    DescriptorSetWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    DescriptorSetWrite.dstBinding = 2;
-    DescriptorSetWrite.dstArrayElement = 0;
-    DescriptorSetWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    DescriptorSetWrite.descriptorCount = 1;
-    DescriptorSetWrite.pImageInfo = &DescriptorImageInformation;
-    DescriptorSetWrite.dstSet = SharedDescriptorSets[FrameIndex];
-
-    vkUpdateDescriptorSets(
-        Device,
-        1,
-        &DescriptorSetWrite,
+        &DescriptorSet,
         0,
         NULL
         );
@@ -3125,6 +3113,8 @@ VulkanDrawModel(
     _In_ PRENDER_MODEL_UNIFORM_DATA UniformData
     )
 {
+    PVULKAN_MODEL_DATA ModelData;
+
     if ( Resized )
     {
         return;
@@ -3139,9 +3129,9 @@ VulkanDrawModel(
         UniformData
         );
 
+    ModelData = Model->Handle;
     if ( LastModel != Model )
     {
-        PVULKAN_MODEL_DATA ModelData = Model->Handle;
         VkDeviceSize Offset = 0;
 
         vkCmdBindVertexBuffers(
@@ -3163,8 +3153,12 @@ VulkanDrawModel(
         LastModel = Model;
     }
 
-    BindTexture(Model->Material->Texture);
-    BindShader(Model->Material->Shader);
+    BindMaterial(
+        Model->Material->Texture,
+        Model->Material->Shader,
+        ModelData->DescriptorSet,
+        &ModelData->LastFrameUsed
+        );
 
     vkCmdDrawIndexed(
         CommandBuffers[FrameIndex],
@@ -3203,7 +3197,6 @@ VulkanDrawGlyph(
         );
 
     FontData = Font->Handle;
-
     VertexBufferOffset = Offset;
     vkCmdBindVertexBuffers(
         CommandBuffers[FrameIndex],
@@ -3219,8 +3212,12 @@ VulkanDrawGlyph(
         VK_INDEX_TYPE_UINT32
         );
 
-    BindTexture(Font->Atlas);
-    BindShader(RenderGetShader("font"));
+    BindMaterial(
+        Font->Atlas,
+        RenderGetShader("font"),
+        FontData->DescriptorSet,
+        &FontData->LastFrameUsed
+        );
 
     vkCmdDrawIndexed(
         CommandBuffers[FrameIndex],
@@ -3325,9 +3322,6 @@ Return Value:
     UINT32 i;
 
     LogDebug("Shutting down Vulkan");
-
-    RenderDestroyShader("font");
-
     VulkanInitialized = FALSE;
     vkDeviceWaitIdle(Device);
 
@@ -3887,6 +3881,9 @@ VulkanUseMesh(
             SourceModel->Name
             );
     }
+
+    ModelData->DescriptorSet = CreateDescriptorSet();
+    ModelData->LastFrameUsed = UINT8_MAX;
 }
 
 VOID
@@ -4070,7 +4067,7 @@ VulkanUseFont(
     for ( i = 0; i < stbds_hmlenu(SourceFont->Font->Glyphs); i++ )
     {
         memcpy(
-            StagingBufferAddress,
+            (PGLYPH)StagingBufferAddress + i,
             &SourceFont->Font->Glyphs[i].value,
             sizeof(GLYPH)
             );
@@ -4089,6 +4086,9 @@ VulkanUseFont(
     EndTransfer(TransferBuffer);
 
     FreeBuffer(&StagingBuffer);
+
+    FontData->DescriptorSet = CreateDescriptorSet();
+    FontData->LastFrameUsed = UINT8_MAX;
 }
 
 VOID

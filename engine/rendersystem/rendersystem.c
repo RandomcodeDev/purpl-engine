@@ -323,6 +323,8 @@ Return Value:
 {
     LogInfo("Shutting down render system, %llu frames rendered", RenderedFrames);
 
+    RenderDestroyShader("font");
+
     if ( RenderInterfaces[RenderApi].Shutdown )
     {
         LogTrace("Calling RenderInterfaces[%s].Shutdown()", RenderInterfaces[RenderApi].Name);
@@ -1246,14 +1248,17 @@ RenderDrawCharacter(
         );
     Glyph = &Font->Font->Glyphs[GlyphIndex].value;
 
-    DrawCharacterInternal(
-        Font,
-        Scale,
-        Colour,
-        Position,
-        Glyph,
-        GlyphIndex
-        );
+    if ( Character != L' ' )
+    {
+        DrawCharacterInternal(
+            Font,
+            Scale,
+            Colour,
+            Position,
+            Glyph,
+            GlyphIndex
+            );
+    }
 
     // top right - top left = width
     return (Glyph->Corners[1].Position[0] - Glyph->Corners[0].Position[0]) * Scale;

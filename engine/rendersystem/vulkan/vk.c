@@ -54,17 +54,6 @@ typedef struct VULKAN_TEXTURE_DATA
 } VULKAN_TEXTURE_DATA, *PVULKAN_TEXTURE_DATA;
 
 //
-// Font data
-//
-
-typedef struct VULKAN_FONT_DATA
-{
-    VULKAN_BUFFER VertexBuffer;
-    VkDescriptorSet DescriptorSet;
-    UINT8 LastFrameUsed;
-} VULKAN_FONT_DATA, *PVULKAN_FONT_DATA;
-
-//
 // Vulkan data
 //
 
@@ -323,12 +312,6 @@ static PRENDER_TEXTURE LastTexture;
 //
 
 static VkSampler Sampler;
-
-//
-// All font glyphs use the exact same indices
-//
-
-static VULKAN_BUFFER FontGlyphIndexBuffer;
 
 //
 // Get the name of a result
@@ -2777,28 +2760,6 @@ CreateDescriptorSet(
     return DescriptorSet;
 }
 
-static
-VOID
-CreateSharedFontObjects(
-    VOID
-    )
-{
-    LogDebug("Creating shared font glyph index buffer");
-
-    CONST UINT32 FontGlyphIndices[] = {
-        0, 1, 2,
-        1, 2, 3
-    };
-
-    AllocateBufferWithData(
-        (PVOID)FontGlyphIndices,
-        sizeof(FontGlyphIndices),
-        VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        &FontGlyphIndexBuffer
-        );
-}
-
 VOID
 VulkanInitialize(
     VOID
@@ -2842,7 +2803,6 @@ Return Value:
     CreateSampler();
     CreateRenderPass();
     CreateFramebuffers();
-    CreateSharedFontObjects();
 
     FrameIndex = 0;
     VulkanInitialized = TRUE;
@@ -3177,64 +3137,6 @@ VulkanDrawModel(
 }
 
 VOID
-VulkanDrawGlyph(
-    _In_ PRENDER_FONT Font,
-    _In_ PRENDER_FONT_UNIFORM_DATA UniformData,
-    _In_ PGLYPH Glyph,
-    _In_ SIZE_T Offset
-    )
-{
-    PVULKAN_FONT_DATA FontData;
-    VkDeviceSize VertexBufferOffset;
-
-    if ( Resized )
-    {
-        return;
-    }
-
-    vkCmdPushConstants(
-        CommandBuffers[FrameIndex],
-        PipelineLayout,
-        VK_SHADER_STAGE_VERTEX_BIT,
-        0,
-        sizeof(RENDER_FONT_UNIFORM_DATA),
-        UniformData
-        );
-
-    FontData = Font->Handle;
-    VertexBufferOffset = Offset;
-    vkCmdBindVertexBuffers(
-        CommandBuffers[FrameIndex],
-        0,
-        1,
-        &FontData->VertexBuffer.Buffer,
-        &VertexBufferOffset
-        );
-    vkCmdBindIndexBuffer(
-        CommandBuffers[FrameIndex],
-        FontGlyphIndexBuffer.Buffer,
-        0,
-        VK_INDEX_TYPE_UINT32
-        );
-
-    BindMaterial(
-        Font->Atlas,
-        RenderGetShader("font"),
-        FontData->DescriptorSet,
-        &FontData->LastFrameUsed
-        );
-
-    vkCmdDrawIndexed(
-        CommandBuffers[FrameIndex],
-        6,
-        1,
-        0,
-        0,
-        0
-        );
-}
-
-VOID
 VulkanPresentFrame(
     VOID
     )
@@ -3331,7 +3233,6 @@ Return Value:
     vkDeviceWaitIdle(Device);
 
     DestroyFramebuffers();
-    FreeBuffer(&FontGlyphIndexBuffer);
 
     if ( RenderPass )
     {
@@ -3560,21 +3461,6 @@ static CONST VkVertexInputAttributeDescription MeshVertexAttributeDescriptions[4
     }
 };
 
-static CONST VkVertexInputAttributeDescription FontVertexAttributeDescriptions[2] = {
-    {
-        .binding = 0,
-        .location = 0,
-        .format = VK_FORMAT_R32G32_SFLOAT,
-        .offset = offsetof(GLYPH_VERTEX, Position),
-    },
-    {
-        .binding = 0,
-        .location = 1,
-        .format = VK_FORMAT_R32G32_SFLOAT,
-        .offset = offsetof(GLYPH_VERTEX, TextureCoordinate),
-    },
-};
-
 VOID
 VulkanCreateShader(
     _In_ PSHADER SourceShader
@@ -3667,14 +3553,6 @@ Return Value:
         VertexAttributeDescriptions = MeshVertexAttributeDescriptions;
         VertexAttributeCount = PURPL_ARRAYSIZE(MeshVertexAttributeDescriptions);
         break;
-    case ShaderTypeFont:
-        VertexAttributeDescriptions = FontVertexAttributeDescriptions;
-        VertexAttributeCount = PURPL_ARRAYSIZE(FontVertexAttributeDescriptions);
-        break;
-    //case ShaderTypeUi:
-    //    VertexAttributeDescriptions = UiVertexAttributeDescriptions;
-    //    VertexAttributeCount = PURPL_ARRAYSIZE(UiVertexAttributeDescriptions);
-    //    break;
     }
 
     VkPipelineInputAssemblyStateCreateInfo InputAssemblyState = {0};
@@ -4025,102 +3903,4 @@ VulkanDestroyTexture(
         );
     PURPL_FREE(TextureData);
     Texture->Handle = NULL;
-}
-
-VOID
-VulkanUseFont(
-    _In_ PRENDER_FONT SourceFont
-    )
-{
-    PVULKAN_FONT_DATA FontData;
-    VULKAN_BUFFER StagingBuffer;
-    PVOID StagingBufferAddress;
-    VkDeviceSize GlyphsSize;
-    SIZE_T i;
-    INT8 j;
-
-    FontData = PURPL_ALLOC(
-        1,
-        sizeof(VULKAN_FONT_DATA)
-        );
-    if ( !FontData )
-    {
-        CommonError("Failed to allocate memory for Vulkan font data for font %s: %s", SourceFont->Name, strerror(errno));
-    }
-    SourceFont->Handle = FontData;
-
-    GlyphsSize = stbds_hmlenu(SourceFont->Font->Glyphs) * sizeof(GLYPH);
-    LogTrace("Creating %zu-byte vertex buffer for font %s", GlyphsSize, SourceFont->Name);
-
-    AllocateBuffer(
-        GlyphsSize,
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &StagingBuffer
-        );
-    AllocateBuffer(
-        GlyphsSize,
-        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        &FontData->VertexBuffer
-        );
-
-    StagingBufferAddress = NULL;
-    vmaMapMemory(
-        Allocator,
-        StagingBuffer.Allocation,
-        &StagingBufferAddress
-        );
-    LogTrace("Copying %zu glyphs to mapped staging buffer at 0x%llX", stbds_hmlenu(SourceFont->Font->Glyphs), StagingBufferAddress);
-    for ( i = 0; i < stbds_hmlenu(SourceFont->Font->Glyphs); i++ )
-    {
-        for ( j = 0; j < 4; j++ )
-        {
-            memcpy(
-                &((PGLYPH_VERTEX)StagingBufferAddress)[i + j],
-                &SourceFont->Font->Glyphs[i].value.Corners[j],
-                sizeof(GLYPH_VERTEX)
-                );
-        }
-    }
-    vmaUnmapMemory(
-        Allocator,
-        StagingBuffer.Allocation
-        );
-
-    CopyBuffer(
-        &StagingBuffer,
-        &FontData->VertexBuffer,
-        GlyphsSize
-        );
-
-    FreeBuffer(&StagingBuffer);
-
-    FontData->DescriptorSet = CreateDescriptorSet();
-    FontData->LastFrameUsed = UINT8_MAX;
-}
-
-VOID
-VulkanDestroyFont(
-    _In_ PRENDER_FONT Font
-    )
-{
-    PVULKAN_FONT_DATA FontData;
-
-    FontData = Font->Handle;
-    if ( !FontData )
-    {
-        return;
-    }
-
-    LogDebug("Destroying font %s", Font->Name);
-
-    FreeBuffer(&FontData->VertexBuffer);
-    memset(
-        FontData,
-        0,
-        sizeof(VULKAN_FONT_DATA)
-        );
-    PURPL_FREE(FontData);
-    Font->Handle = NULL;
 }

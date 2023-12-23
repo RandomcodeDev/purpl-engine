@@ -55,8 +55,6 @@ Return Value:
     CommonInitialize();
     EngineInitialize();
 
-    PURPL_ASSERT(RenderLoadFont("purpl-regular"));
-
     PURPL_ASSERT(RenderLoadShader(
         "basic",
         ShaderTypeMesh
@@ -115,17 +113,17 @@ Return Value:
     ecs_entity_t MasterChief2 = EngineCreateEntity("chief2");
     ecs_add(
         EngineGetEcsWorld(),
-        MasterChief,
+        MasterChief2,
         TRANSFORM
         );
     ecs_add(
         EngineGetEcsWorld(),
-        MasterChief,
+        MasterChief2,
         RENDERABLE
         );
     ecs_set(
         EngineGetEcsWorld(),
-        MasterChief,
+        MasterChief2,
         RENDERABLE,
         {RenderableTypeModel, RenderGetModel("chief")}
         );
@@ -152,7 +150,7 @@ Return Value:
             EngineGetEcsWorld(),
             MasterChief2,
             TRANSFORM,
-            {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
+            {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, -Rotation}, {1.0f, 1.0f, 1.0f}}
             );
         EngineUpdate();
     }
@@ -160,7 +158,6 @@ Return Value:
     RenderDestroyModel("chief");
     RenderDestroyTexture("chief");
     RenderDestroyShader("basic");
-    RenderDestroyFont("purpl-regular");
 
     EngineShutdown();
     CommonShutdown();

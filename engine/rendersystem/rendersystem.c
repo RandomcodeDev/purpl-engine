@@ -47,11 +47,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .UseTexture = NULL,
         .DestroyTexture = NULL,
 
-        .UseFont = NULL,
-        .DestroyFont = NULL,
-
         .DrawModel = NULL,
-        .DrawGlyph = NULL,
     },
     {
         RenderApiDX12,
@@ -75,11 +71,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .UseTexture = NULL,
         .DestroyTexture = NULL,
 
-        .UseFont = NULL,
-        .DestroyFont = NULL,
-
         .DrawModel = NULL,
-        .DrawGlyph = NULL,
 #endif
     },
     {
@@ -104,11 +96,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .UseTexture = DirectX9UseTexture,
         .DestroyTexture = DirectX9DestroyTexture,
 
-        .UseFont = NULL,
-        .DestroyFont = NULL,
-
         .DrawModel = DirectX9DrawModel,
-        .DrawGlyph = NULL,
 #endif
     },
     {
@@ -133,11 +121,7 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
         .UseTexture = VulkanUseTexture,
         .DestroyTexture = VulkanDestroyTexture,
 
-        .UseFont = VulkanUseFont,
-        .DestroyFont = VulkanDestroyFont,
-
         .DrawModel = VulkanDrawModel,
-        .DrawGlyph = VulkanDrawGlyph,
 #endif
     }
 };
@@ -145,7 +129,6 @@ RENDER_SYSTEM_INTERFACE RenderInterfaces[RenderApiCount] =
 PSHADER_MAP Shaders;
 PRENDER_TEXTURE_MAP Textures;
 PMATERIAL_MAP Materials;
-PRENDER_FONT_MAP Fonts;
 PMODEL_MAP Models;
 
 VOID
@@ -192,9 +175,6 @@ Return Value:
     LogTrace("\t.LoadTexture = 0x%llX,", RenderInterfaces[RenderApi].LoadTexture);
     LogTrace("\t.UseTexture = 0x%llX,", RenderInterfaces[RenderApi].UseTexture);
     LogTrace("\t.DestroyTexture = 0x%llX,", RenderInterfaces[RenderApi].DestroyTexture);
-    LogTrace("\t.UseFont = 0x%llX,", RenderInterfaces[RenderApi].UseFont);
-    LogTrace("\t.DestroyFont = 0x%llX,", RenderInterfaces[RenderApi].DestroyFont);
-    LogTrace("\t.DrawGlyph = 0x%llX,", RenderInterfaces[RenderApi].DrawGlyph);
     LogTrace("\t.DrawModel = 0x%llX,", RenderInterfaces[RenderApi].DrawModel);
     LogTrace("}");
 
@@ -203,11 +183,6 @@ Return Value:
         LogTrace("Calling RenderInterfaces[%s].Initialize()", RenderInterfaces[RenderApi].Name);
         RenderInterfaces[RenderApi].Initialize();
     }
-
-    PURPL_ASSERT(RenderLoadShader(
-        "font",
-        ShaderTypeFont
-        ));
 
     RenderedFrames = 0;
 
@@ -323,15 +298,12 @@ Return Value:
 {
     LogInfo("Shutting down render system, %llu frames rendered", RenderedFrames);
 
-    RenderDestroyShader("font");
-
     if ( RenderInterfaces[RenderApi].Shutdown )
     {
         LogTrace("Calling RenderInterfaces[%s].Shutdown()", RenderInterfaces[RenderApi].Name);
         RenderInterfaces[RenderApi].Shutdown();
     }
 
-    stbds_shfree(Fonts);
     stbds_shfree(Models);
     stbds_shfree(Materials);
     stbds_shfree(Shaders);
@@ -1004,368 +976,6 @@ RenderGetMaterial(
         Materials,
         Name
         );
-}
-
-BOOLEAN
-RenderLoadFont(
-    _In_ PCSTR Name
-    )
-/*++
-
-Routine Description:
-
-    Loads a font and uses it.
-
-Arguments:
-
-    Name - The name of the font.
-
-Return Value:
-
-    TRUE on success, FALSE on failure.
-
---*/
-{
-    PFONT Font;
-    PCSTR AtlasPath;
-    PCSTR AtlasIndexPath;
-    BOOLEAN Succeeded;
-
-    AtlasPath = CommonFormatString(ASSETS_PREFIX "fonts/%s.ptex", Name);
-    AtlasIndexPath = CommonFormatString(ASSETS_PREFIX "fonts/%s.json", Name);
-
-    Font = LoadFont(
-        AtlasPath,
-        AtlasIndexPath
-        );
-    Succeeded = RenderUseFont(
-        Name,
-        Font
-        );
-
-    PURPL_FREE(AtlasIndexPath);
-    PURPL_FREE(AtlasPath);
-    return Succeeded;
-}
-
-BOOLEAN
-RenderUseFont(
-    _In_ PCSTR Name,
-    _In_ PFONT Font
-    )
-/*++
-
-Routine Description:
-
-    Sets up a font to be used by the render system.
-
-Arguments:
-
-    Name - The name to give the font.
-
-    Font - The font to use.
-
-Return Value:
-
-    TRUE for success, FALSE for failure.
-
---*/
-{
-    PRENDER_FONT RenderFont;
-
-    if ( !Name || !Font )
-    {
-        LogError("Not creating invalid font %s", Name);
-        return FALSE;
-    }
-
-    RenderFont = PURPL_ALLOC(
-        1,
-        sizeof(RENDER_FONT)
-        );
-    if ( !RenderFont )
-    {
-        LogError("Failed to allocate memory for font %s", Name);
-        return FALSE;
-    }
-
-    strncpy(
-        RenderFont->Name,
-        Name,
-        PURPL_ARRAYSIZE(RenderFont->Name) - 1
-        );
-    RenderFont->Font = Font;
-    if ( !RenderUseTexture(
-             RenderFont->Name,
-             RenderFont->Font->Atlas
-             ) )
-    {
-        LogError("Failed to use font atlas for font %s", Name);
-        PURPL_FREE(RenderFont);
-        return FALSE;
-    }
-    RenderFont->Font->Atlas = NULL; // prevent double free
-    RenderFont->Atlas = RenderGetTexture(RenderFont->Name);
-
-    if ( RenderInterfaces[RenderApi].UseFont )
-    {
-        LogTrace("Calling RenderInterfaces[%s].UseFont(\"%s\")", RenderInterfaces[RenderApi].Name, Name);
-        RenderInterfaces[RenderApi].UseFont(RenderFont);
-    }
-
-    stbds_shput(
-        Fonts,
-        RenderFont->Name,
-        RenderFont
-        );
-
-    return stbds_shget(
-        Fonts,
-        RenderFont->Name
-        ) != NULL;
-}
-
-VOID
-RenderDestroyFont(
-    _In_opt_ PCSTR Name
-    )
-{
-    PRENDER_FONT Font;
-
-    if ( !Name )
-    {
-        return;
-    }
-
-    Font = stbds_shget(
-        Fonts,
-        Name
-        );
-    if ( !Font )
-    {
-        return;
-    }
-    stbds_shdel(
-        Fonts,
-        Name
-        );
-
-    if ( RenderInterfaces[RenderApi].DestroyFont )
-    {
-        LogTrace("Calling RenderInterfaces[%s].DestroyFont(\"%s\")", RenderInterfaces[RenderApi].Name, Name);
-        RenderInterfaces[RenderApi].DestroyFont(Font);
-    }
-
-    RenderDestroyTexture(Font->Name);
-    DestroyFont(Font->Font);
-    PURPL_FREE(Font);
-}
-
-PRENDER_FONT
-RenderGetFont(
-    _In_opt_ PCSTR Name
-    )
-{
-    return stbds_shget(
-        Fonts,
-        Name
-        );
-}
-
-static CONST RENDER_TEXT_OPTIONS DefaultTextOptions =
-{
-    .TopLeft = {0.0f, 0.0f},
-    .Scale = 1.0f,
-    .Colour = {1.0f, 1.0f, 1.0f, 1.0f},
-    .Padding = {0.0f, 0.0f},
-
-    .Wrap = TRUE,
-    .CutOff = FALSE,
-    .BottomRight = {-1.0f, -1.0f},
-};
-
-static
-VOID
-DrawCharacterInternal(
-    _In_ PRENDER_FONT Font,
-    _In_ FLOAT Scale,
-    _In_ vec4 Colour,
-    _In_ vec2 Position,
-    _In_ PGLYPH Glyph,
-    _In_ SIZE_T GlyphIndex
-    )
-{
-    RENDER_FONT_UNIFORM_DATA UniformData;
-
-    MathCreateTransformMatrix(
-        &(TRANSFORM){
-            {Position[0], Position[1], 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {Scale, Scale, 0.0f}
-        },
-        UniformData.Transform
-        );
-    glm_vec4_copy(
-        Colour,
-        UniformData.Colour
-        );
-
-    if ( RenderInterfaces[RenderApi].DrawGlyph )
-    {
-        RenderInterfaces[RenderApi].DrawGlyph(
-            Font,
-            &UniformData,
-            Glyph,
-            GlyphIndex * sizeof(GLYPH_VERTEX)
-            );
-    }
-}
-
-FLOAT
-RenderDrawCharacter(
-    _In_ PCSTR FontName,
-    _In_ FLOAT Scale,
-    _In_ vec4 Colour,
-    _In_ vec2 Position,
-    _In_ WCHAR Character
-    )
-{
-    PRENDER_FONT Font;
-    PGLYPH Glyph;
-    SIZE_T GlyphIndex;
-
-    if ( !FontName )
-    {
-        return 0.0f;
-    }
-
-    Font = RenderGetFont(FontName);
-    if ( !Font )
-    {
-        return 0.0f;
-    }
-
-    GlyphIndex = stbds_shgeti(
-        Font->Font->Glyphs,
-        Character
-        );
-    Glyph = &Font->Font->Glyphs[GlyphIndex].value;
-
-    if ( Character != L' ' )
-    {
-        DrawCharacterInternal(
-            Font,
-            Scale,
-            Colour,
-            Position,
-            Glyph,
-            GlyphIndex
-            );
-    }
-
-    // top right - top left = width
-    return (Glyph->Corners[1].Position[0] - Glyph->Corners[0].Position[0]) * Scale;
-}
-
-VOID
-RenderDrawString(
-    _In_ PCSTR FontName,
-    _In_ PRENDER_TEXT_OPTIONS Options,
-    _In_ PCSTR Format,
-    ...
-    )
-{
-    PRENDER_FONT Font;
-    PCHAR Message;
-    PWCHAR WideMessage;
-    va_list Arguments;
-    FLOAT CurrentX;
-    FLOAT CurrentY;
-    PRENDER_TEXT_OPTIONS RealOptions;
-    PGLYPH Glyph;
-    SIZE_T GlyphIndex;
-    SIZE_T i;
-
-    if ( !FontName || !Format )
-    {
-        return;
-    }
-
-    Font = RenderGetFont(FontName);
-    if ( !Font )
-    {
-        return;
-    }
-
-    RealOptions = Options ? Options : &DefaultTextOptions;
-
-    va_start(
-        Arguments,
-        Format
-        );
-    Message = CommonFormatStringVarArgs(
-        Format,
-        Arguments
-        );
-    va_end(Arguments);
-
-    WideMessage = PURPL_ALLOC(
-        strlen(Message) + 1,
-        sizeof(WCHAR)
-        );
-    if ( !WideMessage )
-    {
-        LogError("Failed to allocate memory for string: %s", strerror(errno));
-        PURPL_FREE(Message);
-        return;
-    }
-
-    mbstowcs(
-        WideMessage,
-        Message,
-        strlen(Message) + 1
-        );
-    PURPL_FREE(Message);
-
-    // TODO: add RTL support?
-
-    CurrentX = RealOptions->TopLeft[0];
-    CurrentY = RealOptions->TopLeft[1];
-    for ( i = 0; i < wcslen(WideMessage); i++ )
-    {
-        GlyphIndex = stbds_hmgeti(
-            Font->Font->Glyphs,
-            WideMessage[i]
-            );
-        Glyph = &Font->Font->Glyphs[GlyphIndex].value;
-
-        // TODO: handle other options
-        switch ( WideMessage[i] )
-        {
-        case L'\n':
-            CurrentX = 0;
-            // glyph size * scale + y padding
-            CurrentY += Font->Font->GlyphSize * RealOptions->Scale + RealOptions->Padding[1];
-            break;
-        case L'\r':
-            CurrentX = 0;
-            break;
-        default:
-            DrawCharacterInternal(
-                Font,
-                RealOptions->Scale,
-                RealOptions->Colour,
-                &(vec2){CurrentX, CurrentY},
-                Glyph,
-                GlyphIndex
-                );
-            // top right - top left + padding
-            CurrentX += Glyph->Width * RealOptions->Scale + RealOptions->Padding[0];
-            break;
-        }
-    }
-
-    PURPL_FREE(WideMessage);
 }
 
 ecs_entity_t ecs_id(RENDERABLE);

@@ -10,7 +10,7 @@ Abstract:
 
     This module defines the render system API.
 
-    TODO: Make textures, meshes, fonts, etc be allocated from a pool or something to reduce fragmentation
+    TODO: Make textures, meshes, etc be allocated from a pool or something to reduce fragmentation
     TODO: Add multi-viewport (splitscreen) rendering support in a cross-API way
 
 --*/
@@ -33,7 +33,6 @@ Abstract:
 #include "vulkan/vk.h"
 #endif
 
-#include "util/font.h"
 #include "util/mesh.h"
 #include "util/texture.h"
 
@@ -69,8 +68,6 @@ extern UINT64 RenderedFrames;
 typedef enum SHADER_TYPE
 {
     ShaderTypeMesh,
-    ShaderTypeFont,
-    ShaderTypeUi,
     ShaderTypePostProcess
 } SHADER_TYPE, *PSHADER_TYPE;
 
@@ -102,12 +99,6 @@ typedef struct RENDER_MODEL_UNIFORM_DATA
 {
     mat4 ModelTransform;
 } RENDER_MODEL_UNIFORM_DATA, *PRENDER_MODEL_UNIFORM_DATA;
-
-typedef struct RENDER_FONT_UNIFORM_DATA
-{
-    mat4 Transform;
-    vec4 Colour;
-} RENDER_FONT_UNIFORM_DATA, *PRENDER_FONT_UNIFORM_DATA;
 
 typedef struct SHADER_MAP
 {
@@ -148,24 +139,6 @@ typedef struct MATERIAL_MAP
     PCHAR key;
     PMATERIAL value;
 } MATERIAL_MAP, *PMATERIAL_MAP;
-
-//
-// Render system font
-//
-
-typedef struct RENDER_FONT
-{
-    CHAR Name[32];
-    PFONT Font;
-    PRENDER_TEXTURE Atlas;
-    PVOID Handle;
-} RENDER_FONT, *PRENDER_FONT;
-
-typedef struct RENDER_FONT_MAP
-{
-    PCHAR key;
-    PRENDER_FONT value;
-} RENDER_FONT_MAP, *PRENDER_FONT_MAP;
 
 //
 // Model
@@ -228,12 +201,6 @@ extern PRENDER_TEXTURE_MAP Textures;
 //
 
 extern PMATERIAL_MAP Materials;
-
-//
-// Fonts by name
-//
-
-extern PRENDER_FONT_MAP Fonts;
 
 //
 // Models by name
@@ -311,23 +278,6 @@ typedef struct RENDER_SYSTEM_INTERFACE
     VOID
     (*DestroyTexture)(
         _In_ PRENDER_TEXTURE Texture
-        );
-
-    VOID
-    (*UseFont)(
-        _In_ PRENDER_FONT SourceFont
-        );
-    VOID
-    (*DestroyFont)(
-        _In_ PRENDER_FONT Font
-        );
-
-    VOID
-    (*DrawGlyph)(
-        _In_ PRENDER_FONT Font,
-        _In_ PRENDER_FONT_UNIFORM_DATA UniformData,
-        _In_ PGLYPH Glyph,
-        _In_ SIZE_T Offset
         );
 } RENDER_SYSTEM_INTERFACE, *PRENDER_SYSTEM_INTERFACE;
 
@@ -562,102 +512,6 @@ extern
 PMATERIAL
 RenderGetMaterial(
     _In_opt_ PCSTR Name
-    );
-
-//
-// Load a font
-//
-
-extern
-BOOLEAN
-RenderLoadFont(
-    _In_ PCSTR Name
-    );
-
-//
-// Use a font
-//
-
-extern
-BOOLEAN
-RenderUseFont(
-    _In_ PCSTR Name,
-    _In_ PFONT Font
-    );
-
-//
-// Destroy a font
-//
-
-extern
-VOID
-RenderDestroyFont(
-    _In_opt_ PCSTR Name
-    );
-
-//
-// Get a font
-//
-
-extern
-PRENDER_FONT
-RenderGetFont(
-    _In_opt_ PCSTR Name
-    );
-
-//
-// Options for drawing text
-//
-
-typedef struct RENDER_TEXT_OPTIONS
-{
-    vec2 TopLeft;
-    FLOAT Scale;
-    vec4 Colour;
-    vec2 Padding;
-
-    // TODO: implement these
-    BOOLEAN Wrap;
-    BOOLEAN CutOff;
-    vec2 BottomRight;
-} RENDER_TEXT_OPTIONS, *PRENDER_TEXT_OPTIONS;
-
-//
-// Draw a character
-//
-
-extern
-FLOAT
-RenderDrawCharacter(
-    _In_ PCSTR FontName,
-    _In_ FLOAT Scale,
-    _In_ vec4 Colour,
-    _In_ vec2 Position,
-    _In_ WCHAR Character
-    );
-
-//
-// Draw a string
-// TODO: Add way more options, maybe a struct?
-//
-
-extern
-VOID
-RenderDrawString(
-    _In_ PCSTR FontName,
-    _In_ PRENDER_TEXT_OPTIONS Options,
-    _In_ PCSTR Format,
-    ...
-    );
-
-//
-// Draw the UI
-//
-
-extern
-VOID
-RenderDrawUi(
-    VOID
     );
 
 //

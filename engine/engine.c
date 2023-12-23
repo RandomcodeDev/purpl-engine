@@ -111,7 +111,6 @@ Return Value:
 
     RenderInitialize();
     EngineEcsInitialize();
-    UiInitialize();
 
     LogInfo("Successfully initialized engine with data directory %s", EngineDataDirectory);
 }
@@ -198,12 +197,6 @@ Return Value:
 
     RenderBeginCommands();
 
-    RenderDrawString(
-        "purpl-regular",
-        NULL,
-        "asdf"
-        );
-
     ecs_progress(
         EngineGetEcsWorld(),
         (FLOAT)Delta
@@ -236,7 +229,6 @@ Return Value:
 {
     LogInfo("Shutting down engine");
 
-    UiShutdown();
     EngineEcsShutdown();
     RenderShutdown();
     PlatformShutdownVideo();

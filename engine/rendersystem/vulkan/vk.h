@@ -64,10 +64,8 @@ VulkanGetAllocationCallbacks(
 typedef struct RENDERABLE RENDERABLE, *PRENDERABLE;
 typedef struct RENDER_GLOBAL_UNIFORM_DATA RENDER_GLOBAL_UNIFORM_DATA, *PRENDER_GLOBAL_UNIFORM_DATA;
 typedef struct RENDER_MODEL_UNIFORM_DATA RENDER_MODEL_UNIFORM_DATA, *PRENDER_MODEL_UNIFORM_DATA;
-typedef struct RENDER_FONT_UNIFORM_DATA RENDER_FONT_UNIFORM_DATA, *PRENDER_FONT_UNIFORM_DATA;
 typedef struct SHADER SHADER, *PSHADER;
 typedef struct RENDER_TEXTURE RENDER_TEXTURE, *PRENDER_TEXTURE;
-typedef struct RENDER_FONT RENDER_FONT, *PRENDER_FONT;
 typedef struct GLYPH GLYPH, *PGLYPH;
 typedef struct MODEL MODEL, *PMODEL;
 
@@ -181,37 +179,4 @@ extern
 VOID
 VulkanDestroyTexture(
     _In_ PRENDER_TEXTURE Texture
-    );
-
-//
-// Use a font
-//
-
-extern
-VOID
-VulkanUseFont(
-    _In_ PRENDER_FONT SourceFont
-    );
-
-//
-// Use a font
-//
-
-extern
-VOID
-VulkanDestroyFont(
-    _In_ PRENDER_FONT Font
-    );
-
-//
-// Draw a glyph
-//
-
-extern
-VOID
-VulkanDrawGlyph(
-    _In_ PRENDER_FONT Font,
-    _In_ PRENDER_FONT_UNIFORM_DATA UniformData,
-    _In_ PGLYPH Glyph,
-    _In_ SIZE_T Offset
     );

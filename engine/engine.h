@@ -24,7 +24,6 @@ Abstract:
 
 #include "camera.h"
 #include "mathutil.h"
-#include "ui.h"
 
 //
 // The engine's data directory

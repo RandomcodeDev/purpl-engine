@@ -94,8 +94,8 @@ PlatformInitializeVideo(
         GLFW_NO_API
         );
 
-    WindowWidth = 1024;
-    WindowHeight = 576;
+    WindowWidth = 1280;
+    WindowHeight = 720;
     LogInfo("Creating %ux%u window titled " GAME_NAME, WindowWidth, WindowHeight);
 
     Window = glfwCreateWindow(

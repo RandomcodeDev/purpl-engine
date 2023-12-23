@@ -37,6 +37,7 @@ typedef struct GLYPH_VERTEX
 typedef struct GLYPH
 {
     GLYPH_VERTEX Corners[4];
+    FLOAT Width;
 } GLYPH, *PGLYPH;
 
 //

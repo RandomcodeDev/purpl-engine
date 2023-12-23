@@ -3179,8 +3179,7 @@ VulkanDrawModel(
 VOID
 VulkanDrawGlyph(
     _In_ PRENDER_FONT Font,
-    _In_ vec4 Colour,
-    _In_ mat4 Transform,
+    _In_ PRENDER_FONT_UNIFORM_DATA UniformData,
     _In_ PGLYPH Glyph,
     _In_ SIZE_T Offset
     )
@@ -3198,8 +3197,8 @@ VulkanDrawGlyph(
         PipelineLayout,
         VK_SHADER_STAGE_VERTEX_BIT,
         0,
-        sizeof(mat4),
-        Transform
+        sizeof(RENDER_FONT_UNIFORM_DATA),
+        UniformData
         );
 
     FontData = Font->Handle;
@@ -3230,7 +3229,7 @@ VulkanDrawGlyph(
         6,
         1,
         0,
-        (INT32)VertexBufferOffset,
+        0,
         0
         );
 }
@@ -4038,6 +4037,7 @@ VulkanUseFont(
     PVOID StagingBufferAddress;
     VkDeviceSize GlyphsSize;
     SIZE_T i;
+    INT8 j;
 
     FontData = PURPL_ALLOC(
         1,
@@ -4074,24 +4074,25 @@ VulkanUseFont(
     LogTrace("Copying %zu glyphs to mapped staging buffer at 0x%llX", stbds_hmlenu(SourceFont->Font->Glyphs), StagingBufferAddress);
     for ( i = 0; i < stbds_hmlenu(SourceFont->Font->Glyphs); i++ )
     {
-        memcpy(
-            &((PGLYPH)StagingBufferAddress)[i],
-            &SourceFont->Font->Glyphs[i].value,
-            sizeof(GLYPH)
-            );
+        for ( j = 0; j < 4; j++ )
+        {
+            memcpy(
+                &((PGLYPH_VERTEX)StagingBufferAddress)[i + j],
+                &SourceFont->Font->Glyphs[i].value.Corners[j],
+                sizeof(GLYPH_VERTEX)
+                );
+        }
     }
     vmaUnmapMemory(
         Allocator,
         StagingBuffer.Allocation
         );
 
-    VkCommandBuffer TransferBuffer = BeginTransfer();
     CopyBuffer(
         &StagingBuffer,
         &FontData->VertexBuffer,
         GlyphsSize
         );
-    EndTransfer(TransferBuffer);
 
     FreeBuffer(&StagingBuffer);
 

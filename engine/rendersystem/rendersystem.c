@@ -1195,7 +1195,7 @@ DrawCharacterInternal(
     _In_ SIZE_T GlyphIndex
     )
 {
-    mat4 TransformMatrix;
+    RENDER_FONT_UNIFORM_DATA UniformData;
 
     MathCreateTransformMatrix(
         &(TRANSFORM){
@@ -1203,15 +1203,18 @@ DrawCharacterInternal(
             {0.0f, 0.0f, 0.0f, 0.0f},
             {Scale, Scale, 0.0f}
         },
-        TransformMatrix
+        UniformData.Transform
+        );
+    glm_vec4_copy(
+        Colour,
+        UniformData.Colour
         );
 
     if ( RenderInterfaces[RenderApi].DrawGlyph )
     {
         RenderInterfaces[RenderApi].DrawGlyph(
             Font,
-            Colour,
-            TransformMatrix,
+            &UniformData,
             Glyph,
             GlyphIndex * sizeof(GLYPH_VERTEX)
             );
@@ -1339,8 +1342,15 @@ RenderDrawString(
         // TODO: handle other options
         switch ( WideMessage[i] )
         {
+        case L'\n':
+            CurrentX = 0;
+            // glyph size * scale + y padding
+            CurrentY += Font->Font->GlyphSize * RealOptions->Scale + RealOptions->Padding[1];
+            break;
+        case L'\r':
+            CurrentX = 0;
+            break;
         default:
-        {
             DrawCharacterInternal(
                 Font,
                 RealOptions->Scale,
@@ -1350,16 +1360,7 @@ RenderDrawString(
                 GlyphIndex
                 );
             // top right - top left + padding
-            CurrentX += (Glyph->Corners[0].Position[0] - Glyph->Corners[1].Position[0]) * RealOptions->Scale + RealOptions->Padding[0];
-            break;
-        }
-        case L'\n':
-            CurrentX = 0;
-            // glyph size * scale + y padding
-            CurrentY += Font->Font->GlyphSize * RealOptions->Scale + RealOptions->Padding[1];
-            break;
-        case L'\r':
-            CurrentX = 0;
+            CurrentX += Glyph->Width * RealOptions->Scale + RealOptions->Padding[0];
             break;
         }
     }

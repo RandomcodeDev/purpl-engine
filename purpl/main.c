@@ -144,13 +144,13 @@ Return Value:
             EngineGetEcsWorld(),
             MasterChief,
             TRANSFORM,
-            {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
+            {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, -Rotation}, {1.0f, 1.0f, 1.0f}}
             );
         ecs_set(
             EngineGetEcsWorld(),
             MasterChief2,
             TRANSFORM,
-            {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, -Rotation}, {1.0f, 1.0f, 1.0f}}
+            {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
             );
         EngineUpdate();
     }

@@ -140,6 +140,8 @@ Return Value:
             Rotation = 0.0f;
         }
 
+        EngineStartFrame();
+
         ecs_set(
             EngineGetEcsWorld(),
             MasterChief,
@@ -152,7 +154,8 @@ Return Value:
             TRANSFORM,
             {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
             );
-        EngineUpdate();
+
+        EngineEndFrame();
     }
 
     RenderDestroyModel("chief");

@@ -110,7 +110,7 @@ EngineEcsInitialize(
     //    60
     //    );
 
-#if defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)
+#if (defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)) && !defined(PURPL_SWITCH)
     LogTrace("Initializing ECS REST");
     ECS_IMPORT(
         EngineEcsWorld,

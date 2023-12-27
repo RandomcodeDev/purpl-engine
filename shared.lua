@@ -91,10 +91,6 @@ function setup_shared(root, vulkan)
     add_includedirs(
         root,
         path.join(root, "deps"),
-        --path.join(root, "deps/cimgui"),
-        --path.join(root, "deps/cimgui/generator/output"),
-        --path.join(root, "deps/cimgui/imgui"),
-        --path.join(root, "deps/imgui_backends"),
         path.join(root, "deps/cglm/include"),
         path.join(root, "deps/cjson"),
         path.join(root, "deps/flecs")

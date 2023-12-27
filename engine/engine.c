@@ -52,7 +52,7 @@ Return Value:
     LogInfo("Initializing engine");
 
     EngineDataDirectory = CommonFormatString(
-        "%s/" GAME_EXECUTABLE_NAME "/",
+        "%s" GAME_EXECUTABLE_NAME "/",
         PlatformGetUserDataDirectory()
         );
 
@@ -117,6 +117,7 @@ Return Value:
 
 static UINT64 Start;
 static DOUBLE Last;
+static DOUBLE Now;
 static DOUBLE Time;
 static UINT FramesThisSecond;
 static UINT FramesPerSecond;
@@ -147,26 +148,10 @@ EngineGetRuntime(
 }
 
 VOID
-EngineUpdate(
+EngineStartFrame(
     VOID
     )
-/*++
-
-Routine Description:
-
-    Updates engine systems if the engine has focus.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
-    DOUBLE Now;
     UINT64 Hours;
     UINT64 Minutes;
     UINT64 Seconds;
@@ -196,7 +181,28 @@ Return Value:
     Seconds -= Minutes * 60;
 
     RenderBeginCommands();
+}
 
+VOID
+EngineEndFrame(
+    VOID
+    )
+/*++
+
+Routine Description:
+
+    Finishes the frame.
+
+Arguments:
+
+    None.
+
+Return Value:
+
+    None.
+
+--*/
+{
     ecs_progress(
         EngineGetEcsWorld(),
         (FLOAT)Delta

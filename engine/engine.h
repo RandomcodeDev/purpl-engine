@@ -54,12 +54,21 @@ EngineInitialize(
     );
 
 //
-// Update the engine
+// Start a frame
+//
+
+VOID
+EngineStartFrame(
+    VOID
+    );
+
+//
+// End a frame
 //
 
 extern
 VOID
-EngineUpdate(
+EngineEndFrame(
     VOID
     );
 

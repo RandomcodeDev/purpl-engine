@@ -361,7 +361,7 @@ Return Value:
 
     Shader = PURPL_ALLOC(
         1,
-        sizeof(SHADER) + VertexLength + FragmentLength
+        sizeof(SHADER) + (RenderApi == RenderApiNone ? 0 : VertexLength + FragmentLength)
         );
     if ( !Shader )
     {
@@ -374,23 +374,26 @@ Return Value:
         Name,
         PURPL_ARRAYSIZE(Shader->Name) -1
         );
-    Shader->VertexData = Shader + 1;
-    Shader->VertexLength = VertexLength;
-    Shader->FragmentData = (PBYTE)(Shader + 1) + VertexLength;
-    Shader->FragmentLength = FragmentLength;
-
-    memmove(
-        Shader->VertexData,
-        VertexData,
-        VertexLength
-        );
-    memmove(
-        Shader->FragmentData,
-        FragmentData,
-        FragmentLength
-        );
-
     Shader->Type = ShaderType;
+
+    if ( RenderApi != RenderApiNone )
+    {
+        Shader->VertexData = Shader + 1;
+        Shader->VertexLength = VertexLength;
+        Shader->FragmentData = (PBYTE)(Shader + 1) + VertexLength;
+        Shader->FragmentLength = FragmentLength;
+
+        memmove(
+            Shader->VertexData,
+            VertexData,
+            VertexLength
+            );
+        memmove(
+            Shader->FragmentData,
+            FragmentData,
+            FragmentLength
+            );
+    }
 
     if ( RenderInterfaces[RenderApi].CreateShader )
     {
@@ -502,30 +505,33 @@ Return Value:
 
     LogInfo("Loading type %d shader %s", ShaderType, Name);
 
-    VertexLength = 0;
-    VertexData = FsReadFile(
-        VertexPath,
-        0,
-        &VertexLength,
-        0
-        );
-    if ( !VertexData )
+    if ( RenderApi != RenderApiNone )
     {
-        LogError("Failed to read shader %s", VertexPath);
-        return FALSE;
-    }
+        VertexLength = 0;
+        VertexData = FsReadFile(
+            VertexPath,
+            0,
+            &VertexLength,
+            0
+            );
+        if ( !VertexData )
+        {
+            LogError("Failed to read shader %s", VertexPath);
+            return FALSE;
+        }
 
-    FragmentLength = 0;
-    FragmentData = FsReadFile(
-        FragmentPath,
-        0,
-        &FragmentLength,
-        0
-        );
-    if ( !FragmentData )
-    {
-        LogError("Failed to read shader %s", FragmentPath);
-        return FALSE;
+        FragmentLength = 0;
+        FragmentData = FsReadFile(
+            FragmentPath,
+            0,
+            &FragmentLength,
+            0
+            );
+        if ( !FragmentData )
+        {
+            LogError("Failed to read shader %s", FragmentPath);
+            return FALSE;
+        }
     }
 
     Succeeded = RenderCreateShader(
@@ -536,8 +542,11 @@ Return Value:
         FragmentLength,
         ShaderType
         );
-    PURPL_FREE(VertexData);
-    PURPL_FREE(FragmentData);
+    if ( RenderApi != RenderApiNone )
+    {
+        PURPL_FREE(VertexData);
+        PURPL_FREE(FragmentData);
+    }
     return Succeeded;
 }
 

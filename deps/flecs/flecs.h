@@ -164,7 +164,7 @@
 #define FLECS_COREDOC       /**< Documentation for core entities & components */
 #define FLECS_LOG           /**< When enabled ECS provides more detailed logs */
 #define FLECS_APP           /**< Application addon */
-#if (!defined(_WIN32_WINNT) || _WIN32_WINNT != WIN32_WINNT_WINXP) && !defined(PSP)
+#if (!defined(_WIN32_WINNT) || _WIN32_WINNT != WIN32_WINNT_WINXP) && !defined(PURPL_SWITCH) && !defined(PSP)
 #define FLECS_OS_API_IMPL   /**< Default implementation for OS API */
 #define FLECS_HTTP          /**< Tiny HTTP server for connecting to remote UI */
 #define FLECS_REST          /**< REST API for querying application data */

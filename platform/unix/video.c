@@ -310,7 +310,7 @@ Return Value:
     VkResult Result;
     VkSurfaceKHR Surface;
 
-    LogDebug("Creating Vulkan surface with GLFW");
+    LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
 
     Result = glfwCreateWindowSurface(
         Instance,

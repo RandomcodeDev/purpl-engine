@@ -12,8 +12,6 @@ Abstract:
 
 --*/
 
-#include "rendersystem/rendersystem.h"
-
 #include "camera.h"
 
 ecs_entity_t ecs_id(CAMERA);
@@ -200,7 +198,7 @@ Return Value:
 
     if ( Camera->Perspective )
     {
-        if ( RenderApi == RenderApiDX12 || RenderApi == RenderApiDX9 )
+        if ( FALSE ) //RenderApi == RenderApiDX12 || RenderApi == RenderApiDX9 )
         {
             glm_lookat_lh(
                 Camera->Position,
@@ -235,12 +233,12 @@ Return Value:
     }
     else
     {
-        PlatformGetVideoSize(
+        VidGetSize(
             &Width,
             &Height
             );
 
-        if ( RenderApi == RenderApiDX12 || RenderApi == RenderApiDX9 )
+        if ( FALSE ) // RenderApi == RenderApiDX12 || RenderApi == RenderApiDX9 )
         {
             glm_lookat_lh(
                 Camera->Position,

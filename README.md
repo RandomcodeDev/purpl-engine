@@ -14,9 +14,8 @@ This is a game engine I'm making.
 
   ![textured Master Chief model](https://randomcode.dev/files/programs/purpl_chief_doomguy_1.gif)
 - Tools for converting to the engine's formats
-- Decent Vulkan backend (and it's nearly 4000 lines long!)
+- ~~Decent Vulkan backend (and it's nearly 4000 lines long!)~~ This has been removed, a new renderer architecture is under construction
 - Partial DirectX 9 backend (for supporting operating systems older than I am like Windows XP)
-- Partially implemented MSDF font support, which will allow for nice, crisp text rendering
 - No DLL shenanigans (yet)
 
 ### Interesting stuff I guess
@@ -25,17 +24,14 @@ I've done my best to use [the coding style used for the Windows kernel](http://t
 because I think it's cool and also fairly readable, although kinda weird, impossible to match with an autoformatter,
 and not compatible with Doxygen or anything.
 
-The engine is made of these components:
+The engine is made of these components (some have prefixes, like NT, others don't, like Win32):
 
-- `common` - Shared common functions. Existance and some functions inspired by Quake 2.
-- `platform` - Platform abstraction, handles the compiler(s) used for that platform but also OS functions,
+- `common` (Cmn) - Shared common functions. Existance and some functions inspired by Quake 2.
+- `platform` (Plat/Vid) - Platform abstraction, handles the compiler(s) used for that platform but also OS functions,
 also handles "video" (another Quake 2 idea sort of), through functions that hide most details
 about the underlying window and such.
-- `engine` - Currently contains a camera structure and function, a transform structure, and some ECS stuff.
-- `rendersystem` (`engine/rendersystem`) - API-independant frontend for rendering, also inspired a bit by Quake 2.
-- `rendersystem-vk` (`engine/rendersystem/vulkan`) - Vulkan render backend, more than a third of the lines of code in the engine.
-- `rendersystem-dx` (`engine/rendersystem/directx`) - DirectX 12 backend, planned but currently empty.
-- `rendersystem-dx9` (`engine/rendersystem/directx9`) - DirectX 9 backend, has fixed-function lighting but no texturing.
+- `engine` (Eng) - Currently contains a camera structure and function, a transform structure, and some ECS stuff.
+- `render` (Rdr) (`engine/render`) - Currently under construction, gonna be multithreaded and use a graph and stuff.
 - `texture` (`util/texture`) - Texture format library. ZSTD compression, basically a header and pixels in ~~RGB~~, RGBA, or ~~depth
 (32-bit float)~~ formats.
 - `model` (`util/model`) - Model format library. Extremely primitive, like the texture format.

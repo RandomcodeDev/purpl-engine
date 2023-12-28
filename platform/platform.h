@@ -22,7 +22,7 @@ Abstract:
 
 extern
 VOID
-PlatformInitialize(
+PlatInitialize(
     VOID
     );
 
@@ -32,88 +32,7 @@ PlatformInitialize(
 
 extern
 VOID
-PlatformShutdown(
-    VOID
-    );
-
-//
-// Initialize platform video
-//
-
-extern
-VOID
-PlatformInitializeVideo(
-    VOID
-    );
-
-//
-// Update video and input
-//
-
-extern
-BOOLEAN
-PlatformUpdate(
-    VOID
-    );
-
-//
-// Clean up video resources
-//
-
-extern
-VOID
-PlatformShutdownVideo(
-    VOID
-    );
-
-//
-// Get the size of the video output
-//
-
-extern
-VOID
-PlatformGetVideoSize(
-    _Out_opt_ PUINT32 Width,
-    _Out_opt_ PUINT32 Height
-    );
-
-//
-// Determine whether the video output has been resized since the last call
-//
-
-extern
-BOOLEAN
-PlatformVideoResized(
-    VOID
-    );
-
-//
-// Determine whether the video output is focused
-//
-
-extern
-BOOLEAN
-PlatformVideoFocused(
-    VOID
-    );
-
-//
-// Get the window or similar object
-//
-
-extern
-PVOID
-PlatformGetVideoObject(
-    VOID
-    );
-
-//
-// Get the current DPI
-//
-
-extern
-FLOAT
-PlatformVideoGetDpi(
+PlatShutdown(
     VOID
     );
 
@@ -123,7 +42,7 @@ PlatformVideoGetDpi(
 
 extern
 PCSTR
-PlatformCaptureStackBackTrace(
+PlatCaptureStackBackTrace(
     _In_ INT FramesToSkip
     );
 
@@ -134,7 +53,7 @@ PlatformCaptureStackBackTrace(
 extern
 _Noreturn
 VOID
-PlatformError(
+PlatError(
     _In_ PCSTR Message
     );
 
@@ -144,7 +63,7 @@ PlatformError(
 
 extern
 PCSTR
-PlatformGetDescription(
+PlatGetDescription(
     VOID
     );
 
@@ -154,22 +73,9 @@ PlatformGetDescription(
 
 extern
 PVOID
-PlatformGetReturnAddress(
+PlatGetReturnAddress(
     VOID
     );
-
-#ifdef PURPL_VULKAN
-//
-// Create a Vulkan surface
-//
-
-extern
-PVOID
-PlatformCreateVulkanSurface(
-    _In_ PVOID Instance,
-    _In_opt_ PVOID WindowHandle
-    );
-#endif
 
 //
 // Get the user data directory (AppData, XDG_DATA_HOME, ~/.local, etc)
@@ -177,7 +83,7 @@ PlatformCreateVulkanSurface(
 
 extern
 PCSTR
-PlatformGetUserDataDirectory(
+PlatGetUserDataDirectory(
     VOID
     );
 
@@ -187,7 +93,7 @@ PlatformGetUserDataDirectory(
 
 extern
 UINT64
-PlatformGetMilliseconds(
+PlatGetMilliseconds(
     VOID
     );
 
@@ -197,7 +103,7 @@ PlatformGetMilliseconds(
 
 extern
 BOOLEAN
-PlatformCreateDirectory(
+PlatCreateDirectory(
     _In_ PCSTR Path
     );
 
@@ -207,7 +113,7 @@ PlatformCreateDirectory(
 
 extern
 VOID
-PlatformPrint(
+PlatPrint(
     _In_ PCSTR Text
     );
 
@@ -217,6 +123,6 @@ PlatformPrint(
 
 extern
 PCHAR
-PlatformFixPath(
+PlatFixPath(
     _In_ PCSTR Path
     );

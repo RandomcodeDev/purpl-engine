@@ -16,6 +16,8 @@ Abstract:
 
 #include "purpl/purpl.h"
 
+#include "platform/platform.h"
+
 #include "mathutil.h"
 
 //

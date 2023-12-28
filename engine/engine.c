@@ -10,12 +10,7 @@ Abstract:
 
 --*/
 
-#include "common/common.h"
-
-#include "platform/platform.h"
-
 #include "engine.h"
-#include "entity.h"
 
 PCHAR EngineDataDirectory;
 
@@ -27,7 +22,7 @@ CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount] = {
 ecs_entity_t EngineMainCamera;
 
 VOID
-EngineInitialize(
+EngInitialize(
     VOID
     )
 /*++
@@ -51,27 +46,27 @@ Return Value:
 
     LogInfo("Initializing engine");
 
-    EngineDataDirectory = CommonFormatString(
+    EngineDataDirectory = CmnFormatString(
         "%s" GAME_EXECUTABLE_NAME "/",
-        PlatformGetUserDataDirectory()
+        PlatGetUserDataDirectory()
         );
 
     LogInfo("Ensuring engine data directory %s exists", EngineDataDirectory);
     if ( !FsCreateDirectory(EngineDataDirectory) )
     {
-        CommonError("Failed to create engine directory %s", EngineDataDirectory);
+        CmnError("Failed to create engine directory %s", EngineDataDirectory);
     }
     for ( i = 0; i < EngineDataDirectoryCount; i++ )
     {
         LogDebug("Creating directory %s%s", EngineDataDirectory, EngineDataDirectories[i]);
-        Path = CommonFormatTempString(
+        Path = CmnFormatTempString(
             "%s%s",
             EngineDataDirectory,
             EngineDataDirectories[i]
             );
         if ( !FsCreateDirectory(Path) )
         {
-            CommonError("Failed to create engine directory %s", Path);
+            CmnError("Failed to create engine directory %s", Path);
         }
     }
 
@@ -79,7 +74,7 @@ Return Value:
     struct tm Time;
     RawTime = time(NULL);
     Time = *localtime(&RawTime);
-    Path = CommonFormatTempString(
+    Path = CmnFormatTempString(
         "%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log",
         EngineDataDirectory,
         EngineDataDirectories[EngineDataDirectoryLogs],
@@ -97,7 +92,7 @@ Return Value:
         );
     if ( !LogFile )
     {
-        CommonError("Failed to open log file %s: %s", Path, strerror(errno));
+        CmnError("Failed to open log file %s: %s", Path, strerror(errno));
     }
 
     LogAddFile(
@@ -105,12 +100,11 @@ Return Value:
         LogGetLevel()
         );
 
-    LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatformGetDescription());
+    LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
 
-    PlatformInitializeVideo();
+    VidInitialize();
 
-    RenderInitialize();
-    EngineEcsInitialize();
+    EcsInitialize();
 
     LogInfo("Successfully initialized engine with data directory %s", EngineDataDirectory);
 }
@@ -124,7 +118,7 @@ static UINT FramesPerSecond;
 static DOUBLE Delta;
 
 DOUBLE
-EngineGetDelta(
+EngGetDelta(
     VOID
     )
 {
@@ -132,7 +126,7 @@ EngineGetDelta(
 }
 
 UINT32
-EngineGetFramerate(
+EngGetFramerate(
     VOID
     )
 {
@@ -140,7 +134,7 @@ EngineGetFramerate(
 }
 
 UINT64
-EngineGetRuntime(
+EngGetRuntime(
     VOID
     )
 {
@@ -148,7 +142,31 @@ EngineGetRuntime(
 }
 
 VOID
-EngineStartFrame(
+EngMainLoop(
+    VOID
+    )
+{
+    BOOLEAN Running;
+
+    Running = TRUE;
+    while ( Running )
+    {
+        Running = VidUpdate();
+
+        EngStartFrame();
+
+        ecs_progress(
+            EcsGetWorld(),
+            (FLOAT)Delta
+            );
+
+        EngEndFrame();
+    }
+}
+
+// TODO: integrate into EngMainLoop?
+VOID
+EngStartFrame(
     VOID
     )
 {
@@ -156,7 +174,7 @@ EngineStartFrame(
     UINT64 Minutes;
     UINT64 Seconds;
 
-    Now = (DOUBLE)PlatformGetMilliseconds();
+    Now = (DOUBLE)PlatGetMilliseconds();
     Delta = Now - Last;
     if ( Last != 0 )
     {
@@ -174,17 +192,16 @@ EngineStartFrame(
         Start = time(NULL);
     }
 
-    Seconds = EngineGetRuntime();
+    Seconds = EngGetRuntime();
     Hours = Seconds / 60 / 60;
     Seconds -= Hours * 60 * 60;
     Minutes = Seconds / 60;
     Seconds -= Minutes * 60;
-
-    RenderBeginCommands();
 }
 
+// TODO: integrate into EngMainLoop?
 VOID
-EngineEndFrame(
+EngEndFrame(
     VOID
     )
 /*++
@@ -203,18 +220,11 @@ Return Value:
 
 --*/
 {
-    ecs_progress(
-        EngineGetEcsWorld(),
-        (FLOAT)Delta
-        );
-
-    RenderPresentFrame();
-
     Last = Now;
 }
 
 VOID
-EngineShutdown(
+EngShutdown(
     VOID
     )
 /*++
@@ -235,9 +245,8 @@ Return Value:
 {
     LogInfo("Shutting down engine");
 
-    EngineEcsShutdown();
-    RenderShutdown();
-    PlatformShutdownVideo();
+    EcsShutdown();
+    VidShutdown();
 
     PURPL_FREE(EngineDataDirectory);
 
@@ -245,7 +254,7 @@ Return Value:
 }
 
 ecs_entity_t
-EngineGetMainCamera(
+EngGetMainCamera(
     VOID
     )
 {
@@ -253,13 +262,13 @@ EngineGetMainCamera(
 }
 
 VOID
-EngineSetMainCamera(
+EngSetMainCamera(
     _In_ ecs_entity_t Camera
     )
 {
     LogTrace("Setting main camera to %u", Camera);
     PCAMERA CameraComponent = ecs_get_mut(
-        EngineGetEcsWorld(),
+        EcsGetWorld(),
         Camera,
         CAMERA
         );

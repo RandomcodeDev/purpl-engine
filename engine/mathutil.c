@@ -49,7 +49,7 @@ Return Value:
 }
 
 VOID
-MathCreateTransformMatrix(
+MthCreateTransformMatrix(
     _In_ PTRANSFORM Transform,
     _Out_ mat4 TransformMatrix
     )
@@ -93,7 +93,7 @@ Return Value:
 }
 
 VOID
-MathEulerToAxisAngle(
+MthEulerToAxisAngle(
     _In_ vec3 Euler,
     _Out_ vec4 AxisAngle
     )

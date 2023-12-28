@@ -41,6 +41,9 @@ Return Value:
 {
     INT Result;
 
+    // Get a ton of memory so it doesn't have to be requested from the OS later
+    free(malloc(1 * 1024 * 1024 * 1024));
+
     Result = PurplMain(
         argc,
         argv

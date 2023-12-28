@@ -28,7 +28,7 @@ Abstract:
 do                                                    \
 {                                                     \
     if (!(Condition))                                 \
-        CommonError("Assertion failed: " #Condition); \
+        CmnError("Assertion failed: " #Condition); \
 } while (0);
 
 //
@@ -126,7 +126,7 @@ do                                                    \
 
 extern
 VOID
-CommonInitialize(
+CmnInitialize(
     VOID
     );
 
@@ -136,7 +136,7 @@ CommonInitialize(
 
 extern
 VOID
-CommonShutdown(
+CmnShutdown(
     VOID
     );
 
@@ -146,7 +146,7 @@ CommonShutdown(
 
 extern
 PCSTR
-CommonFormatTempString(
+CmnFormatTempString(
     _In_ _Printf_format_string_ PCSTR Format,
     ...
     );
@@ -157,7 +157,7 @@ CommonFormatTempString(
 
 extern
 PCSTR
-CommonFormatTempStringVarArgs(
+CmnFormatTempStringVarArgs(
     _In_ _Printf_format_string_ PCSTR Format,
     _In_ va_list Arguments
     );
@@ -168,7 +168,7 @@ CommonFormatTempStringVarArgs(
 
 extern
 PCHAR
-CommonFormatString(
+CmnFormatString(
     _In_ _Printf_format_string_ PCSTR Format,
     ...
     );
@@ -179,7 +179,7 @@ CommonFormatString(
 
 extern
 PCHAR
-CommonFormatStringVarArgs(
+CmnFormatStringVarArgs(
     _In_ _Printf_format_string_ PCSTR Format,
     _In_ va_list Arguments
     );
@@ -191,7 +191,7 @@ CommonFormatStringVarArgs(
 extern
 _Noreturn
 VOID
-CommonError(
+CmnError(
     _In_ _Printf_format_string_ PCSTR Message,
     ...
     );

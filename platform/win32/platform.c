@@ -25,7 +25,7 @@ XGameRuntimeInitialize(
 #endif
 
 VOID
-PlatformInitialize(
+PlatInitialize(
         VOID
         )
 /*++
@@ -158,7 +158,7 @@ Return Value:
 }
 
 VOID
-PlatformShutdown(
+PlatShutdown(
         VOID
         )
 /*++
@@ -188,7 +188,7 @@ Return Value:
 }
 
 PCSTR
-PlatformCaptureStackBackTrace(
+PlatCaptureStackBackTrace(
     _In_ INT FramesToSkip
     )
 /*++
@@ -303,7 +303,7 @@ Return Value:
 }
 
 PCSTR
-PlatformGetDescription(
+PlatGetDescription(
         VOID
         )
 /*++
@@ -505,7 +505,7 @@ Return Value:
 
 _Noreturn
 VOID
-PlatformError(
+PlatError(
     _In_ PCSTR Message
     )
 /*++
@@ -544,7 +544,7 @@ Return Value:
 }
 
 PVOID
-PlatformGetReturnAddress(
+PlatGetReturnAddress(
     VOID
     )
 /*++
@@ -578,7 +578,7 @@ Return Value:
 }
 
 PCSTR
-PlatformGetUserDataDirectory(
+PlatGetUserDataDirectory(
     VOID
     )
 /*++
@@ -610,7 +610,7 @@ Return Value:
             Directory
             );
 
-        Path = PlatformFixPath(Directory);
+        Path = PlatFixPath(Directory);
         if ( Path )
         {
             strncpy(
@@ -626,7 +626,7 @@ Return Value:
 }
 
 UINT64
-PlatformGetMilliseconds(
+PlatGetMilliseconds(
     VOID
     )
 /*++
@@ -653,7 +653,7 @@ Return Value:
 }
 
 BOOLEAN
-PlatformCreateDirectory(
+PlatCreateDirectory(
     _In_ PCSTR Path
     )
 /*++
@@ -710,7 +710,7 @@ Return Value:
 }
 
 VOID
-PlatformPrint(
+PlatPrint(
     _In_ PCSTR Text
     )
 /*++
@@ -733,7 +733,7 @@ Return Value:
 }
 
 PCHAR
-PlatformFixPath(
+PlatFixPath(
     _In_ PCSTR Path
     )
 /*++

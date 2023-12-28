@@ -36,7 +36,7 @@ extern ECS_COMPONENT_DECLARE(TRANSFORM);
 
 extern
 VOID
-MathCreateTransformMatrix(
+MthCreateTransformMatrix(
     _In_ PTRANSFORM Transform,
     _Out_ mat4 TransformMatrix
     );
@@ -47,7 +47,7 @@ MathCreateTransformMatrix(
 
 extern
 VOID
-MathEulerToAxisAngle(
+MthEulerToAxisAngle(
     _In_ vec3 Euler,
     _Out_ vec4 AxisAngle
     );

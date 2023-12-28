@@ -440,6 +440,9 @@ Return Value:
     UNREFERENCED_PARAMETER(PreviousInstance);
     UNREFERENCED_PARAMETER(Show);
 
+    // Get a ton of memory so it doesn't have to be requested from the OS later
+    free(malloc(1 * 1024 * 1024 * 1024));
+
     Result = PurplMain(
         ArgumentCount,
         Arguments

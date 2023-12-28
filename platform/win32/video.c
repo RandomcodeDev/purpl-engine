@@ -277,7 +277,7 @@ Return Value:
 }
 
 VOID
-PlatformInitializeVideo(
+VidInitialize(
 	VOID
 	)
 /*++
@@ -310,7 +310,7 @@ Return Value:
 }
 
 BOOLEAN
-PlatformUpdate(
+VidUpdate(
 	VOID
 	)
 /*++
@@ -352,7 +352,7 @@ Return Value:
 }
 
 VOID
-PlatformShutdownVideo(
+VidShutdown(
 	VOID
 	)
 /*++
@@ -382,7 +382,7 @@ Return Value:
 }
 
 VOID
-PlatformGetVideoSize(
+VidGetSize(
     _Out_opt_ PUINT32 Width,
     _Out_opt_ PUINT32 Height
     )
@@ -411,7 +411,7 @@ Return Value:
 }
 
 BOOLEAN
-PlatformVideoResized(
+VidResized(
     VOID
     )
 /*++
@@ -436,7 +436,7 @@ Return Value:
 }
 
 BOOLEAN
-PlatformVideoFocused(
+VidFocused(
     VOID
     )
 /*++
@@ -459,7 +459,7 @@ Return Value:
 }
 
 PVOID
-PlatformGetVideoObject(
+VidGetObject(
     VOID
     )
 /*++
@@ -482,7 +482,7 @@ Return Value:
 }
 
 FLOAT
-PlatformVideoGetDpi(
+VidGetDpi(
     VOID
     )
 /*++
@@ -506,7 +506,7 @@ Return Value:
 
 #ifdef PURPL_VULKAN
 PVOID
-PlatformCreateVulkanSurface(
+PlatCreateVulkanSurface(
     _In_ PVOID Instance,
     _In_opt_ PVOID WindowHandle
     )

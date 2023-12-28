@@ -23,7 +23,7 @@ FsGetFileSize(
     SIZE_T Size;
     PCSTR FixedPath;
 
-    FixedPath = PlatformFixPath(Path);
+    FixedPath = PlatFixPath(Path);
     LogTrace("Getting size of file %s (%s)", Path, FixedPath);
     File = fopen(
         FixedPath,
@@ -53,7 +53,7 @@ FsCreateDirectory(
     )
 {
     LogTrace("Creating directory %s", Path);
-    return PlatformCreateDirectory(Path);
+    return PlatCreateDirectory(Path);
 }
 
 PVOID
@@ -96,7 +96,7 @@ Return Value:
         return NULL;
     }
 
-    FixedPath = PlatformFixPath(Path);
+    FixedPath = PlatFixPath(Path);
     LogTrace("Reading up to %zu byte(s) (+%zu) of file %s (%s)", MaxAmount, Extra, Path, FixedPath);
     File = fopen(
         FixedPath,
@@ -152,7 +152,7 @@ FsWriteFile(
     BOOLEAN Success;
     PCSTR FixedPath;
 
-    FixedPath = PlatformFixPath(Path);
+    FixedPath = PlatFixPath(Path);
     LogTrace("%s %zu byte(s) to file %s (%s)", Append ? "Appending" : "Writing", Size, Path, FixedPath);
     File = fopen(
         FixedPath,

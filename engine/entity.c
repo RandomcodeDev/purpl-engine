@@ -13,8 +13,8 @@ Abstract:
 --*/
 
 #include "flecs.h"
-#include "rendersystem/rendersystem.h"
 
+#include "entity.h"
 
 extern
 VOID
@@ -74,7 +74,7 @@ EcsLog(
 
     if ( RealLevel == LogLevelFatal )
     {
-        CommonError("%s", Message);
+        CmnError("%s", Message);
     }
     else
     {
@@ -90,7 +90,7 @@ EcsLog(
 }
 
 VOID
-EngineEcsInitialize(
+EcsInitialize(
     VOID
     )
 {
@@ -139,7 +139,7 @@ EngineEcsInitialize(
 }
 
 VOID
-EngineEcsBeginFrame(
+EcsBeginFrame(
     _In_ UINT64 Delta
     )
 {
@@ -150,7 +150,7 @@ EngineEcsBeginFrame(
 }
 
 VOID
-EngineEcsEndFrame(
+EcsEndFrame(
     VOID
     )
 {
@@ -160,7 +160,7 @@ EngineEcsEndFrame(
 }
 
 VOID
-EngineEcsShutdown(
+EcsShutdown(
     VOID
     )
 {
@@ -169,7 +169,7 @@ EngineEcsShutdown(
 }
 
 ecs_entity_t
-EngineCreateEntity(
+EcsCreateEntity(
     _In_opt_ PCSTR Name
     )
 {
@@ -183,7 +183,7 @@ EngineCreateEntity(
 }
 
 VOID
-EngineSetEcsWorld(
+EcsSetWorld(
     _In_ ecs_world_t* World
     )
 {
@@ -194,7 +194,7 @@ EngineSetEcsWorld(
 }
 
 ecs_world_t*
-EngineGetEcsWorld(
+EcsGetWorld(
     VOID
     )
 {

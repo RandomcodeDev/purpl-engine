@@ -17,11 +17,13 @@ Abstract:
 #include "filesystem.h"
 
 VOID
-CommonInitialize(
+CmnInitialize(
     VOID
     )
 {
     LOG_LEVEL Level;
+
+    PlatInitialize();
 
 #ifdef PURPL_USE_MIMALLOC
     mi_option_set(mi_option_reserve_huge_os_pages, 2);
@@ -56,14 +58,15 @@ CommonInitialize(
 }
 
 VOID
-CommonShutdown(
+CmnShutdown(
     VOID
     )
 {
+    PlatShutdown();
 }
 
 PCSTR
-CommonFormatTempStringVarArgs(
+CmnFormatTempStringVarArgs(
     _In_ _Printf_format_string_ PCSTR Format,
     _In_ va_list Arguments
     )
@@ -112,7 +115,7 @@ Return Value:
 }
 
 PCSTR
-CommonFormatTempString(
+CmnFormatTempString(
     _In_ _Printf_format_string_ PCSTR Format,
     ...
     )
@@ -143,7 +146,7 @@ Return Value:
         Arguments,
         Format
         );
-    Formatted = CommonFormatTempStringVarArgs(
+    Formatted = CmnFormatTempStringVarArgs(
         Format,
         Arguments
         );
@@ -153,7 +156,7 @@ Return Value:
 }
 
 PCHAR
-CommonFormatStringVarArgs(
+CmnFormatStringVarArgs(
     _In_ _Printf_format_string_ PCSTR Format,
     _In_ va_list Arguments
     )
@@ -210,7 +213,7 @@ Return Value:
 }
 
 PCHAR
-CommonFormatString(
+CmnFormatString(
     _In_ _Printf_format_string_ PCSTR Format,
     ...
     )
@@ -240,7 +243,7 @@ Return Value:
         Arguments,
         Format
         );
-    Formatted = CommonFormatStringVarArgs(
+    Formatted = CmnFormatStringVarArgs(
         Format,
         Arguments
         );
@@ -251,7 +254,7 @@ Return Value:
 
 _Noreturn
 VOID
-CommonError(
+CmnError(
     _In_ _Printf_format_string_ PCSTR Message,
     ...
     )
@@ -282,19 +285,19 @@ Return Value:
         Arguments,
         Message
         );
-    FormattedMessage = CommonFormatStringVarArgs(
+    FormattedMessage = CmnFormatStringVarArgs(
         Message,
         Arguments
         );
     va_end(Arguments);
-    BackTrace = PlatformCaptureStackBackTrace(1);
-    Formatted = CommonFormatString(
+    BackTrace = PlatCaptureStackBackTrace(1);
+    Formatted = CmnFormatString(
         "%s\nStack trace:\n%s",
         FormattedMessage,
         BackTrace
         );
     LogFatal("%s", Formatted);
-    PlatformError(Formatted);
+    PlatError(Formatted);
 
     // Just in case PlatformError doesn't kill the process
     while (1)

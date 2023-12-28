@@ -24,7 +24,7 @@ Abstract:
 
 extern
 void
-CommonError(
+CmnError(
     const char* Format,
     ...
     );
@@ -33,7 +33,7 @@ CommonError(
 do                                                    \
 {                                                     \
     if (!(Condition))                                 \
-        CommonError("Assertion failed: " #Condition); \
+        CmnError("Assertion failed: " #Condition); \
 } while (0);
 
 #define STB_DS_IMPLEMENTATION 1

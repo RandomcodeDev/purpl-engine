@@ -25,7 +25,7 @@ Abstract:
 
 extern
 VOID
-EngineEcsInitialize(
+EcsInitialize(
     VOID
     );
 
@@ -35,7 +35,7 @@ EngineEcsInitialize(
 
 extern
 VOID
-EngineEcsBeginFrame(
+EcsBeginFrame(
     _In_ UINT64 Delta
     );
 
@@ -45,7 +45,7 @@ EngineEcsBeginFrame(
 
 extern
 VOID
-EngineEcsEndFrame(
+EcsEndFrame(
     VOID
     );
 
@@ -55,7 +55,7 @@ EngineEcsEndFrame(
 
 extern
 VOID
-EngineEcsShutdown(
+EcsShutdown(
     VOID
     );
 
@@ -65,7 +65,7 @@ EngineEcsShutdown(
 
 extern
 ecs_entity_t
-EngineCreateEntity(
+EcsCreateEntity(
     _In_opt_ PCSTR Name
     );
 
@@ -75,7 +75,7 @@ EngineCreateEntity(
 
 extern
 VOID
-EngineSetEcsWorld(
+EcsSetWorld(
     _In_ ecs_world_t* World
     );
 
@@ -85,6 +85,6 @@ EngineSetEcsWorld(
 
 extern
 ecs_world_t*
-EngineGetEcsWorld(
+EcsGetWorld(
     VOID
     );

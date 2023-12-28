@@ -17,7 +17,7 @@ Abstract:
 #include "platform/platform.h"
 
 #ifdef PURPL_VULKAN
-#include "engine/rendersystem/vulkan/vk.h"
+//#include "engine/rendersystem/vulkan/vk.h"
 #endif
 
 #include "GLFW/glfw3.h"
@@ -74,7 +74,7 @@ GlfwFocusCallback(
 }
 
 VOID
-PlatformInitializeVideo(
+VidInitialize(
     VOID
     )
 {
@@ -84,7 +84,7 @@ PlatformInitializeVideo(
 
     if ( !glfwInit() )
     {
-        CommonError("Failed to initialize GLFW: %d %s", glfwGetError(&GlfwError), GlfwError);
+        CmnError("Failed to initialize GLFW: %d %s", glfwGetError(&GlfwError), GlfwError);
     }
 
     glfwSetErrorCallback(GlfwErrorCallback);
@@ -107,7 +107,7 @@ PlatformInitializeVideo(
         );
     if ( !Window )
     {
-        CommonError("Failed to create window: %d %s", glfwGetError(&GlfwError), GlfwError);
+        CmnError("Failed to create window: %d %s", glfwGetError(&GlfwError), GlfwError);
     }
 
     glfwSetWindowSizeCallback(
@@ -123,7 +123,7 @@ PlatformInitializeVideo(
 }
 
 BOOLEAN
-PlatformUpdate(
+VidUpdate(
 	VOID
 	)
 /*++
@@ -158,7 +158,7 @@ Return Value:
 }
 
 VOID
-PlatformShutdownVideo(
+VidShutdown(
     VOID
     )
 /*++
@@ -186,7 +186,7 @@ Return Value:
 }
 
 VOID
-PlatformGetVideoSize(
+VidGetSize(
     _Out_opt_ PUINT32 Width,
     _Out_opt_ PUINT32 Height
     )
@@ -210,12 +210,12 @@ Return Value:
 
 --*/
 {
-    Width ? *Width = WindowWidth : 0;
-    Height ? *Height = WindowHeight : 0;
+    Width ? *Width = (UINT32)WindowWidth : 0;
+    Height ? *Height = (UINT32)WindowHeight : 0;
 }
 
 BOOLEAN
-PlatformVideoResized(
+VidResized(
     VOID
     )
 /*++
@@ -240,7 +240,7 @@ Return Value:
 }
 
 BOOLEAN
-PlatformVideoFocused(
+VidFocused(
     VOID
     )
 /*++
@@ -263,7 +263,7 @@ Return Value:
 }
 
 FLOAT
-PlatformVideoGetDpi(
+VidGetDpi(
     VOID
     )
 {
@@ -283,7 +283,7 @@ PlatformVideoGetDpi(
 
 #ifdef PURPL_VULKAN
 PVOID
-PlatformCreateVulkanSurface(
+PlatCreateVulkanSurface(
     _In_ PVOID Instance,
     _In_opt_ PVOID WindowHandle
     )
@@ -307,23 +307,23 @@ Return Value:
 
 --*/
 {
-    VkResult Result;
-    VkSurfaceKHR Surface;
-
-    LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
-
-    Result = glfwCreateWindowSurface(
-        Instance,
-        WindowHandle ? WindowHandle : Window,
-        NULL,
-        &Surface
-        );
-    if ( Result != VK_SUCCESS )
-    {
-        LogError("Failed to create Vulkan surface: VkResult %d", Result);
-        return NULL;
-    }
-
-    return Surface;
+//    VkResult Result;
+//    VkSurfaceKHR Surface;
+//
+//    LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
+//
+//    Result = glfwCreateWindowSurface(
+//        Instance,
+//        WindowHandle ? WindowHandle : Window,
+//        NULL,
+//        &Surface
+//        );
+//    if ( Result != VK_SUCCESS )
+//    {
+//        LogError("Failed to create Vulkan surface: VkResult %d", Result);
+//        return NULL;
+//    }
+//
+//    return Surface;
 }
 #endif

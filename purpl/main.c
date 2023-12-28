@@ -46,125 +46,16 @@ Return Value:
 
 --*/
 {
-    BOOLEAN Running;
-
     UNREFERENCED_PARAMETER(ArgumentCount);
     UNREFERENCED_PARAMETER(Arguments);
 
-    PlatformInitialize();
-    CommonInitialize();
-    EngineInitialize();
+    CmnInitialize();
+    EngInitialize();
 
-    PURPL_ASSERT(RenderLoadShader(
-        "basic",
-        ShaderTypeMesh
-        ));
-    PURPL_ASSERT(RenderLoadTexture("chief"));
-    RenderAddMaterial(
-        "chief",
-        "basic",
-        "chief"
-        );
-    PURPL_ASSERT(RenderLoadModel("chief", 0));
+    EngMainLoop();
 
-    ecs_entity_t Camera = EngineCreateEntity("camera");
-    ecs_add(
-        EngineGetEcsWorld(),
-        Camera,
-        CAMERA
-        );
-    CAMERA CameraComponent;
-    InitializePerspectiveCamera(
-        (vec3){0.0, 0.0, 2.0},
-        (vec4){0.0, 0.0, 0.0, 0.0},
-        78.0,
-        1,
-        0.1,
-        1000.0,
-        &CameraComponent
-        );
-    ecs_set_id(
-        EngineGetEcsWorld(),
-        Camera,
-        ecs_id(CAMERA),
-        sizeof(CAMERA),
-        &CameraComponent
-        );
-    EngineSetMainCamera(Camera);
-
-    ecs_entity_t MasterChief = EngineCreateEntity("chief");
-    ecs_add(
-        EngineGetEcsWorld(),
-        MasterChief,
-        TRANSFORM
-        );
-    ecs_add(
-        EngineGetEcsWorld(),
-        MasterChief,
-        RENDERABLE
-        );
-    ecs_set(
-        EngineGetEcsWorld(),
-        MasterChief,
-        RENDERABLE,
-        {RenderableTypeModel, RenderGetModel("chief")}
-        );
-
-    ecs_entity_t MasterChief2 = EngineCreateEntity("chief2");
-    ecs_add(
-        EngineGetEcsWorld(),
-        MasterChief2,
-        TRANSFORM
-        );
-    ecs_add(
-        EngineGetEcsWorld(),
-        MasterChief2,
-        RENDERABLE
-        );
-    ecs_set(
-        EngineGetEcsWorld(),
-        MasterChief2,
-        RENDERABLE,
-        {RenderableTypeModel, RenderGetModel("chief")}
-        );
-
-    Running = TRUE;
-    FLOAT Rotation = 90.0;
-    while ( Running )
-    {
-        Running = PlatformUpdate();
-
-        Rotation += 20.0f * (FLOAT)EngineGetDelta();
-        if ( Rotation > 360.0f )
-        {
-            Rotation = 0.0f;
-        }
-
-        EngineStartFrame();
-
-        ecs_set(
-            EngineGetEcsWorld(),
-            MasterChief,
-            TRANSFORM,
-            {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, -Rotation}, {1.0f, 1.0f, 1.0f}}
-            );
-        ecs_set(
-            EngineGetEcsWorld(),
-            MasterChief2,
-            TRANSFORM,
-            {{1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, Rotation}, {1.0f, 1.0f, 1.0f}}
-            );
-
-        EngineEndFrame();
-    }
-
-    RenderDestroyModel("chief");
-    RenderDestroyTexture("chief");
-    RenderDestroyShader("basic");
-
-    EngineShutdown();
-    CommonShutdown();
-    PlatformShutdown();
+    EngShutdown();
+    CmnShutdown();
 
     return 0;
 }

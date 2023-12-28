@@ -19,7 +19,7 @@ Abstract:
 #include "GLFW/glfw3.h"
 
 VOID
-PlatformInitialize(
+PlatInitialize(
     VOID
     )
 /*++
@@ -42,7 +42,7 @@ Return Value:
 }
 
 VOID
-PlatformShutdown(
+PlatShutdown(
     VOID
     )
 /*++
@@ -65,7 +65,7 @@ Return Value:
 }
 
 PCSTR
-PlatformCaptureStackBackTrace(
+PlatCaptureStackBackTrace(
     _In_ INT FramesToSkip
     )
 /*++
@@ -126,7 +126,7 @@ Return Value:
 }
 
 PCSTR
-PlatformGetDescription(
+PlatGetDescription(
     VOID
     )
 /*++
@@ -220,7 +220,7 @@ Return Value:
 
 _Noreturn
 VOID
-PlatformError(
+PlatError(
     _In_ PCSTR Message
     )
 {
@@ -248,7 +248,7 @@ PlatformError(
 }
 
 PVOID
-PlatformGetReturnAddress(
+PlatGetReturnAddress(
     VOID
     )
 /*++
@@ -277,7 +277,7 @@ Return Value:
 }
 
 PCSTR
-PlatformGetUserDataDirectory(
+PlatGetUserDataDirectory(
     VOID
     )
 {
@@ -298,7 +298,7 @@ PlatformGetUserDataDirectory(
             snprintf(
                 Directory,
                 PURPL_ARRAYSIZE(Directory),
-                "%s/.local/share",
+                "%s/.local/share/",
                 getenv("HOME")
                 );
         }
@@ -307,7 +307,7 @@ PlatformGetUserDataDirectory(
             // good enough
             strncpy(
                 Directory,
-                "/tmp",
+                "/tmp/",
                 MAX_PATH
                 );
         }
@@ -317,7 +317,7 @@ PlatformGetUserDataDirectory(
 }
 
 UINT64
-PlatformGetMilliseconds(
+PlatGetMilliseconds(
     VOID
     )
 {
@@ -332,7 +332,7 @@ PlatformGetMilliseconds(
 }
 
 BOOLEAN
-PlatformCreateDirectory(
+PlatCreateDirectory(
     _In_ PCSTR Path
     )
 {
@@ -374,18 +374,18 @@ PlatformCreateDirectory(
 }
 
 VOID
-PlatformPrint(
+PlatPrint(
     _In_ PCSTR String
     )
 {
 }
 
 PCHAR
-PlatformFixPath(
+PlatFixPath(
     _In_ PCSTR Path
     )
 {
-    return CommonFormatString(
+    return CmnFormatString(
         "%s",
 	Path
 	);

@@ -20,9 +20,10 @@ Abstract:
 #include "common/filesystem.h"
 #include "common/log.h"
 
-#include "rendersystem/rendersystem.h"
+#include "platform/video.h"
 
 #include "camera.h"
+#include "entity.h"
 #include "mathutil.h"
 
 //
@@ -49,7 +50,17 @@ extern CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount];
 
 extern
 VOID
-EngineInitialize(
+EngInitialize(
+    VOID
+    );
+
+//
+// The main loop of the engine
+//
+
+extern
+VOID
+EngMainLoop(
     VOID
     );
 
@@ -58,7 +69,7 @@ EngineInitialize(
 //
 
 VOID
-EngineStartFrame(
+EngStartFrame(
     VOID
     );
 
@@ -68,7 +79,7 @@ EngineStartFrame(
 
 extern
 VOID
-EngineEndFrame(
+EngEndFrame(
     VOID
     );
 
@@ -78,7 +89,7 @@ EngineEndFrame(
 
 extern
 VOID
-EngineShutdown(
+EngShutdown(
     VOID
     );
 
@@ -88,7 +99,7 @@ EngineShutdown(
 
 extern
 ecs_entity_t
-EngineGetMainCamera(
+EngGetMainCamera(
     VOID
     );
 
@@ -98,7 +109,7 @@ EngineGetMainCamera(
 
 extern
 VOID
-EngineSetMainCamera(
+EngSetMainCamera(
     _In_ ecs_entity_t Entity
     );
 
@@ -108,7 +119,7 @@ EngineSetMainCamera(
 
 extern
 DOUBLE
-EngineGetDelta(
+EngGetDelta(
     VOID
     );
 
@@ -118,7 +129,7 @@ EngineGetDelta(
 
 extern
 UINT32
-EngineGetFramerate(
+EngGetFramerate(
     VOID
     );
 
@@ -128,6 +139,6 @@ EngineGetFramerate(
 
 extern
 UINT64
-EngineGetRuntime(
+EngGetRuntime(
     VOID
     );

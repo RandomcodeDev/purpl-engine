@@ -182,7 +182,7 @@ Return Value:
             Message
             );
 
-    PlatformPrint(All);
+    PlatPrint(All);
 }
 
 static void

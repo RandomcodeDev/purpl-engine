@@ -41,8 +41,8 @@ target("engine")
 
 target("rendersystem")
     set_kind("static")
-    add_headerfiles("engine/rendersystem/*.h")
-    add_files("engine/rendersystem/*.c")
+    add_headerfiles("engine/render/*.h")
+    add_files("engine/render/*.c")
 
     add_deps("util")
 
@@ -54,8 +54,8 @@ target("rendersystem")
 
     if vulkan then
         add_includedirs("deps/volk", "deps/Vulkan-Headers/include", "deps/VulkanMemoryAllocator/include")
-        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/rendersystem/vulkan/*.h")
-        add_files("engine/rendersystem/vulkan/*.c", "engine/rendersystem/vulkan/*.cpp")
+--        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/rendersystem/vulkan/*.h")
+--        add_files("engine/rendersystem/vulkan/*.c", "engine/rendersystem/vulkan/*.cpp")
 
         if is_plat("switch") then
             add_switch_vulkan_links()

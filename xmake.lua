@@ -35,11 +35,11 @@ target("engine")
     set_kind("static")
     add_headerfiles("engine/*.h")
     add_files("engine/*.c")
-    add_deps("common", "cjson", "flecs", "platform", "rendersystem", "util")
+    add_deps("common", "cjson", "flecs", "platform", "render", "util")
 
     on_load(fix_target)
 
-target("rendersystem")
+target("render")
     set_kind("static")
     add_headerfiles("engine/render/*.h")
     add_files("engine/render/*.c")
@@ -47,8 +47,8 @@ target("rendersystem")
     add_deps("util")
 
     if directx then
-        add_headerfiles("engine/rendersystem/directx/dx.h")
-        add_files("engine/rendersystem/directx/dx.cpp")
+--        add_headerfiles("engine/rendersystem/directx/dx.h")
+--        add_files("engine/rendersystem/directx/dx.cpp")
         add_defines("PURPL_DIRECTX")
     end
 

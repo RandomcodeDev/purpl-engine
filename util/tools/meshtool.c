@@ -111,7 +111,7 @@ GetMaterialName(
         &Name
         );
 
-    return CommonFormatString(
+    return CmnFormatString(
         "%s",
         Name.data
         );
@@ -284,7 +284,7 @@ Return Value:
 
     printf("Converting model %s to Purpl mesh %s\n", Source, Destination);
 
-    BaseName = CommonFormatString("%s", Destination);
+    BaseName = CmnFormatString("%s", Destination);
     Extension = NULL;
     if ( strrchr(
              BaseName,
@@ -334,7 +334,7 @@ Return Value:
 
     for ( i = 0; i < 1; i++ ) //Scene->mNumMeshes; i++ )
     {
-        OutputName = CommonFormatTempString("%s%s%s", BaseName, Extension ? "." : "", Extension);
+        OutputName = CmnFormatTempString("%s%s%s", BaseName, Extension ? "." : "", Extension);
         Mesh = ConvertMesh(
             Scene,
             Meshes[i]
@@ -439,9 +439,9 @@ Return Value:
     MESHTOOL_MODE Mode;
     INT Result;
 
-    printf("Purpl Mesh Tool v" GAME_VERSION_STRING " (supports mesh format v" PURPL_STRINGIZE_EXPAND(MESH_FORMAT_VERSION) ") on %s\n\n", PlatformGetDescription());
+    printf("Purpl Mesh Tool v" GAME_VERSION_STRING " (supports mesh format v" PURPL_STRINGIZE_EXPAND(MESH_FORMAT_VERSION) ") on %s\n\n", PlatGetDescription());
 
-    CommonInitialize();
+    CmnInitialize();
 
     if ( argc < 4 )
     {
@@ -471,7 +471,7 @@ Return Value:
         argv[3]
         );
 
-    CommonShutdown();
+    CmnShutdown();
 
     return Result;
 }

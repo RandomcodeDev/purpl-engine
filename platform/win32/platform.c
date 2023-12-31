@@ -609,6 +609,7 @@ Return Value:
             SHGFP_TYPE_CURRENT,
             Directory
             );
+        Directory[PURPL_MIN(MAX_PATH, strlen(Directory))] = '/';
 
         Path = PlatFixPath(Directory);
         if ( Path )

@@ -435,7 +435,7 @@ Return Value:
             );
         ParsedArguments = TRUE;
     }
-    
+
     UNREFERENCED_PARAMETER(Instance);
     UNREFERENCED_PARAMETER(PreviousInstance);
     UNREFERENCED_PARAMETER(Show);
@@ -549,7 +549,7 @@ Return Value:
                      ParentHeaders.OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI )
                 {
                     printf("Engine (PID %llu, parent PID %llu) returned %d. Press any key to exit...", (UINT64)EngineProcessId, (UINT64)ParentProcessId, Result);
-    
+
                     // Disable line input so any key works and not just Enter
                     Mode = 0;
                     GetConsoleMode(

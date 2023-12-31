@@ -25,7 +25,7 @@ Abstract:
 #endif
 
 #ifdef PURPL_VULKAN
-#include "engine/rendersystem/vulkan/vk.h"
+//#include "engine/rendersystem/vulkan/vk.h"
 #endif
 
 #define IDI_ICON1 103
@@ -192,7 +192,7 @@ Return Value:
     WindowClass.lpszClassName = WindowClassName;
     if ( !RegisterClassExA(&WindowClass) )
     {
-        CommonError(
+        CmnError(
             "Failed to register window class: error 0x%X (%d)",
             GetLastError,
             GetLastError
@@ -255,7 +255,7 @@ Return Value:
         );
     if ( !Window )
     {
-        CommonError(
+        CmnError(
             "Failed to create window: error 0x%X (%d)",
             GetLastError(),
             GetLastError()
@@ -530,30 +530,30 @@ Return Value:
 
 --*/
 {
-    VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
-    VkSurfaceKHR Surface;
-    VkResult Result;
+//    VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
+//    VkSurfaceKHR Surface;
+//    VkResult Result;
 
     LogDebug("Creating Vulkan surface with vkCreateWin32SurfaceKHR");
 
-    SurfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    SurfaceCreateInfo.hinstance = GetModuleHandleA(NULL);
-    SurfaceCreateInfo.hwnd = WindowHandle ? WindowHandle : Window;
+//    SurfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+//    SurfaceCreateInfo.hinstance = GetModuleHandleA(NULL);
+//    SurfaceCreateInfo.hwnd = WindowHandle ? WindowHandle : Window;
 
-    Surface = NULL;
-    Result = vkCreateWin32SurfaceKHR(
-        Instance,
-        &SurfaceCreateInfo,
-        VulkanGetAllocationCallbacks(),
-        &Surface
-        );
-    if ( Result != VK_SUCCESS )
-    {
-        CommonError("Failed to create VkSurfaceKHR: VkResult %d", Result);
-    }
+//    Surface = NULL;
+//    Result = vkCreateWin32SurfaceKHR(
+//        Instance,
+//        &SurfaceCreateInfo,
+//        VulkanGetAllocationCallbacks(),
+//        &Surface
+//        );
+//    if ( Result != VK_SUCCESS )
+//    {
+//        CmnError("Failed to create VkSurfaceKHR: VkResult %d", Result);
+//    }
 
-    LogDebug("Successfully created Vulkan surface with handle 0x%llX", (UINT64)Surface);
+//    LogDebug("Successfully created Vulkan surface with handle 0x%llX", (UINT64)Surface);
 
-    return Surface;
+    return NULL; //Surface;
 }
 #endif

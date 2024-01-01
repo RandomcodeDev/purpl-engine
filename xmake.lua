@@ -14,7 +14,7 @@ else
     function add_switch_links() end
     function add_switch_vulkan_links() end
     function switch_postbuild(target) end
-    function add_switch_rendersystem() end
+    function add_switch_renderapi() end
 end
 
 directx = is_plat("gdk", "gdkx")
@@ -64,7 +64,7 @@ target("render")
         end
     end
 
-    add_switch_rendersystem()
+    add_switch_renderapi()
 
     on_load(fix_target)
 

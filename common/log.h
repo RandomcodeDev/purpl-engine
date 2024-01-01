@@ -17,6 +17,7 @@
 
 #include "purpl/purpl.h"
 
+#include "platform/async.h"
 #include "platform/platform.h"
 
 #define LOG_USE_COLOR 1

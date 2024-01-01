@@ -85,7 +85,15 @@ function setup_shared(root, vulkan)
     end
 
     if is_plat("windows", "gdk", "gdkx") then
+        -- These are just noise, like alignment and stuff
         add_cxflags("-wd4820", "-wd4255", "-wd4464", "-wd4668")
+    end
+
+    if is_plat("linux", "freebsd", "switch") then
+        -- Old style casts are to match stylistically, and C++98 is defunct as hell
+        -- Also, PURPL_FREE sets the variable to NULL to reduce misuse, and uses a
+        -- block to do that, but having a semi after looks normal
+        add_cxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt")
     end
 
     add_includedirs(
@@ -128,19 +136,28 @@ function setup_shared(root, vulkan)
         add_headerfiles(path.join(root, "platform/*.h"))
 
         if is_plat("gdk", "gdkx", "windows") then
-            add_files(path.join(root, "platform/win32/platform.c"), path.join(root, "platform/win32/video.c"))
+            add_files(
+                path.join(root, "platform/win32/async.c"),
+                path.join(root, "platform/win32/platform.c"),
+                path.join(root, "platform/win32/video.c")
+            )
             add_links("advapi32", "kernel32", "shell32", "user32")
             if not is_plat("gdkx") then
                 add_links("dbghelp")
             end
         elseif is_plat("linux", "freebsd") then
             add_files(
+                path.join(root, "platform/unix/async.c"),
                 path.join(root, "platform/unix/platform.c"),
                 path.join(root, "platform/unix/video.c")
             )
             add_packages("glfw")
         elseif is_plat("switch") then
-            add_files(path.join(root, "../platform/switch/platform.cpp"), path.join(root, "../platform/switch/video.cpp"))
+            add_files(
+                path.join(root, "../platform/switch/async.cpp"),
+                path.join(root, "../platform/switch/platform.cpp"),
+                path.join(root, "../platform/switch/video.cpp")
+            )
             add_switch_links()
         end
         on_load(fix_target)

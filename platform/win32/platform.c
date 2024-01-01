@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2024 MobSlicer152
 
 Module Name:
 
@@ -619,7 +619,7 @@ Return Value:
                 Path,
                 PURPL_MIN(strlen(Path) + 1, PURPL_ARRAYSIZE(Directory))
                 );
-            PURPL_FREE((PCHAR)Path);
+            PURPL_FREE(Path);
         }
     }
 

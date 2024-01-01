@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2024 MobSlicer152
 
 Module Name:
 
@@ -17,9 +17,17 @@ Abstract:
 #include "common/common.h"
 
 #include "engine/engine.h"
-#include "engine/entity.h"
 
-#include "platform/platform.h"
+#include "platform/async.h"
+
+INT
+TestThread(
+    _In_ PVOID UserData
+    )
+{
+    LogInfo("0x%llX", (UINT64)AsCurrentThread->ThreadStart);
+    return (INT)UserData;
+}
 
 INT
 PurplMain(
@@ -52,10 +60,21 @@ Return Value:
     CmnInitialize();
     EngInitialize();
 
+    PTHREAD Thread = AsCreateThread(
+        "test",
+        8192,
+        TestThread,
+        (PVOID)69420
+        );
+    LogInfo("0x%llX", (UINT64)AsCurrentThread->ThreadStart);
+    AsDetachThread(Thread);
+
     EngMainLoop();
 
     EngShutdown();
     CmnShutdown();
+
+    LogInfo("%d", AsJoinThread(Thread));
 
     return 0;
 }

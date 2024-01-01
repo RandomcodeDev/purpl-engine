@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2024 MobSlicer152
 
 Module Name:
 
@@ -119,6 +119,12 @@ do                                                    \
 #define PURPL_ALIGNED_FREE(Block) free(Block);
 #endif
 #endif
+
+//
+// Align a size
+//
+
+#define PURPL_ALIGN(Alignment, Size) ((((Size) / (Alignment)) + 1) * (Alignment))
 
 //
 // Initialize the common library

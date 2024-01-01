@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2024 MobSlicer152
 
 Module Name:
 
@@ -38,6 +38,7 @@ Abstract:
 #ifdef PURPL_WIN32
 #if __STDC_VERSION__ <= 201100l
 #define _Noreturn __declspec(noreturn)
+#define _Thread_local __declspec(thread)
 #endif
 
 #define WIN32_LEAN_AND_MEAN
@@ -56,10 +57,6 @@ Abstract:
 #endif
 
 #ifdef PURPL_UNIX
-#if __STDC_VERSION__ <= 201100l
-#define _Noreturn __attribute__((noreturn))
-#endif
-
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/syscall.h>

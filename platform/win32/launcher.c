@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2024 MobSlicer152
 
 Module Name:
 
@@ -15,10 +15,6 @@ Abstract:
 #include "purpl/purpl.h"
 
 #include "common/common.h"
-
-//
-// Copied directly from Source engine leak, but that's probably fine
-//
 
 // hinting the nvidia driver to use the dedicated graphics card in an optimus configuration
 // for more info, see:
@@ -376,6 +372,12 @@ Return Value:
 //    return 0;
 //}
 
+extern
+VOID
+InitializeMainThread(
+    _In_ PFN_THREAD_START StartAddress
+    );
+
 INT
 WinMain(
     _In_ HINSTANCE Instance,
@@ -442,6 +444,10 @@ Return Value:
 
     // Get a ton of memory so it doesn't have to be requested from the OS later
     free(malloc(1 * 1024 * 1024 * 1024));
+
+#ifndef PURPL_DEBUG
+    InitializeMainThread(WinMain);
+#endif
 
     Result = PurplMain(
         ArgumentCount,
@@ -594,6 +600,8 @@ Routine Description:
     Arguments = argv;
     ArgumentCount = argc;
     ParsedArguments = FALSE;
+
+    InitializeMainThread(main);
 
     return WinMain(
         GetModuleHandleA(NULL),

@@ -23,6 +23,7 @@
  */
 
 #include "log.h"
+#include "platform/async.h"
 
 #define LOG_MAX_CALLBACKS 32
 
@@ -79,15 +80,20 @@ StdoutCallback(
     if ( Event->HexLine )
         fprintf(
             Event->Data,
-            "0x%llX:\x1b[0m ",
+            "0x%llX:",
             (UINT64)Event->Line
             );
     else
         fprintf(
             Event->Data,
-            "%lld:\x1b[0m ",
+            "%lld:",
             (INT64)Event->Line
             );
+    fprintf(
+        Event->Data,
+        "%s:\x1b[0m ",
+        AsCurrentThread->Name
+        );
 #else
     fprintf(
         Event->Data,
@@ -99,15 +105,20 @@ StdoutCallback(
     if ( Event->HexLine )
         fprintf(
             Event->Data,
-            "0x%llX: ",
+            "0x%llX:",
             (UINT64)Event->Line
             );
     else
         fprintf(
             Event->Data,
-            "%lld: ",
+            "%lld:",
             (INT64)Event->Line
             );
+    fprintf(
+        Event->Data,
+        "%s: ",
+        AsCurrentThread->Name
+        );
 #endif
     vfprintf(
         Event->Data,
@@ -122,15 +133,15 @@ StdoutCallback(
 }
 
 void
-PlatformPrintCallback(
+PlatPrintCallback(
     LOG_EVENT* Event
-)
+    )
 /*++
 
 Routine Description:
 
     Sends log messages to the debug console using
-    PlatformPrint.
+    PlatPrint.
 
 Arguments:
 
@@ -163,22 +174,24 @@ Return Value:
         snprintf(
             All,
             sizeof(All),
-            "%s %-5s %s:0x%llX: %s\n",
+            "%s %-5s %s:0x%llX:%s: %s\n",
             Time,
             LogGetLevelString(Event->Level),
             Event->File,
             (UINT64)Event->Line,
+            AsCurrentThread->Name,
             Message
             );
     else
         snprintf(
             All,
             sizeof(All),
-            "%s %-5s %s:%lld: %s\n",
+            "%s %-5s %s:%lld:%s: %s\n",
             Time,
             LogGetLevelString(Event->Level),
             Event->File,
             (INT64)Event->Line,
+            AsCurrentThread->Name,
             Message
             );
 
@@ -207,15 +220,20 @@ FileCallback(
     if ( Event->HexLine )
         fprintf(
             Event->Data,
-            "0x%llX: ",
+            "0x%llX:",
             (UINT64)Event->Line
             );
     else
         fprintf(
             Event->Data,
-            "%lld: ",
+            "%lld:",
             (INT64)Event->Line
             );
+    fprintf(
+        Event->Data,
+        "%s: ",
+        AsCurrentThread->Name
+        );
     vfprintf(
         Event->Data,
         Event->Format,
@@ -389,7 +407,7 @@ LogMessage(
         StdoutCallback(&Event);
 
 #ifdef PURPL_WIN32
-        PlatformPrintCallback(&Event);
+        PlatPrintCallback(&Event);
 #endif
 
         va_end(Event.ArgList);

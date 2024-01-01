@@ -81,10 +81,9 @@ Ideally the enemies will be unique depending on the region rather than having
 shared archetypes between them, in the hopes of avoiding repetetiveness. The
 player will be able to select between the different elements and use three
 styles of attack, basic, special, and ranged. Combo moves between different
-elements will be investigated. The current ECS-based design lends itself well
-to this. Various movement features will also exist, such as jumping and
-dashing. Bosses will have various moves that depend on what phase of the fight
-they're in.
+elements will be investigated. Various movement features will also exist, such
+as jumping and dashing. Bosses will have various moves that depend on what phase
+of the fight they're in.
 
 ## Objectives
 
@@ -96,18 +95,19 @@ of new game plus mode which introduces altered mechanics.
 
 ## Level design
 
-The level design will be similar to that of Hyper Light Drifter. There will be
-open areas with the occasional structure in them, indoor somewhat cramped
-dungeon areas with traps, and areas with puzzles, and some large
-structures/places that combine the various elements. There will also
-potentially be areas that have enemies, which close when the player enters them
+There will be open areas with the occasional structure in them, indoor somewhat
+cramped dungeon areas with traps, and areas with puzzles, and some large
+structures/places that combine the various other level design elements. There will
+also potentially be areas that have enemies, which close when the player enters them
 until the enemies are defeated. Boss rooms will be similar, additionally
 featuring traps.
 
 ## Graphics
 
 The game will use low-detail 3D models and textures, and the rendered frames will
-be downscaled to look pixelated, making the game seem more 2D.
+be downscaled to look pixelated, making the game seem more 2D. High performance
+(120 FPS or higher) is expected to be achievable on all platforms even without
+substantial optimization.
 
 ## Audio
 
@@ -131,9 +131,9 @@ and other things.
 
 ## Data Storage
 
-- Images are stored in a simple format in [`util/texture/texture.h`](util/texture/texture.h)
-- TOML will be used for configuration files and metadata, such as font
-  definitions
+- Images are stored in a simple format in [`util/texture/texture.h`](util/texture/texture.h).
+  Through the usage of Zstandard compression, similar sizes to PNG are achieved.
+- TOML will be used for configuration files and metadata
 - Levels will likely consist of geometry and entities, no format has been designed yet
 - Non-changing game assets such as models, textures, shaders, levels, audio,
   etc will be stored in some form of archive to allow more convenient and
@@ -145,16 +145,13 @@ and other things.
   making distribution somewhat simpler and possibly allow for link time
   optimization
 - Due to the fact that the game uses low-detail assets, it will very
-  likely be orders of magnitude smaller than a typical AAA game even with no storage
-  optimization
+  likely be orders of magnitude smaller than a typical AAA game
 
 ## Development
 
 - The game is primarily developed using Visual Studio, alongside similar tools
   on platforms like macOS and Linux (Xcode and Neovim), using [xmake](https://github.com/xmake-io/xmake)
-  as a build system (despite being developed in China, I have found absolutely
-  no reason not to trust it, and since it's open source I could patch out any
-  spyware if it were there)
+  as a build system
 - Various open source libraries with non-strict licenses are used
 - Main game code is stored on GitHub, but assets and precompiled dependencies
   are stored on a personal Gitea server to get around file size limits. Any
@@ -180,7 +177,7 @@ ability to easily separate closed build system logic for consoles.
   Windows, since the GDKX is only a superset of the GDK and Xbox is just a subset
   of Windows
 - Nintendo Switch support is planned, and its successor should the rumoured
-  Switch 2 be available for development
+  Switch 2 be available for development in time
 - PlayStation 5 support is planned
 
 ## Rough timeline

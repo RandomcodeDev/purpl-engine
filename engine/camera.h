@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2024 MobSlicer152
 
 Module Name:
 
@@ -16,7 +16,7 @@ Abstract:
 
 #include "purpl/purpl.h"
 
-#include "platform/platform.h"
+#include "platform/video.h"
 
 #include "mathutil.h"
 

@@ -32,7 +32,7 @@ BEGIN
             VALUE "FileDescription", GAME_NAME "\0"
             VALUE "FileVersion", GAME_VERSION_STRING_RC "\0"
             VALUE "InternalName", GAME_EXECUTABLE_NAME "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 " GAME_ORGANIZATION "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 " GAME_ORGANIZATION "\0"
             VALUE "OriginalFilename", GAME_EXECUTABLE_NAME ".exe\0"
             VALUE "ProductName", GAME_NAME "\0"
             VALUE "ProductVersion", GAME_VERSION_STRING "\0"

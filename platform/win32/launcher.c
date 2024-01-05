@@ -407,6 +407,7 @@ Return Value:
 
 --*/
 {
+    DWORD Error;
     INT Result;
     HANDLE Snapshot;
     PROCESSENTRY32 ProcessEntry = {0};
@@ -447,6 +448,34 @@ Return Value:
 
 #ifndef PURPL_DEBUG
     InitializeMainThread(WinMain);
+#endif
+
+#if !defined PURPL_GDKX && (defined PURPL_DEBUG || defined PURPL_RELWITHDEBINFO)
+    LogDebug("Attempting to load debug info");
+    SymSetOptions(SYMOPT_DEBUG | SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
+    if ( !SymInitialize(
+             GetCurrentProcess(),
+             NULL,
+             TRUE
+             ) )
+    {
+        Error = GetLastError();
+        LogError("Failed to initialize DbgHelp: %d (0x%X)", Error, Error);
+    }
+    if ( !SymLoadModuleEx(
+             GetCurrentProcess(),
+             NULL,
+             GAME_EXECUTABLE_NAME ".exe",
+             NULL,
+             (UINT64)GetModuleHandleA(NULL),
+             0,
+             NULL,
+             0
+             ) )
+    {
+        Error = GetLastError();
+        LogError("Failed to load symbols: %d (0x%X)", Error, Error);
+    }
 #endif
 
     Result = PurplMain(

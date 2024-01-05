@@ -51,7 +51,7 @@ static CONST char* LevelStrings[] =
 #ifdef LOG_USE_COLOR
 static CONST char* LevelColours[] =
 {
-    "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
+    "\x1b[38;5;197m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
 };
 #endif
 
@@ -71,8 +71,9 @@ StdoutCallback(
 #ifdef LOG_USE_COLOR
     fprintf(
         Event->Data,
-        "%s %s%-5s\x1b[0m \x1b[90m%s:",
+        "%s \x1b[38;5;213m%s\x1b[0m %s%-5s\x1b[0m \x1b[90m%s:",
         Buffer,
+        AsCurrentThread->Name,
         LevelColours[Event->Level],
         LevelStrings[Event->Level],
         Event->File
@@ -80,45 +81,36 @@ StdoutCallback(
     if ( Event->HexLine )
         fprintf(
             Event->Data,
-            "0x%llX:",
+            "0x%llX:\x1b[0m ",
             (UINT64)Event->Line
             );
     else
         fprintf(
             Event->Data,
-            "%lld:",
+            "%lld:\x1b[0m ",
             (INT64)Event->Line
             );
-    fprintf(
-        Event->Data,
-        "%s:\x1b[0m ",
-        AsCurrentThread->Name
-        );
 #else
     fprintf(
         Event->Data,
-        "%s %-5s %s:",
+        "%s %s %-5s %s:",
         Buffer,
+        AsCurrentThread->Name,
         LevelStrings[Event->Level],
         Event->File
         );
     if ( Event->HexLine )
         fprintf(
             Event->Data,
-            "0x%llX:",
+            "0x%llX: ",
             (UINT64)Event->Line
             );
     else
         fprintf(
             Event->Data,
-            "%lld:",
+            "%lld: ",
             (INT64)Event->Line
             );
-    fprintf(
-        Event->Data,
-        "%s: ",
-        AsCurrentThread->Name
-        );
 #endif
     vfprintf(
         Event->Data,
@@ -174,24 +166,24 @@ Return Value:
         snprintf(
             All,
             sizeof(All),
-            "%s %-5s %s:0x%llX:%s: %s\n",
+            "%s %s %-5s %s:0x%llX: %s\n",
             Time,
+            AsCurrentThread->Name,
             LogGetLevelString(Event->Level),
             Event->File,
             (UINT64)Event->Line,
-            AsCurrentThread->Name,
             Message
             );
     else
         snprintf(
             All,
             sizeof(All),
-            "%s %-5s %s:%lld:%s: %s\n",
+            "%s %s %-5s %s:%lld: %s\n",
             Time,
+            AsCurrentThread->Name,
             LogGetLevelString(Event->Level),
             Event->File,
             (INT64)Event->Line,
-            AsCurrentThread->Name,
             Message
             );
 
@@ -203,37 +195,33 @@ FileCallback(
     LOG_EVENT* Event
     )
 {
-    char buf[64] = { 0 };
-    buf[strftime(
-            buf,
-            sizeof(buf),
+    char Buffer[64] = { 0 };
+    Buffer[strftime(
+            Buffer,
+            sizeof(Buffer),
             "%Y-%m-%d %H:%M:%S",
             Event->Time
             )] = '\0';
     fprintf(
         Event->Data,
-        "%s %-5s %s:",
-        buf,
+        "%s %s %-5s %s:",
+        Buffer,
+        AsCurrentThread->Name,
         LevelStrings[Event->Level],
         Event->File
         );
     if ( Event->HexLine )
         fprintf(
             Event->Data,
-            "0x%llX:",
+            "0x%llX: ",
             (UINT64)Event->Line
             );
     else
         fprintf(
             Event->Data,
-            "%lld:",
+            "%lld: ",
             (INT64)Event->Line
             );
-    fprintf(
-        Event->Data,
-        "%s: ",
-        AsCurrentThread->Name
-        );
     vfprintf(
         Event->Data,
         Event->Format,

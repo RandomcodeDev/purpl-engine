@@ -48,7 +48,7 @@ Return Value:
     BOOL HaveConsole;
     DWORD Error;
 #ifdef PURPL_GDK
-//    HRESULT Result;
+    HRESULT Result;
 #endif
 
     HaveConsole = AttachConsole(ATTACH_PARENT_PROCESS);
@@ -117,40 +117,12 @@ Return Value:
 
     LogInfo("Performing Windows specific initialization");
 
-#if !defined PURPL_GDKX && (defined PURPL_DEBUG || defined PURPL_RELWITHDEBINFO)
-    LogDebug("Attempting to load debug info");
-    SymSetOptions(SYMOPT_DEBUG | SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
-    if ( !SymInitialize(
-             GetCurrentProcess(),
-             NULL,
-             FALSE
-             ) )
-    {
-        Error = GetLastError();
-        LogError("Failed to initialize DbgHelp: %d (0x%X)", Error, Error);
-    }
-    if ( !SymLoadModuleEx(
-             GetCurrentProcess(),
-             NULL,
-             GAME_EXECUTABLE_NAME ".exe",
-             NULL,
-             (UINT64)GetModuleHandleA(NULL),
-             0,
-             NULL,
-             0
-             ) )
-    {
-        Error = GetLastError();
-        LogError("Failed to load symbols: %d (0x%X)", Error, Error);
-    }
-#endif
-
-#if 0 //def PURPL_GDK
+#ifdef PURPL_GDK
     LogInfo("Initializing Xbox Gaming Runtime Services");
     Result = XGameRuntimeInitialize();
     if (!SUCCEEDED(Result))
     {
-        CommonError("Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X", Result);
+        CmnError("Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X", Result);
     }
 #endif
 

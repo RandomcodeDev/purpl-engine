@@ -252,6 +252,67 @@ Return Value:
     return Formatted;
 }
 
+PCSTR
+CmnFormatSize(
+    _In_ DOUBLE Size
+)
+/*++
+
+Routine Description:
+
+    This routine converts a size into a human readable string, using the
+    most appropriate unit.
+
+Arguments:
+
+    Size - The size to convert.
+
+Return Value:
+
+    The address of a static buffer containing the string.
+
+--*/
+{
+    static CHAR Buffer[64]; // Not gonna be bigger than this
+    DOUBLE Value;
+    UINT8 Prefix;
+
+    // TODO: if this is ever somehow a bottleneck, remove everything past tibibytes and make the buffer 16 bytes.
+
+    CONST PCSTR Units[] = {
+        "B",
+        "kiB",
+        "MiB",
+        "GiB",
+        "TiB",
+        "PiB (damn)",
+        "EiB (are you sure?)",
+        "ZiB (who are you?)",
+        "YiB (what are you doing?)",
+        "RiB (why are you doing this?)",
+        "QiB (HOW ARE YOU DOING THIS?)",
+        "?B (what did you do?)"
+    };
+
+    Value = Size;
+    Prefix = 0;
+    while ( Value > 1024 )
+    {
+        Value /= 1024;
+        Prefix++;
+    }
+
+    snprintf(
+        Buffer,
+        PURPL_ARRAYSIZE(Buffer),
+        "%.02lf %s",
+        Value,
+        Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]
+        );
+
+    return Buffer;
+}
+
 _Noreturn
 VOID
 CmnError(
@@ -292,7 +353,7 @@ Return Value:
     va_end(Arguments);
     BackTrace = PlatCaptureStackBackTrace(1);
     Formatted = CmnFormatString(
-        "%s\nStack trace:\n%s",
+        "Fatal error: %s\nStack trace:\n%s",
         FormattedMessage,
         BackTrace
         );

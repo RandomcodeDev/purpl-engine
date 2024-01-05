@@ -191,6 +191,16 @@ CmnFormatStringVarArgs(
     );
 
 //
+// Format a size
+//
+
+extern
+PCSTR
+CmnFormatSize(
+    _In_ DOUBLE Size
+    );
+
+//
 // Display an error message and exit
 //
 

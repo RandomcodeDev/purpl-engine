@@ -28,9 +28,11 @@ END_EXTERN_C
         HRESULT Result = (Call); \
         if ( !SUCCEEDED(Result) __VA_ARGS__ ) \
         { \
-            CmnError("Windows call " #Call " failed: HRESULT 0x%08X", Result); \
+            CmnError("Call " #Call " failed: HRESULT 0x%08X", Result); \
         } \
     } while ( 0 );
+
+#define FRAME_COUNT 3
 
 static ID3D12Debug6* Debug;
 static IDXGIFactory7* Factory;
@@ -39,6 +41,9 @@ static IDXGIAdapter4** Adapters;
 static UINT AdapterIndex;
 
 static ID3D12Device10* Device;
+static ID3D12CommandQueue* CommandQueue;
+// Is it swap chain or swapchain? DirectX has it as two words, but Vulkan has it as one.
+static IDXGISwapChain1* SwapChain;
 
 #define REQUIRED_FEATURE_LEVEL D3D_FEATURE_LEVEL_12_0
 
@@ -103,10 +108,10 @@ EnumerateAdapters(
             ));
 
         Adapter->GetDesc3(&AdapterDescription);
-        LogDebug("Got adapter %d:", i);
+        LogDebug("Adapter %d:", i);
         LogDebug("\tName: %ls", AdapterDescription.Description);
         LogDebug("\tPCI ID: %04x:%04x", AdapterDescription.VendorId, AdapterDescription.DeviceId);
-        LogDebug("\tSupports DirectX 12: %s", Supported ? "yes" : "no");
+        LogDebug("\tSupports " PURPL_STRINGIZE_EXPAND(REQUIRED_FEATURE_LEVEL) ": %s", Supported ? "yes" : "no");
         LogDebug("\tVideo memory: %s", CmnFormatSize(AdapterDescription.DedicatedVideoMemory));
 
         if ( Supported )
@@ -127,12 +132,12 @@ CreateDevice(
 {
     if ( Device )
     {
-        LogDebug("Recreating device");
+        LogDebug("Recreating device with adapter %d", AdapterIndex);
         Device->Release();
     }
     else
     {
-        LogDebug("Creating device");
+        LogDebug("Creating device with adapter %d", AdapterIndex);
     }
 
     HRESULT_CHECK(D3D12CreateDevice(
@@ -144,12 +149,77 @@ CreateDevice(
 
 static
 VOID
+CreateCommandQueue(
+    VOID
+    )
+{
+    if ( CommandQueue )
+    {
+        LogDebug("Recreating command queue");
+        CommandQueue->Release();
+    }
+    else
+    {
+        LogDebug("Creating command queue");
+    }
+
+    D3D12_COMMAND_QUEUE_DESC QueueDescription = {};
+    QueueDescription.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    QueueDescription.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+
+    HRESULT_CHECK(Device->CreateCommandQueue(
+        &QueueDescription,
+        IID_PPV_ARGS(&CommandQueue)
+        ));
+}
+
+static
+VOID
+CreateSwapChain(
+    VOID
+    )
+{
+    if ( SwapChain )
+    {
+        LogDebug("Recreating swap chain");
+        SwapChain->Release();
+    }
+    else
+    {
+        LogDebug("Creating swap chain");
+    }
+
+    DXGI_SWAP_CHAIN_DESC1 SwapChainDescription = {};
+    VidGetSize(
+        &SwapChainDescription.Width,
+        &SwapChainDescription.Height
+        );
+    SwapChainDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    SwapChainDescription.BufferCount = FRAME_COUNT;
+    SwapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    SwapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    SwapChainDescription.SampleDesc.Count = 1;
+
+    HRESULT_CHECK(Factory->CreateSwapChainForHwnd(
+        CommandQueue,
+        (HWND)VidGetObject(),
+        &SwapChainDescription,
+        nullptr,
+        nullptr,
+        &SwapChain
+        ));
+}
+
+static
+VOID
 SetAdapter(
     _In_ UINT Index
     )
 {
     AdapterIndex = Index;
     CreateDevice();
+    CreateCommandQueue();
+    CreateSwapChain();
 }
 
 static
@@ -194,7 +264,43 @@ Shutdown(
     VOID
     )
 {
+    UINT i;
+
     LogDebug("Shutting down DirectX 12 backend");
+
+    if ( SwapChain )
+    {
+        LogDebug("Releasing swap chain");
+        SwapChain->Release();
+    }
+
+    if ( CommandQueue )
+    {
+        LogDebug("Releasing command queue");
+        CommandQueue->Release();
+    }
+
+    if ( Device )
+    {
+        LogDebug("Releasing device");
+        Device->Release();
+    }
+
+    if ( Adapters )
+    {
+        LogDebug("Releasing %zu adapters", stbds_arrlenu(Adapters));
+        for ( i = 0; i < stbds_arrlenu(Adapters); i++ )
+        {
+            LogDebug("Releasing adapter %u", i);
+            Adapters[i]->Release();
+        }
+    }
+
+    if ( Factory )
+    {
+        LogDebug("Releasing factory");
+        Factory->Release();
+    }
 
     LogDebug("DirectX 12 backend shutdown succeeded");
 }

@@ -112,6 +112,11 @@ target("purpl")
     if is_plat("gdk", "gdkx") then
         add_files("platform/win32/launcher.c", "platform/win32/purpl.rc")
         add_links("xgameruntime.lib")
+        after_build(function (target)
+            if not os.exists(path.join(target:targetdir(), "MicrosoftGame.Config")) then
+                os.ln(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
+            end
+        end)
     elseif is_plat("linux", "freebsd") then
         add_files("platform/unix/launcher.c")
     elseif is_plat("switch") then

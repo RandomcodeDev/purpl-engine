@@ -18,6 +18,8 @@ Abstract:
 
 #include "common/log.h"
 
+#include "platform/video.h"
+
 typedef struct RENDER_BACKEND RENDER_BACKEND, *PRENDER_BACKEND;
 
 extern

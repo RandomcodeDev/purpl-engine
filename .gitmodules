@@ -1,6 +1,6 @@
 [submodule "deps/DirectX-Headers"]
 	path = deps/DirectX-Headers
-	url = https://github.com/microsoft/DirectX-Headers
+	url = https://github.com/Microsoft/DirectX-Headers
 [submodule "deps/Vulkan-Headers"]
 	path = deps/Vulkan-Headers
 	url = https://github.com/KhronosGroup/Vulkan-Headers
@@ -25,3 +25,9 @@
 [submodule "assets"]
 	path = assets
 	url = https://git.randomcode.dev/mobslicer152/purpl-assets.git
+[submodule "deps/RenderPipelineShaders"]
+	path = deps/RenderPipelineShaders
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/RenderPipelineShaders
+[submodule "deps/D3D12MemoryAllocator"]
+	path = deps/D3D12MemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator

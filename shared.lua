@@ -28,7 +28,7 @@ function fix_target(target)
     end
 end
 
-function setup_shared(root, vulkan)
+function setup_shared(root, directx, vulkan)
     set_version("0.0.0")
 
     set_warnings("everything")
@@ -60,10 +60,19 @@ function setup_shared(root, vulkan)
         add_defines('PURPL_BUILD_TYPE="Release"')
     end
 
-    add_includedirs(path.join(root, "deps/zstd/lib"))
-
     if is_plat("linux", "freebsd") then
         add_requires("glfw")
+    end
+
+    if directx then
+        add_defines("PURPL_DIRECTX")
+
+        add_includedirs(
+            path.join(root, "deps/D3D12MemoryAllocator/include"),
+            path.join(root, "deps/DirectX-Headers/include"),
+            path.join(root, "deps/DirectX-Headers/include/directx"),
+            path.join(root, "deps/DirectX-Headers/include/dxguids")
+        )
     end
 
     if vulkan then
@@ -86,7 +95,11 @@ function setup_shared(root, vulkan)
 
     if is_plat("windows", "gdk", "gdkx") then
         -- These are just noise, like alignment and stuff
-        add_cxflags("-wd4820", "-wd4255", "-wd4464", "-wd4668")
+        add_cxflags("-wd4820", "-wd4255", "-wd4464", "-wd4668", "-wd5045")
+
+        add_linkdirs(
+            path.join(os.getenv("GRDKLatest"), "GameKit/Lib/amd64")
+        )
     end
 
     if is_plat("linux", "freebsd", "switch") then
@@ -101,7 +114,10 @@ function setup_shared(root, vulkan)
         path.join(root, "deps"),
         path.join(root, "deps/cglm/include"),
         path.join(root, "deps/cjson"),
-        path.join(root, "deps/flecs")
+        path.join(root, "deps/flecs"),
+        path.join(root, "deps/RenderPipelineShaders/include"),
+        path.join(root, "deps/RenderPipelineShaders/src"),
+        path.join(root, "deps/zstd/lib")
     )
 
     target("cjson")

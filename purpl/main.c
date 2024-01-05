@@ -18,17 +18,6 @@ Abstract:
 
 #include "engine/engine.h"
 
-#include "platform/async.h"
-
-INT
-TestThread(
-    _In_ PVOID UserData
-    )
-{
-    LogInfo("0x%llX", (UINT64)AsCurrentThread->ThreadStart);
-    return (INT)UserData;
-}
-
 INT
 PurplMain(
     _In_ INT ArgumentCount,
@@ -59,22 +48,11 @@ Return Value:
 
     CmnInitialize();
     EngInitialize();
-
-    PTHREAD Thread = AsCreateThread(
-        "test",
-        8192,
-        TestThread,
-        (PVOID)69420
-        );
-    LogInfo("0x%llX", (UINT64)AsCurrentThread->ThreadStart);
-    AsDetachThread(Thread);
-
+    
     EngMainLoop();
 
     EngShutdown();
     CmnShutdown();
-
-    LogInfo("%d", AsJoinThread(Thread));
 
     return 0;
 }

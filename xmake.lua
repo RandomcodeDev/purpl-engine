@@ -5,8 +5,8 @@ set_project("purpl-engine")
 set_allowedplats("gdk", "gdkx", "linux", "freebsd", "switch")
 set_allowedarchs("gdk|x64", "gdkx|x64", "switch|arm64")
 
-if os.isfile("../platform/switch/toolchain.lua") then
-    includes("../platform/switch/toolchain.lua")
+if os.isfile("../platform/switch/switch.lua") then
+    includes("../platform/switch/switch.lua")
     if is_plat("switch") then
         add_switch_settings()
     end
@@ -18,10 +18,36 @@ else
 end
 
 directx = is_plat("gdk", "gdkx")
-vulkan = is_plat("gdk", "linux", "freebsd")
+vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 
 includes("shared.lua")
-setup_shared("$(scriptdir)", vulkan)
+setup_shared("$(scriptdir)", directx, vulkan)
+
+target("rps")
+    set_kind("static")
+    add_headerfiles(
+        "deps/RenderPipelineShaders/include/rps/**.h",
+        "deps/RenderPipelineShaders/include/rps/**.h",
+        "deps/RenderPipelineShaders/src/core/**.hpp",
+        "deps/RenderPipelineShaders/src/runtime/common/**.hpp"
+    )
+    add_files(
+        "deps/RenderPipelineShaders/src/core/**.cpp",
+        "deps/RenderPipelineShaders/src/frontend/**.cpp",
+        "deps/RenderPipelineShaders/src/runtime/common/**.cpp"
+    )
+
+    if directx then
+        add_headerfiles("deps/RenderPipelineShaders/src/runtime/d3d*/**.hpp")
+        add_files("deps/RenderPipelineShaders/src/runtime/d3d*/*.cpp")
+    end
+
+    if vulkan then
+        add_headerfiles("deps/RenderPipelineShaders/src/runtime/vk/**.hpp")
+        add_files("deps/RenderPipelineShaders/src/runtime/vk/*.cpp")
+    end
+
+    on_load(fix_target)
 
 target("flecs")
     set_kind("static")
@@ -44,18 +70,26 @@ target("render")
     add_headerfiles("engine/render/*.h")
     add_files("engine/render/*.c")
 
-    add_deps("util")
+    add_deps("rps", "util")
 
     if directx then
---        add_headerfiles("engine/rendersystem/directx/dx.h")
---        add_files("engine/rendersystem/directx/dx.cpp")
-        add_defines("PURPL_DIRECTX")
+        add_headerfiles("engine/render/d3d12.h")
+        add_files(
+            "deps/DirectX-Headers/src/*.cpp",
+            "deps/D3D12MemoryAllocator/src/Common.cpp",
+            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp",
+            "engine/render/d3d12.cpp"
+        )
+        if is_plat("gdk") then
+            add_links("d3d12.lib", "dxgi.lib")
+        elseif is_plat("gdkx") then
+            add_links("d3d12_xs.lib", "dxgi_xs.lib")
+        end
     end
 
     if vulkan then
-        add_includedirs("deps/volk", "deps/Vulkan-Headers/include", "deps/VulkanMemoryAllocator/include")
---        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/rendersystem/vulkan/*.h")
---        add_files("engine/rendersystem/vulkan/*.c", "engine/rendersystem/vulkan/*.cpp")
+        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/render/vk.h")
+        add_files("engine/render/vk.c", "engine/render/VmaUsage.cpp")
 
         if is_plat("switch") then
             add_switch_vulkan_links()
@@ -77,6 +111,7 @@ target("purpl")
 
     if is_plat("gdk", "gdkx") then
         add_files("platform/win32/launcher.c", "platform/win32/purpl.rc")
+        add_links("xgameruntime.lib")
     elseif is_plat("linux", "freebsd") then
         add_files("platform/unix/launcher.c")
     elseif is_plat("switch") then

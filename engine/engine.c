@@ -1,5 +1,7 @@
 /*++
 
+Copyright (c) 2024 MobSlicer152
+
 Module Name:
 
     engine.c
@@ -106,7 +108,7 @@ Return Value:
 
     EcsInitialize();
 
-    LogInfo("Successfully initialized engine with data directory %s", EngineDataDirectory);
+    LogInfo("Engine initialization succeeded, data directory is %s", EngineDataDirectory);
 }
 
 static UINT64 Start;
@@ -246,6 +248,7 @@ Return Value:
     LogInfo("Shutting down engine");
 
     EcsShutdown();
+    RdrShutdown();
     VidShutdown();
 
     PURPL_FREE(EngineDataDirectory);

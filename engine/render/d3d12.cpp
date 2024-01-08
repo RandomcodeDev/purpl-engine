@@ -34,18 +34,26 @@ END_EXTERN_C
 
 #define FRAME_COUNT 3
 
+// Global resouces
+
 static ID3D12Debug6* Debug;
 static IDXGIFactory7* Factory;
-
 static IDXGIAdapter4** Adapters;
 static UINT AdapterIndex;
 
+// Device resources
 static ID3D12Device10* Device;
 static ID3D12CommandQueue* CommandQueue;
-// Is it swap chain or swapchain? DirectX has it as two words, but Vulkan has it as one.
-static IDXGISwapChain1* SwapChain;
+// Is it swap chain or swapchain? DirectX (and Visual Studio's autocorrect) has it as two words, but Vulkan has it as one.
+static IDXGISwapChain4* SwapChain;
+static UINT SwapChainIndex;
+static ID3D12DescriptorHeap* RenderTargetViewHeap;
+static UINT RtvDescriptorHeapSize;
+static ID3D12Resource* RenderTargetViews[FRAME_COUNT];
+static ID3D12CommandAllocator* CommandAllocator;
 
-#define REQUIRED_FEATURE_LEVEL D3D_FEATURE_LEVEL_12_0
+// DirectX 12 Ultimate
+#define REQUIRED_FEATURE_LEVEL D3D_FEATURE_LEVEL_12_2
 
 static
 VOID
@@ -206,8 +214,45 @@ CreateSwapChain(
         &SwapChainDescription,
         nullptr,
         nullptr,
-        &SwapChain
+        (IDXGISwapChain1**)&SwapChain
         ));
+    SwapChainIndex = SwapChain->GetCurrentBackBufferIndex();
+}
+
+static
+VOID
+CreateRtvDescriptorHeap(
+    VOID
+    )
+{
+    if ( RenderTargetViewHeap )
+    {
+        LogDebug("Recreating RTV descriptor heap");
+        RenderTargetViewHeap->Release();
+    }
+    else
+    {
+        LogDebug("Creating RTV descriptor heap");
+    }
+
+    D3D12_DESCRIPTOR_HEAP_DESC RenderTargetViewHeapDescription = {};
+    RenderTargetViewHeapDescription.NumDescriptors = FRAME_COUNT;
+    RenderTargetViewHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    RenderTargetViewHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    HRESULT_CHECK(Device->CreateDescriptorHeap(
+        &RenderTargetViewHeapDescription,
+        IID_PPV_ARGS(&RenderTargetViewHeap)
+        ));
+    RtvDescriptorHeapSize = Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+}
+
+static
+VOID
+CreateRenderTargetViews(
+    VOID
+    )
+{
+
 }
 
 static
@@ -216,10 +261,24 @@ SetAdapter(
     _In_ UINT Index
     )
 {
+    if ( !Factory )
+    {
+        LogError("CreateFactory has not been called, not doing anything");
+        return;
+    }
+
+    if ( !Adapters )
+    {
+        LogError("No adapters stored, did you call EnumerateAdapters");
+        return;
+    }
+
     AdapterIndex = Index;
     CreateDevice();
     CreateCommandQueue();
     CreateSwapChain();
+    CreateRtvDescriptorHeap();
+    CreateRenderTargetViews();
 }
 
 static
@@ -268,6 +327,12 @@ Shutdown(
 
     LogDebug("Shutting down DirectX 12 backend");
 
+    if ( RenderTargetViewHeap )
+    {
+        LogDebug("Releasing RTV descriptor heap");
+        RenderTargetViewHeap->Release();
+    }
+
     if ( SwapChain )
     {
         LogDebug("Releasing swap chain");
@@ -294,6 +359,7 @@ Shutdown(
             LogDebug("Releasing adapter %u", i);
             Adapters[i]->Release();
         }
+        stbds_arrfree(Adapters);
     }
 
     if ( Factory )

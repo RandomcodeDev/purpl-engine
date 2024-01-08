@@ -101,9 +101,9 @@ do                                                    \
 //
 
 #ifdef PURPL_USE_MIMALLOC
-#define PURPL_FREE(Block) { mi_free(Block); (Block) = NULL; }
+#define PURPL_FREE(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
 #else
-#define PURPL_FREE(Block) { free(Block); (Block) = NULL; }
+#define PURPL_FREE(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
 #endif
 
 //
@@ -111,12 +111,12 @@ do                                                    \
 //
 
 #ifdef PURPL_USE_MIMALLOC
-#define PURPL_ALIGNED_FREE(Block) { mi_free(Block); (Block) = NULL; }
+#define PURPL_ALIGNED_FREE(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
 #else
 #ifdef PURPL_WIN32
-#define PURPL_ALIGNED_FREE(Block) _aligned_free(Block);
+#define PURPL_ALIGNED_FREE(Block) { (Block) ? _aligned_free(Block) : (VOID)0; (Block) = NULL; }
 #else
-#define PURPL_ALIGNED_FREE(Block) free(Block);
+#define PURPL_ALIGNED_FREE(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
 #endif
 #endif
 

@@ -22,6 +22,8 @@ Abstract:
 
 #include "platform/video.h"
 
+#include "render/render.h"
+
 #include "camera.h"
 #include "entity.h"
 #include "mathutil.h"

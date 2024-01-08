@@ -16,6 +16,12 @@ Abstract:
 
 #include "common/common.h"
 
+extern
+VOID
+InitializeMainThread(
+    _In_ PFN_THREAD_START ThreadStart
+    );
+
 INT
 main(
     INT argc,
@@ -43,6 +49,8 @@ Return Value:
 
     // Get a ton of memory so it doesn't have to be requested from the OS later
     free(malloc(1 * 1024 * 1024 * 1024));
+
+    InitializeMainThread((PFN_THREAD_START)main);
 
     Result = PurplMain(
         argc,

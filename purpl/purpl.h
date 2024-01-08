@@ -66,6 +66,7 @@ Abstract:
 #ifndef PURPL_SWITCH
 #include <dlfcn.h>
 #include <execinfo.h>
+#include <pthread.h>
 #endif
 #include <unistd.h>
 

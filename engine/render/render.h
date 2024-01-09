@@ -19,14 +19,6 @@ Abstract:
 #include "common/common.h"
 #include "common/log.h"
 
-#ifdef PURPL_DIRECTX
-#include "d3d12.h"
-#endif
-
-#ifdef PURPL_VULKAN
-//#include "vk.h"
-#endif
-
 //
 // Graphics API
 //

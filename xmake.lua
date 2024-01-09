@@ -73,12 +73,10 @@ target("render")
     add_deps("rps", "util")
 
     if directx then
-        add_headerfiles("engine/render/d3d12.h")
         add_files(
             "deps/DirectX-Headers/src/*.cpp",
             "deps/D3D12MemoryAllocator/src/Common.cpp",
-            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp",
-            "engine/render/d3d12.cpp"
+            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp"
         )
         if is_plat("gdk") then
             add_links("d3d12.lib", "dxgi.lib")
@@ -88,8 +86,7 @@ target("render")
     end
 
     if vulkan then
-        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/render/vk.h")
-        add_files("engine/render/vk.c", "engine/render/VmaUsage.cpp")
+        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h")
 
         if is_plat("switch") then
             add_switch_vulkan_links()

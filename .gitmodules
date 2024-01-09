@@ -31,6 +31,3 @@
 [submodule "deps/D3D12MemoryAllocator"]
 	path = deps/D3D12MemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator
-[submodule "deps/vkd3d"]
-	path = deps/vkd3d
-	url = https://github.com/HansKristian-Work/vkd3d-proton

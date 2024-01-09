@@ -22,6 +22,10 @@ Abstract:
 
 typedef struct RENDER_BACKEND RENDER_BACKEND, *PRENDER_BACKEND;
 
+//
+// Sets up the backend
+//
+
 extern
 VOID
 D3d12SetupBackend(

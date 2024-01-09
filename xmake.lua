@@ -17,7 +17,7 @@ else
     function add_switch_renderapi() end
 end
 
-directx = is_plat("gdk", "gdkx", "linux")
+directx = is_plat("gdk", "gdkx")
 vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 
 includes("shared.lua")
@@ -126,7 +126,7 @@ target("purpl")
 
     on_load(fix_target)
     before_build(function (target)
-        if not os.exists(path.join(target:targetdir(), "assets")) and not os.exists(path.join(target:targetdir(), "assets")) then
+        if not os.exists(path.join(target:targetdir(), "assets")) then
             os.ln(path.absolute("assets/out"), path.join(target:targetdir(), "assets"))
         end
     end)

@@ -42,7 +42,7 @@ target("engine")
 target("render")
     set_kind("static")
     add_headerfiles("engine/render/*.h")
-    add_files("engine/render/*.c", "engine/render/*.cpp")
+    add_files("engine/render/*.c")
 
     add_deps("util")
 
@@ -61,6 +61,7 @@ target("render")
 
     if vulkan then
         add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h")
+        add_files("engine/render/vk.c")
 
         if is_plat("switch") then
             add_switch_vulkan_links()

@@ -31,6 +31,41 @@ typedef enum RENDER_API
     RenderApiCount
 } RENDER_API, *PRENDER_API;
 
+//
+// Graphics backend
+//
+
+typedef struct RENDER_BACKEND
+{
+    BOOLEAN
+    (*Initialize)(
+        VOID
+        );
+    VOID
+    (*BeginFrame)(
+        VOID
+        );
+    VOID
+    (*EndFrame)(
+        VOID
+        );
+    VOID
+    (*Shutdown)(
+        VOID
+        );
+} RENDER_BACKEND, *PRENDER_BACKEND;
+
+//
+// Model
+//
+
+typedef struct MODEL
+{
+    PVOID MeshHandle;
+    PVOID MaterialHandle;
+};
+extern ECS_COMPONENT_DECLARE(MODEL);
+
 extern
 VOID
 RdrInitialize(

@@ -31,30 +31,6 @@ typedef enum RENDER_API
     RenderApiCount
 } RENDER_API, *PRENDER_API;
 
-//
-// API-specific render backend
-//
-
-typedef struct RENDER_BACKEND
-{
-    VOID
-    (*Initialize)(
-        VOID
-        );
-    VOID
-    (*BeginFrame)(
-        VOID
-        );
-    VOID
-    (*EndFrame)(
-        VOID
-        );
-    VOID
-    (*Shutdown)(
-        VOID
-        );
-} RENDER_BACKEND, *PRENDER_BACKEND;
-
 extern
 VOID
 RdrInitialize(

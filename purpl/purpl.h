@@ -88,8 +88,6 @@ Abstract:
 #include "mimalloc.h"
 #endif
 
-#include "rps/rps.h"
-
 #include "stb/stb_ds.h"
 #include "stb/stb_image.h"
 #include "stb/stb_image_write.h"

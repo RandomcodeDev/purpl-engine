@@ -25,9 +25,6 @@
 [submodule "assets"]
 	path = assets
 	url = https://git.randomcode.dev/mobslicer152/purpl-assets.git
-[submodule "deps/RenderPipelineShaders"]
-	path = deps/RenderPipelineShaders
-	url = https://github.com/GPUOpen-LibrariesAndSDKs/RenderPipelineShaders
 [submodule "deps/D3D12MemoryAllocator"]
 	path = deps/D3D12MemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator

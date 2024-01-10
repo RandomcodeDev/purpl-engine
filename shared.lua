@@ -64,6 +64,15 @@ function setup_shared(root, directx, vulkan)
         add_requires("glfw")
     end
 
+    add_includedirs(
+        root,
+        path.join(root, "deps"),
+        path.join(root, "deps/cglm/include"),
+        path.join(root, "deps/cjson"),
+        path.join(root, "deps/flecs"),
+        path.join(root, "deps/zstd/lib")
+    )
+
     if directx then
         add_defines("PURPL_DIRECTX")
 
@@ -108,17 +117,6 @@ function setup_shared(root, directx, vulkan)
         -- block to do that, but having a semi after looks normal
         add_cxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt")
     end
-
-    add_includedirs(
-        root,
-        path.join(root, "deps"),
-        path.join(root, "deps/cglm/include"),
-        path.join(root, "deps/cjson"),
-        path.join(root, "deps/flecs"),
-        path.join(root, "deps/RenderPipelineShaders/include"),
-        path.join(root, "deps/RenderPipelineShaders/src"),
-        path.join(root, "deps/zstd/lib")
-    )
 
     target("cjson")
         set_kind("static")

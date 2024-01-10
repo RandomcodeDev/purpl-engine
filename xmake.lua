@@ -23,32 +23,6 @@ vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 includes("shared.lua")
 setup_shared("$(scriptdir)", directx, vulkan)
 
-target("rps")
-    set_kind("static")
-    add_headerfiles(
-        "deps/RenderPipelineShaders/include/rps/**.h",
-        "deps/RenderPipelineShaders/include/rps/**.h",
-        "deps/RenderPipelineShaders/src/core/**.hpp",
-        "deps/RenderPipelineShaders/src/runtime/common/**.hpp"
-    )
-    add_files(
-        "deps/RenderPipelineShaders/src/core/**.cpp",
-        "deps/RenderPipelineShaders/src/frontend/**.cpp",
-        "deps/RenderPipelineShaders/src/runtime/common/**.cpp"
-    )
-
-    if directx then
-        add_headerfiles("deps/RenderPipelineShaders/src/runtime/d3d*/**.hpp")
-        add_files("deps/RenderPipelineShaders/src/runtime/d3d*/*.cpp")
-    end
-
-    if vulkan then
-        add_headerfiles("deps/RenderPipelineShaders/src/runtime/vk/**.hpp")
-        add_files("deps/RenderPipelineShaders/src/runtime/vk/*.cpp")
-    end
-
-    on_load(fix_target)
-
 target("flecs")
     set_kind("static")
     add_defines("FLECS_STATIC")
@@ -68,9 +42,9 @@ target("engine")
 target("render")
     set_kind("static")
     add_headerfiles("engine/render/*.h")
-    add_files("engine/render/*.c")
+    add_files("engine/render/*.c", "engine/render/*.cpp")
 
-    add_deps("rps", "util")
+    add_deps("util")
 
     if directx then
         add_files(

@@ -63,7 +63,7 @@ typedef struct MODEL
 {
     PVOID MeshHandle;
     PVOID MaterialHandle;
-};
+} MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
 extern

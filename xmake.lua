@@ -61,7 +61,7 @@ target("render")
 
     if vulkan then
         add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h")
-        add_files("engine/render/vk.c")
+        add_files("engine/render/vk.c", "engine/render/VmaUsage.cpp")
 
         if is_plat("switch") then
             add_switch_vulkan_links()

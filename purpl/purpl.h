@@ -93,6 +93,10 @@ Abstract:
 #include "stb/stb_image_write.h"
 #include "stb/stb_sprintf.h"
 
+#ifdef PURPL_VULKAN
+#include "volk.h"
+#endif
+
 #include "zstd.h"
 
 BEGIN_EXTERN_C

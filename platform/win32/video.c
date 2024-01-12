@@ -24,10 +24,6 @@ Abstract:
 	"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-#ifdef PURPL_VULKAN
-//#include "engine/rendersystem/vulkan/vk.h"
-#endif
-
 #define IDI_ICON1 103
 
 static HWND Window = NULL;
@@ -530,30 +526,30 @@ Return Value:
 
 --*/
 {
-//    VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
-//    VkSurfaceKHR Surface;
-//    VkResult Result;
+    VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
+    VkSurfaceKHR Surface;
+    VkResult Result;
 
     LogDebug("Creating Vulkan surface with vkCreateWin32SurfaceKHR");
 
-//    SurfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-//    SurfaceCreateInfo.hinstance = GetModuleHandleA(NULL);
-//    SurfaceCreateInfo.hwnd = WindowHandle ? WindowHandle : Window;
+    SurfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+    SurfaceCreateInfo.hinstance = GetModuleHandleA(NULL);
+    SurfaceCreateInfo.hwnd = WindowHandle ? WindowHandle : Window;
 
-//    Surface = NULL;
-//    Result = vkCreateWin32SurfaceKHR(
-//        Instance,
-//        &SurfaceCreateInfo,
-//        VulkanGetAllocationCallbacks(),
-//        &Surface
-//        );
-//    if ( Result != VK_SUCCESS )
-//    {
-//        CmnError("Failed to create VkSurfaceKHR: VkResult %d", Result);
-//    }
+    Surface = NULL;
+    Result = vkCreateWin32SurfaceKHR(
+        Instance,
+        &SurfaceCreateInfo,
+        VulkanGetAllocationCallbacks(),
+        &Surface
+        );
+    if ( Result != VK_SUCCESS )
+    {
+        CmnError("Failed to create VkSurfaceKHR: VkResult %d", Result);
+    }
 
-//    LogDebug("Successfully created Vulkan surface with handle 0x%llX", (UINT64)Surface);
+    LogDebug("Successfully created Vulkan surface with handle 0x%llX", (UINT64)Surface);
 
-    return NULL; //Surface;
+    return Surface;
 }
 #endif

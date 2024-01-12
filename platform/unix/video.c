@@ -16,10 +16,6 @@ Abstract:
 
 #include "platform/platform.h"
 
-#ifdef PURPL_VULKAN
-//#include "engine/rendersystem/vulkan/vk.h"
-#endif
-
 #include "GLFW/glfw3.h"
 
 static GLFWwindow* Window;
@@ -307,23 +303,23 @@ Return Value:
 
 --*/
 {
-//    VkResult Result;
-//    VkSurfaceKHR Surface;
-//
-//    LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
-//
-//    Result = glfwCreateWindowSurface(
-//        Instance,
-//        WindowHandle ? WindowHandle : Window,
-//        NULL,
-//        &Surface
-//        );
-//    if ( Result != VK_SUCCESS )
-//    {
-//        LogError("Failed to create Vulkan surface: VkResult %d", Result);
-//        return NULL;
-//    }
-//
-//    return Surface;
+    VkResult Result;
+    VkSurfaceKHR Surface;
+
+    LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
+
+    Result = glfwCreateWindowSurface(
+        Instance,
+        WindowHandle ? WindowHandle : Window,
+        NULL,
+        &Surface
+        );
+    if ( Result != VK_SUCCESS )
+    {
+        LogError("Failed to create Vulkan surface: VkResult %d", Result);
+        return NULL;
+    }
+
+    return Surface;
 }
 #endif

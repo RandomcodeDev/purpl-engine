@@ -286,6 +286,7 @@ VlkSetObjectName(
 // Debug callback to log things
 //
 
+extern
 VkBool32
 VKAPI_CALL
 VlkDebugCallback(
@@ -299,7 +300,58 @@ VlkDebugCallback(
 // Get devices
 //
 
+extern
 VOID
 VlkEnumeratePhysicalDevices(
+    VOID
+    );
+
+//
+// Create the logical device
+//
+
+extern
+VOID
+VlkCreateLogicalDevice(
+    VOID
+    );
+
+//
+// Create presentation semaphores
+//
+
+extern
+VOID
+VlkCreateSemaphores(
+    VOID
+    );
+
+//
+// Create the main and transfer command pools
+//
+
+extern
+VOID
+VlkCreateCommandPools(
+    VOID
+    );
+
+//
+// Allocate the main command buffers
+//
+
+extern
+VOID
+VlkAllocateCommandBuffers(
+    VOID
+    );
+
+//
+// Create the swap chain
+//
+
+extern
+VOID
+VlkCreateSwapChain(
     VOID
     );

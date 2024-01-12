@@ -104,7 +104,7 @@ function setup_shared(root, directx, vulkan)
 
     if is_plat("windows", "gdk", "gdkx") then
         -- These are just noise, like alignment and stuff
-        add_cxflags("-wd4820", "-wd4255", "-wd4464", "-wd4668", "-wd5045")
+        add_cxflags("-wd4820", "-wd4255", "-wd4464", "-wd4668", "-wd5045", {force = true})
 
         add_linkdirs(
             path.join(os.getenv("GRDKLatest"), "GameKit/Lib/amd64")
@@ -115,7 +115,7 @@ function setup_shared(root, directx, vulkan)
         -- Old style casts are to match stylistically, and C++98 is defunct as hell
         -- Also, PURPL_FREE sets the variable to NULL to reduce misuse, and uses a
         -- block to do that, but having a semi after looks normal
-        add_cxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt")
+        add_cxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
     end
 
     target("cjson")

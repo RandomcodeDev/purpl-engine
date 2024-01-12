@@ -35,6 +35,11 @@ Abstract:
 #include <time.h>
 #include <wchar.h>
 
+#ifdef __cplusplus
+#define _Noreturn
+#define _Thread_local thread_local
+#endif
+
 #ifdef PURPL_WIN32
 #if __STDC_VERSION__ <= 201100l
 #define _Noreturn __declspec(noreturn)

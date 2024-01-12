@@ -39,6 +39,43 @@ target("engine")
 
     on_load(fix_target)
 
+if vulkan then
+    target("render-vk")
+        set_kind("static")
+        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/render/vk/*.h")
+        add_files("engine/render/vk/*.c", "engine/render/vk/*.cpp")
+
+        add_deps("util")
+
+        if is_plat("switch") then
+            add_switch_vulkan_links()
+        else
+            add_files("deps/volk/volk.c")
+        end
+
+        on_load(fix_target)
+end
+
+if directx then
+    target("render-vk")
+        set_kind("static")
+        add_files(
+            "deps/DirectX-Headers/src/*.cpp",
+            "deps/D3D12MemoryAllocator/src/Common.cpp",
+            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp"
+        )
+
+        if is_plat("gdk") then
+            add_links("d3d12.lib", "dxgi.lib")
+        elseif is_plat("gdkx") then
+            add_links("d3d12_xs.lib", "dxgi_xs.lib")
+        end
+
+        on_load(fix_target)
+end
+
+add_switch_renderapi()
+
 target("render")
     set_kind("static")
     add_headerfiles("engine/render/*.h")
@@ -47,30 +84,11 @@ target("render")
     add_deps("util")
 
     if directx then
-        add_files(
-            "deps/DirectX-Headers/src/*.cpp",
-            "deps/D3D12MemoryAllocator/src/Common.cpp",
-            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp"
-        )
-        if is_plat("gdk") then
-            add_links("d3d12.lib", "dxgi.lib")
-        elseif is_plat("gdkx") then
-            add_links("d3d12_xs.lib", "dxgi_xs.lib")
-        end
+        add_deps("render-dx12")
     end
-
     if vulkan then
-        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h")
-        add_files("engine/render/vk.c", "engine/render/VmaUsage.cpp")
-
-        if is_plat("switch") then
-            add_switch_vulkan_links()
-        else
-            add_files("deps/volk/volk.c")
-        end
+        add_deps("render-vk")
     end
-
-    add_switch_renderapi()
 
     on_load(fix_target)
 

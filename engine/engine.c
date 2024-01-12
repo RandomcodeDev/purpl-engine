@@ -108,7 +108,7 @@ Return Value:
 
     EcsInitialize();
 
-    LogInfo("Engine initialization succeeded, data directory is %s", EngineDataDirectory);
+    LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);
 }
 
 static UINT64 Start;
@@ -253,7 +253,7 @@ Return Value:
 
     PURPL_FREE(EngineDataDirectory);
 
-    LogInfo("Engine shutdown succeeded");
+    LogInfo("Successfully shut down engine");
 }
 
 ecs_entity_t

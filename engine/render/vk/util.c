@@ -137,6 +137,7 @@ VlkSetObjectName(
     //UNREFERENCED_PARAMETER(ObjectType);
     //UNREFERENCED_PARAMETER(Name);
     // Seems to crash a lot
+#ifndef PURPL_SWITCH
 #ifdef PURPL_VULKAN_DEBUG
     if ( vkSetDebugUtilsObjectNameEXT && VlkData.Device )
     {
@@ -164,6 +165,7 @@ VlkSetObjectName(
             &NameInformation
             );
     }
+#endif
 #endif
 }
 

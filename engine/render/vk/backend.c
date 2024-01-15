@@ -213,10 +213,6 @@ Return Value:
     LogDebug("Freeing uniform buffers");
     for ( i = 0; i < VULKAN_FRAME_COUNT; i++ )
     {
-        vmaUnmapMemory(
-            VlkData.Allocator,
-            VlkData.UniformBuffers[i].Allocation
-            );
         VlkFreeBuffer(&VlkData.UniformBuffers[i]);
     }
 

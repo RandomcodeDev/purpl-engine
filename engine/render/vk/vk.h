@@ -123,6 +123,34 @@ typedef struct VULKAN_GPU_INFO
 } VULKAN_GPU_INFO, *PVULKAN_GPU_INFO;
 
 //
+// Render attachment
+//
+
+typedef struct VULKAN_ATTACHMENT
+{
+    VkImage Image;
+    VmaAllocation Allocation;
+    VkImageView View;
+    VkFormat Format;
+} VULKAN_ATTACHMENT, *PVULKAN_ATTACHMENT;
+
+//
+// Deferred rendering first stage
+//
+
+typedef struct VULKAN_DEFERRED_INFO
+{
+    INT32 Width;
+    INT32 Height;
+    VkFramebuffer Framebuffer;
+    VULKAN_ATTACHMENT PositionBuffer;
+    VULKAN_ATTACHMENT NormalBuffer;
+    VULKAN_ATTACHMENT AlbedoBuffer;
+    VULKAN_ATTACHMENT DepthBuffer;
+    VkRenderPass RenderPass;
+} VULKAN_DEFERRED_INFO, *PVULKAN_DEFERRED_INFO;
+
+//
 // Vulkan data
 //
 
@@ -150,7 +178,7 @@ typedef struct VULKAN_DATA
     VkDevice Device;
 
     //
-    // VMA stuff
+    // Allocator
     //
 
     VmaAllocator Allocator;
@@ -186,20 +214,17 @@ typedef struct VULKAN_DATA
     UINT32 SwapChainIndex;
 
     //
-    // Render target stuff
-    //
-
-    VkFormat DepthFormat;
-    VkImage DepthImage;
-    VmaAllocation DepthImageAllocation;
-    VkImageView DepthView;
-
-    //
     // Rendering stuff
     //
 
-    VkRenderPass RenderPass;
-    VkFramebuffer Framebuffers[VULKAN_FRAME_COUNT];
+    VkRenderPass GlobalRenderPass;
+    VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
+
+    //
+    // Deferred rendering information
+    //
+
+    VULKAN_DEFERRED_INFO DeferredInfo;
 
     //
     // Descriptor things

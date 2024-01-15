@@ -306,12 +306,19 @@ VlkFreeBuffer(
     _In_ PVULKAN_BUFFER Buffer
     )
 {
-    LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
-    vmaDestroyBuffer(
-        VlkData.Allocator,
-        Buffer->Buffer,
-        Buffer->Allocation
-        );
+    //LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
+    if ( Buffer->Allocation )
+    {
+        vmaUnmapMemory(
+            VlkData.Allocator,
+            Buffer->Allocation
+            );
+        vmaDestroyBuffer(
+            VlkData.Allocator,
+            Buffer->Buffer,
+            Buffer->Allocation
+            );
+    }
     memset(
         Buffer,
         0,

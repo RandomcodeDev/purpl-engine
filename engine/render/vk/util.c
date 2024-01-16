@@ -302,8 +302,57 @@ Return Value:
 }
 
 VOID
+VlkAllocateBufferWithData(
+    _In_ PVOID Data,
+    _In_ VkDeviceSize Size,
+    _In_ VkBufferUsageFlags Usage,
+    _In_ VkMemoryPropertyFlags Flags,
+    _Out_ PVULKAN_BUFFER Buffer
+    )
+{
+    VULKAN_BUFFER StagingBuffer;
+    PVOID BufferAddress;
+
+    VlkAllocateBuffer(
+        Size,
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        &StagingBuffer
+        );
+
+    BufferAddress = NULL;
+    vmaMapMemory(
+        VlkData.Allocator,
+        StagingBuffer.Allocation,
+        &BufferAddress
+        );
+    memcpy(
+        BufferAddress,
+        Data,
+        Size
+        );
+    vmaUnmapMemory(
+        VlkData.Allocator,
+        StagingBuffer.Allocation
+        );
+
+    VlkAllocateBuffer(
+        Size,
+        Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        Flags,
+        Buffer
+        );
+    VlkCopyBuffer(
+        &StagingBuffer,
+        Buffer,
+        Size
+        );
+    VlkFreeBuffer(&StagingBuffer);
+}
+
+VOID
 VlkFreeBuffer(
-    _In_ PVULKAN_BUFFER Buffer
+    _Inout_ PVULKAN_BUFFER Buffer
     )
 {
     //LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
@@ -327,7 +376,9 @@ VlkFreeBuffer(
 }
 
 VkCommandBuffer
-VlkBeginTransfer(VOID)
+VlkBeginTransfer(
+    VOID
+    )
 {
     VkCommandBufferAllocateInfo CommandBufferAllocateInformation = {0};
 
@@ -412,53 +463,4 @@ VlkCopyBuffer(
         );
 
     VlkEndTransfer(TransferBuffer);
-}
-
-VOID
-VlkAllocateBufferWithData(
-    _In_ PVOID Data,
-    _In_ VkDeviceSize Size,
-    _In_ VkBufferUsageFlags Usage,
-    _In_ VkMemoryPropertyFlags Flags,
-    _Out_ PVULKAN_BUFFER Buffer
-    )
-{
-    VULKAN_BUFFER StagingBuffer;
-    PVOID BufferAddress;
-
-    VlkAllocateBuffer(
-        Size,
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &StagingBuffer
-        );
-
-    BufferAddress = NULL;
-    vmaMapMemory(
-        VlkData.Allocator,
-        StagingBuffer.Allocation,
-        &BufferAddress
-        );
-    memcpy(
-        BufferAddress,
-        Data,
-        Size
-        );
-    vmaUnmapMemory(
-        VlkData.Allocator,
-        StagingBuffer.Allocation
-        );
-
-    VlkAllocateBuffer(
-        Size,
-        Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        Flags,
-        Buffer
-        );
-    VlkCopyBuffer(
-        &StagingBuffer,
-        Buffer,
-        Size
-        );
-    VlkFreeBuffer(&StagingBuffer);
 }

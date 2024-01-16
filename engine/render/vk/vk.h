@@ -372,11 +372,189 @@ VlkAllocateCommandBuffers(
     );
 
 //
+// Allocate a buffer
+//
+
+extern
+VOID
+VlkAllocateBuffer(
+    _In_ VkDeviceSize Size,
+    _In_ VkBufferUsageFlags Usage,
+    _In_ VkMemoryPropertyFlags Flags,
+    _Out_ PVULKAN_BUFFER Buffer
+    );
+
+//
+// Allocate a buffer and copy data to it
+//
+
+extern
+VOID
+VlkAllocateBufferWithData(
+    _In_ PVOID Data,
+    _In_ VkDeviceSize Size,
+    _In_ VkBufferUsageFlags Usage,
+    _In_ VkMemoryPropertyFlags Flags,
+    _Out_ PVULKAN_BUFFER Buffer
+    );
+
+//
+// Free a buffer
+//
+
+extern
+VOID
+VlkFreeBuffer(
+    _Inout_ PVULKAN_BUFFER Buffer
+    );
+
+//
+// Create a temporary command buffer in the transfer command pool
+//
+
+extern
+VkCommandBuffer
+VlkBeginTransfer(
+    VOID
+    );
+
+//
+// Submits and frees a command buffer from VlkBeginTransfer
+//
+
+extern
+VOID
+VlkEndTransfer(
+    _In_ VkCommandBuffer TransferBuffer
+    );
+    
+//
+// Copy a buffer to another buffer
+//
+
+extern
+VOID
+VlkCopyBuffer(
+    _In_ PVULKAN_BUFFER Source,
+    _In_ PVULKAN_BUFFER Destination,
+    _In_ VkDeviceSize Size
+    );
+
+//
+// Create an image view
+//
+
+extern
+VOID
+VlkCreateImageView(
+    _Out_ VkImageView* ImageView,
+    _In_ VkImage Image,
+    _In_ VkFormat Format,
+    _In_ VkImageAspectFlags Aspect
+    );
+
+//
+// Choose a format from a set
+//
+
+extern
+VkFormat
+VlkChooseFormat(
+    VkFormat* Formats,
+    UINT32 FormatCount,
+    VkImageTiling ImageTiling,
+    VkFormatFeatureFlags FormatFeatures
+    );
+
+//
+// Change an image's layout
+//
+
+extern
+VOID
+VlkTransitionImageLayout(
+    _Inout_ VkImage Image,
+    _In_ VkImageLayout OldLayout,
+    _In_ VkImageLayout NewLayout
+    );
+
+//
+// Copy a buffer into an image
+//
+
+extern
+VOID
+VlkCopyBufferToImage(
+    _In_ VkBuffer Buffer,
+    _Out_ VkImage Image,
+    _In_ UINT32 Width,
+    _In_ UINT32 Height
+    );
+
+//
+// Create an initialized image
+//
+
+extern
+VOID
+VlkCreateImageWithData(
+    _In_ PVOID Data,
+    _In_ VkDeviceSize Size,
+    _In_ UINT32 Width,
+    _In_ UINT32 Height,
+    _In_ VkImageCreateInfo* ImageCreateInformation,
+    _In_ VmaAllocationCreateInfo* AllocationCreateInformation,
+    _In_ VkImageLayout TargetLayout,
+    _Out_ VkImage* Image,
+    _Out_ VmaAllocation* Allocation
+    );
+
+//
+// Choose a surface format
+//
+
+extern
+VkSurfaceFormatKHR
+VlkChooseSurfaceFormat(
+    VOID
+    );
+
+//
+// Choose a present mode
+//
+
+extern
+VkPresentModeKHR
+VlkChoosePresentMode(
+    VOID
+    );
+
+//
+// Get the extent of the surface
+//
+
+extern
+VkExtent2D
+VlkGetSurfaceExtent(
+    VOID
+    );
+
+//
 // Create the swap chain
 //
 
 extern
 VOID
 VlkCreateSwapChain(
+    VOID
+    );
+
+//
+// Destroy the swap chain
+//
+
+extern
+VOID
+VlkDestroySwapChain(
     VOID
     );

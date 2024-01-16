@@ -138,17 +138,15 @@ typedef struct VULKAN_ATTACHMENT
 // Deferred rendering first stage
 //
 
-typedef struct VULKAN_DEFERRED_INFO
+typedef struct VULKAN_DEFERRED_PASS
 {
-    INT32 Width;
-    INT32 Height;
+    VkRenderPass RenderPass;
     VkFramebuffer Framebuffer;
     VULKAN_ATTACHMENT PositionBuffer;
     VULKAN_ATTACHMENT NormalBuffer;
     VULKAN_ATTACHMENT AlbedoBuffer;
     VULKAN_ATTACHMENT DepthBuffer;
-    VkRenderPass RenderPass;
-} VULKAN_DEFERRED_INFO, *PVULKAN_DEFERRED_INFO;
+} VULKAN_DEFERRED_PASS, *PVULKAN_DEFERRED_PASS;
 
 //
 // Vulkan data
@@ -196,6 +194,7 @@ typedef struct VULKAN_DATA
 
     VkCommandPool CommandPool;
     VkCommandPool TransferCommandPool;
+    VkCommandBuffer DeferredCommandBuffer;
     VkCommandBuffer CommandBuffers[VULKAN_FRAME_COUNT];
     VkFence CommandBufferFences[VULKAN_FRAME_COUNT];
     VkSemaphore AcquireSemaphores[VULKAN_FRAME_COUNT];
@@ -217,14 +216,11 @@ typedef struct VULKAN_DATA
     // Rendering stuff
     //
 
-    VkRenderPass GlobalRenderPass;
+    VULKAN_DEFERRED_PASS DeferredPass;
+    VkRenderPass LightingPass;
+    VkFramebuffer LightingFramebuffer;
+    VkRenderPass PostProcessPass;
     VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
-
-    //
-    // Deferred rendering information
-    //
-
-    VULKAN_DEFERRED_INFO DeferredInfo;
 
     //
     // Descriptor things
@@ -557,4 +553,28 @@ extern
 VOID
 VlkDestroySwapChain(
     VOID
+    );
+
+//
+// Create an attachment
+//
+
+extern
+VOID
+VlkCreateAttachment(
+    _Out_ PVULKAN_ATTACHMENT Attachment,
+    _In_ UINT32 Width,
+    _In_ UINT32 Height,
+    _In_ VkFormat Format,
+    _In_ VkImageLayout Layout
+    );
+
+//
+// Initialize deferred rendering pass
+//
+
+extern
+VOID
+VlkCreateDeferredPass(
+    _Out_ PVULKAN_DEFERRED_PASS DeferredPass
     );

@@ -118,10 +118,8 @@ Initialize(
 {
     LogDebug("Initializing Vulkan backend");
 
-#ifndef PURPL_SWITCH
     LogDebug("Initializing volk");
-    VULKAN_CHECK(volkInitialize());
-#endif
+    volkInitializeCustom(PlatGetVulkanFunction);
 
     VlkCreateInstance();
     VlkCreateSurface();

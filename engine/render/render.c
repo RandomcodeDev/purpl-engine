@@ -8,16 +8,16 @@ static RENDER_BACKEND Backend;
 #ifdef PURPL_DIRECTX
 extern
 VOID
-D3d12InitializeBackend(
+Dx12InitializeBackend(
     _Out_ PRENDER_BACKEND Backend
     );
 #else
 VOID
-D3d12InitializeBackend(
+Dx12InitializeBackend(
     _Out_ PRENDER_BACKEND Backend
     )
 {
-    LogError("Why are you intializing Direct3D 12 on this platform?");
+    LogError("Why are you intializing DX12 on this platform?");
 }
 #endif
 
@@ -55,7 +55,7 @@ RdrInitialize(
     case RenderApiNone:
         break;
     case RenderApiDirect3D12:
-        D3d12InitializeBackend(&Backend);
+        Dx12InitializeBackend(&Backend);
         break;
     case RenderApiVulkan:
         VkInitializeBackend(&Backend);

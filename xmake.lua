@@ -43,14 +43,12 @@ if vulkan then
     target("render-vk")
         set_kind("static")
         add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/render/vk/*.h")
-        add_files("engine/render/vk/*.c", "engine/render/vk/*.cpp")
+        add_files("deps/volk/volk.c", "engine/render/vk/*.c", "engine/render/vk/*.cpp")
 
         add_deps("util")
 
         if is_plat("switch") then
             add_switch_vulkan_links()
-        else
-            add_files("deps/volk/volk.c")
         end
 
         on_load(fix_target)

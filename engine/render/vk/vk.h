@@ -218,8 +218,6 @@ typedef struct VULKAN_DATA
 
     VULKAN_DEFERRED_PASS DeferredPass;
     VkRenderPass LightingPass;
-    VkFramebuffer LightingFramebuffer;
-    VkRenderPass PostProcessPass;
     VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
 
     //

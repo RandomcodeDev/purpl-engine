@@ -99,13 +99,24 @@ VidGetDpi(
 
 #ifdef PURPL_VULKAN
 //
+// Get the address of a Vulkan function
+//
+
+extern
+PFN_vkVoidFunction
+PlatGetVulkanFunction(
+    _In_ VkInstance Instance,
+    _In_ PCSTR Name
+    );
+
+//
 // Create a Vulkan surface
 //
 
 extern
 PVOID
 PlatCreateVulkanSurface(
-    _In_ PVOID Instance,
+    _In_ VkInstance Instance,
     _In_opt_ PVOID WindowHandle
     );
 #endif

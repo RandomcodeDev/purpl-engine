@@ -381,22 +381,22 @@ Return Value:
     VkPhysicalDeviceFeatures DeviceFeatures = {0};
     DeviceFeatures.samplerAnisotropy = TRUE;
 
-    VkPhysicalDeviceDescriptorIndexingFeatures DescriptorIndexingFeatures = {0};
-    DescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-    DescriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind = TRUE;
-    DescriptorIndexingFeatures.descriptorBindingSampledImageUpdateAfterBind = TRUE;
+    // VkPhysicalDeviceDescriptorIndexingFeatures DescriptorIndexingFeatures = {0};
+    // DescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+    // DescriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind = TRUE;
+    // DescriptorIndexingFeatures.descriptorBindingSampledImageUpdateAfterBind = TRUE;
 
-    VkPhysicalDeviceRobustness2FeaturesEXT DeviceRobustness2Features = {0};
-    DeviceRobustness2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
-    DeviceRobustness2Features.nullDescriptor = TRUE;
-    DeviceRobustness2Features.pNext = &DescriptorIndexingFeatures;
+    // VkPhysicalDeviceRobustness2FeaturesEXT DeviceRobustness2Features = {0};
+    // DeviceRobustness2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
+    // DeviceRobustness2Features.nullDescriptor = TRUE;
+    // DeviceRobustness2Features.pNext = &DescriptorIndexingFeatures;
 
     DeviceCreateInformation.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     DeviceCreateInformation.pQueueCreateInfos = QueueCreateInfos;
     DeviceCreateInformation.pEnabledFeatures = &DeviceFeatures;
     DeviceCreateInformation.ppEnabledExtensionNames = RequiredDeviceExtensions;
     DeviceCreateInformation.enabledExtensionCount = PURPL_ARRAYSIZE(RequiredDeviceExtensions);
-    DeviceCreateInformation.pNext = &DeviceRobustness2Features;
+    //DeviceCreateInformation.pNext = &DescriptorIndexingFeatures;
 
     LogTrace("Calling vkCreateDevice");
     VULKAN_CHECK(vkCreateDevice(
@@ -447,4 +447,7 @@ Return Value:
         VK_OBJECT_TYPE_SURFACE_KHR,
         "Surface"
         );
+
+    LogDebug("Loading device functions");
+    volkLoadDevice(VlkData.Device);
 }

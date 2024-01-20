@@ -34,11 +34,17 @@ PCSTR RequiredExtensions[] = {
 };
 
 //
-// Required validation layers (only in debug mode)
+// Required layers
 //
 
-PCSTR RequiredValidationLayers[] = {
-    "VK_LAYER_KHRONOS_validation"
+PCSTR RequiredLayers[] = {
+#ifdef PURPL_SWITCH
+    "VK_LAYER_NN_vi_swapchain",
+#endif
+#ifdef PURPL_VULKAN_DEBUG
+    "VK_LAYER_KHRONOS_validation",
+#endif
+    NULL
 };
 
 VOID
@@ -85,15 +91,15 @@ Return Value:
         LogDebug("\t%s", CreateInformation.ppEnabledExtensionNames[i]);
     }
 
-#ifdef PURPL_VULKAN_DEBUG
-    LogDebug("Required validation layers:");
-    CreateInformation.enabledLayerCount = PURPL_ARRAYSIZE(RequiredValidationLayers);
-    CreateInformation.ppEnabledLayerNames = RequiredValidationLayers;
+    LogDebug("Required layers:");
+    CreateInformation.enabledLayerCount = PURPL_ARRAYSIZE(RequiredLayers) - 1;
+    CreateInformation.ppEnabledLayerNames = RequiredLayers;
     for ( i = 0; i < CreateInformation.enabledLayerCount; i++ )
     {
         LogDebug("\t%s", CreateInformation.ppEnabledLayerNames[i]);
     }
 
+#ifdef PURPL_VULKAN_DEBUG
     VkDebugUtilsMessengerCreateInfoEXT DebugMessengerCreateInformation = {0};
     DebugMessengerCreateInformation.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     DebugMessengerCreateInformation.messageSeverity =
@@ -127,8 +133,6 @@ Return Value:
         CmnError("Failed to create Vulkan instance: VkResult %d", Result);
     }
 
-#ifndef PURPL_SWITCH
     LogDebug("Loading Vulkan functions");
     volkLoadInstance(VlkData.Instance);
-#endif
 }

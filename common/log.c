@@ -392,11 +392,11 @@ LogMessage(
             Format
             );
 
+#ifndef PURPL_SWITCH
         StdoutCallback(&Event);
-
-#ifdef PURPL_WIN32
-        PlatPrintCallback(&Event);
 #endif
+
+        PlatPrintCallback(&Event);
 
         va_end(Event.ArgList);
     }

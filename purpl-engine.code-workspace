@@ -9,6 +9,7 @@
         "files.associations": {
             "*.h": "c",
         },
-        "cmake.configureOnOpen": false
+        "cmake.configureOnOpen": false,
+        "C_Cpp.default.compileCommands": "compile_commands.json"
     }
 }

@@ -373,13 +373,6 @@ PlatCreateDirectory(
     return TRUE;
 }
 
-VOID
-PlatPrint(
-    _In_ PCSTR String
-    )
-{
-}
-
 PCHAR
 PlatFixPath(
     _In_ PCSTR Path

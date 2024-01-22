@@ -16,6 +16,10 @@ Abstract:
 
 #include "purpl/purpl.h"
 
+#if defined PURPL_WIN32 || defined PURPL_SWITCH
+#define PURPL_HAVE_PLATPRINT 1
+#endif
+
 //
 // Initialize the platform layer
 //
@@ -111,11 +115,13 @@ PlatCreateDirectory(
 // Output text in a platform specific way like OutputDebugString
 //
 
+#ifdef PURPL_HAVE_PLATPRINT
 extern
 VOID
 PlatPrint(
     _In_ PCSTR Text
     );
+#endif
 
 //
 // Fix a path (if necessary)

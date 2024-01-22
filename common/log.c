@@ -124,6 +124,7 @@ StdoutCallback(
     fflush(Event->Data);
 }
 
+#ifdef PURPL_HAVE_PLATPRINT
 void
 PlatPrintCallback(
     LOG_EVENT* Event
@@ -189,6 +190,7 @@ Return Value:
 
     PlatPrint(All);
 }
+#endif
 
 static void
 FileCallback(
@@ -396,7 +398,9 @@ LogMessage(
         StdoutCallback(&Event);
 #endif
 
+#ifdef PURPL_HAVE_PLATPRINT
         PlatPrintCallback(&Event);
+#endif
 
         va_end(Event.ArgList);
     }

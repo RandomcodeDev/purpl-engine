@@ -119,7 +119,11 @@ Initialize(
     LogDebug("Initializing Vulkan backend");
 
     LogDebug("Initializing volk");
+#ifdef PURPL_SWITCH
     volkInitializeCustom(PlatGetVulkanFunction);
+#else
+    volkInitialize();
+#endif
 
     VlkCreateInstance();
     VlkCreateSurface();
@@ -356,9 +360,13 @@ Return Value:
         VlkData.Instance = NULL;
     }
 
+    memset(
+        &VlkData,
+        0,
+        sizeof(VULKAN_DATA)
+        );
     LogDebug("Successfully shut down Vulkan");
 }
-
 
 VOID
 VkInitializeBackend(

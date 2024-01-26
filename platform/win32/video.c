@@ -30,7 +30,11 @@ static HWND Window = NULL;
 
 static CHAR WindowClassName[] = "PurplWindow";
 
+#ifdef PURPL_DEBUG
+static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+#else
 static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
+#endif
 static INT32 WindowWidth;
 static INT32 WindowHeight;
 
@@ -233,7 +237,7 @@ Return Value:
     WindowWidth = ClientArea.right - ClientArea.left;
     WindowHeight = ClientArea.bottom - ClientArea.top;
 
-    LogDebug("Creating %dx%d window titled " GAME_NAME, WindowWidth, WindowHeight);
+    LogDebug("Creating %dx%d window titled " WindowTitle, WindowWidth, WindowHeight);
 
     Window = CreateWindowExA(
         0,

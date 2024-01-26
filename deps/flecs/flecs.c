@@ -11076,7 +11076,7 @@ bool ecs_stage_is_readonly(const ecs_world_t* stage)
 
 ecs_world_t* ecs_async_stage_new(ecs_world_t* world)
 {
-    ecs_stage_t* stage = ecs_os_calloc(sizeof(ecs_stage_t));
+    ecs_stage_t* stage = ecs_os_calloc(1, sizeof(ecs_stage_t));
     flecs_stage_init(world, stage);
 
     stage->id = -1;
@@ -11273,7 +11273,7 @@ static ecs_page_t* flecs_sparse_page_new(ecs_sparse_t* sparse,
      * always initialized. When an entry is removed, data is reset back to
      * zero. Initialize now, as this can take advantage of calloc. */
     result->data = a ? flecs_calloc(a, sparse->size * FLECS_SPARSE_PAGE_SIZE)
-                     : ecs_os_calloc(sparse->size * FLECS_SPARSE_PAGE_SIZE);
+                     : ecs_os_calloc(sparse->size, FLECS_SPARSE_PAGE_SIZE);
 
     ecs_assert(result->sparse != NULL, ECS_INTERNAL_ERROR, NULL);
     ecs_assert(result->data != NULL, ECS_INTERNAL_ERROR, NULL);
@@ -13130,7 +13130,7 @@ static void ensure(ecs_bitset_t* bs, ecs_size_t size)
     {
         int32_t new_size = ((size - 1) / 64 + 1) * ECS_SIZEOF(uint64_t);
         bs->size = ((size - 1) / 64 + 1) * 64;
-        bs->data = ecs_os_calloc(new_size);
+        bs->data = ecs_os_calloc(1, new_size);
     }
     else if (size > bs->size)
     {
@@ -14655,7 +14655,7 @@ void ecs_map_insert(ecs_map_t* map, ecs_map_key_t key, ecs_map_val_t value)
 void* ecs_map_insert_alloc(ecs_map_t* map, ecs_size_t elem_size,
                            ecs_map_key_t key)
 {
-    void* elem = ecs_os_calloc(elem_size);
+    void* elem = ecs_os_calloc(1, elem_size);
     ecs_map_insert_ptr(map, key, elem);
     return elem;
 }
@@ -14689,7 +14689,7 @@ void* ecs_map_ensure_alloc(ecs_map_t* map, ecs_size_t elem_size,
     ecs_map_val_t* val = ecs_map_ensure(map, key);
     if (!*val)
     {
-        void* elem = ecs_os_calloc(elem_size);
+        void* elem = ecs_os_calloc(1, elem_size);
         *val = (ecs_map_val_t)elem;
         return elem;
     }
@@ -53157,7 +53157,7 @@ ecs_filter_t* ecs_filter_init(ecs_world_t* world, const ecs_filter_desc_t* desc)
             f->term_count = term_count + expr_count;
             ecs_size_t terms_size = ECS_SIZEOF(ecs_term_t) * f->term_count;
             ecs_size_t sizes_size = ECS_SIZEOF(int32_t) * f->term_count;
-            f->terms = ecs_os_calloc(terms_size + sizes_size);
+            f->terms = ecs_os_calloc(1, terms_size + sizes_size);
             f->sizes = ECS_OFFSET(f->terms, terms_size);
         }
         else

@@ -14,7 +14,7 @@ Abstract:
 
 #pragma once
 
-//#define PURPL_VERBOSE 1
+#define PURPL_VERBOSE 1
 #define PURPL_USE_MIMALLOC 1
 
 #ifndef PURPL_RESOURCE_FILE
@@ -91,7 +91,7 @@ Abstract:
 #endif
 #include "flecs.h"
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #include "mimalloc.h"
 #endif
 
@@ -137,19 +137,7 @@ PurplMain(
 // Game version
 //
 
-#define MAKE_VERSION(Major, Minor, Patch) ((Major) << 24 | (Minor) << 16 | (Patch) << 8)
-#define MAKE_VERSION_STRING_(Major, Minor, Patch) #Major "." #Minor "." #Patch
-#define MAKE_VERSION_STRING(Major, Minor, Patch) MAKE_VERSION_STRING_(Major, Minor, Patch)
-#define MAKE_VERSION_STRING_RC_(Major, Minor, Patch) #Major "," #Minor "," #Patch ",0"
-#define MAKE_VERSION_STRING_RC(Major, Minor, Patch) MAKE_VERSION_STRING_RC_(Major, Minor, Patch)
-
-#define GAME_VERSION_MAJOR 0
-#define GAME_VERSION_MINOR 0
-#define GAME_VERSION_PATCH 0
-
-#define GAME_VERSION MAKE_VERSION(GAME_VERSION_MAJOR, GAME_VERSION_MINOR, GAME_VERSION_PATCH)
-#define GAME_VERSION_STRING MAKE_VERSION_STRING(GAME_VERSION_MAJOR, GAME_VERSION_MINOR, GAME_VERSION_PATCH)
-#define GAME_VERSION_STRING_RC MAKE_VERSION_STRING_RC(GAME_VERSION_MAJOR, GAME_VERSION_MINOR, GAME_VERSION_PATCH)
+#include "config.h"
 
 //
 // Switch mountpoints

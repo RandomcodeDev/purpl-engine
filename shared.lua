@@ -29,7 +29,7 @@ function fix_target(target)
 end
 
 function setup_shared(root, directx, vulkan)
-    set_version("0.0.0")
+    set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
     set_warnings("everything")
 
@@ -73,7 +73,8 @@ function setup_shared(root, directx, vulkan)
         path.join(root, "deps/cjson"),
         path.join(root, "deps/flecs"),
         path.join(root, "deps/mimalloc/include"),
-        path.join(root, "deps/zstd/lib")
+        path.join(root, "deps/zstd/lib"),
+        "$(buildir)/config"
     )
 
     if directx then
@@ -119,7 +120,7 @@ function setup_shared(root, directx, vulkan)
         -- Also, PURPL_FREE sets the variable to NULL to reduce misuse, and uses a
         -- block to do that, but having a semi after looks normal, even if it's
         -- technically superfluous 
-        add_cxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
+        add_cxflags("-Wno-gnu-line-marker", "-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
     end
 
     target("cjson")
@@ -172,6 +173,8 @@ function setup_shared(root, directx, vulkan)
 
     target("common")
         set_kind("static")
+        set_configdir("$(buildir)/config")
+        add_configfiles(path.join(root, "purpl/config.h.in"))
         add_headerfiles(path.join(root, "common/*.h"))
         add_files(path.join(root, "common/*.c"))
         add_deps("platform", "stb")

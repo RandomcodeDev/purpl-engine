@@ -226,8 +226,6 @@ VlkSetObjectName(
     {
         va_list Arguments;
 
-        LogTrace("Setting object name of type %u object 0x%llX to %s", ObjectType, (UINT64)Object, Name);
-
         VkDebugUtilsObjectNameInfoEXT NameInformation = {0};
         NameInformation.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
         NameInformation.objectType = ObjectType;
@@ -242,6 +240,8 @@ VlkSetObjectName(
             Arguments
             );
         va_end(Arguments);
+
+        LogTrace("Setting object name of type %u object 0x%llX to %s", ObjectType, (UINT64)Object, NameInformation.pObjectName);
 
         vkSetDebugUtilsObjectNameEXT(
             VlkData.Device,

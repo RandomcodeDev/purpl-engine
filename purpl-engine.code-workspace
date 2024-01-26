@@ -8,10 +8,7 @@
     "settings": {
         "files.associations": {
             "*.h": "c",
-            "random": "c",
-            "bitset": "c",
-            "string_view": "c",
-            "cstdlib": "cpp"
+            "*.h.in": "c"
         },
         "cmake.configureOnOpen": false,
         "C_Cpp.default.compileCommands": "compile_commands.json"

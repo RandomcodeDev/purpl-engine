@@ -119,7 +119,11 @@ VlkTransitionImageLayout(
     Barrier.subresourceRange.baseArrayLayer = 0;
     Barrier.subresourceRange.layerCount = 1;
 
-    if ( OldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+    if ( OldLayout == NewLayout )
+    {
+        return;
+    }
+    else if ( OldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
          NewLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL )
     {
         Barrier.srcAccessMask = 0;

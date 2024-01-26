@@ -20,7 +20,11 @@ Abstract:
 
 static GLFWwindow* Window;
 
-CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
+#ifdef PURPL_DEBUG
+static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+#else
+static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
+#endif
 INT WindowWidth;
 INT WindowHeight;
 

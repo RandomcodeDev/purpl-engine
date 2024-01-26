@@ -78,7 +78,7 @@ do                                                    \
 // Allocate memory
 //
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define PURPL_ALLOC(Count, Size) mi_calloc(Count, Size)
 #else
 #define PURPL_ALLOC(Count, Size) calloc(Count, Size)
@@ -88,7 +88,7 @@ do                                                    \
 // Reallocate memory
 //
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define PURPL_REALLOC(Block, Size) mi_realloc(Block, Size)
 #else
 #define PURPL_REALLOC(Block, Size) realloc(Block, Size)
@@ -98,7 +98,7 @@ do                                                    \
 // Allocate aligned memory
 //
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define PURPL_ALIGNED_ALLOC(Alignment, Size) mi_aligned_alloc(Alignment, Size)
 #else
 #ifdef PURPL_WIN32
@@ -112,7 +112,7 @@ do                                                    \
 // Reallocate aligned memory
 //
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) mi_aligned_recalloc(Block, 1, Size, Alignment)
 #else
 #ifdef PURPL_WIN32
@@ -135,7 +135,7 @@ do                                                    \
 // Free memory
 //
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define PURPL_FREE(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
 #else
 #define PURPL_FREE(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
@@ -145,7 +145,7 @@ do                                                    \
 // Free aligned memory
 //
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define PURPL_ALIGNED_FREE(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
 #else
 #ifdef PURPL_WIN32

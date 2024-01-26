@@ -96,10 +96,15 @@ EcsInitialize(
 {
     LogInfo("Initializing ECS");
 
-    LogTrace("Putting log callback in flecs OS API");
     ecs_os_set_api_defaults();
     ecs_os_api_t OsApi = ecs_os_api;
     OsApi.log_ = EcsLog;
+#if PURPL_USE_MIMALLOC
+    OsApi.malloc_ = mi_malloc;
+    OsApi.calloc_ = mi_calloc;
+    OsApi.realloc_ = mi_realloc;
+    OsApi.free_ = mi_free;
+#endif
     ecs_os_set_api(&OsApi);
 
     LogTrace("Creating ECS world");

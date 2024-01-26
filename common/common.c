@@ -25,7 +25,7 @@ CmnInitialize(
 
     PlatInitialize();
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     mi_option_set(mi_option_reserve_huge_os_pages, 2);
     mi_option_set(mi_option_show_errors, TRUE);
     mi_option_set(mi_option_show_stats, TRUE);
@@ -37,9 +37,9 @@ CmnInitialize(
         );
 
 #ifdef PURPL_DEBUG
-#ifdef PURPL_VERBOSE
+#if PURPL_VERBOSE
     Level = LogLevelTrace;
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     mi_option_set(mi_option_verbose, TRUE);
 #endif
 #else
@@ -59,7 +59,7 @@ CmnInitialize(
     LogInfo("Common library initialized");
 }
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 static
 VOID
 MiMallocStatPrint(
@@ -81,7 +81,7 @@ CmnShutdown(
 
     LogInfo("Common library shut down");
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     // Some memory will still be in use because of the THREAD for the main thread,
     // which is managed by the launcher, and therefore can't be freed before this
     // function
@@ -382,8 +382,8 @@ Return Value:
     va_end(Arguments);
     BackTrace = PlatCaptureStackBackTrace(
         1, // Don't include CmnError in the trace
-#ifdef PURPL_VERBOSE
-        0, // Everything
+#if PURPL_VERBOSE
+        0 // Everything
 #elif defined PURPL_DEBUG
         5 // A bit more context
 #else

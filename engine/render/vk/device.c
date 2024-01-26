@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2024 MobSlicer152
+Copyright (c) 2024 Randomcode Developers
 
 Module Name:
 
@@ -310,7 +310,8 @@ Return Value:
             );
         for ( i = 0; i < CurrentGpu->MemoryProperties.memoryHeapCount; i++ )
         {
-            LogDebug("Memory heap %d: %s", i, CmnFormatSize(CurrentGpu->MemoryProperties.memoryHeaps[i].size));
+            LogDebug("Memory heap %d: %s%s", i, CmnFormatSize(CurrentGpu->MemoryProperties.memoryHeaps[i].size),
+                i == 0 ? " (this tends to be the amount of VRAM the GPU has)" : "");
         }
 
         LogTrace("Getting properties");

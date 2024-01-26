@@ -24,7 +24,20 @@ Return Value:
     SemaphoreCreateInformation.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     UINT32 i;
 
-    LogDebug("Creating %d semaphores", VULKAN_FRAME_COUNT * 2);
+    // Render completion and acquisition semaphores for each frame, plus deferred semaphore
+    LogDebug("Creating %d semaphores", VULKAN_FRAME_COUNT * 2 + 1);
+
+    VULKAN_CHECK(vkCreateSemaphore(
+        VlkData.Device,
+        &SemaphoreCreateInformation,
+        NULL,
+        &VlkData.DeferredSemaphore
+        ));
+    VlkSetObjectName(
+        VlkData.DeferredSemaphore,
+        VK_OBJECT_TYPE_SEMAPHORE,
+        "Deferred semaphore"
+        );
 
     for ( i = 0; i < VULKAN_FRAME_COUNT; i++ )
     {

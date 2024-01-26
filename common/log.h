@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MIT license. See `log.c` for details.
  *
- * Modifications made by MobSlicer152:
+ * Modifications made by Randomcode Developers:
  * - NT code style
  * - Add option to display line number in hex (for callbacks where you get an address)
  * - Add thread name to messages

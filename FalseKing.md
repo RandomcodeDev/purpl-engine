@@ -2,28 +2,22 @@
 
 ## Revisions
 
-| Version | Author(s)    | Date       | Comments                    |
-|---------|--------------|------------|-----------------------------|
-| 1       | MobSlicer152 | 2023-07-17 | Initial version             |
-| 2       | MobSlicer152 | 2023-11-25 | New version after 3D switch |
+| Version | Author(s)    | Date       | Comments                                                      |
+|---------|--------------|------------|---------------------------------------------------------------|
+| 1       | MobSlicer152 | 2023-07-17 | Initial version                                               |
+| 2       | MobSlicer152 | 2023-11-25 | New version after 3D switch                                   |
+| 3       | MobSlicer152 | 2024-01-25 | Add information about graphics APIs, add details to timeline) |
 
 ## Introduction
 
 This document serves as a general concept draft that the game will follow. It
 should evolve as the vision of the game evolves.
 
-### Note on the use of the word element
-
-Depending on context, this either refers to the components of the game's
-design/gameplay/etc or the in-game elements likely to be fire, water, air, and
-earth.
-
 ## Table of Contents
 
-- [False King Game Design Version 2 2023-11-25](#false-king-game-design-version-1-2023-11-25)
+- [False King Game Design Version 1 2023-07-17](#false-king-game-design-version-1-2023-07-17)
   - [Revisions](#revisions)
   - [Introduction](#introduction)
-    - [Note on the use of the word element](#note-on-the-use-of-the-word-element)
   - [Table of Contents](#table-of-contents)
   - [Concept](#concept)
   - [Story](#story)
@@ -43,8 +37,8 @@ earth.
 
 ## Concept
 
-The False King game will include elements of various genres such as roguelite,
-roleplaying, puzzles, and also feature a 3D world made to look 2D.
+The False King game will be an adventure game, featuring skills and abilities
+that the player can improve, and puzzles necessary for progression.
 
 ## Story
 
@@ -68,11 +62,12 @@ with, allowing for an NPC area where the player starts.
 
 The game will (should approval from the necessary parties be obtained) be
 available on Steam, as well as all major console platforms at the time of
-release. Mobile devices (phones/tablets) might be supported at some point. The
-target price is around 20 Canadian dollars, though a free version for PC may
-exist, as player enjoyment is a higher priority than money (within reason). The
-game will be available in English, with French, Russian, and simplified Chinese
-translations being possibilities.
+release (presently, Xbox Series X|S, Nintendo Switch, and PlayStation 5).
+Mobile devices (phones/tablets) might be supported at some point. The target
+price is around 20 Canadian dollars, though a free version for PC may exist,
+as player enjoyment is a higher priority than money (within reason). The game
+will be available in English, with French and other translations being
+possibilities.
 
 ## Gameplay
 
@@ -106,15 +101,14 @@ featuring traps.
 
 The game will use low-detail 3D models and textures, and the rendered frames will
 be downscaled to look pixelated, making the game seem more 2D. High performance
-(120 FPS or higher) is expected to be achievable on all platforms even without
-substantial optimization.
+(120 FPS or higher) is expected to be achievable on all platforms.
 
 ## Audio
 
 The game will feature different music for each region, as well as variants for
 different contexts such as outdoors, puzzles, dungeons, and combat. There will
 be a few versions of the sounds for different actions, and most actions such as
-walking, attacking, jumping, dashing, etc
+walking, attacking, jumping, dashing, etc.
 
 ## Player input
 
@@ -131,7 +125,7 @@ and other things.
 
 ## Data Storage
 
-- Images are stored in a simple format in [`util/texture/texture.h`](util/texture/texture.h).
+- Images are stored in a simple format defined in [`util/texture/texture.h`](util/texture/texture.h).
   Through the usage of Zstandard compression, similar sizes to PNG are achieved.
 - TOML will be used for configuration files and metadata
 - Levels will likely consist of geometry and entities, no format has been designed yet
@@ -140,7 +134,7 @@ and other things.
   efficient storage
 - Save data will be somehow stored, likely being created from a processed
   snapshot of the ECS world.
-- The executable won't be particularly large
+- The executable won't be particularly large, even with static linking
 - Static linking is used to reduce the number of files necessary to work with,
   making distribution somewhat simpler and possibly allow for link time
   optimization
@@ -168,27 +162,30 @@ and other things.
 xmake makes it quite straightforward to build for other platforms, including the
 ability to easily separate closed build system logic for consoles.
 
-- Windows 10/11 are supported using the Microsoft Game Development Kit
+- Windows 10/11 are supported using the Microsoft Game Development Kit, and rendering
+  will use Direct3D 12 or Vulkan, based on user preference
 - Linux and other Unix-like systems are/can be supported. Alternate binaries supporting
   systems not using the most common `libc` for a given platform may eventually
   be provided (although all core and external code thus far is open source and
-  could be compiled by people who want a build that works better on their system)
+  could be compiled by people who want a build that works better on their system).
+  Rendering will use Vulkan or vkd3d, again based on user preference.
 - Xbox Series X|S support is planned, it can be supported with the same code as
   Windows, since the GDKX is only a superset of the GDK and Xbox is just a subset
-  of Windows
+  of Windows. Rendering will use Direct3D 12.
 - Nintendo Switch support is planned, and its successor should the rumoured
-  Switch 2 be available for development in time
-- PlayStation 5 support is planned
+  Switch 2 be available for development in time. Vulkan will be used, unless
+  using NVN substantially improves performance
+- PlayStation 5 support is planned, and will use GNM for rendering
 
 ## Rough timeline
 
-| Goal                     | Completion estimate |
-|--------------------------|---------------------|
-| Engine development       | Early 2024          |
-| Core game mechanics      | Mid 2024            |
-| Content development      | Late 2024           |
-| Polishing                | Early 2025          |
-| Testing                  | Mid 2025            |
-| Release                  | Late 2025           |
-| Additional localizations | When possible       |
-| Additional platforms     | When possible       |
+| Goal                                                                                  | Completion estimate |
+|---------------------------------------------------------------------------------------|---------------------|
+| Engine development (rendering, physics, audio, basic entity components, UI framework) | Early 2024          |
+| Core game mechanics (movement, combat, "AI", basic UI screens, temporary assets)      | Mid 2024            |
+| Content development (enemies, items, better assets)                                   | Late 2024           |
+| Polishing (fix as many bugs as possible, optimize)                                    | Early 2025          |
+| Testing (likely to be fairly open, and free)                                          | Mid 2025            |
+| Release                                                                               | Late 2025           |
+| Additional localizations                                                              | When possible       |
+| Additional platforms                                                                  | When possible       |

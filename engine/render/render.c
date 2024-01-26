@@ -4,6 +4,7 @@ ecs_entity_t ecs_id(MODEL);
 
 static RENDER_API Api;
 static RENDER_BACKEND Backend;
+static FLOAT Scale;
 
 #ifdef PURPL_DIRECTX
 extern
@@ -133,4 +134,52 @@ RenderImport(
         RdrEndFrame,
         EcsPostUpdate
         );
+}
+
+FLOAT
+RdrGetScale(
+    VOID
+    )
+{
+    return Scale;
+}
+
+FLOAT
+RdrSetScale(
+    FLOAT NewScale
+    )
+{
+    FLOAT OldScale = Scale;
+    Scale = NewScale;
+    return OldScale;
+}
+
+UINT32
+RdrGetWidth(
+    VOID
+    )
+{
+    UINT32 Width;
+
+    VidGetSize(
+        &Width,
+        NULL
+        );
+
+    return Width * Scale;
+}
+
+UINT32
+RdrGetHeight(
+    VOID
+    )
+{
+    UINT32 Height;
+
+    VidGetSize(
+        NULL,
+        &Height
+        );
+
+    return Height * Scale;
 }

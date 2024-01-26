@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2024 MobSlicer152
+Copyright (c) 2024 Randomcode Developers
 
 Module Name:
 
@@ -134,6 +134,8 @@ Initialize(
     VlkAllocateCommandBuffers();
     VlkCreateAllocator();
     VlkCreateSwapChain();
+    VlkCreateDeferredPass(&VlkData.DeferredPass);
+    VlkCreateLightingPass();
 
     VlkData.FrameIndex = 0;
     VlkData.Initialized = TRUE;
@@ -200,6 +202,19 @@ Return Value:
     LogDebug("Shutting down Vulkan");
     VlkData.Initialized = FALSE;
     vkDeviceWaitIdle(VlkData.Device);
+
+    VlkDestroyDeferredPass(&VlkData.DeferredPass);
+
+    if ( VlkData.LightingPass )
+    {
+        LogDebug("Destroying lighting render pass 0x%llX", (UINT64)VlkData.LightingPass);
+        vkDestroyRenderPass(
+            VlkData.Device,
+            VlkData.LightingPass,
+            NULL
+            );
+        VlkData.LightingPass = NULL;
+    }
 
     if ( VlkData.Sampler )
     {
@@ -268,6 +283,14 @@ Return Value:
     }
 
     LogDebug("Destroying semaphores");
+    if ( VlkData.DeferredSemaphore )
+    {
+        vkDestroySemaphore(
+            VlkData.Device,
+            VlkData.DeferredSemaphore,
+            NULL
+            );
+    }
     for ( i = 0; i < VULKAN_FRAME_COUNT; i++ )
     {
         if ( VlkData.AcquireSemaphores[i] )

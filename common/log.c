@@ -19,7 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * Modifications to naming and formatting by MobSlicer152
+ * Modifications to naming and formatting by Randomcode Developers
  */
 
 #include "log.h"

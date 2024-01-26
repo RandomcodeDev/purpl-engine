@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2023 MobSlicer152
+Copyright (c) 2023 Randomcode Developers
 
 Module Name:
 
@@ -18,6 +18,8 @@ Abstract:
 
 #include "common/common.h"
 #include "common/log.h"
+
+#include "platform/video.h"
 
 //
 // Graphics API
@@ -90,5 +92,29 @@ extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 extern
 VOID
 RdrShutdown(
+    VOID
+    );
+
+extern
+FLOAT
+RdrGetScale(
+    VOID
+    );
+
+extern
+FLOAT
+RdrSetScale(
+    FLOAT NewScale
+    );
+
+extern
+UINT32
+RdrGetWidth(
+    VOID
+    );
+
+extern
+UINT32
+RdrGetHeight(
     VOID
     );

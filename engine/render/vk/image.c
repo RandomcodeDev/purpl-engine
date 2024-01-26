@@ -211,16 +211,66 @@ VlkCopyBufferToImage(
 }
 
 VOID
+VlkCreateImage(
+    _In_ UINT32 Width,
+    _In_ UINT32 Height,
+    _In_ VkFormat Format,
+    _In_ VkImageLayout Layout,
+    _In_ VkImageUsageFlags Usage,
+    _In_ VmaMemoryUsage MemoryUsage,
+    _In_ VkImageAspectFlags Aspect,
+    _Out_ PVULKAN_IMAGE Image
+    )
+{
+    memset(
+        Image,
+        0,
+        sizeof(VULKAN_IMAGE)
+        );
+
+    Image->Format = Format;
+
+    VkImageCreateInfo ImageCreateInformation = {0};
+    ImageCreateInformation.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    ImageCreateInformation.imageType = VK_IMAGE_TYPE_2D;
+    ImageCreateInformation.extent.width = Width;
+    ImageCreateInformation.extent.height = Height;
+    ImageCreateInformation.initialLayout = Layout;
+    ImageCreateInformation.usage = Usage;
+    ImageCreateInformation.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    ImageCreateInformation.samples = VK_SAMPLE_COUNT_1_BIT;
+
+    VmaAllocationCreateInfo AllocationCreateInformation = {0};
+    AllocationCreateInformation.usage = MemoryUsage;
+
+    VULKAN_CHECK(vmaCreateImage(
+        VlkData.Allocator,
+        &ImageCreateInformation,
+        &AllocationCreateInformation,
+        &Image->Handle,
+        &Image->Allocation,
+        NULL
+        ));
+    VlkCreateImageView(
+        &Image->View,
+        Image->Handle,
+        Format,
+        Aspect
+        );
+}
+
+VOID
 VlkCreateImageWithData(
     _In_ PVOID Data,
     _In_ VkDeviceSize Size,
     _In_ UINT32 Width,
     _In_ UINT32 Height,
-    _In_ VkImageCreateInfo* ImageCreateInformation,
-    _In_ VmaAllocationCreateInfo* AllocationCreateInformation,
-    _In_ VkImageLayout TargetLayout,
-    _Out_ VkImage* Image,
-    _Out_ VmaAllocation* Allocation
+    _In_ VkFormat Format,
+    _In_ VkImageLayout Layout,
+    _In_ VkImageUsageFlags Usage,
+    _In_ VmaMemoryUsage MemoryUsage,
+    _In_ VkImageAspectFlags Aspect,
+    _Out_ PVULKAN_IMAGE Image
     )
 {
     VULKAN_BUFFER StagingBuffer;
@@ -249,32 +299,33 @@ VlkCreateImageWithData(
         StagingBuffer.Allocation
         );
 
-    VULKAN_CHECK(vmaCreateImage(
-        VlkData.Allocator,
-        ImageCreateInformation,
-        AllocationCreateInformation,
-        Image,
-        Allocation,
-        NULL
-        ));
+    VlkCreateImage(
+        Width,
+        Height,
+        Format,
+        VK_IMAGE_LAYOUT_UNDEFINED,
+        Usage,
+        MemoryUsage,
+        Aspect,
+        Image
+        );
 
     VlkTransitionImageLayout(
-        *Image,
+        Image->Handle,
         VK_IMAGE_LAYOUT_UNDEFINED,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
         );
     VlkCopyBufferToImage(
         StagingBuffer.Buffer,
-        *Image,
+        Image->Handle,
         Width,
         Height
         );
     VlkTransitionImageLayout(
-        *Image,
+        Image->Handle,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        TargetLayout
+        Layout
         );
 
     VlkFreeBuffer(&StagingBuffer);
 }
-

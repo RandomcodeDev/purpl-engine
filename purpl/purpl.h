@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2024 MobSlicer152
+Copyright (c) 2024 Randomcode Developers
 
 Module Name:
 
@@ -129,7 +129,7 @@ PurplMain(
 // Organization that made the game
 //
 
-#define GAME_ORGANIZATION "MobSlicer152"
+#define GAME_ORGANIZATION "Randomcode Developers"
 
 //
 // Game version

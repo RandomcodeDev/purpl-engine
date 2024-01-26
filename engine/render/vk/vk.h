@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2024 MobSlicer152
+Copyright (c) 2024 Randomcode Developers
 
 Module Name:
 
@@ -126,13 +126,13 @@ typedef struct VULKAN_GPU_INFO
 // Render attachment
 //
 
-typedef struct VULKAN_ATTACHMENT
+typedef struct VULKAN_IMAGE
 {
-    VkImage Image;
+    VkImage Handle;
     VmaAllocation Allocation;
     VkImageView View;
     VkFormat Format;
-} VULKAN_ATTACHMENT, *PVULKAN_ATTACHMENT;
+} VULKAN_IMAGE, *PVULKAN_IMAGE;
 
 //
 // Deferred rendering first stage
@@ -142,10 +142,10 @@ typedef struct VULKAN_DEFERRED_PASS
 {
     VkRenderPass RenderPass;
     VkFramebuffer Framebuffer;
-    VULKAN_ATTACHMENT PositionBuffer;
-    VULKAN_ATTACHMENT NormalBuffer;
-    VULKAN_ATTACHMENT AlbedoBuffer;
-    VULKAN_ATTACHMENT DepthBuffer;
+    VULKAN_IMAGE PositionBuffer;
+    VULKAN_IMAGE NormalBuffer;
+    VULKAN_IMAGE AlbedoBuffer;
+    VULKAN_IMAGE DepthBuffer;
 } VULKAN_DEFERRED_PASS, *PVULKAN_DEFERRED_PASS;
 
 //
@@ -199,6 +199,7 @@ typedef struct VULKAN_DATA
     VkFence CommandBufferFences[VULKAN_FRAME_COUNT];
     VkSemaphore AcquireSemaphores[VULKAN_FRAME_COUNT];
     VkSemaphore RenderCompleteSemaphores[VULKAN_FRAME_COUNT];
+    VkSemaphore DeferredSemaphore;
 
     //
     // Swap chain stuff
@@ -216,8 +217,8 @@ typedef struct VULKAN_DATA
     // Rendering stuff
     //
 
-    VULKAN_DEFERRED_PASS DeferredPass;
-    VkRenderPass LightingPass;
+    VULKAN_DEFERRED_PASS DeferredPass; // Outputs to images
+    VkRenderPass LightingPass; // Outputs to the screen
     VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
 
     //
@@ -486,6 +487,23 @@ VlkCopyBufferToImage(
     );
 
 //
+// Create an image
+//
+
+extern
+VOID
+VlkCreateImage(
+    _In_ UINT32 Width,
+    _In_ UINT32 Height,
+    _In_ VkFormat Format,
+    _In_ VkImageLayout Layout,
+    _In_ VkImageUsageFlags Usage,
+    _In_ VmaMemoryUsage MemoryUsage,
+    _In_ VkImageAspectFlags Aspect,
+    _Out_ PVULKAN_IMAGE Image
+    );
+
+//
 // Create an initialized image
 //
 
@@ -496,11 +514,12 @@ VlkCreateImageWithData(
     _In_ VkDeviceSize Size,
     _In_ UINT32 Width,
     _In_ UINT32 Height,
-    _In_ VkImageCreateInfo* ImageCreateInformation,
-    _In_ VmaAllocationCreateInfo* AllocationCreateInformation,
-    _In_ VkImageLayout TargetLayout,
-    _Out_ VkImage* Image,
-    _Out_ VmaAllocation* Allocation
+    _In_ VkFormat Format,
+    _In_ VkImageLayout Layout,
+    _In_ VkImageUsageFlags Usage,
+    _In_ VmaMemoryUsage MemoryUsage,
+    _In_ VkImageAspectFlags Aspect,
+    _Out_ PVULKAN_IMAGE Image
     );
 
 //
@@ -554,25 +573,44 @@ VlkDestroySwapChain(
     );
 
 //
-// Create an attachment
+// Create a render pass
+//
+
+extern
+VkRenderPass
+VlkCreateRenderPass(
+    _In_ VkAttachmentDescription* Attachments,
+    _In_ SIZE_T AttachmentCount,
+    _In_ VkSubpassDescription* Subpasses,
+    _In_ SIZE_T SubpassCount
+    );
+
+//
+// Create the secondary/lighting render pass
 //
 
 extern
 VOID
-VlkCreateAttachment(
-    _Out_ PVULKAN_ATTACHMENT Attachment,
-    _In_ UINT32 Width,
-    _In_ UINT32 Height,
-    _In_ VkFormat Format,
-    _In_ VkImageLayout Layout
+VlkCreateLightingPass(
+    VOID
     );
 
 //
-// Initialize deferred rendering pass
+// Initialize deferred render pass
 //
 
 extern
 VOID
 VlkCreateDeferredPass(
     _Out_ PVULKAN_DEFERRED_PASS DeferredPass
+    );
+
+//
+// Destroy deferred render pass
+//
+
+extern
+VOID
+VlkDestroyDeferredPass(
+    _Inout_ PVULKAN_DEFERRED_PASS DeferredPass
     );

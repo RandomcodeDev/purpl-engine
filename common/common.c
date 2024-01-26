@@ -351,7 +351,16 @@ Return Value:
         Arguments
         );
     va_end(Arguments);
-    BackTrace = PlatCaptureStackBackTrace(1);
+    BackTrace = PlatCaptureStackBackTrace(
+        1, // Don't include CmnError in the trace
+#ifdef PURPL_VERBOSE
+        0, // Everything
+#elif defined PURPL_DEBUG
+        5 // A bit more context
+#else
+        3 // Enough
+#endif
+        );
     Formatted = CmnFormatString(
         "Fatal error: %s\nStack trace:\n%s",
         FormattedMessage,

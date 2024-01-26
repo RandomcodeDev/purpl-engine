@@ -57,7 +57,7 @@ END_EXTERN_C
         VkResult Result_ = (Call); \
         if ( Result_ != VK_SUCCESS __VA_ARGS__ ) \
         { \
-            CmnError("Vulkan call " #Call " failed: %s (VkResult %d)", VlkGetResultString(Result_), Result_); \
+            CmnError("Vulkan call " #Call " at %s:%d failed: %s (VkResult %d)", __FILE__, __LINE__, VlkGetResultString(Result_), Result_); \
         } \
     } while(0)
 

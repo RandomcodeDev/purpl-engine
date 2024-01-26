@@ -171,7 +171,7 @@ Return Value:
     SwapChainCreateInformation.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     SwapChainCreateInformation.surface = VlkData.Surface;
 
-    SwapChainCreateInformation.minImageCount = VULKAN_FRAME_COUNT;
+    SwapChainCreateInformation.minImageCount = SurfaceCapabilities.minImageCount;
     PURPL_ASSERT(SurfaceCapabilities.maxImageCount == 0 || SwapChainCreateInformation.minImageCount <= SurfaceCapabilities.maxImageCount);
 
     LogDebug("Creating %ux%u swap chain with minimum of %u images", VlkData.SwapChainExtent.width,

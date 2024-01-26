@@ -16,6 +16,11 @@ Abstract:
 
 #include "purpl/purpl.h"
 
+//
+// Defined if the platform has a relevant location other than standard output
+// to send log output to
+//
+
 #if defined PURPL_WIN32 || defined PURPL_SWITCH
 #define PURPL_HAVE_PLATPRINT 1
 #endif
@@ -47,7 +52,8 @@ PlatShutdown(
 extern
 PCSTR
 PlatCaptureStackBackTrace(
-    _In_ INT FramesToSkip
+    _In_ SIZE_T FramesToSkip,
+    _In_ SIZE_T MaxFrames
     );
 
 //

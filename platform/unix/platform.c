@@ -66,7 +66,8 @@ Return Value:
 
 PCSTR
 PlatCaptureStackBackTrace(
-    _In_ INT FramesToSkip
+    _In_ SIZE_T FramesToSkip,
+    _In_ SIZE_T MaxFrames
     )
 /*++
 
@@ -77,6 +78,8 @@ Routine Description:
 Arguments:
 
     FramesToSkip - The number of stack frames to skip.
+
+    MaxFrames - The maximum number of frames to get.
 
 Return Value:
 
@@ -102,13 +105,17 @@ Return Value:
         Frames,
         PURPL_ARRAYSIZE(Frames)
         );
+    if ( MaxFrames > 0 && Size > MaxFrames )
+    {
+        Size = MaxFrames + FramesToSkip;
+    }
     Symbols = backtrace_symbols(
         Frames,
         Size
         );
 
     Offset = 0;
-    for ( i = 0; i < Size; i++ )
+    for ( i = FramesToSkip; i < Size; i++ )
     {
         Offset += snprintf(
             Buffer + Offset,
@@ -230,6 +237,7 @@ PlatError(
         "--error",
         "--text",
         Message,
+        "--no-markup", // Prevent any characters from being interpreted as formatting
         "--title=Purpl Error",
         NULL
         );

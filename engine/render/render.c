@@ -18,6 +18,7 @@ Dx12InitializeBackend(
     _Out_ PRENDER_BACKEND Backend
     )
 {
+    UNREFERENCED_PARAMETER(Backend);
     LogError("Why are you intializing DX12 on this platform?");
 }
 #endif

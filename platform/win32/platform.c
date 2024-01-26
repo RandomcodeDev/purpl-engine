@@ -161,7 +161,8 @@ Return Value:
 
 PCSTR
 PlatCaptureStackBackTrace(
-    _In_ INT FramesToSkip
+    _In_ SIZE_T FramesToSkip,
+    _In_ SIZE_T MaxFrames
     )
 /*++
 
@@ -172,6 +173,8 @@ Routine Description:
 Arguments:
 
     FramesToSkip - The number of stack frames to skip.
+
+    MaxFrames - The maximum number of frames to get.
 
 Return Value:
 
@@ -194,6 +197,16 @@ Return Value:
     //PVOID ModuleHandle = NULL;
     INT i;
     DWORD Error;
+    SIZE_T Count;
+
+    if ( MaxFrames > 0 )
+    {
+        Count = MaxFrames + FramesToSkip;
+    }
+    else
+    {
+        Count = PURPL_ARRAYSIZE(BackTrace);
+    }
 
     RtlCaptureStackBackTrace(
         FramesToSkip + 1,
@@ -203,9 +216,9 @@ Return Value:
         );
 
     Offset = 0;
-    for ( i = 0; i < PURPL_ARRAYSIZE(BackTrace) && BackTrace[i]; i++ )
+    for ( i = 0; i < Count && BackTrace[i]; i++ )
     {
-        // Seems unlikely that the Xbox has dbghelp stuff
+        // To the best of my knowledge, this isn't supported on Xbox
 #ifndef PURPL_GDKX
         memset(
             SymbolBuffer,

@@ -504,6 +504,7 @@ Return Value:
 PVOID
 PlatCreateVulkanSurface(
     _In_ PVOID Instance,
+    _In_ PVOID AllocationCallbacks,
     _In_opt_ PVOID WindowHandle
     )
 /*++
@@ -515,6 +516,8 @@ Routine Description:
 Arguments:
 
     Instance - The Vulkan instance to create the surface for.
+
+    AllocationCallbacks - The Vulkan allocation callbacks to use.
 
     WindowHandle - The window to create the surface for. If NULL, the engine's window is used.
 
@@ -540,7 +543,7 @@ Return Value:
     Result = vkCreateWin32SurfaceKHR(
         Instance,
         &SurfaceCreateInfo,
-        VulkanGetAllocationCallbacks(),
+        AllocationCallbacks,
         &Surface
         );
     if ( Result != VK_SUCCESS )

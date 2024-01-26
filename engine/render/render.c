@@ -45,6 +45,7 @@ RdrInitialize(
     )
 {
     LogInfo("Initializing renderer");
+    RdrSetScale(1.0f);
 
 #ifdef PURPL_DIRECTX
     Api = RenderApiDirect3D12;

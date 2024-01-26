@@ -30,7 +30,7 @@ Return Value:
     VULKAN_CHECK(vkCreateSemaphore(
         VlkData.Device,
         &SemaphoreCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &VlkData.DeferredSemaphore
         ));
     VlkSetObjectName(
@@ -44,7 +44,7 @@ Return Value:
         VULKAN_CHECK(vkCreateSemaphore(
             VlkData.Device,
             &SemaphoreCreateInformation,
-            NULL,
+            VlkGetAllocationCallbacks(),
             &VlkData.AcquireSemaphores[i]
             ));
         VlkSetObjectName(
@@ -56,7 +56,7 @@ Return Value:
         VULKAN_CHECK(vkCreateSemaphore(
             VlkData.Device,
             &SemaphoreCreateInformation,
-            NULL,
+            VlkGetAllocationCallbacks(),
             &VlkData.RenderCompleteSemaphores[i]
             ));
         VlkSetObjectName(

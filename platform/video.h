@@ -116,7 +116,8 @@ PlatGetVulkanFunction(
 extern
 PVOID
 PlatCreateVulkanSurface(
-    _In_ VkInstance Instance,
+    _In_ PVOID Instance,
+    _In_ PVOID AllocationCallbacks,
     _In_opt_ PVOID WindowHandle
     );
 #endif

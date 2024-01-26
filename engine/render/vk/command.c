@@ -32,7 +32,7 @@ Return Value:
     VULKAN_CHECK(vkCreateCommandPool(
         VlkData.Device,
         &CommandPoolCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &VlkData.CommandPool
         ));
     VlkSetObjectName(
@@ -47,7 +47,7 @@ Return Value:
     VULKAN_CHECK(vkCreateCommandPool(
         VlkData.Device,
         &CommandPoolCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &VlkData.TransferCommandPool
         ));
     VlkSetObjectName(
@@ -113,7 +113,7 @@ Return Value:
         VULKAN_CHECK(vkCreateFence(
             VlkData.Device,
             &FenceCreateInformation,
-            NULL,
+            VlkGetAllocationCallbacks(),
             &VlkData.CommandBufferFences[i]
             ));
         VlkSetObjectName(

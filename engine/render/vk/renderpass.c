@@ -35,7 +35,7 @@ VlkCreateRenderPass(
     VULKAN_CHECK(vkCreateRenderPass(
         VlkData.Device,
         &RenderPassCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &RenderPass
         ));
 

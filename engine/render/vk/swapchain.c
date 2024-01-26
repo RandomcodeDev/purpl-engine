@@ -171,7 +171,7 @@ Return Value:
     SwapChainCreateInformation.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     SwapChainCreateInformation.surface = VlkData.Surface;
 
-    SwapChainCreateInformation.minImageCount = SurfaceCapabilities.minImageCount;
+    SwapChainCreateInformation.minImageCount = SurfaceCapabilities.minImageCount + 1;
     PURPL_ASSERT(SurfaceCapabilities.maxImageCount == 0 || SwapChainCreateInformation.minImageCount <= SurfaceCapabilities.maxImageCount);
 
     LogDebug("Creating %ux%u swap chain with minimum of %u images", VlkData.SwapChainExtent.width,
@@ -209,7 +209,7 @@ Return Value:
     VULKAN_CHECK(vkCreateSwapchainKHR(
         VlkData.Device,
         &SwapChainCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &VlkData.SwapChain
         ));
     VlkSetObjectName(
@@ -297,7 +297,7 @@ Return Value:
             vkDestroyImageView(
                 VlkData.Device,
                 VlkData.SwapChainImageViews[i],
-                NULL
+                VlkGetAllocationCallbacks()
                 );
             VlkData.SwapChainImageViews[i] = NULL;
         }
@@ -316,7 +316,7 @@ Return Value:
         vkDestroySwapchainKHR(
             VlkData.Device,
             VlkData.SwapChain,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.SwapChain = NULL;
     }

@@ -63,6 +63,18 @@ do                                                    \
 #define PURPL_STRINGIZE_EXPAND(X) PURPL_STRINGIZE(X)
 
 //
+// Get size of block allocated by malloc
+//
+
+#ifdef PURPL_WIN32
+#define PURPL_MSIZE(Block) _msize(block);
+#elif defined PURPL_MACOS
+#define PURPL_MSIZE(Block) malloc_size(block);
+#else
+#define PURPL_MSIZE(Block) malloc_usable_size(block);
+#endif
+
+//
 // Allocate memory
 //
 
@@ -93,6 +105,29 @@ do                                                    \
 #define PURPL_ALIGNED_ALLOC(Alignment, Size) _aligned_malloc(Alignment, Size)
 #else
 #define PURPL_ALIGNED_ALLOC(Alignment, Size) aligned_alloc(Alignment, Size)
+#endif
+#endif
+
+//
+// Reallocate aligned memory
+//
+
+#ifdef PURPL_USE_MIMALLOC
+#define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) mi_aligned_recalloc(Block, 1, Size, Alignment)
+#else
+#ifdef PURPL_WIN32
+#define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) _aligned_realloc(Block, 1, Size, Alignment)
+#else
+#define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) \
+{ \
+    PVOID NewBlock = PURPL_ALIGNED_ALLOC(Alignment, Size); \
+    memmove(
+        NewBlock,
+        Block,
+        PURPL_MIN(Size, PURPL_MSIZE(Block))
+        );
+    PURPL_FREE(Block);
+}
 #endif
 #endif
 

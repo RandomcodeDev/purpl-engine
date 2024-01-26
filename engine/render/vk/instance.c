@@ -115,7 +115,7 @@ Return Value:
     LogTrace("Calling vkCreateInstance");
     Result = vkCreateInstance(
         &CreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &VlkData.Instance
         );
     if ( Result == VK_ERROR_LAYER_NOT_PRESENT )
@@ -124,7 +124,7 @@ Return Value:
         CreateInformation.enabledLayerCount = 0;
         Result = vkCreateInstance(
             &CreateInformation,
-            NULL,
+            VlkGetAllocationCallbacks(),
             &VlkData.Instance
             );
     }

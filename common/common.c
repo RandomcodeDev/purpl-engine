@@ -55,6 +55,19 @@ CmnInitialize(
     Level = LogLevelError;
 #endif
     LogSetLevel(Level);
+
+    LogInfo("Common library initialized");
+}
+
+static
+VOID
+MiMallocStatPrint(
+    PCSTR Message,
+    PVOID Argument
+    )
+{
+    UNREFERENCED_PARAMETER(Argument);
+    LogDebug("%.*s", strlen(Message) - 2, Message); // -2 for NUL and newline
 }
 
 VOID
@@ -63,6 +76,16 @@ CmnShutdown(
     )
 {
     PlatShutdown();
+
+    LogInfo("Common library shut down");
+
+    // Some memory will still be in use because of the THREAD for the main thread,
+    // which is managed by the launcher, and therefore can't be freed before this
+    // function
+    mi_stats_print_out(
+        MiMallocStatPrint,
+        NULL
+        );
 }
 
 PCSTR
@@ -341,6 +364,8 @@ Return Value:
     PCSTR FormattedMessage;
     PCSTR Formatted;
     PCSTR BackTrace;
+
+    CmnShutdown();
 
     va_start(
         Arguments,

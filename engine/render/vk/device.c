@@ -170,7 +170,7 @@ Return Value:
         UINT32 ExtensionCount = 0;
         Result = vkEnumerateDeviceExtensionProperties(
             CurrentGpu->Device,
-            NULL,
+            VlkGetAllocationCallbacks(),
             &ExtensionCount,
             NULL
             );
@@ -193,7 +193,7 @@ Return Value:
             );
         Result = vkEnumerateDeviceExtensionProperties(
             CurrentGpu->Device,
-            NULL,
+            VlkGetAllocationCallbacks(),
             &ExtensionCount,
             CurrentGpu->ExtensionProperties
             );
@@ -403,7 +403,7 @@ Return Value:
     VULKAN_CHECK(vkCreateDevice(
         VlkData.Gpu->Device,
         &DeviceCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         &VlkData.Device
         ));
     VlkSetObjectName(

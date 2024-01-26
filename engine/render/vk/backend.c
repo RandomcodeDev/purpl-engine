@@ -42,6 +42,7 @@ Return Value:
 {
     VlkData.Surface = PlatCreateVulkanSurface(
         VlkData.Instance,
+        VlkGetAllocationCallbacks(),
         NULL
         );
 }
@@ -103,6 +104,7 @@ None.
     VulkanFunctions.vkGetDeviceBufferMemoryRequirements = vkGetDeviceBufferMemoryRequirements;
     VulkanFunctions.vkGetDeviceImageMemoryRequirements = vkGetDeviceImageMemoryRequirements;
     AllocatorCreateInformation.pVulkanFunctions = &VulkanFunctions;
+    AllocatorCreateInformation.pAllocationCallbacks = VlkGetAllocationCallbacks();
 
     VULKAN_CHECK(vmaCreateAllocator(
         &AllocatorCreateInformation,
@@ -211,7 +213,7 @@ Return Value:
         vkDestroyRenderPass(
             VlkData.Device,
             VlkData.LightingPass,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.LightingPass = NULL;
     }
@@ -222,7 +224,7 @@ Return Value:
         vkDestroySampler(
             VlkData.Device,
             VlkData.Sampler,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.Sampler = NULL;
     }
@@ -239,7 +241,7 @@ Return Value:
         vkDestroyDescriptorPool(
             VlkData.Device,
             VlkData.DescriptorPool,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.DescriptorPool = NULL;
     }
@@ -254,7 +256,7 @@ Return Value:
             vkDestroyFence(
                 VlkData.Device,
                 VlkData.CommandBufferFences[i],
-                NULL
+                VlkGetAllocationCallbacks()
                 );
             VlkData.CommandBufferFences[i] = NULL;
         }
@@ -266,7 +268,7 @@ Return Value:
         vkDestroyCommandPool(
             VlkData.Device,
             VlkData.TransferCommandPool,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.TransferCommandPool = NULL;
     }
@@ -277,7 +279,7 @@ Return Value:
         vkDestroyCommandPool(
             VlkData.Device,
             VlkData.CommandPool,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.CommandPool = NULL;
     }
@@ -288,7 +290,7 @@ Return Value:
         vkDestroySemaphore(
             VlkData.Device,
             VlkData.DeferredSemaphore,
-            NULL
+            VlkGetAllocationCallbacks()
             );
     }
     for ( i = 0; i < VULKAN_FRAME_COUNT; i++ )
@@ -298,7 +300,7 @@ Return Value:
             vkDestroySemaphore(
                 VlkData.Device,
                 VlkData.AcquireSemaphores[i],
-                NULL
+                VlkGetAllocationCallbacks()
                 );
             VlkData.AcquireSemaphores[i] = NULL;
         }
@@ -307,7 +309,7 @@ Return Value:
             vkDestroySemaphore(
                 VlkData.Device,
                 VlkData.RenderCompleteSemaphores[i],
-                NULL
+                VlkGetAllocationCallbacks()
                 );
             VlkData.RenderCompleteSemaphores[i] = NULL;
         }
@@ -319,7 +321,7 @@ Return Value:
         vkDestroySurfaceKHR(
             VlkData.Instance,
             VlkData.Surface,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.Surface = NULL;
     }
@@ -336,7 +338,7 @@ Return Value:
         LogDebug("Destroying VkDevice 0x%llX", (UINT64)VlkData.Device);
         vkDestroyDevice(
             VlkData.Device,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.Device = NULL;
     }
@@ -378,7 +380,7 @@ Return Value:
         LogDebug("Destroying VkInstance 0x%llX", (UINT64)VlkData.Instance);
         vkDestroyInstance(
             VlkData.Instance,
-            NULL
+            VlkGetAllocationCallbacks()
             );
         VlkData.Instance = NULL;
     }

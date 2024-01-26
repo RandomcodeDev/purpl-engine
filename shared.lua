@@ -70,6 +70,7 @@ function setup_shared(root, directx, vulkan)
         path.join(root, "deps/cglm/include"),
         path.join(root, "deps/cjson"),
         path.join(root, "deps/flecs"),
+        path.join(root, "deps/mimalloc/include"),
         path.join(root, "deps/zstd/lib")
     )
 
@@ -114,7 +115,8 @@ function setup_shared(root, directx, vulkan)
     if is_plat("linux", "freebsd", "switch") then
         -- Old style casts are to match stylistically, and C++98 is defunct as hell
         -- Also, PURPL_FREE sets the variable to NULL to reduce misuse, and uses a
-        -- block to do that, but having a semi after looks normal
+        -- block to do that, but having a semi after looks normal, even if it's
+        -- technically superfluous 
         add_cxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
     end
 
@@ -122,6 +124,34 @@ function setup_shared(root, directx, vulkan)
         set_kind("static")
         add_headerfiles(path.join(root, "deps/cjson/cJSON.h"))
         add_files(path.join(root, "deps/cjson/cJSON.c"))
+        on_load(fix_target)
+
+    target("mimalloc")
+        set_kind("static")
+        add_files(
+            path.join(root, "deps/mimalloc/src/alloc.c"),
+            path.join(root, "deps/mimalloc/src/alloc-aligned.c"),
+            path.join(root, "deps/mimalloc/src/alloc-posix.c"),
+            path.join(root, "deps/mimalloc/src/arena.c"),
+            path.join(root, "deps/mimalloc/src/bitmap.c"),
+            path.join(root, "deps/mimalloc/src/heap.c"),
+            path.join(root, "deps/mimalloc/src/init.c"),
+            path.join(root, "deps/mimalloc/src/options.c"),
+            path.join(root, "deps/mimalloc/src/os.c"),
+            path.join(root, "deps/mimalloc/src/page.c"),
+            path.join(root, "deps/mimalloc/src/random.c"),
+            path.join(root, "deps/mimalloc/src/segment.c"),
+            path.join(root, "deps/mimalloc/src/segment-map.c"),
+            path.join(root, "deps/mimalloc/src/stats.c"),
+            path.join(root, "deps/mimalloc/src/prim/prim.c")
+        )
+        if is_plat("windows", "gdk", "gdkx") then
+            add_files(path.join(root, "deps/mimalloc/src/prim/win/*.c"))
+        elseif is_plat("macos") then
+            add_files(path.join(root, "deps/mimalloc/src/prim/osx/*.c"))
+        else
+            add_files(path.join(root, "deps/mimalloc/src/prim/unix/*.c"))
+        end
         on_load(fix_target)
 
     target("stb")
@@ -148,6 +178,8 @@ function setup_shared(root, directx, vulkan)
     target("platform")
         set_kind("static")
         add_headerfiles(path.join(root, "platform/*.h"))
+
+        add_deps("mimalloc")
 
         if is_plat("gdk", "gdkx", "windows") then
             add_files(

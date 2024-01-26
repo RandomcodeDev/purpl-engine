@@ -15,6 +15,89 @@ Abstract:
 
 #include "vk.h"
 
+static
+PVOID
+Allocate(
+    PVOID pUserData,
+    SIZE_T size,
+    SIZE_T alignment,
+    VkSystemAllocationScope allocationScope
+    )
+{
+    return PURPL_ALIGNED_ALLOC(alignment, size);
+}
+
+static
+void
+Free(
+    PVOID pUserData,
+    PVOID pMemory
+    )
+{
+    PURPL_ALIGNED_FREE(pMemory);
+}
+
+static
+void
+LogInternalAllocation(
+    PVOID pUserData,
+    SIZE_T size,
+    VkInternalAllocationType allocationType,
+    VkSystemAllocationScope allocationScope
+    )
+{
+    LogTrace("Vulkan allocation made:");
+    LogTrace("\tSize: %zu", size);
+    LogTrace("\tType: %d", allocationType);
+    LogTrace("\tScope: %d", allocationScope);
+}
+
+static void LogInternalFree(
+    PVOID pUserData,
+    SIZE_T size,
+    VkInternalAllocationType allocationType,
+    VkSystemAllocationScope allocationScope
+    )
+{
+    LogTrace("Vulkan allocation freed:");
+    LogTrace("\tSize: %zu", size);
+    LogTrace("\tType: %d", allocationType);
+    LogTrace("\tScope: %d", allocationScope);
+}
+
+static
+void*
+Reallocate(
+    PVOID pUserData,
+    PVOID pOriginal,
+    SIZE_T size,
+    SIZE_T alignment,
+    VkSystemAllocationScope allocationScope
+    )
+{
+    return PURPL_ALIGNED_REALLOC(
+        pOriginal,
+        alignment,
+        size
+        );
+}
+
+static CONST VkAllocationCallbacks AllocationCallbacks = {
+    .pfnAllocation = Allocate,
+    .pfnReallocation = Reallocate,
+    .pfnFree = Free,
+    .pfnInternalAllocation = LogInternalAllocation,
+    .pfnInternalFree = LogInternalFree,
+};
+
+VkAllocationCallbacks*
+VlkGetAllocationCallbacks(
+    VOID
+    )
+{
+    return &AllocationCallbacks;
+}
+
 PCSTR
 VlkGetResultString(
     VkResult Result
@@ -199,7 +282,7 @@ Return Value:
 
 --*/
 {
-    CHAR Location[128];
+    CHAR Type[128];
     LOG_LEVEL Level;
 
     UNREFERENCED_PARAMETER(UserData);
@@ -225,19 +308,21 @@ Return Value:
 
     // Put the message types as the source file, using the address of the function as the line
     snprintf(
-        Location,
-        PURPL_ARRAYSIZE(Location),
-        "VULKAN %s%s%sMESSAGE",
-        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) ? "GENERAL " : "",
-        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) ? "PERFORMANCE " : "",
-        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ? "VALIDATION " : ""
+        Type,
+        PURPL_ARRAYSIZE(Type),
+        "%s%s%smessage",
+        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) ? "general " : "",
+        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) ? "performance " : "",
+        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ? "validation " : ""
         );
+    Type[0] = toupper(Type[0]);
     LogMessage(
         Level,
-        Location,
+        "Vulkan",
         (UINT64)PlatGetReturnAddress(),
         true,
-        "%s",
+        "%s: %s",
+        Type,
         CallbackData->pMessage
         );
 

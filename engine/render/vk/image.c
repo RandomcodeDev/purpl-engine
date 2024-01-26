@@ -28,7 +28,7 @@ VlkCreateImageView(
     VULKAN_CHECK(vkCreateImageView(
         VlkData.Device,
         &ImageViewCreateInformation,
-        NULL,
+        VlkGetAllocationCallbacks(),
         ImageView
         ));
 }
@@ -235,7 +235,12 @@ VlkCreateImage(
     ImageCreateInformation.imageType = VK_IMAGE_TYPE_2D;
     ImageCreateInformation.extent.width = Width;
     ImageCreateInformation.extent.height = Height;
-    ImageCreateInformation.initialLayout = Layout;
+    ImageCreateInformation.extent.depth = 1;
+    ImageCreateInformation.mipLevels = 1;
+    ImageCreateInformation.arrayLayers = 1;
+    ImageCreateInformation.tiling = VK_IMAGE_TILING_OPTIMAL;
+    ImageCreateInformation.format = Format;
+    ImageCreateInformation.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     ImageCreateInformation.usage = Usage;
     ImageCreateInformation.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     ImageCreateInformation.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -251,6 +256,11 @@ VlkCreateImage(
         &Image->Allocation,
         NULL
         ));
+    VlkTransitionImageLayout(
+        Image->Handle,
+        VK_IMAGE_LAYOUT_UNDEFINED,
+        Layout
+        );
     VlkCreateImageView(
         &Image->View,
         Image->Handle,
@@ -303,18 +313,13 @@ VlkCreateImageWithData(
         Width,
         Height,
         Format,
-        VK_IMAGE_LAYOUT_UNDEFINED,
+        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
         Usage,
         MemoryUsage,
         Aspect,
         Image
         );
 
-    VlkTransitionImageLayout(
-        Image->Handle,
-        VK_IMAGE_LAYOUT_UNDEFINED,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
-        );
     VlkCopyBufferToImage(
         StagingBuffer.Buffer,
         Image->Handle,
@@ -328,4 +333,21 @@ VlkCreateImageWithData(
         );
 
     VlkFreeBuffer(&StagingBuffer);
+}
+
+VOID
+VlkDestroyImage(
+    _Inout_ PVULKAN_IMAGE Image
+    )
+{
+    vkDestroyImageView(
+        VlkData.Device,
+        Image->View,
+        VlkGetAllocationCallbacks()
+        );
+    vmaDestroyImage(
+        VlkData.Allocator,
+        Image->Handle,
+        Image->Allocation
+        );
 }

@@ -14,7 +14,8 @@ Abstract:
 
 #pragma once
 
-//#define PURPL_VERBOSE
+//#define PURPL_VERBOSE 1
+#define PURPL_USE_MIMALLOC 1
 
 #ifndef PURPL_RESOURCE_FILE
 
@@ -27,10 +28,11 @@ Abstract:
 #endif
 
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
-#include <stdint.h>
 #include <math.h>
 #include <stdalign.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
 #include <wchar.h>

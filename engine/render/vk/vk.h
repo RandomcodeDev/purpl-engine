@@ -280,6 +280,16 @@ VlkCreateInstance(
     );
 
 //
+// Get allocation callbacks
+//
+
+extern
+VkAllocationCallbacks*
+VlkGetAllocationCallbacks(
+    VOID
+    );
+
+//
 // Get the name of a result
 //
 
@@ -520,6 +530,16 @@ VlkCreateImageWithData(
     _In_ VmaMemoryUsage MemoryUsage,
     _In_ VkImageAspectFlags Aspect,
     _Out_ PVULKAN_IMAGE Image
+    );
+
+//
+// Destroy an image
+//
+
+extern
+VOID
+VlkDestroyImage(
+    _Inout_ PVULKAN_IMAGE Image
     );
 
 //

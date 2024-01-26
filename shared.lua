@@ -38,6 +38,8 @@ function setup_shared(root, directx, vulkan)
 
     set_languages("gnu11", "cxx23")
 
+    set_policy("build.optimization.lto", true)
+
     if is_plat("windows") then
         add_defines("PURPL_WIN32")
     elseif is_plat("gdk") then

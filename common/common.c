@@ -59,6 +59,7 @@ CmnInitialize(
     LogInfo("Common library initialized");
 }
 
+#ifdef PURPL_USE_MIMALLOC
 static
 VOID
 MiMallocStatPrint(
@@ -69,6 +70,7 @@ MiMallocStatPrint(
     UNREFERENCED_PARAMETER(Argument);
     LogDebug("%.*s", strlen(Message) - 2, Message); // -2 for NUL and newline
 }
+#endif
 
 VOID
 CmnShutdown(
@@ -79,6 +81,7 @@ CmnShutdown(
 
     LogInfo("Common library shut down");
 
+#ifdef PURPL_USE_MIMALLOC
     // Some memory will still be in use because of the THREAD for the main thread,
     // which is managed by the launcher, and therefore can't be freed before this
     // function
@@ -86,6 +89,7 @@ CmnShutdown(
         MiMallocStatPrint,
         NULL
         );
+#endif
 }
 
 PCSTR

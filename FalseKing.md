@@ -1,4 +1,4 @@
-# False King Game Design Version 1 2023-07-17
+# False King Game Design Version 3 2024-01-25
 
 ## Revisions
 
@@ -125,7 +125,7 @@ and other things.
 
 ## Data Storage
 
-- Images are stored in a simple format defined in [`util/texture/texture.h`](util/texture/texture.h).
+- Images are stored in a simple format defined in [`util/texture/texture.h`](https://github.com/RandomcodeDev/purpl-engine/blob/main/util/texture/texture.h).
   Through the usage of Zstandard compression, similar sizes to PNG are achieved.
 - TOML will be used for configuration files and metadata
 - Levels will likely consist of geometry and entities, no format has been designed yet

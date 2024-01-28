@@ -90,6 +90,8 @@ CmnShutdown(
 #endif
 }
 
+// Only on non-Windows, non-mimalloc
+#ifndef CmnAlignedRealloc
 PVOID
 CmnAlignedRealloc(
     PVOID Block,
@@ -109,6 +111,7 @@ CmnAlignedRealloc(
     CmnAlignedFree(Block);
     return NewBlock;
 }
+#endif
 
 PCSTR
 CmnFormatTempStringVarArgs(

@@ -1,4 +1,7 @@
 function fix_target(target)
+    target:add("options", "mimalloc")
+    target:add("options", "verbose")
+
     if is_plat("gdk", "gdkx") then
         target:set("prefixname", "")
         if target:kind() == "binary" then
@@ -174,12 +177,12 @@ function setup_shared(root, directx, vulkan)
     option("verbose")
         set_default(false)
         set_description("Enable verbose logging")
-        add_defines("PURPL_VERBOSE", 1)
+        add_defines("PURPL_VERBOSE")
 
     option("mimalloc")
         set_default(true)
         set_description("Enable the use of mimalloc")
-        add_defines("PURPL_USE_MIMALLOC", 1)
+        add_defines("PURPL_USE_MIMALLOC")
 
     target("common")
         set_kind("static")
@@ -189,7 +192,6 @@ function setup_shared(root, directx, vulkan)
         add_files(path.join(root, "common/*.c"))
         add_deps("platform", "stb")
         on_load(fix_target)
-        add_options("verbose", "mimalloc")
 
     target("platform")
         set_kind("static")

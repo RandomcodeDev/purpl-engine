@@ -66,68 +66,49 @@ do                                                    \
 // Get size of block allocated by malloc
 //
 
-#ifdef PURPL_WIN32
-#define PURPL_MSIZE(Block) _msize(block);
-#elif defined PURPL_MACOS
-#define PURPL_MSIZE(Block) malloc_size(block);
+#ifdef PURPL_USE_MIMALLOC
+#define PURPL_MSIZE(Block) mi_usable_size(Block)
 #else
-#define PURPL_MSIZE(Block) malloc_usable_size(block);
+#ifdef PURPL_WIN32
+#define PURPL_MSIZE(Block) _msize(Block)
+#elif defined PURPL_MACOS
+#define PURPL_MSIZE(Block) malloc_size(Block)
+#else
+#define PURPL_MSIZE(Block) malloc_usable_size(Block)
+#endif
 #endif
 
 //
 // Allocate memory
 //
 
-#if PURPL_USE_MIMALLOC
-#define PURPL_ALLOC(Count, Size) mi_calloc(Count, Size)
+#ifdef PURPL_USE_MIMALLOC
+#define CmnAlloc(Count, Size) mi_calloc(Count, Size)
 #else
-#define PURPL_ALLOC(Count, Size) calloc(Count, Size)
+#define CmnAlloc(Count, Size) calloc(Count, Size)
 #endif
 
 //
 // Reallocate memory
 //
 
-#if PURPL_USE_MIMALLOC
-#define PURPL_REALLOC(Block, Size) mi_realloc(Block, Size)
+#ifdef PURPL_USE_MIMALLOC
+#define CmnRealloc(Block, Size) mi_realloc(Block, Size)
 #else
-#define PURPL_REALLOC(Block, Size) realloc(Block, Size)
+#define CmnRealloc(Block, Size) realloc(Block, Size)
 #endif
 
 //
 // Allocate aligned memory
 //
 
-#if PURPL_USE_MIMALLOC
-#define PURPL_ALIGNED_ALLOC(Alignment, Size) mi_aligned_alloc(Alignment, Size)
+#ifdef PURPL_USE_MIMALLOC
+#define CmnAlignedAlloc(Alignment, Size) mi_aligned_alloc(Alignment, Size)
 #else
 #ifdef PURPL_WIN32
-#define PURPL_ALIGNED_ALLOC(Alignment, Size) _aligned_malloc(Alignment, Size)
+#define CmnAlignedAlloc(Alignment, Size) _aligned_malloc(Alignment, Size)
 #else
-#define PURPL_ALIGNED_ALLOC(Alignment, Size) aligned_alloc(Alignment, Size)
-#endif
-#endif
-
-//
-// Reallocate aligned memory
-//
-
-#if PURPL_USE_MIMALLOC
-#define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) mi_aligned_recalloc(Block, 1, Size, Alignment)
-#else
-#ifdef PURPL_WIN32
-#define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) _aligned_realloc(Block, 1, Size, Alignment)
-#else
-#define PURPL_ALIGNED_REALLOC(Block, Alignment, Size) \
-{ \
-    PVOID NewBlock = PURPL_ALIGNED_ALLOC(Alignment, Size); \
-    memmove(
-        NewBlock,
-        Block,
-        PURPL_MIN(Size, PURPL_MSIZE(Block))
-        );
-    PURPL_FREE(Block);
-}
+#define CmnAlignedAlloc(Alignment, Size) aligned_alloc(Alignment, Size)
 #endif
 #endif
 
@@ -135,23 +116,43 @@ do                                                    \
 // Free memory
 //
 
-#if PURPL_USE_MIMALLOC
-#define PURPL_FREE(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
+#ifdef PURPL_USE_MIMALLOC
+#define CmnFree(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
 #else
-#define PURPL_FREE(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
+#define CmnFree(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
 #endif
 
 //
 // Free aligned memory
 //
 
-#if PURPL_USE_MIMALLOC
-#define PURPL_ALIGNED_FREE(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
+#ifdef PURPL_USE_MIMALLOC
+#define CmnAlignedFree(Block) { (Block) ? mi_free(Block) : (VOID)0; (Block) = NULL; }
 #else
 #ifdef PURPL_WIN32
-#define PURPL_ALIGNED_FREE(Block) { (Block) ? _aligned_free(Block) : (VOID)0; (Block) = NULL; }
+#define CmnAlignedFree(Block) { (Block) ? _aligned_free(Block) : (VOID)0; (Block) = NULL; }
 #else
-#define PURPL_ALIGNED_FREE(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
+#define CmnAlignedFree(Block) { (Block) ? free(Block) : (VOID)0; (Block) = NULL; }
+#endif
+#endif
+
+//
+// Reallocate aligned memory
+//
+
+#ifdef PURPL_USE_MIMALLOC
+#define CmnAlignedRealloc(Block, Alignment, Size) mi_aligned_recalloc(Block, 1, Size, Alignment)
+#else
+#ifdef PURPL_WIN32
+#define CmnAlignedRealloc(Block, Alignment, Size) _aligned_realloc(Block, 1, Size, Alignment)
+#else
+extern
+PVOID
+CmnAlignedRealloc(
+    PVOID Block,
+    SIZE_T Alignment,
+    SIZE_T Size
+    );
 #endif
 #endif
 

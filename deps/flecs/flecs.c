@@ -56998,11 +56998,11 @@ static void* ecs_os_api_malloc(ecs_size_t size)
     return malloc((size_t)size);
 }
 
-static void* ecs_os_api_calloc(ecs_size_t size)
+static void* ecs_os_api_calloc(ecs_size_t count, ecs_size_t size)
 {
     ecs_os_linc(&ecs_os_api_calloc_count);
     ecs_assert(size > 0, ECS_INVALID_PARAMETER, NULL);
-    return calloc(1, (size_t)size);
+    return calloc((size_t)count, (size_t)size);
 }
 
 static void* ecs_os_api_realloc(void* ptr, ecs_size_t size)

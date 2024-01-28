@@ -35,7 +35,7 @@ InitializeMainThread(
     _In_ PFN_THREAD_START StartAddress
     )
 {
-    AsCurrentThread = PURPL_ALLOC(
+    AsCurrentThread = CmnAlloc(
         1,
         sizeof(THREAD)
         );
@@ -61,7 +61,7 @@ AsCreateThread(
 
     LogInfo("Creating thread %s with %zu-byte stack, entry point 0x%llX, and userdata 0x%llX", Name, StackSize, ThreadStart, UserData);
 
-    Thread = PURPL_ALLOC(
+    Thread = CmnAlloc(
         1,
         sizeof(THREAD)
         );
@@ -83,7 +83,7 @@ AsCreateThread(
     if ( Error != 0 )
     {
         LogError("Failed to initialize thread attributes: %s", strerror(Error));
-        PURPL_FREE(Thread);
+        CmnFree(Thread);
         return NULL;
     }
 
@@ -94,7 +94,7 @@ AsCreateThread(
     if ( Error != 0 )
     {
         LogError("Failed to set thread stack size: %s", strerror(Error));
-        PURPL_FREE(Thread);
+        CmnFree(Thread);
         return NULL;
     }
 
@@ -107,7 +107,7 @@ AsCreateThread(
     if ( Error != 0 )
     {
         LogError("Failed to create thread: %s", strerror(Error));
-        PURPL_FREE(Thread);
+        CmnFree(Thread);
         return NULL;
     }
 
@@ -140,7 +140,7 @@ AsJoinThread(
 
     ReturnValue = (PVOID)Thread->ReturnValue;
 
-    PURPL_FREE(Thread);
+    CmnFree(Thread);
 
     return (INT)ReturnValue;
 }

@@ -14,8 +14,7 @@ Abstract:
 
 #pragma once
 
-#define PURPL_VERBOSE 1
-#define PURPL_USE_MIMALLOC 1
+#include "config.h"
 
 #ifndef PURPL_RESOURCE_FILE
 
@@ -75,6 +74,8 @@ Abstract:
 #include <execinfo.h>
 #include <pthread.h>
 #endif
+
+#include <malloc.h>
 #include <unistd.h>
 
 #include "common/wintypes.h"
@@ -91,7 +92,7 @@ Abstract:
 #endif
 #include "flecs.h"
 
-#if PURPL_USE_MIMALLOC
+#ifdef PURPL_USE_MIMALLOC
 #include "mimalloc.h"
 #endif
 
@@ -120,10 +121,6 @@ PurplMain(
 
 #endif
 
-//
-// Game name
-//
-
 #define GAME_NAME "Purpl"
 #define GAME_EXECUTABLE_NAME "purpl"
 
@@ -137,7 +134,6 @@ PurplMain(
 // Game version
 //
 
-#include "config.h"
 
 //
 // Switch mountpoints

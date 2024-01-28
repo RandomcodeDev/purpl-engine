@@ -81,17 +81,17 @@ Return Value:
         size = sizeof(LPSTR) * 2 + deslen * sizeof(CHAR);
         for (;;)
         {
-            if (!(argv = PURPL_ALLOC(size, 1))) return NULL;
+            if (!(argv = CmnAlloc(size, 1))) return NULL;
             len = GetModuleFileNameA(0, (LPSTR)(argv + 2), deslen);
             if (!len)
             {
-                PURPL_FREE(argv);
+                CmnFree(argv);
                 return NULL;
             }
             if (len < deslen) break;
             deslen *= 2;
             size = sizeof(LPSTR) * 2 + deslen * sizeof(CHAR);
-            PURPL_FREE(argv);
+            CmnFree(argv);
         }
         argv[0] = (LPSTR)(argv + 2);
         argv[1] = NULL;
@@ -172,7 +172,7 @@ Return Value:
      * with it. This way the caller can make a single LocalFree() call to free
      * both, as per MSDN.
      */
-    argv = PURPL_ALLOC((argc + 1) * sizeof(LPSTR) + (strlen(lpCmdline) + 1) * sizeof(CHAR), 1);
+    argv = CmnAlloc((argc + 1) * sizeof(LPSTR) + (strlen(lpCmdline) + 1) * sizeof(CHAR), 1);
     if (!argv)
         return NULL;
     cmdline = (LPSTR)(argv + argc + 1);
@@ -529,7 +529,7 @@ Return Value:
                 0,
                 &Size
                 );
-            ParentModules = PURPL_ALLOC(
+            ParentModules = CmnAlloc(
                 1,
                 Size
                 );
@@ -606,7 +606,7 @@ Return Value:
     }
 
     if ( ParsedArguments )
-        PURPL_FREE(Arguments);
+        CmnFree(Arguments);
 
     return Result;
 }

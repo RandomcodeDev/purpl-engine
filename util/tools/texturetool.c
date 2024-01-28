@@ -174,7 +174,7 @@ Return Value:
     }
 
     stbi_image_free(ImageBytes);
-    PURPL_FREE(Texture);
+    CmnFree(Texture);
     printf("Done\n");
     return 0;
 }
@@ -227,7 +227,7 @@ Return Value:
         (INT32)Texture->Width * (INT32)GetFormatPitch(Texture->Format)
         );
 
-    PURPL_FREE(Texture);
+    CmnFree(Texture);
     printf("Done\n");
     return 0;
 }

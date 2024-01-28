@@ -155,7 +155,7 @@ Return Value:
 
     Indices = NULL;
 
-    Vertices = PURPL_ALLOC(
+    Vertices = CmnAlloc(
         Mesh->mNumVertices,
         sizeof(VERTEX)
         );
@@ -202,7 +202,7 @@ Return Value:
         }
     }
 
-    Indices = PURPL_ALLOC(
+    Indices = CmnAlloc(
         Mesh->mNumFaces,
         sizeof(ivec3)
         );
@@ -237,15 +237,15 @@ Return Value:
 Error:
     if ( MaterialName )
     {
-        PURPL_FREE(MaterialName);
+        CmnFree(MaterialName);
     }
     if ( Vertices )
     {
-        PURPL_FREE(Vertices);
+        CmnFree(Vertices);
     }
     if ( Indices )
     {
-        PURPL_FREE(Indices);
+        CmnFree(Indices);
     }
     return NULL;
 }
@@ -314,7 +314,7 @@ Return Value:
         return errno;
     }
 
-    Meshes = PURPL_ALLOC(
+    Meshes = CmnAlloc(
         Scene->mNumMeshes,
         sizeof(struct aiMesh*)
         );
@@ -350,7 +350,7 @@ Return Value:
         }
     }
 
-    PURPL_FREE(BaseName);
+    CmnFree(BaseName);
 
     return 0;
 }

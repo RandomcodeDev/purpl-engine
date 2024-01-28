@@ -251,7 +251,7 @@ Return Value:
     RdrShutdown();
     VidShutdown();
 
-    PURPL_FREE(EngineDataDirectory);
+    CmnFree(EngineDataDirectory);
 
     LogInfo("Successfully shut down engine");
 }

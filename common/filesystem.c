@@ -42,7 +42,7 @@ FsGetFileSize(
         );
     Size = ftell(File);
 
-    PURPL_FREE(FixedPath);
+    CmnFree(FixedPath);
     fclose(File);
     return Size;
 }
@@ -110,7 +110,7 @@ Return Value:
     }
 
     Size = PURPL_MAX(MaxAmount, FsGetFileSize(Path)) + Extra;
-    Buffer = PURPL_ALLOC(
+    Buffer = CmnAlloc(
         Size,
         1
         );
@@ -131,11 +131,11 @@ Return Value:
     {
         LogWarning("Failed to read file %s (%s): %s", Path, FixedPath, strerror(errno));
         *ReadAmount = 0;
-        PURPL_FREE(Buffer);
+        CmnFree(Buffer);
         return NULL;
     }
 
-    PURPL_FREE(FixedPath);
+    CmnFree(FixedPath);
     *ReadAmount = Read;
     return Buffer;
 }
@@ -163,7 +163,7 @@ FsWriteFile(
         LogWarning("Failed to open file %s (%s): %s", Path, FixedPath, strerror(errno));
         return FALSE;
     }
-    PURPL_FREE(FixedPath);
+    CmnFree(FixedPath);
 
     Success = fwrite(
         Data,

@@ -24,7 +24,7 @@ Allocate(
     VkSystemAllocationScope allocationScope
     )
 {
-    return PURPL_ALIGNED_ALLOC(alignment, size);
+    return CmnAlignedAlloc(alignment, size);
 }
 
 static
@@ -34,7 +34,7 @@ Free(
     PVOID pMemory
     )
 {
-    PURPL_ALIGNED_FREE(pMemory);
+    CmnAlignedFree(pMemory);
 }
 
 static
@@ -75,7 +75,7 @@ Reallocate(
     VkSystemAllocationScope allocationScope
     )
 {
-    return PURPL_ALIGNED_REALLOC(
+    return CmnAlignedRealloc(
         pOriginal,
         alignment,
         size

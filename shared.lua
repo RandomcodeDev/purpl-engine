@@ -49,7 +49,7 @@ function setup_shared(root, directx, vulkan)
     elseif is_plat("linux") then
         add_defines("PURPL_LINUX", "PURPL_UNIX")
     elseif is_plat("freebsd") then
-        add_defines("PURPL_FREEBSD", "PURPL_UNIX")
+        add_defines("CmnFreeBSD", "PURPL_UNIX")
     elseif is_plat("switch") then
         add_defines("PURPL_SWITCH", "PURPL_UNIX")
     end
@@ -117,7 +117,7 @@ function setup_shared(root, directx, vulkan)
 
     if is_plat("linux", "freebsd", "switch") then
         -- Old style casts are to match stylistically, and C++98 is defunct as hell
-        -- Also, PURPL_FREE sets the variable to NULL to reduce misuse, and uses a
+        -- Also, CmnFree sets the variable to NULL to reduce misuse, and uses a
         -- block to do that, but having a semi after looks normal, even if it's
         -- technically superfluous 
         add_cxflags("-Wno-gnu-line-marker", "-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
@@ -170,6 +170,16 @@ function setup_shared(root, directx, vulkan)
             add_files(path.join(root, "deps/zstd/lib/**/*.S"))
         end
         on_load(fix_target)
+
+    option("verbose")
+        set_default(false)
+        set_description("Enable verbose logging")
+        add_defines("PURPL_VERBOSE", 1)
+
+    option("mimalloc")
+        set_default(true)
+        set_description("Enable the use of mimalloc")
+        add_defines("PURPL_USE_MIMALLOC", 1)
 
     target("common")
         set_kind("static")

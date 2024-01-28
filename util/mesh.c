@@ -56,7 +56,7 @@ Return Value:
         return NULL;
     }
 
-    Mesh = PURPL_ALLOC(
+    Mesh = CmnAlloc(
         1,
         sizeof(MESH)
         );
@@ -125,7 +125,7 @@ Return Value:
     if ( Size < MESH_HEADER_SIZE )
     {
         LogError("Mesh is %zu bytes but should be %zu bytes", Size, MESH_HEADER_SIZE);
-        PURPL_FREE(Mesh);
+        CmnFree(Mesh);
         return NULL;
     }
 

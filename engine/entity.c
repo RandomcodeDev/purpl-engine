@@ -99,7 +99,7 @@ EcsInitialize(
     ecs_os_set_api_defaults();
     ecs_os_api_t OsApi = ecs_os_api;
     OsApi.log_ = EcsLog;
-#if PURPL_USE_MIMALLOC
+#ifdef PURPL_USE_MIMALLOC
     OsApi.malloc_ = mi_malloc;
     OsApi.calloc_ = mi_calloc;
     OsApi.realloc_ = mi_realloc;

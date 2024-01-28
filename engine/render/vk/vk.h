@@ -34,8 +34,8 @@ END_EXTERN_C
 
 #define VMA_VULKAN_VERSION 1003000
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
-    //#define VMA_SYSTEM_ALIGNED_MALLOC PURPL_ALIGNED_ALLOC
-    //#define VMA_SYSTEM_ALIGNED_FREE PURPL_ALIGNED_FREE
+    //#define VMA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
+    //#define VMA_SYSTEM_ALIGNED_FREE CmnAlignedFree
 #define VMA_DEBUG_LOG_FORMAT(format, ...) LogDebug((format), __VA_ARGS__)
 #define VMA_HEAVY_ASSERT(expr) if ( !(expr) ) \
 { \

@@ -12,7 +12,7 @@ Abstract:
 
 --*/
 
-#if PURPL_USE_MIMALLOC
+#ifdef PURPL_USE_MIMALLOC
 #define MALLOC mi_malloc
 #define REALLOC mi_realloc
 #define FREE mi_free

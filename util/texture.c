@@ -73,7 +73,7 @@ Return Value:
         Size += EstimateTextureSize(Format, Width, Height);
     }
 
-    Texture = PURPL_ALLOC(
+    Texture = CmnAlloc(
         1,
         Size
         );
@@ -147,20 +147,20 @@ Return Value:
     if ( Size < RequiredSize )
     {
         LogError("Texture is %zu bytes but should be %zu bytes", Size, RequiredSize);
-        PURPL_FREE(Texture);
+        CmnFree(Texture);
         return NULL;
     }
 
     Data = (PBYTE)Texture + TEXTURE_HEADER_SIZE;
 
-    RealTexture = PURPL_ALLOC(
+    RealTexture = CmnAlloc(
         1,
         sizeof(TEXTURE) + GetTextureSize(*Texture)
         );
     if ( !RealTexture )
     {
         LogError("Failed to allocate %zu bytes for texture", sizeof(TEXTURE) + GetTextureSize(*Texture));
-        PURPL_FREE(Texture);
+        CmnFree(Texture);
         return NULL;
     }
 
@@ -180,12 +180,12 @@ Return Value:
              ) != GetTextureSize(*Texture) )
     {
         LogError("Decompressed pixels are not the expected size");
-        PURPL_FREE(RealTexture);
-        PURPL_FREE(Texture);
+        CmnFree(RealTexture);
+        CmnFree(Texture);
         return NULL;
     }
 
-    PURPL_FREE(Texture);
+    CmnFree(Texture);
 
     return RealTexture;
 }
@@ -224,7 +224,7 @@ Return Value:
 
     LogInfo("Writing texture to %s", Path);
 
-    Data = PURPL_ALLOC(
+    Data = CmnAlloc(
         1,
         ZSTD_COMPRESSBOUND(GetTextureSize(*Texture))
         );
@@ -271,7 +271,7 @@ Return Value:
         return FALSE;
     }
 
-    PURPL_FREE(Data);
+    CmnFree(Data);
 
     return TRUE;
 }

@@ -604,7 +604,7 @@ Return Value:
                 Path,
                 PURPL_MIN(strlen(Path) + 1, PURPL_ARRAYSIZE(Directory))
                 );
-            PURPL_FREE(Path);
+            CmnFree(Path);
         }
     }
 
@@ -746,7 +746,7 @@ Return Value:
         return NULL;
     }
 
-    FixedPath = PURPL_ALLOC(
+    FixedPath = CmnAlloc(
         1,
         strlen(Path) + 1
         );

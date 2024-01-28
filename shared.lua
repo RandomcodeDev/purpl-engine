@@ -189,6 +189,7 @@ function setup_shared(root, directx, vulkan)
         add_files(path.join(root, "common/*.c"))
         add_deps("platform", "stb")
         on_load(fix_target)
+        add_options("verbose", "mimalloc")
 
     target("platform")
         set_kind("static")

@@ -19,7 +19,9 @@ VlkCreateRenderPass(
     _In_ VkAttachmentDescription* Attachments,
     _In_ SIZE_T AttachmentCount,
     _In_ VkSubpassDescription* Subpasses,
-    _In_ SIZE_T SubpassCount
+    _In_ SIZE_T SubpassCount,
+    _In_ VkSubpassDependency* SubpassDependencies,
+    _In_ SIZE_T SubpassDependencyCount
     )
 {
     LogDebug("Creating render pass with %zu attachment(s) and %zu subpass(es)", AttachmentCount, SubpassCount);
@@ -30,6 +32,8 @@ VlkCreateRenderPass(
     RenderPassCreateInformation.attachmentCount = AttachmentCount;
     RenderPassCreateInformation.pSubpasses = Subpasses;
     RenderPassCreateInformation.subpassCount = SubpassCount;
+    RenderPassCreateInformation.pDependencies = SubpassDependencies;
+    RenderPassCreateInformation.dependencyCount = SubpassDependencyCount;
 
     VkRenderPass RenderPass = NULL;
     VULKAN_CHECK(vkCreateRenderPass(
@@ -82,6 +86,8 @@ VlkCreateLightingPass(
         &ColorAttachment,
         1,
         Subpasses,
-        PURPL_ARRAYSIZE(Subpasses)
+        PURPL_ARRAYSIZE(Subpasses),
+        NULL,
+        0
         );
 }

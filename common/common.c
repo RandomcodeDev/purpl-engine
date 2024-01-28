@@ -229,33 +229,33 @@ Return Value:
 {
     PCHAR Buffer;
     INT Size;
-    va_list _Arguments;
+    va_list CopiedArguments;
 
     va_copy(
-        _Arguments,
+        CopiedArguments,
         Arguments
         );
     Size = vsnprintf(
         NULL,
         0,
         Format,
-        _Arguments
+        CopiedArguments
         ) + 1;
     Buffer = CmnAlloc(
         Size,
         1
         );
     va_copy(
-        _Arguments,
+        CopiedArguments,
         Arguments
         );
     vsnprintf(
         Buffer,
         Size,
         Format,
-        _Arguments
+        CopiedArguments
         );
-    va_end(_Arguments);
+    va_end(CopiedArguments);
 
     return Buffer;
 }

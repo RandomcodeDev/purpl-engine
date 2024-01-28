@@ -602,7 +602,9 @@ VlkCreateRenderPass(
     _In_ VkAttachmentDescription* Attachments,
     _In_ SIZE_T AttachmentCount,
     _In_ VkSubpassDescription* Subpasses,
-    _In_ SIZE_T SubpassCount
+    _In_ SIZE_T SubpassCount,
+    _In_ VkSubpassDependency* SubpassDependencies,
+    _In_ SIZE_T SubpassDependencyCount
     );
 
 //

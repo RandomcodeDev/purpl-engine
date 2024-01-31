@@ -72,6 +72,7 @@ Return Value:
         }
     }
 
+#ifndef PURPL_SWITCH
     time_t RawTime;
     struct tm Time;
     RawTime = time(NULL);
@@ -87,6 +88,7 @@ Return Value:
         Time.tm_min,
         Time.tm_sec
         );
+
     LogInfo("Opening log file %s", Path);
     FILE* LogFile = fopen(
         Path,
@@ -101,6 +103,7 @@ Return Value:
         LogFile,
         LogGetLevel()
         );
+#endif
 
     LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
 

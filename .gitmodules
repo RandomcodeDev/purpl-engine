@@ -1,9 +1,6 @@
 [submodule "deps/DirectX-Headers"]
 	path = deps/DirectX-Headers
 	url = https://github.com/Microsoft/DirectX-Headers
-[submodule "deps/Vulkan-Headers"]
-	path = deps/Vulkan-Headers
-	url = https://github.com/KhronosGroup/Vulkan-Headers
 [submodule "deps/volk"]
 	path = deps/volk
 	url = https://github.com/zeux/volk
@@ -28,3 +25,6 @@
 [submodule "deps/D3D12MemoryAllocator"]
 	path = deps/D3D12MemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator
+[submodule "deps/Vulkan-Headers"]
+	path = deps/Vulkan-Headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers

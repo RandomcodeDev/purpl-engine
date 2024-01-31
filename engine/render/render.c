@@ -26,12 +26,12 @@ Dx12InitializeBackend(
 #ifdef PURPL_VULKAN
 extern
 VOID
-VkInitializeBackend(
+VlkInitializeBackend(
     _Out_ PRENDER_BACKEND Backend
     );
 #else
 VOID
-VkInitializeBackend(
+VlkInitializeBackend(
     _Out_ PRENDER_BACKEND Backend
     )
 {
@@ -61,7 +61,7 @@ RdrInitialize(
         Dx12InitializeBackend(&Backend);
         break;
     case RenderApiVulkan:
-        VkInitializeBackend(&Backend);
+        VlkInitializeBackend(&Backend);
         break;
     }
 

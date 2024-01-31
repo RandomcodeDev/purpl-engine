@@ -391,7 +391,7 @@ Return Value:
 }
 
 VOID
-VkInitializeBackend(
+VlkInitializeBackend(
     _Out_ PRENDER_BACKEND Backend
     )
 {

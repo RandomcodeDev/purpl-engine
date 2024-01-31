@@ -47,11 +47,11 @@ VlkCreateRenderPass(
 }
 
 VOID
-VlkCreateLightingPass(
+VlkCreateMainRenderPass(
     VOID
     )
 {
-    LogDebug("Creating lighting render pass");
+    LogDebug("Creating main render render pass");
 
     VkAttachmentDescription ColorAttachment = {0};
     ColorAttachment.format = VlkData.SurfaceFormat.format;
@@ -67,22 +67,22 @@ VlkCreateLightingPass(
     ColorAttachmentReference.attachment = 0;
     ColorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkSubpassDescription LightingSubpass = {0};
-    LightingSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    LightingSubpass.colorAttachmentCount = 1;
-    LightingSubpass.pColorAttachments = &ColorAttachmentReference;
+    VkSubpassDescription MainSubpass = {0};
+    MainSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    MainSubpass.colorAttachmentCount = 1;
+    MainSubpass.pColorAttachments = &ColorAttachmentReference;
 
     VkSubpassDescription PostProcessSubpass = {0};
-    LightingSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    LightingSubpass.colorAttachmentCount = 1;
-    LightingSubpass.pColorAttachments = &ColorAttachmentReference;
+    PostProcessSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    PostProcessSubpass.colorAttachmentCount = 1;
+    PostProcessSubpass.pColorAttachments = &ColorAttachmentReference;
 
     VkSubpassDescription Subpasses[] = {
-        LightingSubpass,
+        MainSubpass,
         PostProcessSubpass
     };
 
-    VlkData.LightingPass = VlkCreateRenderPass(
+    VlkData.MainRenderPass = VlkCreateRenderPass(
         &ColorAttachment,
         1,
         Subpasses,

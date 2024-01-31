@@ -306,7 +306,6 @@ Return Value:
         break;
     }
 
-    // Put the message types as the source file, using the address of the function as the line
     snprintf(
         Type,
         PURPL_ARRAYSIZE(Type),
@@ -318,9 +317,9 @@ Return Value:
     Type[0] = toupper(Type[0]);
     LogMessage(
         Level,
-        "Vulkan",
-        (UINT64)PlatGetReturnAddress(),
-        true,
+        "Vulkan", // "File"
+        (UINT64)PlatGetReturnAddress(), // "Line"
+        true, // Display it in hex cause it's an address
         "%s: %s",
         Type,
         CallbackData->pMessage

@@ -135,20 +135,6 @@ typedef struct VULKAN_IMAGE
 } VULKAN_IMAGE, *PVULKAN_IMAGE;
 
 //
-// Deferred rendering first stage
-//
-
-typedef struct VULKAN_DEFERRED_PASS
-{
-    VkRenderPass RenderPass;
-    VkFramebuffer Framebuffer;
-    VULKAN_IMAGE PositionBuffer;
-    VULKAN_IMAGE NormalBuffer;
-    VULKAN_IMAGE AlbedoBuffer;
-    VULKAN_IMAGE DepthBuffer;
-} VULKAN_DEFERRED_PASS, *PVULKAN_DEFERRED_PASS;
-
-//
 // Vulkan data
 //
 
@@ -217,8 +203,7 @@ typedef struct VULKAN_DATA
     // Rendering stuff
     //
 
-    VULKAN_DEFERRED_PASS DeferredPass; // Outputs to images
-    VkRenderPass LightingPass; // Outputs to the screen
+    VkRenderPass MainRenderPass; // Outputs to the screen
     VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
 
     //
@@ -613,26 +598,6 @@ VlkCreateRenderPass(
 
 extern
 VOID
-VlkCreateLightingPass(
+VlkCreateMainRenderPass(
     VOID
-    );
-
-//
-// Initialize deferred render pass
-//
-
-extern
-VOID
-VlkCreateDeferredPass(
-    _Out_ PVULKAN_DEFERRED_PASS DeferredPass
-    );
-
-//
-// Destroy deferred render pass
-//
-
-extern
-VOID
-VlkDestroyDeferredPass(
-    _Inout_ PVULKAN_DEFERRED_PASS DeferredPass
     );

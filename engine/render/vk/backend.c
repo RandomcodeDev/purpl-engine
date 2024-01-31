@@ -136,8 +136,7 @@ Initialize(
     VlkAllocateCommandBuffers();
     VlkCreateAllocator();
     VlkCreateSwapChain();
-    VlkCreateDeferredPass(&VlkData.DeferredPass);
-    VlkCreateLightingPass();
+    VlkCreateMainRenderPass();
 
     VlkData.FrameIndex = 0;
     VlkData.Initialized = TRUE;
@@ -205,17 +204,15 @@ Return Value:
     VlkData.Initialized = FALSE;
     vkDeviceWaitIdle(VlkData.Device);
 
-    VlkDestroyDeferredPass(&VlkData.DeferredPass);
-
-    if ( VlkData.LightingPass )
+    if ( VlkData.MainRenderPass )
     {
-        LogDebug("Destroying lighting render pass 0x%llX", (UINT64)VlkData.LightingPass);
+        LogDebug("Destroying main render pass 0x%llX", (UINT64)VlkData.MainRenderPass);
         vkDestroyRenderPass(
             VlkData.Device,
-            VlkData.LightingPass,
+            VlkData.MainRenderPass,
             VlkGetAllocationCallbacks()
             );
-        VlkData.LightingPass = NULL;
+        VlkData.MainRenderPass = NULL;
     }
 
     if ( VlkData.Sampler )

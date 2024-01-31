@@ -31,6 +31,8 @@ function fix_target(target)
     end
 end
 
+default_mimalloc = not is_plat("switch")
+
 function setup_shared(root, directx, vulkan)
     set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
@@ -132,33 +134,36 @@ function setup_shared(root, directx, vulkan)
         add_files(path.join(root, "deps/cjson/cJSON.c"))
         on_load(fix_target)
 
-    target("mimalloc")
-        set_kind("static")
-        add_files(
-            path.join(root, "deps/mimalloc/src/alloc.c"),
-            path.join(root, "deps/mimalloc/src/alloc-aligned.c"),
-            path.join(root, "deps/mimalloc/src/alloc-posix.c"),
-            path.join(root, "deps/mimalloc/src/arena.c"),
-            path.join(root, "deps/mimalloc/src/bitmap.c"),
-            path.join(root, "deps/mimalloc/src/heap.c"),
-            path.join(root, "deps/mimalloc/src/init.c"),
-            path.join(root, "deps/mimalloc/src/options.c"),
-            path.join(root, "deps/mimalloc/src/os.c"),
-            path.join(root, "deps/mimalloc/src/page.c"),
-            path.join(root, "deps/mimalloc/src/random.c"),
-            path.join(root, "deps/mimalloc/src/segment.c"),
-            path.join(root, "deps/mimalloc/src/segment-map.c"),
-            path.join(root, "deps/mimalloc/src/stats.c"),
-            path.join(root, "deps/mimalloc/src/prim/prim.c")
-        )
-        if is_plat("windows", "gdk", "gdkx") then
-            add_files(path.join(root, "deps/mimalloc/src/prim/win/*.c"))
-        elseif is_plat("macos") then
-            add_files(path.join(root, "deps/mimalloc/src/prim/osx/*.c"))
-        else
-            add_files(path.join(root, "deps/mimalloc/src/prim/unix/*.c"))
-        end
-        on_load(fix_target)
+    if default_mimalloc then
+        target("mimalloc")
+            set_kind("static")
+            add_files(
+                path.join(root, "deps/mimalloc/src/alloc.c"),
+                path.join(root, "deps/mimalloc/src/alloc-aligned.c"),
+                path.join(root, "deps/mimalloc/src/alloc-posix.c"),
+                path.join(root, "deps/mimalloc/src/arena.c"),
+                path.join(root, "deps/mimalloc/src/bitmap.c"),
+                path.join(root, "deps/mimalloc/src/heap.c"),
+                path.join(root, "deps/mimalloc/src/init.c"),
+                path.join(root, "deps/mimalloc/src/options.c"),
+                path.join(root, "deps/mimalloc/src/os.c"),
+                path.join(root, "deps/mimalloc/src/page.c"),
+                path.join(root, "deps/mimalloc/src/random.c"),
+                path.join(root, "deps/mimalloc/src/segment.c"),
+                path.join(root, "deps/mimalloc/src/segment-map.c"),
+                path.join(root, "deps/mimalloc/src/stats.c"),
+                path.join(root, "deps/mimalloc/src/prim/prim.c")
+            )
+            if is_plat("windows", "gdk", "gdkx") then
+                add_files(path.join(root, "deps/mimalloc/src/prim/windows/*.c"))
+            elseif is_plat("macos") then
+                add_files(path.join(root, "deps/mimalloc/src/prim/osx/*.c"))
+            else
+                add_files(path.join(root, "deps/mimalloc/src/prim/unix/*.c"))
+            end
+            add_forceincludes("stdio.h")
+            on_load(fix_target)
+    end
 
     target("stb")
         set_kind("static")
@@ -180,9 +185,10 @@ function setup_shared(root, directx, vulkan)
         add_defines("PURPL_VERBOSE")
 
     option("mimalloc")
-        set_default(true)
+        set_default(default_mimalloc)
         set_description("Enable the use of mimalloc")
         add_defines("PURPL_USE_MIMALLOC")
+        add_links("mimalloc")
 
     target("common")
         set_kind("static")
@@ -196,8 +202,6 @@ function setup_shared(root, directx, vulkan)
     target("platform")
         set_kind("static")
         add_headerfiles(path.join(root, "platform/*.h"))
-
-        add_deps("mimalloc")
 
         if is_plat("gdk", "gdkx", "windows") then
             add_files(

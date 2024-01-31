@@ -55,12 +55,15 @@ if vulkan then
 end
 
 if directx then
-    target("render-vk")
+    target("render-dx12")
         set_kind("static")
+        add_headerfiles("engine/render/dx12/*.h")
         add_files(
             "deps/DirectX-Headers/src/*.cpp",
             "deps/D3D12MemoryAllocator/src/Common.cpp",
-            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp"
+            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp",
+            --"engine/render/dx12/*.c",
+            "engine/render/dx12/*.cpp"
         )
 
         if is_plat("gdk") then

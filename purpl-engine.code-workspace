@@ -8,7 +8,9 @@
     "settings": {
         "files.associations": {
             "*.h": "c",
-            "*.h.in": "c"
+            "*.h.in": "c",
+            "*.vert": "hlsl",
+            "*.frag": "hlsl"
         },
         "cmake.configureOnOpen": false,
         "C_Cpp.default.compileCommands": "compile_commands.json"

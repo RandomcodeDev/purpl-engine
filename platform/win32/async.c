@@ -81,7 +81,7 @@ AsCreateThread(
     Thread->Handle = CreateThread(
         NULL,
         StackSize,
-        ThreadEntry,
+        (LPTHREAD_START_ROUTINE)ThreadEntry,
         Thread,
         CREATE_SUSPENDED,
         NULL
@@ -110,6 +110,7 @@ AsJoinThread(
             Thread->Handle,
             INFINITE
             );
+        // Kill the thread in case it didn't exit
         TerminateThread(
             Thread->Handle,
             Thread->ReturnValue

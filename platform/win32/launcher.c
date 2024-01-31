@@ -407,8 +407,10 @@ Return Value:
 
 --*/
 {
-    DWORD Error;
     INT Result;
+    // Don't care about checking for a console parent process on Xbox, since it won't be seen
+#ifndef PURPL_GDKX
+    DWORD Error;
     HANDLE Snapshot;
     PROCESSENTRY32 ProcessEntry = {0};
     UINT32 EngineProcessId;
@@ -423,6 +425,7 @@ Return Value:
     IMAGE_DOS_HEADER ParentDosHeader = {0};
     IMAGE_NT_HEADERS ParentHeaders = {0};
     DWORD Mode;
+#endif
 
     /*AddVectoredExceptionHandler(
         FALSE,
@@ -484,7 +487,9 @@ Return Value:
         );
 
     // No error checking because the program is done anyway
+    // Check if the parent process is a console, and pause if it isn't
 
+#ifndef PURPL_GDKX
     Snapshot = CreateToolhelp32Snapshot(
         TH32CS_SNAPPROCESS,
         0
@@ -604,6 +609,7 @@ Return Value:
             }
         }
     }
+#endif
 
     if ( ParsedArguments )
         CmnFree(Arguments);
@@ -630,12 +636,12 @@ Routine Description:
     ArgumentCount = argc;
     ParsedArguments = FALSE;
 
-    InitializeMainThread(main);
+    InitializeMainThread((PFN_THREAD_START)main);
 
     return WinMain(
         GetModuleHandleA(NULL),
         NULL,
-        NULL,
+        "",
         SW_SHOWNORMAL
         );
 }

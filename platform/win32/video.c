@@ -237,7 +237,7 @@ Return Value:
     WindowWidth = ClientArea.right - ClientArea.left;
     WindowHeight = ClientArea.bottom - ClientArea.top;
 
-    LogDebug("Creating %dx%d window titled " WindowTitle, WindowWidth, WindowHeight);
+    LogDebug("Creating %dx%d window titled %s", WindowWidth, WindowHeight, WindowTitle);
 
     Window = CreateWindowExA(
         0,

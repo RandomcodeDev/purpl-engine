@@ -189,10 +189,10 @@ Return Value:
 #ifndef PURPL_GDKX
     PSYMBOL_INFOW Symbol;
     BYTE SymbolBuffer[sizeof(SYMBOL_INFOW) + 31 * sizeof(WCHAR)];
+    IMAGEHLP_MODULEW64 ModuleInfo = {0};
 #endif
     SIZE_T Offset;
     UINT64 Written;
-    IMAGEHLP_MODULEW64 ModuleInfo = {0};
     PVOID ModuleAddress = NULL;
     //PVOID ModuleHandle = NULL;
     INT i;
@@ -272,10 +272,11 @@ Return Value:
             PURPL_ARRAYSIZE(Buffer) - Offset,
             "\t%d: %ls!%ls+0x%llX (0x%llX)\n",
             i,
-            wcslen(ModuleInfo.ImageName) ? ModuleInfo.ImageName : L"<unknown>",
 #ifdef PURPL_GDKX
             L"<unknown>",
+            L"<unknown>",
 #else
+            wcslen(ModuleInfo.ImageName) ? ModuleInfo.ImageName : L"<unknown>",
             Symbol->NameLen ? Symbol->Name : L"<unknown>",
 #endif
             Displacement,

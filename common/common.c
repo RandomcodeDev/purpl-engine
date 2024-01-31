@@ -66,7 +66,8 @@ MiMallocStatPrint(
     )
 {
     UNREFERENCED_PARAMETER(Argument);
-    LogDebug("%.*s", strlen(Message) - 2, Message); // -2 for NUL and newline
+    // Don't want blanks between log messages, looks bad
+    LogDebug("%.*s", strlen(Message) - (Message[strlen(Message) - 2] == '\n' ? 2 : 1), Message);
 }
 #endif
 

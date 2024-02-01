@@ -50,97 +50,58 @@ extern CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount];
 // Initialize the engine
 //
 
-extern
-VOID
-EngInitialize(
-    VOID
-    );
+extern VOID EngInitialize(VOID);
 
 //
 // The main loop of the engine
 //
 
-extern
-VOID
-EngMainLoop(
-    VOID
-    );
+extern VOID EngMainLoop(VOID);
 
 //
 // Start a frame
 //
 
-VOID
-EngStartFrame(
-    VOID
-    );
+VOID EngStartFrame(VOID);
 
 //
 // End a frame
 //
 
-extern
-VOID
-EngEndFrame(
-    VOID
-    );
+extern VOID EngEndFrame(VOID);
 
 //
 // Shut down the engine
 //
 
-extern
-VOID
-EngShutdown(
-    VOID
-    );
+extern VOID EngShutdown(VOID);
 
 //
 // Get the main camera
 //
 
-extern
-ecs_entity_t
-EngGetMainCamera(
-    VOID
-    );
+extern ecs_entity_t EngGetMainCamera(VOID);
 
 //
 // Set the main camera
 //
 
-extern
-VOID
-EngSetMainCamera(
-    _In_ ecs_entity_t Entity
-    );
+extern VOID EngSetMainCamera(_In_ ecs_entity_t Entity);
 
 //
 // Get the frame delta in seconds
 //
 
-extern
-DOUBLE
-EngGetDelta(
-    VOID
-    );
+extern DOUBLE EngGetDelta(VOID);
 
 //
 // Get the framerate
 //
 
-extern
-UINT32
-EngGetFramerate(
-    VOID
-    );
+extern UINT32 EngGetFramerate(VOID);
 
 //
 // Get the runtime of the engine
 //
 
-extern
-UINT64
-EngGetRuntime(
-    VOID
-    );
+extern UINT64 EngGetRuntime(VOID);

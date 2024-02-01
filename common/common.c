@@ -16,10 +16,7 @@ Abstract:
 
 #include "filesystem.h"
 
-VOID
-CmnInitialize(
-    VOID
-    )
+VOID CmnInitialize(VOID)
 {
     LOG_LEVEL Level;
 
@@ -35,10 +32,7 @@ CmnInitialize(
     LogInfo("Using libc allocator");
 #endif
 
-    LogSetLock(
-        NULL,
-        NULL
-        );
+    LogSetLock(NULL, NULL);
 
 #ifdef PURPL_DEBUG
 #ifdef PURPL_VERBOSE
@@ -58,67 +52,45 @@ CmnInitialize(
 }
 
 #ifdef PURPL_USE_MIMALLOC
-static
-VOID
-MiMallocStatPrint(
-    PCSTR Message,
-    PVOID Argument
-    )
+static VOID MiMallocStatPrint(PCSTR Message, PVOID Argument)
 {
     UNREFERENCED_PARAMETER(Argument);
     // Don't want blanks between log messages, looks bad
-    LogDebug("%.*s", strlen(Message) - (Message[strlen(Message) - 2] == '\n' ? 2 : 1), Message);
+    LogDebug("%.*s",
+             strlen(Message) - (Message[strlen(Message) - 2] == '\n' ? 2 : 1),
+             Message);
 }
 #endif
 
-VOID
-CmnShutdown(
-    VOID
-    )
+VOID CmnShutdown(VOID)
 {
     PlatShutdown();
 
     LogInfo("Common library shut down");
 
 #ifdef PURPL_USE_MIMALLOC
-    // Some memory will still be in use because of the THREAD for the main thread,
-    // which is managed by the launcher, and therefore can't be freed before this
-    // function
-    mi_stats_print_out(
-        MiMallocStatPrint,
-        NULL
-        );
+    // Some memory will still be in use because of the THREAD for the main
+    // thread, which is managed by the launcher, and therefore can't be freed
+    // before this function
+    mi_stats_print_out(MiMallocStatPrint, NULL);
 #endif
 }
 
 // Only on non-Windows, non-mimalloc
 #ifndef CmnAlignedRealloc
 PVOID
-CmnAlignedRealloc(
-    PVOID Block,
-    SIZE_T Alignment,
-    SIZE_T Size
-    )
+CmnAlignedRealloc(PVOID Block, SIZE_T Alignment, SIZE_T Size)
 {
-    PVOID NewBlock = CmnAlignedAlloc(
-        Alignment,
-        Size
-        );
-    memmove(
-        NewBlock,
-        Block,
-        PURPL_MIN(Size, PURPL_MSIZE(Block))
-        );
+    PVOID NewBlock = CmnAlignedAlloc(Alignment, Size);
+    memmove(NewBlock, Block, PURPL_MIN(Size, PURPL_MSIZE(Block)));
     CmnAlignedFree(Block);
     return NewBlock;
 }
 #endif
 
 PCSTR
-CmnFormatTempStringVarArgs(
-    _In_ _Printf_format_string_ PCSTR Format,
-    _In_ va_list Arguments
-    )
+CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
+                           _In_ va_list Arguments)
 /*++
 
 Routine Description:
@@ -142,32 +114,17 @@ Return Value:
     static CHAR Buffer[1024];
     va_list _Arguments;
 
-    memset(
-        Buffer,
-        0,
-        PURPL_ARRAYSIZE(Buffer)
-        );
+    memset(Buffer, 0, PURPL_ARRAYSIZE(Buffer));
 
-    va_copy(
-        _Arguments,
-        Arguments
-        );
-    vsnprintf(
-        Buffer,
-        PURPL_ARRAYSIZE(Buffer),
-        Format,
-        _Arguments
-        );
+    va_copy(_Arguments, Arguments);
+    vsnprintf(Buffer, PURPL_ARRAYSIZE(Buffer), Format, _Arguments);
     va_end(_Arguments);
 
     return Buffer;
 }
 
 PCSTR
-CmnFormatTempString(
-    _In_ _Printf_format_string_ PCSTR Format,
-    ...
-    )
+CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
 /*++
 
 Routine Description:
@@ -191,29 +148,22 @@ Return Value:
     va_list Arguments;
     PCSTR Formatted;
 
-    va_start(
-        Arguments,
-        Format
-        );
-    Formatted = CmnFormatTempStringVarArgs(
-        Format,
-        Arguments
-        );
+    va_start(Arguments, Format);
+    Formatted = CmnFormatTempStringVarArgs(Format, Arguments);
     va_end(Arguments);
 
     return Formatted;
 }
 
 PCHAR
-CmnFormatStringVarArgs(
-    _In_ _Printf_format_string_ PCSTR Format,
-    _In_ va_list Arguments
-    )
+CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
+                       _In_ va_list Arguments)
 /*++
 
 Routine Description:
 
-    This routine formats a printf format string into a dynamically allocated buffer.
+    This routine formats a printf format string into a dynamically allocated
+buffer.
 
 Arguments:
 
@@ -224,7 +174,8 @@ Arguments:
 
 Return Value:
 
-    A pointer to a buffer with the formatted string and a NUL terminator (size is strlen(Buffer) + 1).
+    A pointer to a buffer with the formatted string and a NUL terminator (size
+is strlen(Buffer) + 1).
 
 --*/
 {
@@ -232,45 +183,24 @@ Return Value:
     INT Size;
     va_list CopiedArguments;
 
-    va_copy(
-        CopiedArguments,
-        Arguments
-        );
-    Size = vsnprintf(
-        NULL,
-        0,
-        Format,
-        CopiedArguments
-        ) + 1;
-    Buffer = CmnAlloc(
-        Size,
-        1
-        );
-    va_copy(
-        CopiedArguments,
-        Arguments
-        );
-    vsnprintf(
-        Buffer,
-        Size,
-        Format,
-        CopiedArguments
-        );
+    va_copy(CopiedArguments, Arguments);
+    Size = vsnprintf(NULL, 0, Format, CopiedArguments) + 1;
+    Buffer = CmnAlloc(Size, 1);
+    va_copy(CopiedArguments, Arguments);
+    vsnprintf(Buffer, Size, Format, CopiedArguments);
     va_end(CopiedArguments);
 
     return Buffer;
 }
 
 PCHAR
-CmnFormatString(
-    _In_ _Printf_format_string_ PCSTR Format,
-    ...
-    )
+CmnFormatString(_In_ _Printf_format_string_ PCSTR Format, ...)
 /*++
 
 Routine Description:
 
-    This routine formats a printf format string into a dynamically allocated buffer.
+    This routine formats a printf format string into a dynamically allocated
+buffer.
 
 Arguments:
 
@@ -288,23 +218,15 @@ Return Value:
     va_list Arguments;
     PCHAR Formatted;
 
-    va_start(
-        Arguments,
-        Format
-        );
-    Formatted = CmnFormatStringVarArgs(
-        Format,
-        Arguments
-        );
+    va_start(Arguments, Format);
+    Formatted = CmnFormatStringVarArgs(Format, Arguments);
     va_end(Arguments);
 
     return Formatted;
 }
 
 PCSTR
-CmnFormatSize(
-    _In_ DOUBLE Size
-)
+CmnFormatSize(_In_ DOUBLE Size)
 /*++
 
 Routine Description:
@@ -326,48 +248,37 @@ Return Value:
     DOUBLE Value;
     UINT8 Prefix;
 
-    // TODO: if this is ever somehow a bottleneck, remove everything past tibibytes and make the buffer 16 bytes.
+    // TODO: if this is ever somehow a bottleneck, remove everything past
+    // tibibytes and make the buffer 16 bytes.
 
-    CONST PCSTR Units[] = {
-        "B",
-        "kiB",
-        "MiB",
-        "GiB",
-        "TiB",
-        "PiB (damn)",
-        "EiB (are you sure?)",
-        "ZiB (who are you?)",
-        "YiB (what are you doing?)",
-        "RiB (why are you doing this?)",
-        "QiB (HOW ARE YOU DOING THIS?)",
-        "?B (what did you do?)"
-    };
+    CONST PCSTR Units[] = {"B",
+                           "kiB",
+                           "MiB",
+                           "GiB",
+                           "TiB",
+                           "PiB (damn)",
+                           "EiB (are you sure?)",
+                           "ZiB (who are you?)",
+                           "YiB (what are you doing?)",
+                           "RiB (why are you doing this?)",
+                           "QiB (HOW ARE YOU DOING THIS?)",
+                           "?B (what did you do?)"};
 
     Value = Size;
     Prefix = 0;
-    while ( Value > 1024 )
+    while (Value > 1024)
     {
         Value /= 1024;
         Prefix++;
     }
 
-    snprintf(
-        Buffer,
-        PURPL_ARRAYSIZE(Buffer),
-        "%.02lf %s",
-        Value,
-        Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]
-        );
+    snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%.02lf %s", Value,
+             Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
 
     return Buffer;
 }
 
-_Noreturn
-VOID
-CmnError(
-    _In_ _Printf_format_string_ PCSTR Message,
-    ...
-    )
+_Noreturn VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...)
 /*++
 
 Routine Description:
@@ -393,30 +304,21 @@ Return Value:
 
     CmnShutdown();
 
-    va_start(
-        Arguments,
-        Message
-        );
-    FormattedMessage = CmnFormatStringVarArgs(
-        Message,
-        Arguments
-        );
+    va_start(Arguments, Message);
+    FormattedMessage = CmnFormatStringVarArgs(Message, Arguments);
     va_end(Arguments);
-    BackTrace = PlatCaptureStackBackTrace(
-        1, // Don't include CmnError in the trace
+    BackTrace =
+        PlatCaptureStackBackTrace(1, // Don't include CmnError in the trace
 #ifdef PURPL_VERBOSE
-        0 // Everything
+                                  0 // Everything
 #elif defined PURPL_DEBUG
-        5 // A bit more context
+                                   5 // A bit more context
 #else
-        3 // Enough
+                                   3 // Enough
 #endif
         );
-    Formatted = CmnFormatString(
-        "Fatal error: %s\nStack trace:\n%s",
-        FormattedMessage,
-        BackTrace
-        );
+    Formatted = CmnFormatString("Fatal error: %s\nStack trace:\n%s",
+                                FormattedMessage, BackTrace);
     LogFatal("%s", Formatted);
     PlatError(Formatted);
 

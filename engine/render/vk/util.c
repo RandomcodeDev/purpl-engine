@@ -15,36 +15,20 @@ Abstract:
 
 #include "vk.h"
 
-static
-PVOID
-Allocate(
-    PVOID pUserData,
-    SIZE_T size,
-    SIZE_T alignment,
-    VkSystemAllocationScope allocationScope
-    )
+static PVOID Allocate(PVOID pUserData, SIZE_T size, SIZE_T alignment,
+                      VkSystemAllocationScope allocationScope)
 {
     return CmnAlignedAlloc(alignment, size);
 }
 
-static
-void
-Free(
-    PVOID pUserData,
-    PVOID pMemory
-    )
+static void Free(PVOID pUserData, PVOID pMemory)
 {
     CmnAlignedFree(pMemory);
 }
 
-static
-void
-LogInternalAllocation(
-    PVOID pUserData,
-    SIZE_T size,
-    VkInternalAllocationType allocationType,
-    VkSystemAllocationScope allocationScope
-    )
+static void LogInternalAllocation(PVOID pUserData, SIZE_T size,
+                                  VkInternalAllocationType allocationType,
+                                  VkSystemAllocationScope allocationScope)
 {
     LogTrace("Vulkan allocation made:");
     LogTrace("\tSize: %zu", size);
@@ -52,12 +36,9 @@ LogInternalAllocation(
     LogTrace("\tScope: %d", allocationScope);
 }
 
-static void LogInternalFree(
-    PVOID pUserData,
-    SIZE_T size,
-    VkInternalAllocationType allocationType,
-    VkSystemAllocationScope allocationScope
-    )
+static void LogInternalFree(PVOID pUserData, SIZE_T size,
+                            VkInternalAllocationType allocationType,
+                            VkSystemAllocationScope allocationScope)
 {
     LogTrace("Vulkan allocation freed:");
     LogTrace("\tSize: %zu", size);
@@ -65,21 +46,11 @@ static void LogInternalFree(
     LogTrace("\tScope: %d", allocationScope);
 }
 
-static
-void*
-Reallocate(
-    PVOID pUserData,
-    PVOID pOriginal,
-    SIZE_T size,
-    SIZE_T alignment,
-    VkSystemAllocationScope allocationScope
-    )
+static void *Reallocate(PVOID pUserData, PVOID pOriginal, SIZE_T size,
+                        SIZE_T alignment,
+                        VkSystemAllocationScope allocationScope)
 {
-    return CmnAlignedRealloc(
-        pOriginal,
-        alignment,
-        size
-        );
+    return CmnAlignedRealloc(pOriginal, alignment, size);
 }
 
 static CONST VkAllocationCallbacks AllocationCallbacks = {
@@ -90,18 +61,13 @@ static CONST VkAllocationCallbacks AllocationCallbacks = {
     .pfnInternalFree = LogInternalFree,
 };
 
-VkAllocationCallbacks*
-VlkGetAllocationCallbacks(
-    VOID
-    )
+VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID)
 {
     return &AllocationCallbacks;
 }
 
 PCSTR
-VlkGetResultString(
-    VkResult Result
-    )
+VlkGetResultString(VkResult Result)
 /*++
 
 Routine Description:
@@ -118,8 +84,10 @@ Return Value:
 
 --*/
 {
-    // Stolen from https://github.com/libsdl-org/SDL/blob/a4c6b38fef2ff046e38072200b096c03389bfa28/src/video/SDL_vulkan_utils.c#L29,
-    // but it's just a table that I could probably generate somehow (and, in fact, should)
+    // Stolen from
+    // https://github.com/libsdl-org/SDL/blob/a4c6b38fef2ff046e38072200b096c03389bfa28/src/video/SDL_vulkan_utils.c#L29,
+    // but it's just a table that I could probably generate somehow (and, in
+    // fact, should)
     switch (Result)
     {
     case VK_SUCCESS:
@@ -208,58 +176,44 @@ Return Value:
     }
 }
 
-VOID
-VlkSetObjectName(
-    _In_ PVOID Object,
-    _In_ VkObjectType ObjectType,
-    _In_ _Printf_format_string_ PCSTR Name,
-    ...
-    )
+VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType,
+                      _In_ _Printf_format_string_ PCSTR Name, ...)
 {
-    //UNREFERENCED_PARAMETER(Object);
-    //UNREFERENCED_PARAMETER(ObjectType);
-    //UNREFERENCED_PARAMETER(Name);
-    // Seems to crash a lot
+    // UNREFERENCED_PARAMETER(Object);
+    // UNREFERENCED_PARAMETER(ObjectType);
+    // UNREFERENCED_PARAMETER(Name);
+    //  Seems to crash a lot
 #ifndef PURPL_SWITCH
 #ifdef PURPL_VULKAN_DEBUG
-    if ( vkSetDebugUtilsObjectNameEXT && VlkData.Device )
+    if (vkSetDebugUtilsObjectNameEXT && VlkData.Device)
     {
         va_list Arguments;
 
         VkDebugUtilsObjectNameInfoEXT NameInformation = {0};
-        NameInformation.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+        NameInformation.sType =
+            VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
         NameInformation.objectType = ObjectType;
         NameInformation.objectHandle = (UINT64)Object;
 
-        va_start(
-            Arguments,
-            Name
-            );
-        NameInformation.pObjectName = CmnFormatTempStringVarArgs(
-            Name,
-            Arguments
-            );
+        va_start(Arguments, Name);
+        NameInformation.pObjectName =
+            CmnFormatTempStringVarArgs(Name, Arguments);
         va_end(Arguments);
 
-        LogTrace("Setting object name of type %u object 0x%llX to %s", ObjectType, (UINT64)Object, NameInformation.pObjectName);
+        LogTrace("Setting object name of type %u object 0x%llX to %s",
+                 ObjectType, (UINT64)Object, NameInformation.pObjectName);
 
-        vkSetDebugUtilsObjectNameEXT(
-            VlkData.Device,
-            &NameInformation
-            );
+        vkSetDebugUtilsObjectNameEXT(VlkData.Device, &NameInformation);
     }
 #endif
 #endif
 }
 
-VkBool32
-VKAPI_CALL
-VlkDebugCallback(
-    _In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
-    _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
-    _In_ CONST VkDebugUtilsMessengerCallbackDataEXT* CallbackData,
-    _In_opt_ PVOID UserData
-    )
+VkBool32 VKAPI_CALL
+VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
+                 _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
+                 _In_ CONST VkDebugUtilsMessengerCallbackDataEXT *CallbackData,
+                 _In_opt_ PVOID UserData)
 /*++
 
 Routine Description:
@@ -287,7 +241,7 @@ Return Value:
 
     UNREFERENCED_PARAMETER(UserData);
 
-    switch ( MessageSeverity )
+    switch (MessageSeverity)
     {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
         Level = LogLevelDebug;
@@ -306,36 +260,29 @@ Return Value:
         break;
     }
 
-    snprintf(
-        Type,
-        PURPL_ARRAYSIZE(Type),
-        "%s%s%smessage",
-        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) ? "general " : "",
-        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) ? "performance " : "",
-        (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ? "validation " : ""
-        );
+    snprintf(Type, PURPL_ARRAYSIZE(Type), "%s%s%smessage",
+             (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT)
+                 ? "general "
+                 : "",
+             (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT)
+                 ? "performance "
+                 : "",
+             (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT)
+                 ? "validation "
+                 : "");
     Type[0] = toupper(Type[0]);
-    LogMessage(
-        Level,
-        "Vulkan", // "File"
-        (UINT64)PlatGetReturnAddress(), // "Line"
-        true, // Display it in hex cause it's an address
-        "%s: %s",
-        Type,
-        CallbackData->pMessage
-        );
+    LogMessage(Level,
+               "Vulkan",                       // "File"
+               (UINT64)PlatGetReturnAddress(), // "Line"
+               true, // Display it in hex cause it's an address
+               "%s: %s", Type, CallbackData->pMessage);
 
     return TRUE;
-
 }
 
-VOID
-VlkAllocateBuffer(
-    _In_ VkDeviceSize Size,
-    _In_ VkBufferUsageFlags Usage,
-    _In_ VkMemoryPropertyFlags Flags,
-    _Out_ PVULKAN_BUFFER Buffer
-    )
+VOID VlkAllocateBuffer(_In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage,
+                       _In_ VkMemoryPropertyFlags Flags,
+                       _Out_ PVULKAN_BUFFER Buffer)
 /*++
 
 Routine Description:
@@ -358,11 +305,7 @@ Return Value:
 
 --*/
 {
-    memset(
-        Buffer,
-        0,
-        sizeof(VULKAN_BUFFER)
-        );
+    memset(Buffer, 0, sizeof(VULKAN_BUFFER));
     Buffer->Size = Size;
 
     VkBufferCreateInfo BufferCreateInformation = {0};
@@ -374,130 +317,75 @@ Return Value:
     VmaAllocationCreateInfo AllocationCreateInformation = {0};
     AllocationCreateInformation.requiredFlags = Flags;
 
-    //LogTrace("Allocating %zu-byte buffer 0x%llX", Size, (UINT64)Buffer);
-    VULKAN_CHECK(vmaCreateBuffer(
-        VlkData.Allocator,
-        &BufferCreateInformation,
-        &AllocationCreateInformation,
-        &Buffer->Buffer,
-        &Buffer->Allocation,
-        NULL
-        ));
+    // LogTrace("Allocating %zu-byte buffer 0x%llX", Size, (UINT64)Buffer);
+    VULKAN_CHECK(vmaCreateBuffer(VlkData.Allocator, &BufferCreateInformation,
+                                 &AllocationCreateInformation, &Buffer->Buffer,
+                                 &Buffer->Allocation, NULL));
 }
 
-VOID
-VlkAllocateBufferWithData(
-    _In_ PVOID Data,
-    _In_ VkDeviceSize Size,
-    _In_ VkBufferUsageFlags Usage,
-    _In_ VkMemoryPropertyFlags Flags,
-    _Out_ PVULKAN_BUFFER Buffer
-    )
+VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size,
+                               _In_ VkBufferUsageFlags Usage,
+                               _In_ VkMemoryPropertyFlags Flags,
+                               _Out_ PVULKAN_BUFFER Buffer)
 {
     VULKAN_BUFFER StagingBuffer;
     PVOID BufferAddress;
 
-    VlkAllocateBuffer(
-        Size,
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &StagingBuffer
-        );
+    VlkAllocateBuffer(Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                      &StagingBuffer);
 
     BufferAddress = NULL;
-    vmaMapMemory(
-        VlkData.Allocator,
-        StagingBuffer.Allocation,
-        &BufferAddress
-        );
-    memcpy(
-        BufferAddress,
-        Data,
-        Size
-        );
-    vmaUnmapMemory(
-        VlkData.Allocator,
-        StagingBuffer.Allocation
-        );
+    vmaMapMemory(VlkData.Allocator, StagingBuffer.Allocation, &BufferAddress);
+    memcpy(BufferAddress, Data, Size);
+    vmaUnmapMemory(VlkData.Allocator, StagingBuffer.Allocation);
 
-    VlkAllocateBuffer(
-        Size,
-        Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        Flags,
-        Buffer
-        );
-    VlkCopyBuffer(
-        &StagingBuffer,
-        Buffer,
-        Size
-        );
+    VlkAllocateBuffer(Size, Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT, Flags,
+                      Buffer);
+    VlkCopyBuffer(&StagingBuffer, Buffer, Size);
     VlkFreeBuffer(&StagingBuffer);
 }
 
-VOID
-VlkFreeBuffer(
-    _Inout_ PVULKAN_BUFFER Buffer
-    )
+VOID VlkFreeBuffer(_Inout_ PVULKAN_BUFFER Buffer)
 {
-    //LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
-    if ( Buffer->Allocation )
+    // LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
+    if (Buffer->Allocation)
     {
-        vmaUnmapMemory(
-            VlkData.Allocator,
-            Buffer->Allocation
-            );
-        vmaDestroyBuffer(
-            VlkData.Allocator,
-            Buffer->Buffer,
-            Buffer->Allocation
-            );
+        vmaUnmapMemory(VlkData.Allocator, Buffer->Allocation);
+        vmaDestroyBuffer(VlkData.Allocator, Buffer->Buffer, Buffer->Allocation);
     }
-    memset(
-        Buffer,
-        0,
-        sizeof(VULKAN_BUFFER)
-        );
+    memset(Buffer, 0, sizeof(VULKAN_BUFFER));
 }
 
-VkCommandBuffer
-VlkBeginTransfer(
-    VOID
-    )
+VkCommandBuffer VlkBeginTransfer(VOID)
 {
     VkCommandBufferAllocateInfo CommandBufferAllocateInformation = {0};
 
-    CommandBufferAllocateInformation.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    CommandBufferAllocateInformation.sType =
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     CommandBufferAllocateInformation.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     CommandBufferAllocateInformation.commandPool = VlkData.TransferCommandPool;
     CommandBufferAllocateInformation.commandBufferCount = 1;
 
-    //LogTrace("Creating transfer command buffer");
+    // LogTrace("Creating transfer command buffer");
     VkCommandBuffer TransferBuffer;
     VULKAN_CHECK(vkAllocateCommandBuffers(
-        VlkData.Device,
-        &CommandBufferAllocateInformation,
-        &TransferBuffer
-        ));
+        VlkData.Device, &CommandBufferAllocateInformation, &TransferBuffer));
 
     VkCommandBufferBeginInfo BeginInformation = {0};
     BeginInformation.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     BeginInformation.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    //LogTrace("Beginning transfer command buffer");
-    vkBeginCommandBuffer(
-        TransferBuffer,
-        &BeginInformation
-        );
+    // LogTrace("Beginning transfer command buffer");
+    vkBeginCommandBuffer(TransferBuffer, &BeginInformation);
 
     return TransferBuffer;
 }
 
-VOID
-VlkEndTransfer(
-    _In_ VkCommandBuffer TransferBuffer
-    )
+VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer)
 {
-    //LogTrace("Ending transfer command buffer");
+    // LogTrace("Ending transfer command buffer");
     vkEndCommandBuffer(TransferBuffer);
 
     VkSubmitInfo SubmitInformation = {0};
@@ -505,46 +393,29 @@ VlkEndTransfer(
     SubmitInformation.commandBufferCount = 1;
     SubmitInformation.pCommandBuffers = &TransferBuffer;
 
-    //LogTrace("Submitting transfer command buffer");
-    vkQueueSubmit(
-        VlkData.GraphicsQueue,
-        1,
-        &SubmitInformation,
-        NULL
-        );
+    // LogTrace("Submitting transfer command buffer");
+    vkQueueSubmit(VlkData.GraphicsQueue, 1, &SubmitInformation, NULL);
     vkQueueWaitIdle(VlkData.GraphicsQueue);
 
-    //LogTrace("Destroying transfer command buffer");
-    vkFreeCommandBuffers(
-        VlkData.Device,
-        VlkData.TransferCommandPool,
-        1,
-        &TransferBuffer
-        );
+    // LogTrace("Destroying transfer command buffer");
+    vkFreeCommandBuffers(VlkData.Device, VlkData.TransferCommandPool, 1,
+                         &TransferBuffer);
 }
 
-VOID
-VlkCopyBuffer(
-    _In_ PVULKAN_BUFFER Source,
-    _In_ PVULKAN_BUFFER Destination,
-    _In_ VkDeviceSize Size
-    )
+VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source, _In_ PVULKAN_BUFFER Destination,
+                   _In_ VkDeviceSize Size)
 {
     VkCommandBuffer TransferBuffer;
 
-    //LogTrace("Copying Vulkan buffer 0x%llX to 0x%llX", (UINT64)Source, (UINT64)Destination);
+    // LogTrace("Copying Vulkan buffer 0x%llX to 0x%llX", (UINT64)Source,
+    // (UINT64)Destination);
 
     TransferBuffer = VlkBeginTransfer();
 
     VkBufferCopy CopyRegion = {0};
     CopyRegion.size = Size;
-    vkCmdCopyBuffer(
-        TransferBuffer,
-        Source->Buffer,
-        Destination->Buffer,
-        1,
-        &CopyRegion
-        );
+    vkCmdCopyBuffer(TransferBuffer, Source->Buffer, Destination->Buffer, 1,
+                    &CopyRegion);
 
     VlkEndTransfer(TransferBuffer);
 }

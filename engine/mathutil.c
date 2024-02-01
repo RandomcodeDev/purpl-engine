@@ -16,10 +16,7 @@ Abstract:
 
 ecs_entity_t ecs_id(TRANSFORM);
 
-VOID
-MathImport(
-    _In_ ecs_world_t* World
-    )
+VOID MathImport(_In_ ecs_world_t *World)
 /*++
 
 Routine Description:
@@ -37,22 +34,13 @@ Return Value:
 --*/
 {
     LogTrace("Importing Math ECS module");
-    ECS_MODULE(
-        World,
-        Math
-        );
+    ECS_MODULE(World, Math);
 
-    ECS_COMPONENT_DEFINE(
-        World,
-        TRANSFORM
-        );
+    ECS_COMPONENT_DEFINE(World, TRANSFORM);
 }
 
-VOID
-MthCreateTransformMatrix(
-    _In_ PTRANSFORM Transform,
-    _Out_ mat4 TransformMatrix
-    )
+VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
+                              _Out_ mat4 TransformMatrix)
 /*++
 
 Routine Description:
@@ -71,32 +59,19 @@ Return Value:
 
 --*/
 {
-    if ( !Transform || !TransformMatrix )
+    if (!Transform || !TransformMatrix)
     {
         return;
     }
 
     glm_mat4_identity(TransformMatrix);
-    glm_translate(
-        TransformMatrix,
-        Transform->Position
-        );
-    glm_rotate(
-        TransformMatrix,
-        glm_rad(Transform->Rotation[3]),
-        Transform->Rotation
-        );
-    glm_scale(
-        TransformMatrix,
-        Transform->Scale
-        );
+    glm_translate(TransformMatrix, Transform->Position);
+    glm_rotate(TransformMatrix, glm_rad(Transform->Rotation[3]),
+               Transform->Rotation);
+    glm_scale(TransformMatrix, Transform->Scale);
 }
 
-VOID
-MthEulerToAxisAngle(
-    _In_ vec3 Euler,
-    _Out_ vec4 AxisAngle
-    )
+VOID MthEulerToAxisAngle(_In_ vec3 Euler, _Out_ vec4 AxisAngle)
 /*++
 
 Routine Description:
@@ -124,7 +99,7 @@ Return Value:
     float s3 = sin(Euler[2]) / 2;
 
     AxisAngle[3] = 2 * acos(c1 * c2 * c3 - s1 * s2 * s3); // angle
-    AxisAngle[0] = s1 * s2 * c3 + c1 * c2 * s3; // x
-    AxisAngle[1] = s1 * c2 * c3 + c1 * s2 * s3; // y
-    AxisAngle[2]= c1 * s2 * c3 - s1 * c2 * s3; // z
+    AxisAngle[0] = s1 * s2 * c3 + c1 * c2 * s3;           // x
+    AxisAngle[1] = s1 * c2 * c3 + c1 * s2 * s3;           // y
+    AxisAngle[2] = c1 * s2 * c3 - s1 * c2 * s3;           // z
 }

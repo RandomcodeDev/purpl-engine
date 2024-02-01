@@ -30,105 +30,55 @@
 typedef struct LOG_CALLBACK
 {
     PFN_LOG_LOG Log;
-    void* Data;
+    void *Data;
     int Level;
 } LOG_CALLBACK;
 
 static struct LOG_STATE
 {
-    void* Data;
+    void *Data;
     PFN_LOG_LOCK Lock;
     int Level;
     bool Quiet;
     LOG_CALLBACK Callbacks[LOG_MAX_CALLBACKS];
 } LogState;
 
-static CONST char* LevelStrings[] =
-{
-    "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
-};
+static CONST char *LevelStrings[] = {"TRACE", "DEBUG", "INFO",
+                                     "WARN",  "ERROR", "FATAL"};
 
 #ifdef LOG_USE_COLOR
-static CONST char* LevelColours[] =
-{
-    "\x1b[38;5;197m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
-};
+static CONST char *LevelColours[] = {"\x1b[38;5;197m", "\x1b[36m", "\x1b[32m",
+                                     "\x1b[33m",       "\x1b[31m", "\x1b[35m"};
 #endif
 
-
-static void
-StdoutCallback(
-    LOG_EVENT* Event
-    )
+static void StdoutCallback(LOG_EVENT *Event)
 {
     char Buffer[64];
-    Buffer[strftime(
-               Buffer,
-               sizeof(Buffer),
-               "%H:%M:%S",
-               Event->Time
-               )] = '\0';
+    Buffer[strftime(Buffer, sizeof(Buffer), "%H:%M:%S", Event->Time)] = '\0';
 #ifdef LOG_USE_COLOR
-    fprintf(
-        Event->Data,
-        "%s \x1b[38;5;213m%s\x1b[0m %s%-5s\x1b[0m \x1b[90m%s:",
-        Buffer,
-        AsCurrentThread->Name,
-        LevelColours[Event->Level],
-        LevelStrings[Event->Level],
-        Event->File
-        );
-    if ( Event->HexLine )
-        fprintf(
-            Event->Data,
-            "0x%llX:\x1b[0m ",
-            (UINT64)Event->Line
-            );
+    fprintf(Event->Data,
+            "%s \x1b[38;5;213m%s\x1b[0m %s%-5s\x1b[0m \x1b[90m%s:", Buffer,
+            AsCurrentThread->Name, LevelColours[Event->Level],
+            LevelStrings[Event->Level], Event->File);
+    if (Event->HexLine)
+        fprintf(Event->Data, "0x%llX:\x1b[0m ", (UINT64)Event->Line);
     else
-        fprintf(
-            Event->Data,
-            "%lld:\x1b[0m ",
-            (INT64)Event->Line
-            );
+        fprintf(Event->Data, "%lld:\x1b[0m ", (INT64)Event->Line);
 #else
-    fprintf(
-        Event->Data,
-        "%s %s %-5s %s:",
-        Buffer,
-        AsCurrentThread->Name,
-        LevelStrings[Event->Level],
-        Event->File
-        );
-    if ( Event->HexLine )
-        fprintf(
-            Event->Data,
-            "0x%llX: ",
-            (UINT64)Event->Line
-            );
+    fprintf(Event->Data, "%s %s %-5s %s:", Buffer, AsCurrentThread->Name,
+            LevelStrings[Event->Level], Event->File);
+    if (Event->HexLine)
+        fprintf(Event->Data, "0x%llX: ", (UINT64)Event->Line);
     else
-        fprintf(
-            Event->Data,
-            "%lld: ",
-            (INT64)Event->Line
-            );
+        fprintf(Event->Data, "%lld: ", (INT64)Event->Line);
 #endif
-    vfprintf(
-        Event->Data,
-        Event->Format,
-        Event->ArgList
-        );
-    fprintf(
-        Event->Data,
-        "\n"
-        );
+    vfprintf(Event->Data, Event->Format, Event->ArgList);
+    fprintf(Event->Data, "\n");
     fflush(Event->Data);
 }
 
 #ifdef PURPL_HAVE_PLATPRINT
-void
-PlatPrintCallback(
-    LOG_EVENT* Event
-    )
+void PlatPrintCallback(LOG_EVENT *Event)
 /*++
 
 Routine Description:
@@ -146,214 +96,107 @@ Return Value:
 
 --*/
 {
-    char Time[64] = { 0 };
-    char Message[1024] = { 0 };
-    char All[1024] = { 0 };
+    char Time[64] = {0};
+    char Message[1024] = {0};
+    char All[1024] = {0};
 
-    Time[strftime(
-        Time,
-        sizeof(Time),
-        "%H:%M:%S",
-        Event->Time
-        )] = 0;
+    Time[strftime(Time, sizeof(Time), "%H:%M:%S", Event->Time)] = 0;
 
-    vsnprintf(
-        Message,
-        sizeof(Message),
-        Event->Format,
-        Event->ArgList
-        );
+    vsnprintf(Message, sizeof(Message), Event->Format, Event->ArgList);
     if (Event->HexLine)
-        snprintf(
-            All,
-            sizeof(All),
-            "%s %s %-5s %s:0x%llX: %s\n",
-            Time,
-            AsCurrentThread->Name,
-            LogGetLevelString(Event->Level),
-            Event->File,
-            (UINT64)Event->Line,
-            Message
-            );
+        snprintf(All, sizeof(All), "%s %s %-5s %s:0x%llX: %s\n", Time,
+                 AsCurrentThread->Name, LogGetLevelString(Event->Level),
+                 Event->File, (UINT64)Event->Line, Message);
     else
-        snprintf(
-            All,
-            sizeof(All),
-            "%s %s %-5s %s:%lld: %s\n",
-            Time,
-            AsCurrentThread->Name,
-            LogGetLevelString(Event->Level),
-            Event->File,
-            (INT64)Event->Line,
-            Message
-            );
+        snprintf(All, sizeof(All), "%s %s %-5s %s:%lld: %s\n", Time,
+                 AsCurrentThread->Name, LogGetLevelString(Event->Level),
+                 Event->File, (INT64)Event->Line, Message);
 
     PlatPrint(All);
 }
 #endif
 
-static void
-FileCallback(
-    LOG_EVENT* Event
-    )
+static void FileCallback(LOG_EVENT *Event)
 {
-    char Buffer[64] = { 0 };
-    Buffer[strftime(
-            Buffer,
-            sizeof(Buffer),
-            "%Y-%m-%d %H:%M:%S",
-            Event->Time
-            )] = '\0';
-    fprintf(
-        Event->Data,
-        "%s %s %-5s %s:",
-        Buffer,
-        AsCurrentThread->Name,
-        LevelStrings[Event->Level],
-        Event->File
-        );
-    if ( Event->HexLine )
-        fprintf(
-            Event->Data,
-            "0x%llX: ",
-            (UINT64)Event->Line
-            );
+    char Buffer[64] = {0};
+    Buffer[strftime(Buffer, sizeof(Buffer), "%Y-%m-%d %H:%M:%S", Event->Time)] =
+        '\0';
+    fprintf(Event->Data, "%s %s %-5s %s:", Buffer, AsCurrentThread->Name,
+            LevelStrings[Event->Level], Event->File);
+    if (Event->HexLine)
+        fprintf(Event->Data, "0x%llX: ", (UINT64)Event->Line);
     else
-        fprintf(
-            Event->Data,
-            "%lld: ",
-            (INT64)Event->Line
-            );
-    vfprintf(
-        Event->Data,
-        Event->Format,
-        Event->ArgList
-        );
-    fprintf(
-        Event->Data,
-        "\n"
-        );
+        fprintf(Event->Data, "%lld: ", (INT64)Event->Line);
+    vfprintf(Event->Data, Event->Format, Event->ArgList);
+    fprintf(Event->Data, "\n");
     fflush(Event->Data);
 }
 
-
-static void
-LogLock(
-    void
-    )
+static void LogLock(void)
 {
-    if ( LogState.Lock )
+    if (LogState.Lock)
     {
-        LogState.Lock(
-            true,
-            LogState.Data
-            );
+        LogState.Lock(true, LogState.Data);
     }
 }
 
-
-static void
-LogUnlock(
-    void
-    )
+static void LogUnlock(void)
 {
-    if ( LogState.Lock )
+    if (LogState.Lock)
     {
-        LogState.Lock(
-            false,
-            LogState.Data
-            );
+        LogState.Lock(false, LogState.Data);
     }
 }
-
 
 CONST
-char*
-LogGetLevelString(
-    LOG_LEVEL Level
-    )
+char *LogGetLevelString(LOG_LEVEL Level)
 {
     return LevelStrings[Level];
 }
 
-
-void
-LogSetLock(
-    PFN_LOG_LOCK Lock,
-    void* Data
-    )
+void LogSetLock(PFN_LOG_LOCK Lock, void *Data)
 {
     LogState.Lock = Lock;
     LogState.Data = Data;
 }
 
-
-void
-LogSetLevel(
-    LOG_LEVEL Level
-    )
+void LogSetLevel(LOG_LEVEL Level)
 {
     LogState.Level = Level;
 }
 
 LOG_LEVEL
-LogGetLevel(
-    VOID
-    )
+LogGetLevel(VOID)
 {
     return LogState.Level;
 }
 
-void
-LogSetQuiet(
-    bool Quiet
-    )
+void LogSetQuiet(bool Quiet)
 {
     LogState.Quiet = Quiet;
 }
 
-
-int
-LogAddCallback(
-    PFN_LOG_LOG Callback,
-    void* Data,
-    LOG_LEVEL Level
-    )
+int LogAddCallback(PFN_LOG_LOG Callback, void *Data, LOG_LEVEL Level)
 {
-    for ( int i = 0; i < LOG_MAX_CALLBACKS; i++ )
+    for (int i = 0; i < LOG_MAX_CALLBACKS; i++)
     {
-        if ( !LogState.Callbacks[i].Log )
+        if (!LogState.Callbacks[i].Log)
         {
-            LogState.Callbacks[i] = (LOG_CALLBACK)
-            {Callback, Data, Level};
+            LogState.Callbacks[i] = (LOG_CALLBACK){Callback, Data, Level};
             return 0;
         }
     }
     return -1;
 }
 
-
-int
-LogAddFile(
-    FILE* File,
-    LOG_LEVEL Level
-    )
+int LogAddFile(FILE *File, LOG_LEVEL Level)
 {
-    return LogAddCallback(
-        FileCallback,
-        File,
-        Level
-        );
+    return LogAddCallback(FileCallback, File, Level);
 }
 
-
-static void
-InitEvent(
-    LOG_EVENT* Event,
-    void* Data
-    )
+static void InitEvent(LOG_EVENT *Event, void *Data)
 {
-    if ( !Event->Time )
+    if (!Event->Time)
     {
         time_t t = time(NULL);
         Event->Time = localtime(&t);
@@ -361,19 +204,10 @@ InitEvent(
     Event->Data = Data;
 }
 
-
-void
-LogMessage(
-    LOG_LEVEL Level,
-    CONST char* File,
-    uint64_t Line,
-    bool HexLine,
-    CONST char* Format,
-    ...
-    )
+void LogMessage(LOG_LEVEL Level, CONST char *File, uint64_t Line, bool HexLine,
+                CONST char *Format, ...)
 {
-    LOG_EVENT Event =
-    {
+    LOG_EVENT Event = {
         .Format = Format,
         .File = File,
         .Line = Line,
@@ -383,16 +217,10 @@ LogMessage(
 
     LogLock();
 
-    if ( !LogState.Quiet && Level >= LogState.Level )
+    if (!LogState.Quiet && Level >= LogState.Level)
     {
-        InitEvent(
-            &Event,
-            stderr
-            );
-        va_start(
-            Event.ArgList,
-            Format
-            );
+        InitEvent(&Event, stderr);
+        va_start(Event.ArgList, Format);
 
 #ifndef PURPL_SWITCH
         StdoutCallback(&Event);
@@ -405,19 +233,13 @@ LogMessage(
         va_end(Event.ArgList);
     }
 
-    for ( int i = 0; i < LOG_MAX_CALLBACKS && LogState.Callbacks[i].Log; i++ )
+    for (int i = 0; i < LOG_MAX_CALLBACKS && LogState.Callbacks[i].Log; i++)
     {
-        LOG_CALLBACK* cb = &LogState.Callbacks[i];
-        if ( Level >= cb->Level )
+        LOG_CALLBACK *cb = &LogState.Callbacks[i];
+        if (Level >= cb->Level)
         {
-            InitEvent(
-                &Event,
-                cb->Data
-                );
-            va_start(
-                Event.ArgList,
-                Format
-                );
+            InitEvent(&Event, cb->Data);
+            va_start(Event.ArgList, Format);
             cb->Log(&Event);
             va_end(Event.ArgList);
         }

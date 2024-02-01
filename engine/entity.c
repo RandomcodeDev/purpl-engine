@@ -16,42 +16,24 @@ Abstract:
 
 #include "entity.h"
 
-extern
-VOID
-CameraImport(
-    _In_ ecs_world_t* World
-    );
+extern VOID CameraImport(_In_ ecs_world_t *World);
 
-extern
-VOID
-MathImport(
-    _In_ ecs_world_t* World
-    );
+extern VOID MathImport(_In_ ecs_world_t *World);
 
-extern
-VOID
-RenderImport(
-    _In_ ecs_world_t* World
-    );
+extern VOID RenderImport(_In_ ecs_world_t *World);
 
 //
 // ECS world
 //
 
-static ecs_world_t* EngineEcsWorld;
+static ecs_world_t *EngineEcsWorld;
 
-static
-VOID
-EcsLog(
-    _In_ INT Level,
-    _In_ PCSTR File,
-    _In_ INT Line,
-    _In_ PCSTR Message
-    )
+static VOID EcsLog(_In_ INT Level, _In_ PCSTR File, _In_ INT Line,
+                   _In_ PCSTR Message)
 {
     LOG_LEVEL RealLevel;
 
-    switch ( Level )
+    switch (Level)
     {
     case 0:
         RealLevel = LogLevelTrace;
@@ -72,27 +54,17 @@ EcsLog(
 
     RealLevel = LogLevelTrace;
 
-    if ( RealLevel == LogLevelFatal )
+    if (RealLevel == LogLevelFatal)
     {
         CmnError("%s", Message);
     }
     else
     {
-        LogMessage(
-            RealLevel,
-            File,
-            Line,
-            FALSE,
-            "%s",
-            Message
-            );
+        LogMessage(RealLevel, File, Line, FALSE, "%s", Message);
     }
 }
 
-VOID
-EcsInitialize(
-    VOID
-    )
+VOID EcsInitialize(VOID)
 {
     LogInfo("Initializing ECS");
 
@@ -110,87 +82,47 @@ EcsInitialize(
     LogTrace("Creating ECS world");
     EngineEcsWorld = ecs_init();
 
-    //ecs_set_target_fps(
-    //    EngineEcsWorld,
-    //    60
-    //    );
+    // ecs_set_target_fps(
+    //     EngineEcsWorld,
+    //     60
+    //     );
 
-#if (defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)) && !defined(PURPL_SWITCH)
+#if (defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)) &&                 \
+    !defined(PURPL_SWITCH)
     LogTrace("Initializing ECS REST");
-    ECS_IMPORT(
-        EngineEcsWorld,
-        FlecsMonitor
-        );
-    ecs_singleton_set(
-        EngineEcsWorld,
-        EcsRest,
-        {0}
-        );
+    ECS_IMPORT(EngineEcsWorld, FlecsMonitor);
+    ecs_singleton_set(EngineEcsWorld, EcsRest, {0});
 #endif
 
     LogTrace("Importing components and systems");
-    ECS_IMPORT(
-        EngineEcsWorld,
-        Camera
-        );
-    ECS_IMPORT(
-        EngineEcsWorld,
-        Math
-        );
-    ECS_IMPORT(
-        EngineEcsWorld,
-        Render
-        );
+    ECS_IMPORT(EngineEcsWorld, Camera);
+    ECS_IMPORT(EngineEcsWorld, Math);
+    ECS_IMPORT(EngineEcsWorld, Render);
 }
 
-VOID
-EcsBeginFrame(
-    _In_ UINT64 Delta
-    )
+VOID EcsBeginFrame(_In_ UINT64 Delta)
 {
-    ecs_frame_begin(
-        EngineEcsWorld,
-        (FLOAT)Delta / 1000
-        );
+    ecs_frame_begin(EngineEcsWorld, (FLOAT)Delta / 1000);
 }
 
-VOID
-EcsEndFrame(
-    VOID
-    )
+VOID EcsEndFrame(VOID)
 {
-    ecs_frame_end(
-        EngineEcsWorld
-        );
+    ecs_frame_end(EngineEcsWorld);
 }
 
-VOID
-EcsShutdown(
-    VOID
-    )
+VOID EcsShutdown(VOID)
 {
     LogInfo("Shutting down ECS");
     ecs_fini(EngineEcsWorld);
 }
 
-ecs_entity_t
-EcsCreateEntity(
-    _In_opt_ PCSTR Name
-    )
+ecs_entity_t EcsCreateEntity(_In_opt_ PCSTR Name)
 {
     LogTrace("Creating entity with name %s", Name);
-    return ecs_entity(
-        EngineEcsWorld,
-        {
-            .name = Name
-        }
-        );
+    return ecs_entity(EngineEcsWorld, {.name = Name});
 }
 
-VOID
-EcsSetWorld(
-    _In_ ecs_world_t* World
-    )
+VOID EcsSetWorld(_In_ ecs_world_t *World)
 {
     LogInfo("Setting ECS world");
 
@@ -198,10 +130,7 @@ EcsSetWorld(
     EngineEcsWorld = World;
 }
 
-ecs_world_t*
-EcsGetWorld(
-    VOID
-    )
+ecs_world_t *EcsGetWorld(VOID)
 {
     return EngineEcsWorld;
 }

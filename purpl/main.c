@@ -18,11 +18,7 @@ Abstract:
 
 #include "engine/engine.h"
 
-INT
-PurplMain(
-    _In_ INT ArgumentCount,
-    _In_ PCHAR* Arguments
-    )
+INT PurplMain(_In_ INT ArgumentCount, _In_ PCHAR *Arguments)
 /*++
 
 Routine Description:

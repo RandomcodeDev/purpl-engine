@@ -46,36 +46,22 @@ extern ECS_COMPONENT_DECLARE(CAMERA);
 // Initialize a perspective camera
 //
 
-extern
-VOID
-InitializePerspectiveCamera(
-    _In_ vec3 Position,
-    _In_ vec4 Rotation,
-    _In_ DOUBLE FieldOfView,
-    _In_ DOUBLE Aspect,
-    _In_ DOUBLE NearClip,
-    _In_ DOUBLE FarClip,
-    _Out_ PCAMERA Camera
-    );
+extern VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation,
+                                        _In_ DOUBLE FieldOfView,
+                                        _In_ DOUBLE Aspect,
+                                        _In_ DOUBLE NearClip,
+                                        _In_ DOUBLE FarClip,
+                                        _Out_ PCAMERA Camera);
 
 //
 // Initialize an orthographic camera
 //
 
-extern
-VOID
-InitializeOrthographicCamera(
-    _In_ vec3 Position,
-    _In_ vec4 Rotation,
-    _Out_ PCAMERA Camera
-    );
+extern VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation,
+                                         _Out_ PCAMERA Camera);
 
 //
 // Calculate the camera matrices
 //
 
-extern
-VOID
-CalculateCameraMatrices(
-    _Inout_ PCAMERA Camera
-    );
+extern VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera);

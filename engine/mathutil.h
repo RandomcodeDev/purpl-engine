@@ -34,20 +34,11 @@ extern ECS_COMPONENT_DECLARE(TRANSFORM);
 // Convert a transform into a transformation matrix
 //
 
-extern
-VOID
-MthCreateTransformMatrix(
-    _In_ PTRANSFORM Transform,
-    _Out_ mat4 TransformMatrix
-    );
+extern VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
+                                     _Out_ mat4 TransformMatrix);
 
 //
 // Convert Euler angles into an axis angle
 //
 
-extern
-VOID
-MthEulerToAxisAngle(
-    _In_ vec3 Euler,
-    _Out_ vec4 AxisAngle
-    );
+extern VOID MthEulerToAxisAngle(_In_ vec3 Euler, _Out_ vec4 AxisAngle);

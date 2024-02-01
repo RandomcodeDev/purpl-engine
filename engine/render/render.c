@@ -7,16 +7,9 @@ static RENDER_BACKEND Backend;
 static FLOAT Scale;
 
 #ifdef PURPL_DIRECTX
-extern
-VOID
-Dx12InitializeBackend(
-    _Out_ PRENDER_BACKEND Backend
-    );
+extern VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend);
 #else
-VOID
-Dx12InitializeBackend(
-    _Out_ PRENDER_BACKEND Backend
-    )
+VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
 {
     UNREFERENCED_PARAMETER(Backend);
     LogError("Why are you intializing DX12 on this platform?");
@@ -24,25 +17,15 @@ Dx12InitializeBackend(
 #endif
 
 #ifdef PURPL_VULKAN
-extern
-VOID
-VlkInitializeBackend(
-    _Out_ PRENDER_BACKEND Backend
-    );
+extern VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend);
 #else
-VOID
-VlkInitializeBackend(
-    _Out_ PRENDER_BACKEND Backend
-    )
+VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 {
     LogError("Why are you intializing Vulkan on this platform?");
 }
 #endif
 
-VOID
-RdrInitialize(
-    _In_ ecs_iter_t* Iterator
-    )
+VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
     LogInfo("Initializing renderer");
     RdrSetScale(1.0f);
@@ -52,7 +35,7 @@ RdrInitialize(
 #elif defined(PURPL_VULKAN)
     Api = RenderApiVulkan;
 #endif
-    switch ( Api )
+    switch (Api)
     {
     default:
     case RenderApiNone:
@@ -65,7 +48,7 @@ RdrInitialize(
         break;
     }
 
-    if ( Backend.Initialize  )
+    if (Backend.Initialize)
     {
         Backend.Initialize();
     }
@@ -74,82 +57,51 @@ RdrInitialize(
 }
 ecs_entity_t ecs_id(RdrInitialize);
 
-VOID
-RdrBeginFrame(
-    _In_ ecs_iter_t* Iterator
-    )
+VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 {
-    if ( Backend.BeginFrame )
+    if (Backend.BeginFrame)
     {
         Backend.BeginFrame();
     }
 }
 ecs_entity_t ecs_id(RdrBeginFrame);
 
-VOID
-RdrEndFrame(
-    _In_ ecs_iter_t* Iterator
-    )
+VOID RdrEndFrame(_In_ ecs_iter_t *Iterator)
 {
-    if ( Backend.EndFrame )
+    if (Backend.EndFrame)
     {
         Backend.EndFrame();
     }
 }
 ecs_entity_t ecs_id(RdrEndFrame);
 
-VOID
-RdrShutdown(
-    VOID
-    )
+VOID RdrShutdown(VOID)
 {
-    if ( Backend.Shutdown )
+    if (Backend.Shutdown)
     {
         Backend.Shutdown();
     }
 }
 
-VOID
-RenderImport(
-    _In_ ecs_world_t* World
-    )
+VOID RenderImport(_In_ ecs_world_t *World)
 {
     LogTrace("Importing Render ECS module");
 
-    ECS_MODULE(
-        World,
-        Render
-        );
+    ECS_MODULE(World, Render);
 
-    ECS_SYSTEM_DEFINE(
-        World,
-        RdrInitialize,
-        EcsOnStart
-        );
-    ECS_SYSTEM_DEFINE(
-        World,
-        RdrBeginFrame,
-        EcsPreUpdate
-        );
-    ECS_SYSTEM_DEFINE(
-        World,
-        RdrEndFrame,
-        EcsPostUpdate
-        );
+    ECS_SYSTEM_DEFINE(World, RdrInitialize, EcsOnStart);
+    ECS_SYSTEM_DEFINE(World, RdrBeginFrame, EcsPreUpdate);
+    ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 
 FLOAT
-RdrGetScale(
-    VOID
-    )
+RdrGetScale(VOID)
 {
     return Scale;
 }
 
 FLOAT
-RdrSetScale(
-    FLOAT NewScale
-    )
+RdrSetScale(FLOAT NewScale)
 {
     FLOAT OldScale = Scale;
     Scale = NewScale;
@@ -157,31 +109,21 @@ RdrSetScale(
 }
 
 UINT32
-RdrGetWidth(
-    VOID
-    )
+RdrGetWidth(VOID)
 {
     UINT32 Width;
 
-    VidGetSize(
-        &Width,
-        NULL
-        );
+    VidGetSize(&Width, NULL);
 
     return Width * Scale;
 }
 
 UINT32
-RdrGetHeight(
-    VOID
-    )
+RdrGetHeight(VOID)
 {
     UINT32 Height;
 
-    VidGetSize(
-        NULL,
-        &Height
-        );
+    VidGetSize(NULL, &Height);
 
     return Height * Scale;
 }

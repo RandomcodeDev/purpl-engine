@@ -39,22 +39,10 @@ typedef enum RENDER_API
 
 typedef struct RENDER_BACKEND
 {
-    VOID
-    (*Initialize)(
-        VOID
-        );
-    VOID
-    (*BeginFrame)(
-        VOID
-        );
-    VOID
-    (*EndFrame)(
-        VOID
-        );
-    VOID
-    (*Shutdown)(
-        VOID
-        );
+    VOID (*Initialize)(VOID);
+    VOID (*BeginFrame)(VOID);
+    VOID (*EndFrame)(VOID);
+    VOID (*Shutdown)(VOID);
 } RENDER_BACKEND, *PRENDER_BACKEND;
 
 //
@@ -68,53 +56,21 @@ typedef struct MODEL
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
-extern
-VOID
-RdrInitialize(
-    _In_ ecs_iter_t* Iterator
-    );
+extern VOID RdrInitialize(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrInitialize);
 
-extern
-VOID
-RdrBeginFrame(
-    _In_ ecs_iter_t* Iterator
-    );
+extern VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrBeginFrame);
 
-extern
-VOID
-RdrEndFrame(
-    _In_ ecs_iter_t* Iterator
-    );
+extern VOID RdrEndFrame(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 
-extern
-VOID
-RdrShutdown(
-    VOID
-    );
+extern VOID RdrShutdown(VOID);
 
-extern
-FLOAT
-RdrGetScale(
-    VOID
-    );
+extern FLOAT RdrGetScale(VOID);
 
-extern
-FLOAT
-RdrSetScale(
-    FLOAT NewScale
-    );
+extern FLOAT RdrSetScale(FLOAT NewScale);
 
-extern
-UINT32
-RdrGetWidth(
-    VOID
-    );
+extern UINT32 RdrGetWidth(VOID);
 
-extern
-UINT32
-RdrGetHeight(
-    VOID
-    );
+extern UINT32 RdrGetHeight(VOID);

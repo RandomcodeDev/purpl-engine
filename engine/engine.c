@@ -18,15 +18,12 @@ PCHAR EngineDataDirectory;
 
 CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount] = {
     "saves/", // EngineDataDirectorySaves
-    "logs/", // EngineDataDirectoryLogs
+    "logs/",  // EngineDataDirectoryLogs
 };
 
 ecs_entity_t EngineMainCamera;
 
-VOID
-EngInitialize(
-    VOID
-    )
+VOID EngInitialize(VOID)
 /*++
 
 Routine Description:
@@ -48,25 +45,21 @@ Return Value:
 
     LogInfo("Initializing engine");
 
-    EngineDataDirectory = CmnFormatString(
-        "%s" GAME_EXECUTABLE_NAME "/",
-        PlatGetUserDataDirectory()
-        );
+    EngineDataDirectory = CmnFormatString("%s" GAME_EXECUTABLE_NAME "/",
+                                          PlatGetUserDataDirectory());
 
     LogInfo("Ensuring engine data directory %s exists", EngineDataDirectory);
-    if ( !FsCreateDirectory(EngineDataDirectory) )
+    if (!FsCreateDirectory(EngineDataDirectory))
     {
         CmnError("Failed to create engine directory %s", EngineDataDirectory);
     }
-    for ( i = 0; i < EngineDataDirectoryCount; i++ )
+    for (i = 0; i < EngineDataDirectoryCount; i++)
     {
-        LogDebug("Creating directory %s%s", EngineDataDirectory, EngineDataDirectories[i]);
-        Path = CmnFormatTempString(
-            "%s%s",
-            EngineDataDirectory,
-            EngineDataDirectories[i]
-            );
-        if ( !FsCreateDirectory(Path) )
+        LogDebug("Creating directory %s%s", EngineDataDirectory,
+                 EngineDataDirectories[i]);
+        Path = CmnFormatTempString("%s%s", EngineDataDirectory,
+                                   EngineDataDirectories[i]);
+        if (!FsCreateDirectory(Path))
         {
             CmnError("Failed to create engine directory %s", Path);
         }
@@ -78,31 +71,18 @@ Return Value:
     RawTime = time(NULL);
     Time = *localtime(&RawTime);
     Path = CmnFormatTempString(
-        "%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log",
-        EngineDataDirectory,
-        EngineDataDirectories[EngineDataDirectoryLogs],
-        Time.tm_year + 1900,
-        Time.tm_mon + 1,
-        Time.tm_mday,
-        Time.tm_hour,
-        Time.tm_min,
-        Time.tm_sec
-        );
+        "%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log", EngineDataDirectory,
+        EngineDataDirectories[EngineDataDirectoryLogs], Time.tm_year + 1900,
+        Time.tm_mon + 1, Time.tm_mday, Time.tm_hour, Time.tm_min, Time.tm_sec);
 
     LogInfo("Opening log file %s", Path);
-    FILE* LogFile = fopen(
-        Path,
-        "ab"
-        );
-    if ( !LogFile )
+    FILE *LogFile = fopen(Path, "ab");
+    if (!LogFile)
     {
         CmnError("Failed to open log file %s: %s", Path, strerror(errno));
     }
 
-    LogAddFile(
-        LogFile,
-        LogGetLevel()
-        );
+    LogAddFile(LogFile, LogGetLevel());
 #endif
 
     LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
@@ -111,7 +91,8 @@ Return Value:
 
     EcsInitialize();
 
-    LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);
+    LogInfo("Successfully initialized engine, data directory is %s",
+            EngineDataDirectory);
 }
 
 static UINT64 Start;
@@ -123,57 +104,42 @@ static UINT FramesPerSecond;
 static DOUBLE Delta;
 
 DOUBLE
-EngGetDelta(
-    VOID
-    )
+EngGetDelta(VOID)
 {
     return Delta / 1000;
 }
 
 UINT32
-EngGetFramerate(
-    VOID
-    )
+EngGetFramerate(VOID)
 {
     return FramesPerSecond;
 }
 
 UINT64
-EngGetRuntime(
-    VOID
-    )
+EngGetRuntime(VOID)
 {
     return time(NULL) - Start;
 }
 
-VOID
-EngMainLoop(
-    VOID
-    )
+VOID EngMainLoop(VOID)
 {
     BOOLEAN Running;
 
     Running = TRUE;
-    while ( Running )
+    while (Running)
     {
         Running = VidUpdate();
 
         EngStartFrame();
 
-        ecs_progress(
-            EcsGetWorld(),
-            (FLOAT)Delta
-            );
+        ecs_progress(EcsGetWorld(), (FLOAT)Delta);
 
         EngEndFrame();
     }
 }
 
 // TODO: integrate into EngMainLoop?
-VOID
-EngStartFrame(
-    VOID
-    )
+VOID EngStartFrame(VOID)
 {
     UINT64 Hours;
     UINT64 Minutes;
@@ -181,11 +147,11 @@ EngStartFrame(
 
     Now = (DOUBLE)PlatGetMilliseconds();
     Delta = Now - Last;
-    if ( Last != 0 )
+    if (Last != 0)
     {
         Time += Delta;
         FramesThisSecond++;
-        if ( Time > 1000 )
+        if (Time > 1000)
         {
             FramesPerSecond = FramesThisSecond;
             Time = 0;
@@ -205,10 +171,7 @@ EngStartFrame(
 }
 
 // TODO: integrate into EngMainLoop?
-VOID
-EngEndFrame(
-    VOID
-    )
+VOID EngEndFrame(VOID)
 /*++
 
 Routine Description:
@@ -228,10 +191,7 @@ Return Value:
     Last = Now;
 }
 
-VOID
-EngShutdown(
-    VOID
-    )
+VOID EngShutdown(VOID)
 /*++
 
 Routine Description:
@@ -259,26 +219,16 @@ Return Value:
     LogInfo("Successfully shut down engine");
 }
 
-ecs_entity_t
-EngGetMainCamera(
-    VOID
-    )
+ecs_entity_t EngGetMainCamera(VOID)
 {
     return EngineMainCamera;
 }
 
-VOID
-EngSetMainCamera(
-    _In_ ecs_entity_t Camera
-    )
+VOID EngSetMainCamera(_In_ ecs_entity_t Camera)
 {
     LogTrace("Setting main camera to entity %u", Camera);
-    PCAMERA CameraComponent = ecs_get_mut(
-        EcsGetWorld(),
-        Camera,
-        CAMERA
-        );
-    if ( CameraComponent )
+    PCAMERA CameraComponent = ecs_get_mut(EcsGetWorld(), Camera, CAMERA);
+    if (CameraComponent)
     {
         EngineMainCamera = Camera;
         CalculateCameraMatrices(CameraComponent);

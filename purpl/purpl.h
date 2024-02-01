@@ -19,7 +19,9 @@ Abstract:
 #ifndef PURPL_RESOURCE_FILE
 
 #ifdef __cplusplus
-#define BEGIN_EXTERN_C extern "C" {
+#define BEGIN_EXTERN_C                                                         \
+    extern "C"                                                                 \
+    {
 #define END_EXTERN_C }
 #else
 #define BEGIN_EXTERN_C
@@ -53,8 +55,8 @@ Abstract:
 #ifdef __cplusplus
 #include <comdef.h>
 #endif
-#include <shellapi.h>
 #include <ShlObj.h>
+#include <shellapi.h>
 #include <uxtheme.h>
 #include <windowsx.h>
 
@@ -67,9 +69,9 @@ Abstract:
 
 #ifdef PURPL_UNIX
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <sys/utsname.h>
 
 #ifndef PURPL_SWITCH
@@ -116,11 +118,7 @@ BEGIN_EXTERN_C
 // Cross platform entry point
 //
 
-INT
-PurplMain(
-    _In_ INT ArgumentCount,
-    _In_ PCHAR* Arguments
-    );
+INT PurplMain(_In_ INT ArgumentCount, _In_ PCHAR *Arguments);
 
 #endif
 
@@ -136,7 +134,6 @@ PurplMain(
 //
 // Game version
 //
-
 
 //
 // Switch mountpoints

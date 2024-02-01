@@ -23,68 +23,40 @@ Abstract:
 // Initialize the ECS
 //
 
-extern
-VOID
-EcsInitialize(
-    VOID
-    );
+extern VOID EcsInitialize(VOID);
 
 //
 // Begin an ECS frame
 //
 
-extern
-VOID
-EcsBeginFrame(
-    _In_ UINT64 Delta
-    );
+extern VOID EcsBeginFrame(_In_ UINT64 Delta);
 
 //
 // End an ECS frame
 //
 
-extern
-VOID
-EcsEndFrame(
-    VOID
-    );
+extern VOID EcsEndFrame(VOID);
 
 //
 // Shut down the ECS
 //
 
-extern
-VOID
-EcsShutdown(
-    VOID
-    );
+extern VOID EcsShutdown(VOID);
 
 //
 // Create an entity
 //
 
-extern
-ecs_entity_t
-EcsCreateEntity(
-    _In_opt_ PCSTR Name
-    );
+extern ecs_entity_t EcsCreateEntity(_In_opt_ PCSTR Name);
 
 //
 // Set the ECS world
 //
 
-extern
-VOID
-EcsSetWorld(
-    _In_ ecs_world_t* World
-    );
+extern VOID EcsSetWorld(_In_ ecs_world_t *World);
 
 //
 // Get the ECS world
 //
 
-extern
-ecs_world_t*
-EcsGetWorld(
-    VOID
-    );
+extern ecs_world_t *EcsGetWorld(VOID);

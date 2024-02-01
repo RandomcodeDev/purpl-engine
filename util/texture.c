@@ -29,12 +29,8 @@ static UINT8 FormatPitches[TextureFormatCount] = {
 };
 
 PTEXTURE
-CreateTexture(
-    _In_ TEXTURE_FORMAT Format,
-    _In_ UINT32 Width,
-    _In_ UINT32 Height,
-    _In_ PVOID Data
-    )
+CreateTexture(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width, _In_ UINT32 Height,
+              _In_ PVOID Data)
 /*++
 
 Routine Description:
@@ -60,24 +56,21 @@ Return Value:
     PTEXTURE Texture;
     SIZE_T Size;
 
-    if ( Format <= TextureFormatUndefined || Format >= TextureFormatCount ||
-         Width <= 0 || Height <= 0 )
+    if (Format <= TextureFormatUndefined || Format >= TextureFormatCount ||
+        Width <= 0 || Height <= 0)
     {
         LogError("Cannot create invalid texture");
         return NULL;
     }
 
     Size = sizeof(TEXTURE);
-    if ( !Data )
+    if (!Data)
     {
         Size += EstimateTextureSize(Format, Width, Height);
     }
 
-    Texture = CmnAlloc(
-        1,
-        Size
-        );
-    if ( !Texture )
+    Texture = CmnAlloc(1, Size);
+    if (!Texture)
     {
         LogError("Could not allocate texture");
         return NULL;
@@ -88,7 +81,7 @@ Return Value:
     Texture->Format = Format;
     Texture->Width = Width;
     Texture->Height = Height;
-    if ( Data )
+    if (Data)
     {
         Texture->Pixels = Data;
         Texture->DataSeparate = TRUE;
@@ -102,9 +95,7 @@ Return Value:
 }
 
 PTEXTURE
-LoadTexture(
-    _In_ PCSTR Path
-    )
+LoadTexture(_In_ PCSTR Path)
 /*++
 
 Routine Description:
@@ -130,13 +121,8 @@ Return Value:
     LogInfo("Loading texture %s", Path);
 
     Size = 0;
-    Texture = FsReadFile(
-        Path,
-        0,
-        &Size,
-        sizeof(TEXTURE) - TEXTURE_HEADER_SIZE
-        );
-    if ( !ValidateTexture(Texture) )
+    Texture = FsReadFile(Path, 0, &Size, sizeof(TEXTURE) - TEXTURE_HEADER_SIZE);
+    if (!ValidateTexture(Texture))
     {
         LogError("Texture %s is invalid", Path);
         return NULL;
@@ -144,40 +130,31 @@ Return Value:
 
     LogDebug("Validating texture");
     RequiredSize = TEXTURE_HEADER_SIZE;
-    if ( Size < RequiredSize )
+    if (Size < RequiredSize)
     {
-        LogError("Texture is %zu bytes but should be %zu bytes", Size, RequiredSize);
+        LogError("Texture is %zu bytes but should be %zu bytes", Size,
+                 RequiredSize);
         CmnFree(Texture);
         return NULL;
     }
 
     Data = (PBYTE)Texture + TEXTURE_HEADER_SIZE;
 
-    RealTexture = CmnAlloc(
-        1,
-        sizeof(TEXTURE) + GetTextureSize(*Texture)
-        );
-    if ( !RealTexture )
+    RealTexture = CmnAlloc(1, sizeof(TEXTURE) + GetTextureSize(*Texture));
+    if (!RealTexture)
     {
-        LogError("Failed to allocate %zu bytes for texture", sizeof(TEXTURE) + GetTextureSize(*Texture));
+        LogError("Failed to allocate %zu bytes for texture",
+                 sizeof(TEXTURE) + GetTextureSize(*Texture));
         CmnFree(Texture);
         return NULL;
     }
 
     LogDebug("Decompressing texture");
-    memcpy(
-        RealTexture,
-        Texture,
-        sizeof(TEXTURE)
-        );
+    memcpy(RealTexture, Texture, sizeof(TEXTURE));
     RealTexture->DataSeparate = FALSE;
     RealTexture->Pixels = (PBYTE)RealTexture + sizeof(TEXTURE);
-    if ( ZSTD_decompress(
-             RealTexture->Pixels,
-             GetTextureSize(*Texture),
-             Data,
-             Texture->CompressedSize
-             ) != GetTextureSize(*Texture) )
+    if (ZSTD_decompress(RealTexture->Pixels, GetTextureSize(*Texture), Data,
+                        Texture->CompressedSize) != GetTextureSize(*Texture))
     {
         LogError("Decompressed pixels are not the expected size");
         CmnFree(RealTexture);
@@ -191,10 +168,7 @@ Return Value:
 }
 
 BOOLEAN
-WriteTexture(
-    _In_ PCSTR Path,
-    _In_ PTEXTURE Texture
-    )
+WriteTexture(_In_ PCSTR Path, _In_ PTEXTURE Texture)
 /*++
 
 Routine Description:
@@ -217,55 +191,38 @@ Return Value:
 {
     PVOID Data;
 
-    if ( !Path || !Texture )
+    if (!Path || !Texture)
     {
         return FALSE;
     }
 
     LogInfo("Writing texture to %s", Path);
 
-    Data = CmnAlloc(
-        1,
-        ZSTD_COMPRESSBOUND(GetTextureSize(*Texture))
-        );
-    if ( !Data )
+    Data = CmnAlloc(1, ZSTD_COMPRESSBOUND(GetTextureSize(*Texture)));
+    if (!Data)
     {
         LogError("Failed to allocate memory for texture compression");
         return FALSE;
     }
 
     LogDebug("Compressing texture");
-    Texture->CompressedSize = ZSTD_compress(
-        Data,
-        ZSTD_COMPRESSBOUND(GetTextureSize(*Texture)),
-        Texture->Pixels,
-        GetTextureSize(*Texture),
-        ZSTD_btultra2
-        );
-    if ( ZSTD_isError(Texture->CompressedSize) )
+    Texture->CompressedSize =
+        ZSTD_compress(Data, ZSTD_COMPRESSBOUND(GetTextureSize(*Texture)),
+                      Texture->Pixels, GetTextureSize(*Texture), ZSTD_btultra2);
+    if (ZSTD_isError(Texture->CompressedSize))
     {
         LogError("Failed to compress texture");
         return FALSE;
     }
 
     LogDebug("Writing texture header");
-    if ( !FsWriteFile(
-             Path,
-             Texture,
-             TEXTURE_HEADER_SIZE,
-             FALSE
-             ) )
+    if (!FsWriteFile(Path, Texture, TEXTURE_HEADER_SIZE, FALSE))
     {
         LogError("Could not write texture header to %s", Path);
         return FALSE;
     }
     LogDebug("Writing texture data");
-    if ( !FsWriteFile(
-             Path,
-             Data,
-             Texture->CompressedSize,
-             TRUE
-             ) )
+    if (!FsWriteFile(Path, Data, Texture->CompressedSize, TRUE))
     {
         LogError("Could not write texture data to %s", Path);
         return FALSE;
@@ -277,9 +234,7 @@ Return Value:
 }
 
 SIZE_T
-GetFormatComponents(
-    _In_ TEXTURE_FORMAT Format
-    )
+GetFormatComponents(_In_ TEXTURE_FORMAT Format)
 /*++
 
 Routine Description:
@@ -296,17 +251,12 @@ Return Value:
 
 --*/
 {
-    return FormatComponents[PURPL_CLAMP(
-        Format,
-        TextureFormatUndefined,
-        TextureFormatCount - 1
-        )];
+    return FormatComponents[PURPL_CLAMP(Format, TextureFormatUndefined,
+                                        TextureFormatCount - 1)];
 }
 
 SIZE_T
-GetFormatPitch(
-    _In_ TEXTURE_FORMAT Format
-    )
+GetFormatPitch(_In_ TEXTURE_FORMAT Format)
 /*++
 
 Routine Description:
@@ -323,19 +273,13 @@ Return Value:
 
 --*/
 {
-    return FormatPitches[PURPL_CLAMP(
-        Format,
-        TextureFormatUndefined,
-        TextureFormatCount - 1
-        )];
+    return FormatPitches[PURPL_CLAMP(Format, TextureFormatUndefined,
+                                     TextureFormatCount - 1)];
 }
 
 SIZE_T
-EstimateTextureSize(
-    _In_ TEXTURE_FORMAT Format,
-    _In_ UINT32 Width,
-    _In_ UINT32 Height
-    )
+EstimateTextureSize(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width,
+                    _In_ UINT32 Height)
 /*++
 
 Routine Description:

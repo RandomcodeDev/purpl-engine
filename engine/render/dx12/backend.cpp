@@ -16,11 +16,7 @@ Abstract:
 
 DIRECTX12_DATA Dx12Data;
 
-static
-VOID
-Initialize(
-    VOID
-    )
+static VOID Initialize(VOID)
 {
     LogDebug("Initializing DirectX 12 backend");
 
@@ -48,35 +44,20 @@ Initialize(
     LogDebug("Successfully initialized DirectX 12 backend");
 }
 
-static
-VOID
-BeginFrame(
-    VOID
-    )
+static VOID BeginFrame(VOID)
 {
 }
 
-static
-VOID
-EndFrame(
-    VOID
-    )
+static VOID EndFrame(VOID)
 {
 }
 
-static
-VOID
-Shutdown(
-    VOID
-    )
+static VOID Shutdown(VOID)
 {
 }
 
 EXTERN_C
-VOID
-Dx12InitializeBackend(
-    _Out_ PRENDER_BACKEND Backend
-    )
+VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
 {
     LogDebug("Filling out render backend for DirectX 12");
 

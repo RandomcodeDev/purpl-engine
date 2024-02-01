@@ -34,8 +34,8 @@ END_EXTERN_C
 
 #define VMA_VULKAN_VERSION 1003000
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
-    //#define VMA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
-    //#define VMA_SYSTEM_ALIGNED_FREE CmnAlignedFree
+#define VMA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
+#define VMA_SYSTEM_ALIGNED_FREE CmnAlignedFree
 #define VMA_DEBUG_LOG_FORMAT(format, ...) LogDebug((format), __VA_ARGS__)
 #define VMA_HEAVY_ASSERT(expr) if ( !(expr) ) \
 { \
@@ -54,12 +54,12 @@ END_EXTERN_C
 
 #define VULKAN_CHECK(Call, ...) \
     do { \
-        VkResult Result_ = (Call); \
-        if ( Result_ != VK_SUCCESS __VA_ARGS__ ) \
+        VkResult Result = (Call); \
+        if ( Result != VK_SUCCESS __VA_ARGS__ ) \
         { \
-            CmnError("Vulkan call " #Call " at %s:%d failed: %s (VkResult %d)", __FILE__, __LINE__, VlkGetResultString(Result_), Result_); \
+            CmnError("Vulkan call " #Call " at %s:%d failed: %s (VkResult %d)", __FILE__, __LINE__, VlkGetResultString(Result), Result); \
         } \
-    } while(0)
+    } while( 0 )
 
 //
 // Allocated buffer
@@ -593,7 +593,7 @@ VlkCreateRenderPass(
     );
 
 //
-// Create the secondary/lighting render pass
+// Create the main render pass
 //
 
 extern

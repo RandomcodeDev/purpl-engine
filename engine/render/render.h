@@ -39,7 +39,7 @@ typedef enum RENDER_API
 
 typedef struct RENDER_BACKEND
 {
-    BOOLEAN
+    VOID
     (*Initialize)(
         VOID
         );

@@ -1,4 +1,8 @@
-add_rules("mode.debug", "mode.release", "plugin.vsxmake.autoupdate")
+add_rules(
+    "mode.debug",
+    "mode.release",
+    "plugin.vsxmake.autoupdate"
+)
 
 set_project("purpl-engine")
 
@@ -108,6 +112,11 @@ target("purpl")
                 os.ln(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
             end
         end)
+        if is_mode("debug") then
+            add_ldflags("-subsystem:console")
+        else
+            add_ldflags("-subsystem:windows")
+        end
     elseif is_plat("linux", "freebsd") then
         add_files("platform/unix/launcher.c")
     elseif is_plat("switch") then

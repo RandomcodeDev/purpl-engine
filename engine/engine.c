@@ -272,7 +272,7 @@ EngSetMainCamera(
     _In_ ecs_entity_t Camera
     )
 {
-    LogTrace("Setting main camera to %u", Camera);
+    LogTrace("Setting main camera to entity %u", Camera);
     PCAMERA CameraComponent = ecs_get_mut(
         EcsGetWorld(),
         Camera,

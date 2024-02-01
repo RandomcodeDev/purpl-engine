@@ -37,7 +37,7 @@ Abstract:
 #include <wchar.h>
 
 #ifdef __cplusplus
-#define _Noreturn
+#define _Noreturn [[noreturn]]
 #define _Thread_local thread_local
 #endif
 
@@ -49,11 +49,14 @@ Abstract:
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <windowsx.h>
 
+#ifdef __cplusplus
+#include <comdef.h>
+#endif
 #include <shellapi.h>
 #include <ShlObj.h>
 #include <uxtheme.h>
+#include <windowsx.h>
 
 #ifndef PURPL_GDKX
 #include <dbghelp.h>

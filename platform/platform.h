@@ -44,7 +44,7 @@ extern PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip,
 /// @brief Displays an error (and potentially gives the option to trigger a breakpoint), and exits the process
 ///
 /// @param Message The error message.
-extern _Noreturn VOID PlatError(_In_ PCSTR Message);
+_Noreturn extern VOID PlatError(_In_ PCSTR Message);
 
 /// @brief Retrieves a string with information about the system version.
 ///

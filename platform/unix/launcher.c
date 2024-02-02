@@ -16,17 +16,9 @@ Abstract:
 
 #include "common/common.h"
 
-extern
-VOID
-InitializeMainThread(
-    _In_ PFN_THREAD_START ThreadStart
-    );
+extern VOID InitializeMainThread(_In_ PFN_THREAD_START ThreadStart);
 
-INT
-main(
-    INT argc,
-    PCHAR* argv   
-    )
+INT main(INT argc, PCHAR *argv)
 /*++
 
 Routine:
@@ -52,10 +44,7 @@ Return Value:
 
     InitializeMainThread((PFN_THREAD_START)main);
 
-    Result = PurplMain(
-        argc,
-        argv
-        );
+    Result = PurplMain(argc, argv);
 
     return Result;
 }

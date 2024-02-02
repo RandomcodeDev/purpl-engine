@@ -114,6 +114,4 @@ extern PCSTR CmnFormatSize(_In_ DOUBLE Size);
 ///
 /// @param Message The error message.
 /// @param ...     The arguments to the error message.
-///
-/// @return Does not return.
-extern _Noreturn VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...);
+_Noreturn extern VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...);

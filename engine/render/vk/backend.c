@@ -201,11 +201,6 @@ static VOID Shutdown(VOID)
     }
 
     LogDebug("Destroying semaphores");
-    if (VlkData.DeferredSemaphore)
-    {
-        vkDestroySemaphore(VlkData.Device, VlkData.DeferredSemaphore,
-                           VlkGetAllocationCallbacks());
-    }
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
         if (VlkData.AcquireSemaphores[i])

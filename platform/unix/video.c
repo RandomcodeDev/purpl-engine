@@ -18,10 +18,11 @@ Abstract:
 
 #include "GLFW/glfw3.h"
 
-static GLFWwindow* Window;
+static GLFWwindow *Window;
 
 #ifdef PURPL_DEBUG
-static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+static CHAR WindowTitle[128] =
+    GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
 #else
 static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
 #endif
@@ -32,100 +33,70 @@ BOOLEAN WindowResized;
 BOOLEAN WindowFocused;
 BOOLEAN WindowClosed;
 
-static
-VOID
-GlfwErrorCallback(
-    _In_ INT Error,
-    _In_ PCSTR Description
-    )
+static VOID GlfwErrorCallback(_In_ INT Error, _In_ PCSTR Description)
 {
     LogError("GLFW error %d: %s", Error, Description);
 }
 
-static
-VOID
-GlfwResizeCallback(
-    _In_ GLFWwindow* ResizedWindow,
-    _In_ INT Width,
-    _In_ INT Height
-    )
+static VOID GlfwResizeCallback(_In_ GLFWwindow *ResizedWindow, _In_ INT Width,
+                               _In_ INT Height)
 {
-    if ( ResizedWindow == Window )
+    if (ResizedWindow == Window)
     {
-        LogInfo("Window resized from %ux%u to %dx%d", WindowWidth, WindowHeight, Width, Height);
+        LogInfo("Window resized from %ux%u to %dx%d", WindowWidth, WindowHeight,
+                Width, Height);
         WindowWidth = Width;
         WindowHeight = Height;
         WindowResized = TRUE;
     }
 }
 
-static
-VOID
-GlfwFocusCallback(
-    _In_ GLFWwindow* FocusWindow,
-    _In_ INT Focused
-    )
+static VOID GlfwFocusCallback(_In_ GLFWwindow *FocusWindow, _In_ INT Focused)
 {
-    if ( FocusWindow == Window )
+    if (FocusWindow == Window)
     {
         WindowFocused = (BOOLEAN)Focused;
         LogInfo("Window %s focus", WindowFocused ? "gained" : "lost");
     }
 }
 
-VOID
-VidInitialize(
-    VOID
-    )
+VOID VidInitialize(VOID)
 {
     PCSTR GlfwError;
 
     LogInfo("Initializing Unix video using GLFW");
 
-    if ( !glfwInit() )
+    if (!glfwInit())
     {
-        CmnError("Failed to initialize GLFW: %d %s", glfwGetError(&GlfwError), GlfwError);
+        CmnError("Failed to initialize GLFW: %d %s", glfwGetError(&GlfwError),
+                 GlfwError);
     }
 
     glfwSetErrorCallback(GlfwErrorCallback);
 
-    glfwWindowHint(
-        GLFW_CLIENT_API,
-        GLFW_NO_API
-        );
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     WindowWidth = 1280;
     WindowHeight = 720;
-    LogInfo("Creating %ux%u window titled " GAME_NAME, WindowWidth, WindowHeight);
+    LogInfo("Creating %ux%u window titled " GAME_NAME, WindowWidth,
+            WindowHeight);
 
-    Window = glfwCreateWindow(
-        WindowWidth,
-        WindowHeight,
-        WindowTitle,
-        NULL,
-        NULL
-        );
-    if ( !Window )
+    Window =
+        glfwCreateWindow(WindowWidth, WindowHeight, WindowTitle, NULL, NULL);
+    if (!Window)
     {
-        CmnError("Failed to create window: %d %s", glfwGetError(&GlfwError), GlfwError);
+        CmnError("Failed to create window: %d %s", glfwGetError(&GlfwError),
+                 GlfwError);
     }
 
-    glfwSetWindowSizeCallback(
-        Window,
-        GlfwResizeCallback
-        );
-    glfwSetWindowFocusCallback(
-        Window,
-        GlfwFocusCallback
-        );
+    glfwSetWindowSizeCallback(Window, GlfwResizeCallback);
+    glfwSetWindowFocusCallback(Window, GlfwFocusCallback);
 
-//    glfwShowWindow(Window);
+    //    glfwShowWindow(Window);
 }
 
 BOOLEAN
-VidUpdate(
-	VOID
-	)
+VidUpdate(VOID)
 /*++
 
 Routine Description:
@@ -148,19 +119,12 @@ Return Value:
 
     WindowClosed = (BOOLEAN)glfwWindowShouldClose(Window);
 
-    glfwGetWindowSize(
-        Window,
-        &WindowWidth,
-        &WindowHeight
-        );
+    glfwGetWindowSize(Window, &WindowWidth, &WindowHeight);
 
     return !WindowClosed;
 }
 
-VOID
-VidShutdown(
-    VOID
-    )
+VOID VidShutdown(VOID)
 /*++
 
 Routine Description:
@@ -185,11 +149,7 @@ Return Value:
     LogInfo("Successfully shut down Unix video");
 }
 
-VOID
-VidGetSize(
-    _Out_opt_ PUINT32 Width,
-    _Out_opt_ PUINT32 Height
-    )
+VOID VidGetSize(_Out_opt_ PUINT32 Width, _Out_opt_ PUINT32 Height)
 /*++
 
 Routine Description:
@@ -215,9 +175,7 @@ Return Value:
 }
 
 BOOLEAN
-VidResized(
-    VOID
-    )
+VidResized(VOID)
 /*++
 
 Routine Description:
@@ -240,9 +198,7 @@ Return Value:
 }
 
 BOOLEAN
-VidFocused(
-    VOID
-    )
+VidFocused(VOID)
 /*++
 
 Routine Description:
@@ -263,31 +219,22 @@ Return Value:
 }
 
 FLOAT
-VidGetDpi(
-    VOID
-    )
+VidGetDpi(VOID)
 {
     FLOAT XDpi;
     FLOAT YDpi;
 
     XDpi = 0.0f;
     YDpi = 0.0f;
-    glfwGetWindowContentScale(
-        Window,
-        &XDpi,
-        &YDpi
-        );
+    glfwGetWindowContentScale(Window, &XDpi, &YDpi);
 
     return XDpi;
 }
 
 #ifdef PURPL_VULKAN
 PVOID
-PlatCreateVulkanSurface(
-    _In_ PVOID Instance,
-    _In_ PVOID AllocationCallbacks,
-    _In_opt_ PVOID WindowHandle
-    )
+PlatCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks,
+                        _In_opt_ PVOID WindowHandle)
 /*++
 
 Routine Description:
@@ -300,7 +247,8 @@ Arguments:
 
     AllocationCallbacks - The Vulkan allocation callbacks to use.
 
-    WindowHandle - The window to create the surface for. If NULL, the engine's window is used.
+    WindowHandle - The window to create the surface for. If NULL, the engine's
+window is used.
 
 Return Value:
 
@@ -315,13 +263,10 @@ Return Value:
 
     LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
 
-    Result = glfwCreateWindowSurface(
-        Instance,
-        WindowHandle ? WindowHandle : Window,
-        AllocationCallbacks,
-        &Surface
-        );
-    if ( Result != VK_SUCCESS )
+    Result =
+        glfwCreateWindowSurface(Instance, WindowHandle ? WindowHandle : Window,
+                                AllocationCallbacks, &Surface);
+    if (Result != VK_SUCCESS)
     {
         LogError("Failed to create Vulkan surface: VkResult %d", Result);
         return NULL;

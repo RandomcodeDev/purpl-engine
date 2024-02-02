@@ -8,13 +8,7 @@ VOID VlkCreateSemaphores(VOID)
 
     // Render completion and acquisition semaphores for each frame, plus
     // deferred semaphore
-    LogDebug("Creating %d semaphores", VULKAN_FRAME_COUNT * 2 + 1);
-
-    VULKAN_CHECK(vkCreateSemaphore(VlkData.Device, &SemaphoreCreateInformation,
-                                   VlkGetAllocationCallbacks(),
-                                   &VlkData.DeferredSemaphore));
-    VlkSetObjectName(VlkData.DeferredSemaphore, VK_OBJECT_TYPE_SEMAPHORE,
-                     "Deferred semaphore");
+    LogDebug("Creating %d semaphores", VULKAN_FRAME_COUNT * 2);
 
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {

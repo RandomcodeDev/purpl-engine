@@ -1,22 +1,6 @@
 #include "vk.h"
 
 VkSurfaceFormatKHR VlkChooseSurfaceFormat(VOID)
-/*++
-
-Routine Description:
-
-    Tries to find a specific format, forces it if only one undefined
-    format, and returns the first format if those fail.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The surface format to use.
-
---*/
 {
     LogDebug("Choosing surface format");
 
@@ -47,22 +31,6 @@ Return Value:
 }
 
 VkPresentModeKHR VlkChoosePresentMode(VOID)
-/*++
-
-Routine Description:
-
-    Looks for the mailbox present mode and returns FIFO if that
-    can't be found.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    A suitable presentation mode.
-
---*/
 {
     UINT32 i;
 
@@ -80,21 +48,6 @@ Return Value:
 }
 
 VkExtent2D VlkGetSurfaceExtent(VOID)
-/*++
-
-Routine Description:
-
-    Determines the bounds of the surface for the swapchain.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The size of the window or surface.
-
---*/
 {
     VkExtent2D Extent = {0};
 
@@ -113,21 +66,6 @@ Return Value:
 }
 
 VOID VlkCreateSwapChain(VOID)
-/*++
-
-Routine Description:
-
-    Creates the swap chain.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     UINT32 i;
 
@@ -231,21 +169,6 @@ Return Value:
 }
 
 VOID VlkDestroySwapChain(VOID)
-/*++
-
-Routine Description:
-
-    Destroys the swap chain and its image views.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     UINT32 i;
 

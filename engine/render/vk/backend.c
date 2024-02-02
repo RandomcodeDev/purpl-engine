@@ -21,42 +21,12 @@ Abstract:
 VULKAN_DATA VlkData;
 
 VOID VlkCreateSurface(VOID)
-/*++
-
-Routine Description:
-
-    Creates a surface.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     VlkData.Surface = PlatCreateVulkanSurface(
         VlkData.Instance, VlkGetAllocationCallbacks(), NULL);
 }
 
 VOID VlkCreateAllocator(VOID)
-/*++
-
-Routine Description:
-
-Creates a VMA allocator.
-
-Arguments:
-
-None.
-
-Return Value:
-
-None.
-
---*/
 {
     VmaAllocatorCreateInfo AllocatorCreateInformation = {0};
     VmaVulkanFunctions VulkanFunctions = {0};
@@ -161,21 +131,6 @@ static VOID EndFrame(VOID)
 }
 
 static VOID Shutdown(VOID)
-/*++
-
-Routine Description:
-
-    Destroys all resources.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     UINT32 i;
 

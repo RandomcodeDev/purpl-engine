@@ -1,21 +1,6 @@
 #include "vk.h"
 
 VOID VlkCreateSemaphores(VOID)
-/*++
-
-Routine Description:
-
-    Creates semaphores for frame rendering and presentation.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     VkSemaphoreCreateInfo SemaphoreCreateInformation = {0};
     SemaphoreCreateInformation.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

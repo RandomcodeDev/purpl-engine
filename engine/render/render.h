@@ -1,16 +1,9 @@
-/*++
+/// @file render.h
+///
+/// @brief This module declares the render API.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
-Copyright (c) 2023 Randomcode Developers
-
-Module Name:
-
-    render.h
-
-Abstract:
-
-    This module declares the render API.
-
---*/
 
 #pragma once
 
@@ -21,10 +14,7 @@ Abstract:
 
 #include "platform/video.h"
 
-//
-// Graphics API
-//
-
+/// @brief Graphics API
 typedef enum RENDER_API
 {
     RenderApiNone,
@@ -32,11 +22,9 @@ typedef enum RENDER_API
     RenderApiDirect3D12,
     RenderApiCount
 } RENDER_API, *PRENDER_API;
+extern RENDER_API RenderApi;
 
-//
-// Graphics backend
-//
-
+/// @brief Renderer backend
 typedef struct RENDER_BACKEND
 {
     VOID (*Initialize)(VOID);
@@ -45,10 +33,7 @@ typedef struct RENDER_BACKEND
     VOID (*Shutdown)(VOID);
 } RENDER_BACKEND, *PRENDER_BACKEND;
 
-//
-// Model
-//
-
+/// @brief  Model component, stores backend handles
 typedef struct MODEL
 {
     PVOID MeshHandle;
@@ -56,21 +41,37 @@ typedef struct MODEL
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
+/// @brief 
+/// @param Iterator Unused
 extern VOID RdrInitialize(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrInitialize);
 
+/// @brief Start recording a frame
+/// @param Iterator Unused
 extern VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrBeginFrame);
 
+/// @brief Finish recording a frame and present it
+/// @param Iterator unused
 extern VOID RdrEndFrame(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 
+/// @brief Shut down the render system
 extern VOID RdrShutdown(VOID);
 
+/// @brief Get the scale of the render output
+/// @return The scale
 extern FLOAT RdrGetScale(VOID);
 
+/// @brief Set the scale of the render output
+/// @param NewScale The new scale of the render output
+/// @return The old scale of the render output
 extern FLOAT RdrSetScale(FLOAT NewScale);
 
+/// @brief Get the width of the render output
+/// @return The scaled width of the render output
 extern UINT32 RdrGetWidth(VOID);
 
+/// @brief Get the height of the render output
+/// @return The scaled height of the render output
 extern UINT32 RdrGetHeight(VOID);

@@ -12,7 +12,7 @@ Abstract:
 
 --*/
 
-#include "common/filesystem.h"
+#include "filesystem.h"
 
 SIZE_T
 FsGetFileSize(_In_ PCSTR Path)
@@ -49,28 +49,6 @@ FsCreateDirectory(_In_ PCSTR Path)
 PVOID
 FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
            _In_ SIZE_T Extra)
-/*++
-
-Routine Description:
-
-    This routine reads a file into a buffer which it allocates.
-
-Arguments:
-
-    Path - The path to the file to read.
-
-    MaxAmount - The maximum number of bytes to read, or zero for the whole file.
-
-    ReadAmount - A pointer to a variable that recieves the number of bytes read
-from the file.
-
-    Extra - Number of extra bytes to allocate.
-
-Return Value:
-
-    A pointer to a buffer containing the file's contents, or NULL.
-
---*/
 {
     FILE *File;
     PVOID Buffer;

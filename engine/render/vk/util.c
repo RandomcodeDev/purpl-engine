@@ -68,21 +68,6 @@ VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID)
 
 PCSTR
 VlkGetResultString(VkResult Result)
-/*++
-
-Routine Description:
-
-    Gets a human-readable version of a VkResult.
-
-Arguments:
-
-    Result - The result to get the string for.
-
-Return Value:
-
-    A string describing the result.
-
---*/
 {
     // Stolen from
     // https://github.com/libsdl-org/SDL/blob/a4c6b38fef2ff046e38072200b096c03389bfa28/src/video/SDL_vulkan_utils.c#L29,
@@ -214,27 +199,6 @@ VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
                  _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
                  _In_ CONST VkDebugUtilsMessengerCallbackDataEXT *CallbackData,
                  _In_opt_ PVOID UserData)
-/*++
-
-Routine Description:
-
-    This routine logs Vulkan messages.
-
-Arguments:
-
-    MessageSeverity - The severity of the message.
-
-    MessageTypes - The types of the message.
-
-    CallbackData - Information about the callback.
-
-    UserData - User data, unused.
-
-Return Value:
-
-    TRUE - Always returned.
-
---*/
 {
     CHAR Type[128];
     LOG_LEVEL Level;
@@ -283,27 +247,6 @@ Return Value:
 VOID VlkAllocateBuffer(_In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage,
                        _In_ VkMemoryPropertyFlags Flags,
                        _Out_ PVULKAN_BUFFER Buffer)
-/*++
-
-Routine Description:
-
-    Allocates a VkBuffer.
-
-Arguments:
-
-    Size - The size of the buffer.
-
-    Usage - The usage of the buffer.
-
-    Flags - The flags to create the buffer with.
-
-    Buffer - Filled in by this function.
-
-Return Value:
-
-    None.
-
---*/
 {
     memset(Buffer, 0, sizeof(VULKAN_BUFFER));
     Buffer->Size = Size;

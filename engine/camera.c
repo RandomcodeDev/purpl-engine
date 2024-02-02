@@ -1,37 +1,16 @@
-/*++
+/// @file camera.c
+///
+/// @brief This module implements camera functions.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    camera.c
-
-Abstract:
-
-    This module implements camera functions.
-
---*/
+#include "engine/render/render.h"
 
 #include "camera.h"
 
 ecs_entity_t ecs_id(CAMERA);
 
 VOID CameraImport(_In_ ecs_world_t *World)
-/*++
-
-Routine Description:
-
-    Imports the Camera ECS module.
-
-Arguments:
-
-    World - The ECS world to import into.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogTrace("Importing Camera ECS module");
 
@@ -44,33 +23,6 @@ VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation,
                                  _In_ DOUBLE FieldOfView, _In_ DOUBLE Aspect,
                                  _In_ DOUBLE NearClip, _In_ DOUBLE FarClip,
                                  _Out_ PCAMERA Camera)
-/*++
-
-Routine Description:
-
-    Initializes a perspective camera.
-
-Arguments:
-
-    Position - The camera's position.
-
-    Rotation - The camera's rotation.
-
-    FieldOfView - The camera's FOV.
-
-    Aspect - The aspect ratio of the camera.
-
-    NearClip - The near clipping distance.
-
-    FarClip - The far clipping distance.
-
-    Camera - The camera to initialize.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogTrace("Initializing perspective camera");
 
@@ -93,25 +45,6 @@ Return Value:
 
 VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation,
                                   _Out_ PCAMERA Camera)
-/*++
-
-Routine Description:
-
-    Initializes an orthographic camera.
-
-Arguments:
-
-    Position - The position of the camera.
-
-    Rotation - The rotation of the camera.
-
-    Camera - The camera to initialize.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogTrace("Initializing orthographic camera");
 
@@ -128,21 +61,6 @@ Return Value:
 }
 
 VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
-/*++
-
-Routine Description:
-
-    Updates a camera's matrices if necessary.
-
-Arguments:
-
-    Camera - The camera to update.
-
-Return Value:
-
-    None.
-
---*/
 {
     UINT32 Width;
     UINT32 Height;
@@ -154,7 +72,7 @@ Return Value:
 
     if (Camera->Perspective)
     {
-        if (FALSE) // RenderApi == RenderApiDX12 || RenderApi == RenderApiDX9 )
+        if (RenderApi == RenderApiDirect3D12)
         {
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0},
                           (vec3){0.0, 1.0, 0.0}, Camera->View);
@@ -176,8 +94,8 @@ Return Value:
     else
     {
         VidGetSize(&Width, &Height);
-
-        if (FALSE) // RenderApi == RenderApiDX12 || RenderApi == RenderApiDX9 )
+        
+        if (RenderApi == RenderApiDirect3D12)
         {
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0},
                           (vec3){0.0, 1.0, 0.0}, Camera->View);

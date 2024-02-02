@@ -12,6 +12,7 @@ Abstract:
 
 --*/
 
+#include "common/alloc.h"
 #include "common/common.h"
 
 #include "platform/async.h"

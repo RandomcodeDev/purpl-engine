@@ -1,19 +1,11 @@
-/*++
+/// @file common.c
+///
+/// @brief This module implements assorted common functions.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    common.c
-
-Abstract:
-
-    This module implements assorted common functions.
-
---*/
-
+#include "alloc.h"
 #include "common.h"
-
 #include "filesystem.h"
 
 VOID CmnInitialize(VOID)
@@ -76,40 +68,22 @@ VOID CmnShutdown(VOID)
 #endif
 }
 
-// Only on non-Windows, non-mimalloc
-#ifndef CmnAlignedRealloc
-PVOID
-CmnAlignedRealloc(PVOID Block, SIZE_T Alignment, SIZE_T Size)
+PCSTR
+CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
 {
-    PVOID NewBlock = CmnAlignedAlloc(Alignment, Size);
-    memmove(NewBlock, Block, PURPL_MIN(Size, PURPL_MSIZE(Block)));
-    CmnAlignedFree(Block);
-    return NewBlock;
+    va_list Arguments;
+    PCSTR Formatted;
+
+    va_start(Arguments, Format);
+    Formatted = CmnFormatTempStringVarArgs(Format, Arguments);
+    va_end(Arguments);
+
+    return Formatted;
 }
-#endif
 
 PCSTR
 CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
                            _In_ va_list Arguments)
-/*++
-
-Routine Description:
-
-    This routine formats a printf format string into a static
-    buffer for temporary usage.
-
-Arguments:
-
-    Format - The format string. You're making a bad decision if this
-    parameter is not a string literal.
-
-    Arguments - Arguments to the format string.
-
-Return Value:
-
-    A pointer to a static buffer with the formatted string.
-
---*/
 {
     static CHAR Buffer[1024];
     va_list _Arguments;
@@ -123,61 +97,9 @@ Return Value:
     return Buffer;
 }
 
-PCSTR
-CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
-/*++
-
-Routine Description:
-
-    This routine formats a printf format string into a static
-    buffer for temporary usage.
-
-Arguments:
-
-    Format - The format string. You're making a bad decision if this
-    parameter is not a string literal.
-
-    ... - Arguments to the format string.
-
-Return Value:
-
-    A pointer to a static buffer with the formatted string.
-
---*/
-{
-    va_list Arguments;
-    PCSTR Formatted;
-
-    va_start(Arguments, Format);
-    Formatted = CmnFormatTempStringVarArgs(Format, Arguments);
-    va_end(Arguments);
-
-    return Formatted;
-}
-
 PCHAR
 CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
                        _In_ va_list Arguments)
-/*++
-
-Routine Description:
-
-    This routine formats a printf format string into a dynamically allocated
-buffer.
-
-Arguments:
-
-    Format - The format string. You're making a bad decision if this
-    parameter is not a string literal.
-
-    Arguments - Arguments to the format string.
-
-Return Value:
-
-    A pointer to a buffer with the formatted string and a NUL terminator (size
-is strlen(Buffer) + 1).
-
---*/
 {
     PCHAR Buffer;
     INT Size;
@@ -193,27 +115,7 @@ is strlen(Buffer) + 1).
     return Buffer;
 }
 
-PCHAR
-CmnFormatString(_In_ _Printf_format_string_ PCSTR Format, ...)
-/*++
-
-Routine Description:
-
-    This routine formats a printf format string into a dynamically allocated
-buffer.
-
-Arguments:
-
-    Format - The format string. You're making a bad decision if this
-    parameter is not a string literal.
-
-    ... - Arguments to the format string.
-
-Return Value:
-
-    A pointer to a buffer with the formatted string.
-
---*/
+PCHAR CmnFormatString(_In_ _Printf_format_string_ PCSTR Format, ...)
 {
     va_list Arguments;
     PCHAR Formatted;
@@ -225,24 +127,7 @@ Return Value:
     return Formatted;
 }
 
-PCSTR
-CmnFormatSize(_In_ DOUBLE Size)
-/*++
-
-Routine Description:
-
-    This routine converts a size into a human readable string, using the
-    most appropriate unit.
-
-Arguments:
-
-    Size - The size to convert.
-
-Return Value:
-
-    The address of a static buffer containing the string.
-
---*/
+PCSTR CmnFormatSize(_In_ DOUBLE Size)
 {
     static CHAR Buffer[64]; // Not gonna be bigger than this
     DOUBLE Value;
@@ -279,23 +164,6 @@ Return Value:
 }
 
 _Noreturn VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...)
-/*++
-
-Routine Description:
-
-    This routine displays an error message and nukes the program.
-
-Arguments:
-
-    Message - The error message.
-
-    ... - The arguments to the error message.
-
-Return Value:
-
-    Does not return.
-
---*/
 {
     va_list Arguments;
     PCSTR FormattedMessage;
@@ -312,9 +180,9 @@ Return Value:
 #ifdef PURPL_VERBOSE
                                   0 // Everything
 #elif defined PURPL_DEBUG
-                                   5 // A bit more context
+                                  5 // A bit more context
 #else
-                                   3 // Enough
+                                  3 // Enough
 #endif
         );
     Formatted = CmnFormatString("Fatal error: %s\nStack trace:\n%s",

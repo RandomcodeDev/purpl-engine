@@ -42,10 +42,15 @@ typedef struct CAMERA
 } CAMERA, *PCAMERA;
 extern ECS_COMPONENT_DECLARE(CAMERA);
 
-//
-// Initialize a perspective camera
-//
-
+/// @brief Initializes a perspective camera.
+///
+/// @param Position    The camera's position.
+/// @param Rotation    The camera's rotation.
+/// @param FieldOfView The camera's FOV.
+/// @param Aspect      The aspect ratio of the camera.
+/// @param NearClip    The near clipping distance.
+/// @param FarClip     The far clipping distance.
+/// @param Camera      The camera to initialize.
 extern VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation,
                                         _In_ DOUBLE FieldOfView,
                                         _In_ DOUBLE Aspect,
@@ -53,15 +58,15 @@ extern VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation,
                                         _In_ DOUBLE FarClip,
                                         _Out_ PCAMERA Camera);
 
-//
-// Initialize an orthographic camera
-//
-
+/// @brief Initializes an orthographic camera.
+///
+/// @param Position The position of the camera.
+/// @param Rotation The rotation of the camera.
+/// @param Camera   The camera to initialize.
 extern VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation,
                                          _Out_ PCAMERA Camera);
 
-//
-// Calculate the camera matrices
-//
-
+/// @brief Updates a camera's matrices if necessary.
+///
+/// @param Camera The camera to update.
 extern VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera);

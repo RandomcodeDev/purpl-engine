@@ -27,27 +27,6 @@ VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
 VkFormat VlkChooseFormat(VkFormat *Formats, UINT32 FormatCount,
                          VkImageTiling ImageTiling,
                          VkFormatFeatureFlags FormatFeatures)
-/*++
-
-Routine Description:
-
-    Chooses a format from the list given.
-
-Arguments:
-
-    Formats - The formats to choose from.
-
-    FormatCount - The number of formats.
-
-    ImageTiling - The desired tiling mode.
-
-    FormatFeatures - The desired features.
-
-Return Value:
-
-    A suitable format or VK_FORMAT_UNDEFINED if none could be found.
-
---*/
 {
     UINT32 i;
 

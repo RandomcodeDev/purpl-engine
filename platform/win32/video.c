@@ -46,32 +46,6 @@ static BOOLEAN WindowClosed;
 static LRESULT CALLBACK WindowProcedure(_In_ HWND MessageWindow,
                                         _In_ UINT Message, _In_ WPARAM Wparam,
                                         _In_ LPARAM Lparam)
-/*++
-
-Routine Description:
-
-    This routine handles messages for the engine window.
-
-Arguments:
-
-    MessageWindow - The window the message pertains to.
-
-    Message - The message.
-
-    Wparam - Message data.
-
-    Lparam - Message data.
-
-Return Value:
-
-    0 - The message was handled.
-
-    1 - The message was not handled.
-
-    DefWindowProcA - The message was given to the system to take
-    the default action.
-
---*/
 {
     //    ImGuiIO* Io = igGetIO();
 
@@ -129,21 +103,6 @@ Return Value:
 }
 
 static VOID RegisterWindowClass(VOID)
-/*++
-
-Routine Description:
-
-    This routine registers the window class.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     WNDCLASSEXA WindowClass;
 
@@ -166,21 +125,6 @@ Return Value:
 }
 
 static VOID InitializeWindow(VOID)
-/*++
-
-Routine Description:
-
-    This routine creates the engine window.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     RECT ClientArea;
 
@@ -217,21 +161,6 @@ Return Value:
 }
 
 VOID VidInitialize(VOID)
-/*++
-
-Routine Description:
-
-    This routine initializes Windows video.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogInfo("Initializing Windows video");
 
@@ -248,23 +177,6 @@ Return Value:
 
 BOOLEAN
 VidUpdate(VOID)
-/*++
-
-Routine Description:
-
-    This routine processes window events.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    TRUE - The window is still open.
-
-    FALSE - The window was closed.
-
---*/
 {
     MSG Message;
 
@@ -281,21 +193,6 @@ Return Value:
 }
 
 VOID VidShutdown(VOID)
-/*++
-
-Routine Description:
-
-    This routine cleans up video resources.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogInfo("Shutting down Windows video");
 
@@ -308,25 +205,6 @@ Return Value:
 }
 
 VOID VidGetSize(_Out_opt_ PUINT32 Width, _Out_opt_ PUINT32 Height)
-/*++
-
-Routine Description:
-
-    Stores the width and/or height in the provided parameters.
-
-Arguments:
-
-    Width - A pointer to an integer that recieves the width of the
-    window if provided.
-
-    Height - A pointer to an integer that recieves the height of the
-    window if provided.
-
-Return Value:
-
-    None.
-
---*/
 {
     Width ? *Width = WindowWidth : 0;
     Height ? *Height = WindowHeight : 0;
@@ -334,21 +212,6 @@ Return Value:
 
 BOOLEAN
 VidResized(VOID)
-/*++
-
-Routine Description:
-
-    Returns whether the window has been resized since the last call.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The value of WindowResized.
-
---*/
 {
     BOOLEAN ReturnValue = WindowResized;
     WindowResized = FALSE;
@@ -357,63 +220,18 @@ Return Value:
 
 BOOLEAN
 VidFocused(VOID)
-/*++
-
-Routine Description:
-
-    Returns whether the window is focused.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The value of WindowFocused.
-
---*/
 {
     return WindowFocused;
 }
 
 PVOID
 VidGetObject(VOID)
-/*++
-
-Routine Description:
-
-    Returns the window handle.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The window handle.
-
---*/
 {
     return Window;
 }
 
 FLOAT
 VidGetDpi(VOID)
-/*++
-
-Routine Description:
-
-    Gets the DPI of the window.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The DPI as a float.
-
---*/
 {
     return (FLOAT)GetDpiForWindow(Window);
 }
@@ -422,28 +240,6 @@ Return Value:
 PVOID
 PlatCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks,
                         _In_opt_ PVOID WindowHandle)
-/*++
-
-Routine Description:
-
-    Creates a Vulkan surface from the HWND.
-
-Arguments:
-
-    Instance - The Vulkan instance to create the surface for.
-
-    AllocationCallbacks - The Vulkan allocation callbacks to use.
-
-    WindowHandle - The window to create the surface for. If NULL, the engine's
-window is used.
-
-Return Value:
-
-    NULL - Surface creation failed.
-
-    Non-NULL - Surface creation successful.
-
---*/
 {
     VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
     VkSurfaceKHR Surface;

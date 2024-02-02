@@ -1,33 +1,17 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    async.h
-
-Abstract:
-
-    This module contains the async abstraction API.
-
---*/
+/// @file async.h
+///
+/// @brief This module contains the async abstraction API.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 
 #include "purpl/purpl.h"
 
-//
-// Thread start signature
-//
+/// @brief A pointer to a thread start function
+typedef INT (*PFN_THREAD_START)(_In_opt_ PVOID UserData);
 
-typedef INT (*PFN_THREAD_START)(
-    _In_opt_ PVOID UserData
-    );
-
-//
-// A thread
-//
-
+/// @brief Data about a thread
 typedef struct THREAD
 {
     CHAR Name[32];
@@ -37,116 +21,62 @@ typedef struct THREAD
     PVOID Handle;
 } THREAD, *PTHREAD;
 
-//
-// The current thread
-//
-
+/// @brief The current thread (not fully valid for the main thread)
 extern _Thread_local PTHREAD AsCurrentThread;
 
-//
-// Create a thread
-//
+/// @brief Create a suspended thread
+/// @param Name The name of the thread
+/// @param StackSize The size of the thread's stack
+/// @param ThreadStart The start function for the thread
+/// @param UserData Data for the thread
+/// @return The new thread
+extern PTHREAD AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize,
+                              _In_ PFN_THREAD_START ThreadStart,
+                              _In_opt_ PVOID UserData);
 
-extern
-PTHREAD
-AsCreateThread(
-    _In_opt_ PCSTR Name,
-    _In_ SIZE_T StackSize,
-    _In_ PFN_THREAD_START ThreadStart,
-    _In_opt_ PVOID UserData
-    );
+/// @brief Wait for a thread to finish, get its return value, and clean up the
+/// THREAD structure
+/// @param Thread The thread to join
+/// @return The thread's return value
+extern INT AsJoinThread(_In_ PTHREAD Thread);
 
-//
-// Wait for a thread to finish and get its return value
-//
+/// @brief Run a thread, use AsJoinThread to clean up its data at some point
+/// @param Thread The thread to detach
+extern VOID AsDetachThread(_In_ PTHREAD Thread);
 
-extern
-INT
-AsJoinThread(
-    _In_ PTHREAD Thread
-    );
-
-//
-// Allow a thread to run on its own, you have to join it to not leak the THREAD data
-//
-
-extern
-VOID
-AsDetachThread(
-    _In_ PTHREAD Thread
-    );
-
-//
-// A mutex
-//
-
+/// @brief A mutex
 typedef PVOID PMUTEX;
 
-//
-// Create a mutex
-//
+/// @brief Create a mutex
+/// @return A mutex
+extern PMUTEX AsCreateMutex(VOID);
 
-extern
-PMUTEX
-AsCreateMutex(
-    VOID 
-    );
+/// @brief Lock a mutex
+/// @param Mutex The mutex to lock
+/// @param Wait Whether to wait for it to be unlocked
+/// @return Whether the mutex was locked
+extern BOOLEAN AsLockMutex(_In_ PMUTEX Mutex, _In_ BOOLEAN Wait);
 
-//
-// Lock a mutex
-//
+/// @brief Unlock a mutex
+/// @param Mutex The mutex to unlock
+extern VOID AsUnlockMutex(_In_ PMUTEX Mutex);
 
-extern
-BOOLEAN
-AsLockMutex(
-    _In_ PMUTEX Mutex,
-    _In_ BOOLEAN Wait
-    );
-
-//
-// Unlock a mutex
-//
-
-extern
-VOID
-AsUnlockMutex(
-    _In_ PMUTEX Mutex
-    );
-
-//
-// A semaphore
-//
-
+/// @brief A semaphore
 typedef PVOID PSEMAPHORE;
 
-//
-// Create a semaphore
-//
+/// @brief Create a semaphore
+/// @param Max The maximum reference count for the semaphore
+/// @return A semaphore
+extern PSEMAPHORE AsCreateSemaphore(_In_ SIZE_T Max);
 
-extern
-PSEMAPHORE
-AsCreateSemaphore(
-    _In_ SIZE_T Max
-    );
+/// @brief Increase the reference count of a semaphore
+/// @param Semaphore The semaphore to acquire
+/// @param Wait Whether to wait
+/// @return Whether the semaphore was acquired
+extern BOOLEAN AsAcquireSemaphore(_In_ PSEMAPHORE Semaphore, _In_ BOOLEAN Wait);
 
-//
-// Acquire a semaphore
-//
-
-extern
-BOOLEAN
-AsAcquireSemaphore(
-    _In_ PSEMAPHORE Semaphore,
-    _In_ BOOLEAN Wait
-    );
-
-//
-// Release a semaphore
-//
-
-extern
-BOOLEAN
-AsReleaseSemaphore(
-    _In_ PSEMAPHORE Semaphore,
-    _In_ BOOLEAN Wait
-    );
+/// @brief Decrease the reference count of a semaphore
+/// @param Semaphore The semaphore to release
+/// @param Wait Whether to wait
+/// @return Whether the semaphore was acquired
+extern BOOLEAN AsReleaseSemaphore(_In_ PSEMAPHORE Semaphore, _In_ BOOLEAN Wait);

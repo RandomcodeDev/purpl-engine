@@ -22,10 +22,6 @@ extern VOID MathImport(_In_ ecs_world_t *World);
 
 extern VOID RenderImport(_In_ ecs_world_t *World);
 
-//
-// ECS world
-//
-
 static ecs_world_t *EngineEcsWorld;
 
 static VOID EcsLog(_In_ INT Level, _In_ PCSTR File, _In_ INT Line,

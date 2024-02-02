@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    purpl/purpl/purpl.h
-
-Abstract:
-
-    Global header. Changes will make a lot of stuff rebuild.
-
---*/
+/// @file purpl/purpl.h
+///
+/// @brief Global header. Changes will make a lot of stuff rebuild.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 
@@ -33,6 +25,7 @@ Abstract:
 #include <errno.h>
 #include <math.h>
 #include <stdalign.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
@@ -114,30 +107,25 @@ Abstract:
 
 BEGIN_EXTERN_C
 
-//
-// Cross platform entry point
-//
-
-INT PurplMain(_In_ INT ArgumentCount, _In_ PCHAR *Arguments);
+/// @brief Cross-platform entry point
+///
+/// @param ArgumentCount The number of command line arguments
+/// @param Arguments The command line arguments
+///
+/// @return 0 on success, otherwise does not return
+extern INT PurplMain(_In_ INT ArgumentCount, _In_ PCHAR *Arguments);
 
 #endif
+
+// Game name
 
 #define GAME_NAME "Purpl"
 #define GAME_EXECUTABLE_NAME "purpl"
 
-//
-// Organization that made the game
-//
-
+/// @brief Organization that made the game
 #define GAME_ORGANIZATION "Randomcode Developers"
 
-//
-// Game version
-//
-
-//
 // Switch mountpoints
-//
 
 #ifdef PURPL_SWITCH
 #define SWITCH_MAKE_MOUNTPOINT(Name) Name ":/"

@@ -17,21 +17,6 @@ Abstract:
 ecs_entity_t ecs_id(TRANSFORM);
 
 VOID MathImport(_In_ ecs_world_t *World)
-/*++
-
-Routine Description:
-
-    Imports the Math ECS module.
-
-Arguments:
-
-    World - The world to import into.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogTrace("Importing Math ECS module");
     ECS_MODULE(World, Math);
@@ -41,23 +26,6 @@ Return Value:
 
 VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
                               _Out_ mat4 TransformMatrix)
-/*++
-
-Routine Description:
-
-    Creates a transform matrix from a TRANSFORM
-
-Arguments:
-
-    Transform - The TRANSFORM to calculate a matrix from.
-
-    TransformMatrix - The transform matrix to calculate into.
-
-Return Value:
-
-    None.
-
---*/
 {
     if (!Transform || !TransformMatrix)
     {
@@ -72,23 +40,6 @@ Return Value:
 }
 
 VOID MthEulerToAxisAngle(_In_ vec3 Euler, _Out_ vec4 AxisAngle)
-/*++
-
-Routine Description:
-
-    Convert Euler angles into an axis angle.
-
-Arguments:
-
-    Euler - The Euler angles to convert.
-
-    AxisAngle - The axis angle to store the result in.
-
-Return Value:
-
-    None.
-
---*/
 {
     // https://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/
     float c1 = cos(Euler[0]) / 2;

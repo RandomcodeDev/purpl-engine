@@ -1,16 +1,9 @@
-/*++
+/// @file mesh.h
+///
+/// @brief This module defines the mesh API.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
-Copyright (c) 2023 Randomcode Developers
-
-Module Name:
-
-    mesh.h
-
-Abstract:
-
-    This module defines the mesh API.
-
---*/
 
 #pragma once
 
@@ -20,24 +13,16 @@ Abstract:
 #include "common/filesystem.h"
 #include "common/log.h"
 
-//
 // Mesh file magic bytes
-//
 
 #define MESH_MAGIC "PMSH"
 #define MESH_MAGIC_NUMBER 'HSMP'
 #define MESH_MAGIC_LENGTH 4
 
-//
 // Mesh format version
-//
-
 #define MESH_FORMAT_VERSION 5
 
-//
 // Vertex
-//
-
 typedef struct VERTEX
 {
     vec3 Position;

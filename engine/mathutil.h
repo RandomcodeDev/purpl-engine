@@ -18,10 +18,7 @@ Abstract:
 
 #include "common/log.h"
 
-//
-// A transformation
-//
-
+/// @brief A transformation
 typedef struct TRANSFORM
 {
     vec3 Position;
@@ -30,15 +27,15 @@ typedef struct TRANSFORM
 } TRANSFORM, *PTRANSFORM;
 extern ECS_COMPONENT_DECLARE(TRANSFORM);
 
-//
-// Convert a transform into a transformation matrix
-//
-
+/// @brief Creates a transform matrix from a TRANSFORM.
+///
+/// @param Transform        The TRANSFORM to calculate a matrix from.
+/// @param TransformMatrix  The transform matrix to calculate into.
 extern VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
                                      _Out_ mat4 TransformMatrix);
 
-//
-// Convert Euler angles into an axis angle
-//
-
+/// @brief Convert Euler angles into an axis angle.
+///
+/// @param Euler     The Euler angles to convert.
+/// @param AxisAngle The axis angle to store the result in.
 extern VOID MthEulerToAxisAngle(_In_ vec3 Euler, _Out_ vec4 AxisAngle);

@@ -1,21 +1,6 @@
 #include "vk.h"
 
 VOID VlkCreateCommandPools(VOID)
-/*++
-
-Routine Description:
-
-    Creates the command pools.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     VkCommandPoolCreateInfo CommandPoolCreateInformation = {0};
 
@@ -46,21 +31,6 @@ Return Value:
 }
 
 VOID VlkAllocateCommandBuffers(VOID)
-/*++
-
-Routine Description:
-
-    Allocates the command buffers.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     VkCommandBufferAllocateInfo CommandBufferAllocateInformation = {0};
     UINT32 i;

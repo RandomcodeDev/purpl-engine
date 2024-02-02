@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2023 MobSlicer152
-
-Module Name:
-
-    stb.c
-
-Abstract:
-
-    This module is used for the stb implementations.
-
---*/
+/// @file stb.c
+///
+/// @brief This module is used for the stb implementations.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #ifdef PURPL_USE_MIMALLOC
 #define MALLOC mi_malloc

@@ -12,6 +12,7 @@ Abstract:
 
 --*/
 
+#include "common/alloc.h"
 #include "common/common.h"
 
 #include "platform/platform.h"
@@ -21,25 +22,8 @@ extern HRESULT XGameRuntimeInitialize(VOID);
 #endif
 
 VOID PlatInitialize(VOID)
-/*++
-
-Routine Description:
-
-    This routine attaches to a console if it exists, and initializes
-    Xbox Live on GDK builds, among other things.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     BOOL HaveConsole;
-    DWORD Error;
 #ifdef PURPL_GDK
     HRESULT Result;
 #endif
@@ -95,21 +79,6 @@ Return Value:
 }
 
 VOID PlatShutdown(VOID)
-/*++
-
-Routine Description:
-
-    This routine cleans up Windows-specific resources.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogInfo("Deinitializing Windows resources");
 
@@ -121,26 +90,7 @@ Return Value:
     LogInfo("Windows deinitialization succeeded");
 }
 
-PCSTR
-PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
-/*++
-
-Routine Description:
-
-    Gets a stack trace in a static buffer.
-
-Arguments:
-
-    FramesToSkip - The number of stack frames to skip.
-
-    MaxFrames - The maximum number of frames to get.
-
-Return Value:
-
-    The address of a static buffer containing a string with
-    the formatted stack trace.
-
---*/
+PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
 {
     static CHAR Buffer[UINT16_MAX];
     PVOID BackTrace[32] = {0};
@@ -151,7 +101,7 @@ Return Value:
     IMAGEHLP_MODULEW64 ModuleInfo = {0};
 #endif
     SIZE_T Offset;
-    UINT64 Written;
+    INT32 Written;
     PVOID ModuleAddress = NULL;
     // PVOID ModuleHandle = NULL;
     INT i;
@@ -213,9 +163,9 @@ Return Value:
 #ifdef PURPL_GDKX
                            L"<unknown>", L"<unknown>",
 #else
-                            wcslen(ModuleInfo.ImageName) ? ModuleInfo.ImageName
-                                                         : L"<unknown>",
-                            Symbol->NameLen ? Symbol->Name : L"<unknown>",
+                           wcslen(ModuleInfo.ImageName) ? ModuleInfo.ImageName
+                                                        : L"<unknown>",
+                           Symbol->NameLen ? Symbol->Name : L"<unknown>",
 #endif
                            Displacement, (UINT64)BackTrace[i]);
         Offset += Written > 0 ? Written : 0;
@@ -224,23 +174,7 @@ Return Value:
     return Buffer;
 }
 
-PCSTR
-PlatGetDescription(VOID)
-/*++
-
-Routine Description:
-
-    Retrieves a string with information about the system version.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    A static buffer containing the system description.
-
---*/
+PCSTR PlatGetDescription(VOID)
 {
     static CHAR Buffer[64];
 
@@ -322,7 +256,7 @@ Return Value:
 #ifdef _DEBUG
                  "%s %s %u.%u.%s %s%s",
 #else
-                  "%s %s %lu.%lu.%s.%lu %s%s",
+                 "%s %s %lu.%lu.%s.%lu %s%s",
 #endif
                  strcmp(EditionId, "SystemOS") == 0 ? "Xbox System Software"
                                                     : "Windows",
@@ -336,9 +270,9 @@ Return Value:
                  strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId,
                  IsWow64 ? " (WoW64)" : ""
 #else
-                  CurrentBuildNumber, UBR,
-                  strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId,
-                  IsWow64 ? " (WoW64)" : ""
+                 CurrentBuildNumber, UBR,
+                 strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId,
+                 IsWow64 ? " (WoW64)" : ""
 #endif
         );
     }
@@ -360,21 +294,6 @@ Return Value:
 }
 
 _Noreturn VOID PlatError(_In_ PCSTR Message)
-/*++
-
-Routine Description:
-
-    Displays an error message box that optionally triggers a breakpoint.
-
-Arguments:
-
-    Message - The error message.
-
-Return Value:
-
-    None.
-
---*/
 {
     INT Option;
 
@@ -391,25 +310,7 @@ Return Value:
     }
 }
 
-PVOID
-PlatGetReturnAddress(VOID)
-/*++
-
-Routine Description:
-
-    Gets the return address.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    NULL - The return address could not be determined.
-
-    non-NULL - The return address of the caller.
-
---*/
+PVOID PlatGetReturnAddress(VOID)
 {
     PVOID ReturnAddress;
 
@@ -418,23 +319,7 @@ Return Value:
     return ReturnAddress;
 }
 
-PCSTR
-PlatGetUserDataDirectory(VOID)
-/*++
-
-Routine Description:
-
-    Gets the path of the directory for user data to be stored in.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    The user data directory in a static buffer.
-
---*/
+PCSTR PlatGetUserDataDirectory(VOID)
 {
     static CHAR Directory[MAX_PATH + 1] = {0};
     PCSTR Path;
@@ -457,23 +342,7 @@ Return Value:
     return Directory;
 }
 
-UINT64
-PlatGetMilliseconds(VOID)
-/*++
-
-Routine Description:
-
-    Gets the number of milliseconds passed since an arbitrary point in time.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    A number of milliseconds.
-
---*/
+UINT64 PlatGetMilliseconds(VOID)
 {
 #if _WIN32_WINNT <= 0x502
     return GetTickCount();
@@ -482,23 +351,7 @@ Return Value:
 #endif
 }
 
-BOOLEAN
-PlatCreateDirectory(_In_ PCSTR Path)
-/*++
-
-Routine Description:
-
-    Recursively creates a directory.
-
-Arguments:
-
-    Path - The path of the directory to create.
-
-Return Value:
-
-    Whether the directory could be created.
-
---*/
+BOOLEAN PlatCreateDirectory(_In_ PCSTR Path)
 {
     // literally Unix version but replace mkdir with CreateDirectoryA
 
@@ -528,42 +381,12 @@ Return Value:
 }
 
 VOID PlatPrint(_In_ PCSTR Text)
-/*++
-
-Routine Description:
-
-    Uses OutputDebugStringA to output text.
-
-Arguments:
-
-    Text - The string to output.
-
-Return Value:
-
-    None.
-
---*/
 {
     OutputDebugStringA(Text);
 }
 
 PCHAR
 PlatFixPath(_In_ PCSTR Path)
-/*++
-
-Routine Description:
-
-    Cleans up a path.
-
-Arguments:
-
-    Path - The path to clean up.
-
-Return Value:
-
-    The cleaned path in a heap buffer.
-
---*/
 {
     PCHAR FixedPath;
     UINT i;

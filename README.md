@@ -4,38 +4,28 @@ This is a game engine I'm making.
 
 ### Features
 
-- Written in portable, modular C11
-- xmake as the build system
-- Diffuse lighting (note: Doom Guy's back is missing because of normal issues with the model that I got from a Google Drive
-  folder of ripped models, and I didn't fix it because it was for testing)
-
-  ![untextured diffuse lit Master Chief and Doom Guy models](https://randomcode.dev/programs/purpl_chief_doomguy_1.gif)
-- Diffuse textured 3D models using custom simple formats about as efficient as OBJ and PNG
-
-  ![textured Master Chief model](https://randomcode.dev/files/programs/purpl_chief_doomguy_1.gif)
-- Tools for converting to the engine's formats
-- ~~Decent Vulkan backend (and it's nearly 4000 lines long!)~~ This has been removed, a new renderer architecture is under construction
-- Partial DirectX 9 backend (for supporting operating systems older than I am like Windows XP)
-- No DLL shenanigans (yet)
+- [x] Written in portable, modular C11
+- [x] xmake as the build system
+- [x] Diffuse lighting
+- [x] Diffuse textured 3D models using custom simple formats about as efficient as OBJ and PNG
+- [x] Tools for converting to the engine's formats
+- [x] Decent Vulkan backend (and it's nearly 4000 lines long!)
+- [ ] Beginning of a DirectX 12 backend (not really implemented yet)
+- [ ] No DLL shenanigans (yet)
 
 ### Interesting stuff I guess
 
-I've done my best to use [the coding style used for the Windows kernel](http://tenox.pdp-11.ru/os/winnt_xp/Documentation/NT_Design_Workbook/coding.doc)
-because I think it's cool and also fairly readable, although kinda weird, impossible to match with an autoformatter,
-and not compatible with Doxygen or anything.
-
 The engine is made of these components (some have prefixes, like NT, others don't, like Win32):
 
-- `common` (Cmn) - Shared common functions. Existance and some functions inspired by Quake 2.
-- `platform` (Plat/Vid) - Platform abstraction, handles the compiler(s) used for that platform but also OS functions,
-also handles "video" (another Quake 2 idea sort of), through functions that hide most details
-about the underlying window and such.
-- `engine` (Eng) - Currently contains a camera structure and function, a transform structure, and some ECS stuff.
-- `render` (Rdr) (`engine/render`) - Currently under construction, gonna be multithreaded and use a graph and stuff
+- [`common`](common) (Cmn) - Shared common functions. Existance and some functions inspired by Quake 2.
+- [`platform`](platform) (Plat/Vid) - Platform abstraction, handles the compiler(s) used for that platform but also OS functions,
+also handles "video" (another Quake 2 idea sort of), through functions that hide most details about the underlying window and such.
+- [`engine`](engine) (Eng) - Currently contains a camera structure and function, a transform structure, and some ECS stuff.
+- [`render`](engine/render) (Rdr) - Currently under construction, gonna be multithreaded and use a graph and stuff
   (you can still see the old code at commit `8ef342c041c0af9ad6aa49f142ea6a0db9e05792`).
-- `texture` (`util/texture`) - Texture format library. ZSTD compression, basically a header and pixels in ~~RGB~~, RGBA, or ~~depth
+- [`texture`](util/texture) (no prefix) - Texture format library. ZSTD compression, basically a header and pixels in ~~RGB~~, RGBA, or ~~depth
 (32-bit float)~~ formats.
-- `model` (`util/model`) - Model format library. Extremely primitive, like the texture format.
+- [`model`](util/model) (no prefix) - Model format library. Extremely primitive, like the texture format.
 
 Other stuff:
 

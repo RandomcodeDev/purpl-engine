@@ -17,6 +17,7 @@ Abstract:
 #include "purpl/purpl.h"
 
 BEGIN_EXTERN_C
+#include "common/alloc.h"
 #include "common/common.h"
 #include "common/log.h"
 
@@ -138,239 +139,218 @@ typedef struct VULKAN_IMAGE
     VkFormat Format;
 } VULKAN_IMAGE, *PVULKAN_IMAGE;
 
-//
-// Vulkan data
-//
-
+/// @brief Vulkan data
 typedef struct VULKAN_DATA
 {
-    //
-    // Instance
-    //
-
+    /// @brief Instance
     VkInstance Instance;
 
-    //
-    // Surface
-    //
-
+    /// @brief Surface
     VkSurfaceKHR Surface;
 
-    //
-    // Device stuff
-    //
-
+    /// @brief List of GPUs
     PVULKAN_GPU_INFO Gpus;
+
+    /// @brief Current GPU
     PVULKAN_GPU_INFO Gpu;
+
+    /// @brief Index of current GPU
     UINT32 GpuIndex;
+
+    /// @brief Logical device
     VkDevice Device;
 
-    //
-    // Allocator
-    //
-
+    /// @brief VMA allocator
     VmaAllocator Allocator;
 
-    //
-    // Queues
-    //
-
+    /// @brief Graphics queue
     VkQueue GraphicsQueue;
+
+    /// @brief Present queue
     VkQueue PresentQueue;
 
-    //
-    // Command and synchronization stuff
-    //
-
+    /// @brief Main command pool
     VkCommandPool CommandPool;
+
+    /// @brief Command pool for transfers
     VkCommandPool TransferCommandPool;
-    VkCommandBuffer DeferredCommandBuffer;
+
+    /// @brief Frame command buffers
     VkCommandBuffer CommandBuffers[VULKAN_FRAME_COUNT];
+
+    /// @brief Fences for the command buffers
     VkFence CommandBufferFences[VULKAN_FRAME_COUNT];
+
+    /// @brief Semaphores for frame acquisition
     VkSemaphore AcquireSemaphores[VULKAN_FRAME_COUNT];
+
+    /// @brief Semaphores for completed frames
     VkSemaphore RenderCompleteSemaphores[VULKAN_FRAME_COUNT];
-    VkSemaphore DeferredSemaphore;
 
-    //
-    // Swap chain stuff
-    //
-
+    /// @brief Swap chain
     VkSwapchainKHR SwapChain;
+
+    /// @brief Swap chain format
     VkSurfaceFormatKHR SurfaceFormat;
+
+    /// @brief Swap chain present mode
     VkPresentModeKHR PresentMode;
+
+    /// @brief Swap chain resolution
     VkExtent2D SwapChainExtent;
+
+    /// @brief Images in the swap chain
     VkImage *SwapChainImages;
+
+    /// @brief Views of the images in the swap chain
     VkImageView SwapChainImageViews[VULKAN_FRAME_COUNT];
+
+    /// @brief The current index in the swap chain
     UINT32 SwapChainIndex;
 
-    //
-    // Rendering stuff
-    //
+    /// @brief Main render pass, outputs to the screen
+    VkRenderPass MainRenderPass;
 
-    VkRenderPass MainRenderPass; // Outputs to the screen
+    /// @brief Framebuffers for the screen, tied to swap chain images
     VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
 
-    //
-    // Descriptor things
-    //
-
+    /// @brief Main descriptor pool
     VkDescriptorPool DescriptorPool;
+
+    /// @brief Descriptor set layout
     VkDescriptorSetLayout DescriptorSetLayout;
 
-    //
-    // Shared pipeline information
-    //
-
+    /// @brief Pipeline layout
     VkPipelineLayout PipelineLayout;
+
+    /// @brief Pipeline cache
     VkPipelineCache PipelineCache;
 
-    //
-    // Frame index
-    //
-
+    /// @brief Current frame index
     UINT8 FrameIndex;
 
-    //
-    // Whether Vulkan is initialized
-    //
-
+    /// @brief Whether Vulkan is initialized
     BOOLEAN Initialized;
 
-    //
-    // Whether the swapchain was recreated
-    //
-
+    /// @brief Whether the swap chain was recreated
     BOOLEAN Resized;
 
-    //
-    // Shader stuff
-    //
-
+    /// @brief Uniform buffers
     VULKAN_BUFFER UniformBuffers[VULKAN_FRAME_COUNT];
+
+    /// @brief Addresses where uniform buffers are mapped
     PVOID UniformBufferAddresses[VULKAN_FRAME_COUNT];
 
-    //
-    // Sampler
-    //
-
+    /// @brief Sampler
     VkSampler Sampler;
 } VULKAN_DATA, *PVULKAN_DATA;
 
 extern VULKAN_DATA VlkData;
 
-//
-// Create the instance
-//
-
+/// @brief Create the instance
 extern VOID VlkCreateInstance(VOID);
 
-//
-// Get allocation callbacks
-//
-
+/// @brief Get allocation callbacks
+///
+/// @return The allocation callbacks
 extern VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID);
 
-//
-// Get the name of a result
-//
-
+/// @brief Get the name of a result
+///
+/// @param Result
 extern PCSTR VlkGetResultString(VkResult Result);
 
-//
-// Set an object's name
-//
-
+/// @brief Set an object's name
+///
+/// @param Object The Vulkan object to name
+/// @param ObjectType The type of the object
+/// @param Name The name to set (supports printf-style formatting)
+/// @param ... Formatting arguments
 extern VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType,
                              _In_ _Printf_format_string_ PCSTR Name, ...);
 
-//
-// Debug callback to log things
-//
-
+/// @brief Debug callback to log things
+/// 
+/// @param MessageSeverity The severity of the message
+/// @param MessageTypes The types of the message
+/// @param CallbackData Callback data
+/// @param UserData Not used
+///
+/// @return Always returns TRUE
 extern VkBool32 VKAPI_CALL
 VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
                  _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
                  _In_ CONST VkDebugUtilsMessengerCallbackDataEXT *CallbackData,
                  _In_opt_ PVOID UserData);
 
-//
-// Get devices
-//
-
+/// @brief Get devices
 extern VOID VlkEnumeratePhysicalDevices(VOID);
 
-//
-// Create the logical device
-//
-
+/// @brief Create the logical device
 extern VOID VlkCreateLogicalDevice(VOID);
 
-//
-// Create presentation semaphores
-//
-
+/// @brief Create presentation semaphores
 extern VOID VlkCreateSemaphores(VOID);
 
-//
-// Create the main and transfer command pools
-//
-
+/// @brief Create the main and transfer command pools
 extern VOID VlkCreateCommandPools(VOID);
 
-//
-// Allocate the main command buffers
-//
-
+/// @brief Allocate the main command buffers
 extern VOID VlkAllocateCommandBuffers(VOID);
 
-//
-// Allocate a buffer
-//
-
+/// @brief Allocate a buffer
+/// 
+/// @param Size The size of the buffer
+/// @param Usage The usage flags of the buffer
+/// @param Flags The memory flags of the buffer
+/// @param Buffer The buffer
 extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size,
                               _In_ VkBufferUsageFlags Usage,
                               _In_ VkMemoryPropertyFlags Flags,
                               _Out_ PVULKAN_BUFFER Buffer);
 
-//
-// Allocate a buffer and copy data to it
-//
-
+/// @brief Allocate a buffer and copy data into it
+/// 
+/// @param Data The data to copy into the buffer
+/// @param Size The size of the buffer and the data
+/// @param Usage The usage of the buffer
+/// @param Flags The flags of the buffer
+/// @param Buffer The buffer
 extern VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size,
                                       _In_ VkBufferUsageFlags Usage,
                                       _In_ VkMemoryPropertyFlags Flags,
                                       _Out_ PVULKAN_BUFFER Buffer);
 
-//
-// Free a buffer
-//
-
+/// @brief Free a buffer
+///
+/// @param Buffer The buffer to free
 extern VOID VlkFreeBuffer(_Inout_ PVULKAN_BUFFER Buffer);
 
-//
-// Create a temporary command buffer in the transfer command pool
-//
-
+/// @brief Create a temporary command buffer in the transfer command pool
+///
+/// @return A command buffer
 extern VkCommandBuffer VlkBeginTransfer(VOID);
 
-//
-// Submits and frees a command buffer from VlkBeginTransfer
-//
-
+/// @brief Submits and frees a command buffer from VlkBeginTransfer
+///
+/// @param TransferBuffer The transfer command buffer from VlkBeginTransfer to submit and free
 extern VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer);
 
-//
-// Copy a buffer to another buffer
-//
-
+/// @brief Copy a buffer to another buffer
+///
+/// @param Source The source buffer
+/// @param Destination The destination buffer
+/// @param Size The size of the copy
 extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source,
                           _In_ PVULKAN_BUFFER Destination,
                           _In_ VkDeviceSize Size);
 
-//
-// Create an image view
-//
-
+/// @brief Create an image view
+/// 
+/// @param ImageView 
+/// @param Image 
+/// @param Format 
+/// @param Aspect 
 extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
                                _In_ VkFormat Format,
                                _In_ VkImageAspectFlags Aspect);

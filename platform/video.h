@@ -16,108 +16,50 @@ Abstract:
 
 #include "purpl/purpl.h"
 
-//
-// Initialize platform video
-//
+/// @brief Initialize platform video
+extern VOID VidInitialize(VOID);
 
-extern
-VOID
-VidInitialize(
-    VOID
-    );
+/// @brief Update video (and input)
+///
+/// @return Whether the window is open
+extern BOOLEAN VidUpdate(VOID);
 
-//
-// Update video (and input)
-//
+/// @brief Shut down platform video
+extern VOID VidShutdown(VOID);
 
-extern
-BOOLEAN
-VidUpdate(
-    VOID
-    );
+/// @brief Get the size of the platform video output
+/// @param Width Receives the width
+/// @param Height Receives the height
+extern VOID VidGetSize(_Out_opt_ PUINT32 Width, _Out_opt_ PUINT32 Height);
 
-//
-// Clean up video resources
-//
+/// @brief Get whether the video output has been resized since the last call
+extern BOOLEAN VidResized(VOID);
 
-extern
-VOID
-VidShutdown(
-    VOID
-    );
+/// @brief Get whether the video output is focused
+extern BOOLEAN VidFocused(VOID);
 
-//
-// Get the size of the video output
-//
+/// @brief Get the equivalent of a window handle (HWND, GLFWwindow, etc)
+/// @return The video output object
+extern PVOID VidGetObject(VOID);
 
-extern
-VOID
-VidGetSize(
-    _Out_opt_ PUINT32 Width,
-    _Out_opt_ PUINT32 Height
-    );
-
-//
-// Determine whether the video output has been resized since the last call
-//
-
-extern
-BOOLEAN
-VidResized(
-    VOID
-    );
-
-//
-// Determine whether the video output is focused
-//
-
-extern
-BOOLEAN
-VidFocused(
-    VOID
-    );
-
-//
-// Get the window or similar object
-//
-
-extern
-PVOID
-VidGetObject(
-    VOID
-    );
-
-//
-// Get the current DPI
-//
-
-extern
-FLOAT
-VidGetDpi(
-    VOID
-    );
+/// @brief Get the current DPI
+/// @return The current DPI
+extern FLOAT VidGetDpi(VOID);
 
 #ifdef PURPL_VULKAN
-//
-// Get the address of a Vulkan function
-//
+/// @brief Get the address of a Vulkan symbol
+/// @param Instance The Vulkan instance
+/// @param Name The name of the symbol
+/// @return The address of the symbol
+extern PFN_vkVoidFunction PlatGetVulkanFunction(_In_ VkInstance Instance,
+                                                _In_ PCSTR Name);
 
-extern
-PFN_vkVoidFunction
-PlatGetVulkanFunction(
-    _In_ VkInstance Instance,
-    _In_ PCSTR Name
-    );
-
-//
-// Create a Vulkan surface
-//
-
-extern
-PVOID
-PlatCreateVulkanSurface(
-    _In_ PVOID Instance,
-    _In_ PVOID AllocationCallbacks,
-    _In_opt_ PVOID WindowHandle
-    );
+/// @brief Create a Vulkan surface
+/// @param Instance The Vulkan instance
+/// @param AllocationCallbacks Allocation functions (should be the return value of VlkGetAllocationCallbacks)
+/// @param WindowHandle The handle of the window to use, if not the engine's
+/// @return A Vulkan surface
+extern PVOID PlatCreateVulkanSurface(_In_ PVOID Instance,
+                                     _In_ PVOID AllocationCallbacks,
+                                     _In_opt_ PVOID WindowHandle);
 #endif

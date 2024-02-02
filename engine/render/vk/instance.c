@@ -1,22 +1,4 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    instance.c
-
-Abstract:
-
-    This module implements Vulkan instance creation.
-
---*/
-
 #include "vk.h"
-
-//
-// Required instance extensions
-//
 
 PCSTR RequiredExtensions[] = {
     VK_KHR_SURFACE_EXTENSION_NAME,
@@ -33,10 +15,6 @@ PCSTR RequiredExtensions[] = {
 #endif
 };
 
-//
-// Required layers
-//
-
 PCSTR RequiredLayers[] = {
 #ifdef PURPL_SWITCH
     "VK_LAYER_NN_vi_swapchain",
@@ -47,21 +25,6 @@ PCSTR RequiredLayers[] = {
     NULL};
 
 VOID VlkCreateInstance(VOID)
-/*++
-
-Routine Description:
-
-    Creates the Vulkan instance and debug messenger.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     VkResult Result;
     SIZE_T i;

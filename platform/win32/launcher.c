@@ -1,19 +1,12 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    launcher.c
-
-Abstract:
-
-    This module implements the Windows entry point.
-
---*/
+/// @file launcher.c
+///
+/// @brief This module implements the Windows entry point.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #include "purpl/purpl.h"
 
+#include "common/alloc.h"
 #include "common/common.h"
 
 // hinting the nvidia driver to use the dedicated graphics card in an optimus
@@ -24,36 +17,22 @@ __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 // same thing for AMD GPUs using v13.35 or newer drivers
 __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 
-//
-// argc and argv are already supplied in debug builds
-//
+// argc and argv are already supplied in debug builds, but otherwise they have
+// to be parsed. These store the arguments either way.
 
 static INT ArgumentCount;
 static PCHAR *Arguments;
 static BOOLEAN ParsedArguments;
 
+/// @brief This routine is a modified version of ReactOS's CommandLineToArgvW
+///        that is adjusted to convert ASCII instead of Unicode command lines
+///        and use CmnAlloc and CmnFree instead of LocalAlloc and LocalFree.
+///
+/// @param lpCmdline The command line to parse
+/// @param numargs   This parameter receives the number of arguments parsed
+///
+/// @return An array of parsed arguments
 LPSTR *WINAPI CommandLineToArgvA(_In_ LPCSTR lpCmdline, _Out_ PINT numargs)
-/*++
-
-Routine Description:
-
-    This routine is a modified version of ReactOS's CommandLineToArgvW
-    that is adjusted to convert ASCII instead of Unicode command lines
-    and use calloc and free instead of LocalAlloc and LocalFree.
-
-Arguments:
-
-    lpCmdline - The command line to parse.
-
-    numargs - This parameter receives number of arguments parsed.
-
-Return Value:
-
-    NULL - Failed to parse command line.
-
-    Array of arguments - Success.
-
---*/
 {
     DWORD argc;
     LPSTR *argv;
@@ -290,122 +269,22 @@ Return Value:
     return argv;
 }
 
-// LONG
-// ExceptionHandler(
-//     _In_ PEXCEPTION_POINTERS ExceptionInformation
-//     )
-///*++
-//
-// Routine Description:
-//
-//    Catch-all exception handler to display exceptions.
-//
-// Arguments:
-//
-//    Exceptioninformation - Information about the exception that occured.
-//
-// Return Value:
-//
-//    None.
-//
-//--*/
-//{
-//    ULONG_PTR Arguments[EXCEPTION_MAXIMUM_PARAMETERS];
-//    ULONG Response;
-//    ULONG UnicodeParameters;
-//
-//    Response = 0;
-//    Arguments[0] =
-//    (ULONG_PTR)ExceptionInformation->ExceptionRecord->ExceptionAddress;
-//    memcpy(
-//        Arguments + 1,
-//        ExceptionInformation->ExceptionRecord->ExceptionInformation,
-//        sizeof(ExceptionInformation->ExceptionRecord->ExceptionInformation)
-//        );
-//    if ( ExceptionInformation->ExceptionRecord->ExceptionCode ==
-//    EXCEPTION_ACCESS_VIOLATION ||
-//         ExceptionInformation->ExceptionRecord->ExceptionCode ==
-//         EXCEPTION_IN_PAGE_ERROR )
-//    {
-//        switch (Arguments[1])
-//        {
-//        case 0:
-//            Arguments[2] =
-//            (ULONG_PTR)&(UNICODE_STRING)RTL_CONSTANT_STRING(L"reading");
-//            break;
-//        case 1:
-//            Arguments[2] =
-//            (ULONG_PTR)&(UNICODE_STRING)RTL_CONSTANT_STRING(L"writing");
-//            break;
-//        case 8:
-//            Arguments[2] =
-//            (ULONG_PTR)&(UNICODE_STRING)RTL_CONSTANT_STRING(L"executing");
-//            break;
-//        }
-//
-//        UnicodeParameters = 1 << 2;
-//    }
-//    else
-//    {
-//        UnicodeParameters = 0;
-//    }
-//
-//    NtRaiseHardError(
-//        ExceptionInformation->ExceptionRecord->ExceptionCode,
-//        ExceptionInformation->ExceptionRecord->NumberParameters,
-//        UnicodeParameters,
-//        Arguments,
-//        OptionAbortRetryIgnore,
-//        &Response
-//        );
-//
-//    switch (Response)
-//    {
-//    case ResponseAbort:
-//        break;
-//    case ResponseIgnore:
-//    case ResponseRetry:
-//        DbgBreakPoint();
-//        break;
-//    }
-//
-//    NtTerminateProcess(
-//        NtCurrentProcess(),
-//        ExceptionInformation->ExceptionRecord->ExceptionCode
-//        );
-//
-//    return 0;
-//}
-
 extern VOID InitializeMainThread(_In_ PFN_THREAD_START StartAddress);
 
+/// @brief This routine is the entry point for non-debug Windows builds.
+///
+/// @param Instance          Module handle.
+/// @param PreviousInstance  Not used.
+/// @param CommandLine       Command line.
+/// @param Show              Window show state.
+///
+/// @return An appropriate status code.
 INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
             _In_ PCHAR CommandLine, _In_ INT Show)
-/*++
-
-Routine Description:
-
-    This routine is the entry point for non-debug Windows builds.
-
-Arguments:
-
-    Instance - Module handle.
-
-    PreviousInstance - Not used.
-
-    CommandLine - Command line.
-
-    Show - Window show state.
-
-Return Value:
-
-    An appropriate status code.
-
---*/
 {
     INT Result;
-    // Don't care about checking for a console parent process on Xbox, since it
-    // won't be seen
+    // Don't care about checking for a console parent process on Xbox, since
+    // the console window won't be seen in any circumstance
 #ifndef PURPL_GDKX
     DWORD Error;
     HANDLE Snapshot;
@@ -424,10 +303,9 @@ Return Value:
     DWORD Mode;
 #endif
 
-    /*AddVectoredExceptionHandler(
-        FALSE,
-        ExceptionHandler
-        );*/
+    UNREFERENCED_PARAMETER(Instance);
+    UNREFERENCED_PARAMETER(PreviousInstance);
+    UNREFERENCED_PARAMETER(Show);
 
     if (!Arguments)
     {
@@ -436,12 +314,8 @@ Return Value:
         ParsedArguments = TRUE;
     }
 
-    UNREFERENCED_PARAMETER(Instance);
-    UNREFERENCED_PARAMETER(PreviousInstance);
-    UNREFERENCED_PARAMETER(Show);
-
     // Get a ton of memory so it doesn't have to be requested from the OS later
-    free(malloc(1 * 1024 * 1024 * 1024));
+    free(malloc(1ULL * 1024 * 1024 * 1024));
 
 #ifndef PURPL_DEBUG
     InitializeMainThread(WinMain);
@@ -465,8 +339,8 @@ Return Value:
 
     Result = PurplMain(ArgumentCount, Arguments);
 
-    // No error checking because the program is done anyway
-    // Check if the parent process is a console, and pause if it isn't
+    // Check if the parent process is a console, and pause if it isn't. No
+    // error checking because the program is done anyway.
 
 #ifndef PURPL_GDKX
     Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -547,22 +421,23 @@ Return Value:
 }
 
 #if defined PURPL_DEBUG || defined PURPL_RELWITHDEBINFO
+/// @brief This routine is the entry point for debug Windows builds.
+///        It calls WinMain with the appropriate parameters.
+///
+/// @param argc The number of command line arguments.
+/// @param argv The command line arguments.
+/// @return The return value of PurplMain
 INT main(_In_ INT argc, _In_ PCHAR argv[])
-/*++
-
-Routine Description:
-
-    This routine is the entry point for debug Windows builds.
-    It calls WinMain with the appropriate parameters.
-
---*/
 {
+    CHAR DummyCommandline;
+
     Arguments = argv;
     ArgumentCount = argc;
     ParsedArguments = FALSE;
 
     InitializeMainThread((PFN_THREAD_START)main);
 
-    return WinMain(GetModuleHandleA(NULL), NULL, "", SW_SHOWNORMAL);
+    DummyCommandline = 0;
+    return WinMain(GetModuleHandleA(NULL), NULL, &DummyCommandline, SW_SHOWNORMAL);
 }
 #endif

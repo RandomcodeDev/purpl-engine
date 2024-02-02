@@ -1,21 +1,15 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    backend.c
-
-Abstract:
-
-    This module implements the DirectX 12 backend.
-
---*/
+/**
+@file
+@brief This file manages the DirectX 12 backend
+*/
 
 #include "dx12.h"
 
 DIRECTX12_DATA Dx12Data;
 
+/**
+
+*/
 static VOID Initialize(VOID)
 {
     LogDebug("Initializing DirectX 12 backend");

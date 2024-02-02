@@ -17,6 +17,7 @@ Abstract:
 #include "purpl/purpl.h"
 
 BEGIN_EXTERN_C
+#include "common/alloc.h"
 #include "common/common.h"
 #include "common/log.h"
 

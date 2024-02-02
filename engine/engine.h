@@ -16,6 +16,7 @@ Abstract:
 
 #include "purpl/purpl.h"
 
+#include "common/alloc.h"
 #include "common/common.h"
 #include "common/filesystem.h"
 #include "common/log.h"
@@ -28,16 +29,10 @@ Abstract:
 #include "entity.h"
 #include "mathutil.h"
 
-//
-// The engine's data directory
-//
-
+/// @brief The engine's data directory
 extern PCHAR EngineDataDirectory;
 
-//
-// The subdirectories of the data directory
-//
-
+/// @brief The subdirectories of the data directory
 typedef enum ENGINE_DATA_DIRECTORY
 {
     EngineDataDirectorySaves,
@@ -46,62 +41,36 @@ typedef enum ENGINE_DATA_DIRECTORY
 } ENGINE_DATA_DIRECTORY, *PENGINE_DATA_DIRECTORY;
 extern CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount];
 
-//
-// Initialize the engine
-//
-
+/// @brief Initialize the engine
 extern VOID EngInitialize(VOID);
 
-//
-// The main loop of the engine
-//
-
+/// @brief The main loop of the engine
 extern VOID EngMainLoop(VOID);
 
-//
-// Start a frame
-//
-
+/// @brief Start a frame
 VOID EngStartFrame(VOID);
 
-//
-// End a frame
-//
-
+/// @brief End a frame
 extern VOID EngEndFrame(VOID);
 
-//
-// Shut down the engine
-//
-
+/// @brief Shut down the engine
 extern VOID EngShutdown(VOID);
 
-//
-// Get the main camera
-//
-
+/// @brief Get the main camera
+///
+/// @return The entity with a camera component that is the main camera
 extern ecs_entity_t EngGetMainCamera(VOID);
 
-//
-// Set the main camera
-//
-
+/// @brief Set the main camera
+///
+/// @param Entity The entity to set as the main camera
 extern VOID EngSetMainCamera(_In_ ecs_entity_t Entity);
 
-//
-// Get the frame delta in seconds
-//
-
+/// @brief Get the frame delta in seconds
 extern DOUBLE EngGetDelta(VOID);
 
-//
-// Get the framerate
-//
-
+/// @brief Get the framerate
 extern UINT32 EngGetFramerate(VOID);
 
-//
-// Get the runtime of the engine
-//
-
+/// @brief Get the runtime of the engine
 extern UINT64 EngGetRuntime(VOID);

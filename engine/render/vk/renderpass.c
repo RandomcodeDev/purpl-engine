@@ -1,17 +1,3 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    backend.c
-
-Abstract:
-
-    This module implements render pass manipulation in Vulkan.
-
---*/
-
 #include "vk.h"
 
 VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments,

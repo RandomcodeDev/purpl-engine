@@ -53,7 +53,7 @@ static CONST char *LevelColours[] = {"\x1b[38;5;197m", "\x1b[36m", "\x1b[32m",
 
 static void StdoutCallback(LOG_EVENT *Event)
 {
-    char Buffer[64];
+    char Buffer[64] = {0};
     Buffer[strftime(Buffer, sizeof(Buffer), "%H:%M:%S", Event->Time)] = '\0';
 #ifdef LOG_USE_COLOR
     fprintf(Event->Data,

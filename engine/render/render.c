@@ -2,7 +2,8 @@
 
 ecs_entity_t ecs_id(MODEL);
 
-static RENDER_API Api;
+RENDER_API RenderApi;
+
 static RENDER_BACKEND Backend;
 static FLOAT Scale;
 
@@ -31,11 +32,11 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     RdrSetScale(1.0f);
 
 #ifdef PURPL_DIRECTX
-    Api = RenderApiDirect3D12;
+    RenderApi = RenderApiDirect3D12;
 #elif defined(PURPL_VULKAN)
-    Api = RenderApiVulkan;
+    RenderApi = RenderApiVulkan;
 #endif
-    switch (Api)
+    switch (RenderApi)
     {
     default:
     case RenderApiNone:

@@ -1,42 +1,9 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    device.c
-
-Abstract:
-
-    This module implements device-related functions for Vulkan.
-
---*/
-
 #include "vk.h"
-
-//
-// Required device extensions
-//
 
 PCSTR RequiredDeviceExtensions[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME,
                                     VK_EXT_ROBUSTNESS_2_EXTENSION_NAME};
 
 VOID VlkEnumeratePhysicalDevices(VOID)
-/*++
-
-Routine Description:
-
-    Populates the list of physical devices and gets information about them.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     UINT32 DeviceCount;
     VkPhysicalDevice *Devices = NULL;
@@ -302,21 +269,6 @@ Return Value:
 }
 
 VOID VlkCreateLogicalDevice(VOID)
-/*++
-
-Routine Description:
-
-    Creates the logical device and queues from the selected physical device.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     VkDeviceCreateInfo DeviceCreateInformation = {0};
     VkDeviceQueueCreateInfo QueueCreateInfos[2] = {0};

@@ -19,44 +19,33 @@ Abstract:
 #include "util/mesh.h"
 #include "util/texture.h"
 
-//
-// Initialize the ECS
-//
-
+/// @brief Initialize the ECS
 extern VOID EcsInitialize(VOID);
 
-//
-// Begin an ECS frame
-//
-
+/// @brief Begin an ECS frame
+///
+/// @param Delta The amount of time since this was last called in milliseconds
 extern VOID EcsBeginFrame(_In_ UINT64 Delta);
 
-//
-// End an ECS frame
-//
-
+/// @brief End an ECS frame
 extern VOID EcsEndFrame(VOID);
 
-//
-// Shut down the ECS
-//
-
+/// @brief Shut down the ECS
 extern VOID EcsShutdown(VOID);
 
-//
-// Create an entity
-//
-
+/// @brief Create an entity
+///
+/// @param Name The name of the entity
+///
+/// @return An entity
 extern ecs_entity_t EcsCreateEntity(_In_opt_ PCSTR Name);
 
-//
-// Set the ECS world
-//
-
+/// @brief Set the ECS world
+///
+/// @param World The new world to use
 extern VOID EcsSetWorld(_In_ ecs_world_t *World);
 
-//
-// Get the ECS world
-//
-
+/// @brief Get the ECS world
+///
+/// @return The current world
 extern ecs_world_t *EcsGetWorld(VOID);

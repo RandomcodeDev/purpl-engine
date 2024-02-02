@@ -172,41 +172,11 @@ VOID EngStartFrame(VOID)
 
 // TODO: integrate into EngMainLoop?
 VOID EngEndFrame(VOID)
-/*++
-
-Routine Description:
-
-    Finishes the frame.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     Last = Now;
 }
 
 VOID EngShutdown(VOID)
-/*++
-
-Routine Description:
-
-    Shuts down the engine.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
 {
     LogInfo("Shutting down engine");
 

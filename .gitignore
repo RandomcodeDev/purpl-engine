@@ -2,6 +2,7 @@
 
 .xmake/
 *build*/
+*docs*/
 vsxmake*/
 *out*
 compile_commands.json

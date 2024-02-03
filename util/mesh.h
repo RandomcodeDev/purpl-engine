@@ -4,7 +4,6 @@
 ///
 /// @copyright (c) 2024 Randomcode Developers
 
-
 #pragma once
 
 #include "purpl/purpl.h"
@@ -13,16 +12,17 @@
 #include "common/filesystem.h"
 #include "common/log.h"
 
-// Mesh file magic bytes
-
+/// @brief Mesh file magic string
 #define MESH_MAGIC "PMSH"
+/// @brief Mesh file magic number (little endian)
 #define MESH_MAGIC_NUMBER 'HSMP'
+/// @brief Mesh file magic signature length
 #define MESH_MAGIC_LENGTH 4
 
-// Mesh format version
+/// @brief Mesh format version
 #define MESH_FORMAT_VERSION 5
 
-// Vertex
+/// @brief Vertex
 typedef struct VERTEX
 {
     vec3 Position;
@@ -31,10 +31,7 @@ typedef struct VERTEX
     vec3 Normal;
 } VERTEX, *PVERTEX;
 
-//
-// Mesh
-//
-
+/// @brief A mesh
 typedef struct MESH
 {
     union {
@@ -49,62 +46,53 @@ typedef struct MESH
     UINT64 VertexCount;
     UINT64 IndexCount;
 
-    // Set to FALSE if you use arrays
+    /// @brief Indicates that the vertices and indices are dynamically allocated
+    /// with CmnAlloc
     BOOLEAN DataSeparate;
     PVERTEX Vertices;
-    ivec3* Indices;
+    ivec3 *Indices;
 } MESH, *PMESH;
 
-//
-// Mesh file header size
-//
-
+/// @brief Mesh file header size
 #define MESH_HEADER_SIZE offsetof(MESH, DataSeparate)
 
-//
-// Check a mesh's validity
-//
+/// @brief Check a mesh's validity
+///
+/// @param Mesh The mesh to check
+///
+/// @return Whether the mesh can be used
+#define ValidateMesh(Mesh)                                                     \
+    ((Mesh) &&                                                                 \
+     memcmp((Mesh)->MagicBytes, MESH_MAGIC, MESH_MAGIC_LENGTH) == 0 &&         \
+     (Mesh)->Version == MESH_FORMAT_VERSION)
 
-#define ValidateMesh(Mesh) \
-    ((Mesh) && \
-    memcmp( \
-        (Mesh)->MagicBytes, \
-        MESH_MAGIC, \
-        MESH_MAGIC_LENGTH \
-        ) == 0 && \
-    (Mesh)->Version == MESH_FORMAT_VERSION)
+/// @brief Create a mesh
+///
+/// @param Material The name of the material for the mesh
+/// @param Vertices The vertex data of the mesh
+/// @param VertexCount The number of vertices
+/// @param Indices The index data of the mesh
+/// @param IndexCount The number of indices
+///
+/// @return A mesh
+extern PMESH CreateMesh(_In_ PCSTR Material,
+                        _In_reads_(VertexCount * sizeof(VERTEX))
+                            PVERTEX Vertices,
+                        _In_ SIZE_T VertexCount,
+                        _In_reads_(IndexCount * sizeof(ivec3)) ivec3 *Indices,
+                        _In_ SIZE_T IndexCount);
 
-//
-// Create a mesh
-//
+/// @brief Load a mesh from a file
+///
+/// @param Path The path of the mesh file
+///
+/// @return The loaded mesh
+extern PMESH LoadMesh(_In_ PCSTR Path);
 
-extern
-PMESH
-CreateMesh(
-    _In_ PCSTR Material,
-    _In_reads_(VertexCount * sizeof(VERTEX)) PVERTEX Vertices,
-    _In_ SIZE_T VertexCount,
-    _In_reads_(IndexCount * sizeof(ivec3)) ivec3* Indices,
-    _In_ SIZE_T IndexCount
-    );
-
-//
-// Load a mesh
-//
-
-extern
-PMESH
-LoadMesh(
-    _In_ PCSTR Path
-    );
-
-//
-// Write a mesh
-//
-
-extern
-BOOLEAN
-WriteMesh(
-    _In_ PCSTR Path,
-    _In_ PMESH Mesh
-    );
+/// @brief Write a mesh
+///
+/// @param Path The path to write the mesh into
+/// @param Mesh The mesh to write
+///
+/// @return Whether the mesh could be written
+extern BOOLEAN WriteMesh(_In_ PCSTR Path, _In_ PMESH Mesh);

@@ -1,1 +1,12 @@
+OUTPUT_DIRECTORY = docs
 ENABLE_PREPROCESSING = YES
+INPUT = common \
+        engine \
+        engine/render \
+        engine/render/dx12 \
+        engine/render/vk \
+        platform/win32 \
+        platform/unix \
+        ../platform/switch \
+        purpl \
+        util

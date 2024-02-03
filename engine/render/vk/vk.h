@@ -50,10 +50,10 @@ END_EXTERN_C
 
 #define VULKAN_FRAME_COUNT 3
 
-//
-// Check if something failed
-//
-
+/// @brief Hard error if a VkResult isn't VK_SUCCESS
+///
+/// @param Call The call/expression to check
+/// @param ... Anything extra to put in the if statement
 #define VULKAN_CHECK(Call, ...)                                                \
     do                                                                         \
     {                                                                          \
@@ -66,10 +66,7 @@ END_EXTERN_C
         }                                                                      \
     } while (0)
 
-//
-// Allocated buffer
-//
-
+/// @brief A buffer allocated with VlkAllocateBuffer
 typedef struct VULKAN_BUFFER
 {
     VkBuffer Buffer;
@@ -77,10 +74,7 @@ typedef struct VULKAN_BUFFER
     VkDeviceSize Size;
 } VULKAN_BUFFER, *PVULKAN_BUFFER;
 
-//
-// Model data
-//
-
+/// @brief Data for a model
 typedef struct VULKAN_MODEL_DATA
 {
     VULKAN_BUFFER VertexBuffer;
@@ -89,10 +83,7 @@ typedef struct VULKAN_MODEL_DATA
     UINT8 LastFrameUsed;
 } VULKAN_MODEL_DATA, *PVULKAN_MODEL_DATA;
 
-//
-// Texture data
-//
-
+/// @brief Data for a texture
 typedef struct VULKAN_TEXTURE_DATA
 {
     VkImage Image;
@@ -100,10 +91,7 @@ typedef struct VULKAN_TEXTURE_DATA
     VkImageView ImageView;
 } VULKAN_TEXTURE_DATA, *PVULKAN_TEXTURE_DATA;
 
-//
-// Device information
-//
-
+/// @brief Information about a GPU
 typedef struct VULKAN_GPU_INFO
 {
     VkPhysicalDevice Device;
@@ -127,10 +115,7 @@ typedef struct VULKAN_GPU_INFO
     BOOLEAN Usable;
 } VULKAN_GPU_INFO, *PVULKAN_GPU_INFO;
 
-//
-// Render attachment
-//
-
+/// @brief An image and related data/objects
 typedef struct VULKAN_IMAGE
 {
     VkImage Handle;
@@ -347,41 +332,54 @@ extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source,
 
 /// @brief Create an image view
 /// 
-/// @param ImageView 
-/// @param Image 
-/// @param Format 
-/// @param Aspect 
+/// @param ImageView This parameter receives the created image view
+/// @param Image The image to create the view for
+/// @param Format The format of the image
+/// @param Aspect The aspect of the image for the view
 extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
                                _In_ VkFormat Format,
                                _In_ VkImageAspectFlags Aspect);
 
-//
-// Choose a format from a set
-//
-
+/// @brief Chooses a format
+/// 
+/// @param Formats The list of formats to pick from
+/// @param FormatCount The number of formats in the list
+/// @param ImageTiling The image tiling
+/// @param FormatFeatures The features
+/// 
+/// @return A format that can be used
 extern VkFormat VlkChooseFormat(VkFormat *Formats, UINT32 FormatCount,
                                 VkImageTiling ImageTiling,
                                 VkFormatFeatureFlags FormatFeatures);
 
-//
-// Change an image's layout
-//
-
+/// @brief Changes an image's layout
+/// 
+/// @param Image The image to transition the layout of
+/// @param OldLayout The current layout of the image
+/// @param NewLayout The layout to transition it to
 extern VOID VlkTransitionImageLayout(_Inout_ VkImage Image,
                                      _In_ VkImageLayout OldLayout,
                                      _In_ VkImageLayout NewLayout);
 
-//
-// Copy a buffer into an image
-//
-
+/// @brief Copy a buffer into an image
+/// 
+/// @param Buffer The buffer to copy into the image
+/// @param Image The image to copy the buffer into
+/// @param Width The width of the image
+/// @param Height The height of the image
 extern VOID VlkCopyBufferToImage(_In_ VkBuffer Buffer, _Out_ VkImage Image,
                                  _In_ UINT32 Width, _In_ UINT32 Height);
 
-//
-// Create an image
-//
-
+/// @brief Create an image
+/// 
+/// @param Width The width of the image
+/// @param Height The height of the image
+/// @param Format The format of the image
+/// @param Layout The layout of the image
+/// @param Usage The usage of the image
+/// @param MemoryUsage The memory usage of the image (where to store it)
+/// @param Aspect The aspect of the image
+/// @param Image This parameter receives the created image
 extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
                            _In_ VkFormat Format, _In_ VkImageLayout Layout,
                            _In_ VkImageUsageFlags Usage,
@@ -389,64 +387,65 @@ extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
                            _In_ VkImageAspectFlags Aspect,
                            _Out_ PVULKAN_IMAGE Image);
 
-//
-// Create an initialized image
-//
-
+/// @brief Create an initialized image
+/// 
+/// @param Data The pixel data for the image
+/// @param Size The size of the data
+/// @param Width The width of the image
+/// @param Height The height of the image
+/// @param Format The format of the image
+/// @param Layout The layout of the image
+/// @param Usage The usage of the image
+/// @param MemoryUsage Where to store the image
+/// @param Aspect The aspect of the image
+/// @param Image This parameter receives the created image
 extern VOID VlkCreateImageWithData(
     _In_ PVOID Data, _In_ VkDeviceSize Size, _In_ UINT32 Width,
     _In_ UINT32 Height, _In_ VkFormat Format, _In_ VkImageLayout Layout,
     _In_ VkImageUsageFlags Usage, _In_ VmaMemoryUsage MemoryUsage,
     _In_ VkImageAspectFlags Aspect, _Out_ PVULKAN_IMAGE Image);
 
-//
-// Destroy an image
-//
-
+/// @brief Destroy an image
+/// 
+/// @param Image The image to destroy
 extern VOID VlkDestroyImage(_Inout_ PVULKAN_IMAGE Image);
 
-//
-// Choose a surface format
-//
-
+/// @brief Choose a surface format
+///
+/// @return The surface format
 extern VkSurfaceFormatKHR VlkChooseSurfaceFormat(VOID);
 
-//
-// Choose a present mode
-//
-
+/// @brief Choose a present mode
+///
+/// @return The present mode
 extern VkPresentModeKHR VlkChoosePresentMode(VOID);
 
-//
-// Get the extent of the surface
-//
-
+/// @brief Get the extent of the main surface
+/// 
+/// @return The extent of the main surface
 extern VkExtent2D VlkGetSurfaceExtent(VOID);
 
-//
-// Create the swap chain
-//
-
+/// @brief Create the main swap chain
 extern VOID VlkCreateSwapChain(VOID);
 
-//
-// Destroy the swap chain
-//
-
+/// @brief Destroy the main swap chain
 extern VOID VlkDestroySwapChain(VOID);
 
-//
-// Create a render pass
-//
-
+/// @brief Create a render pass
+/// 
+/// @param Attachments The attachments for the render pass
+/// @param AttachmentCount The number of attachments
+/// @param Subpasses The subpasses of the render pass
+/// @param SubpassCount The number of subpasses
+/// @param SubpassDependencies The subpass dependencies for the render pass
+/// @param SubpassDependencyCount The number of subpass dependencies
+/// 
+/// @return A render pass
 extern VkRenderPass VlkCreateRenderPass(
     _In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,
     _In_ VkSubpassDescription *Subpasses, _In_ SIZE_T SubpassCount,
     _In_ VkSubpassDependency *SubpassDependencies,
     _In_ SIZE_T SubpassDependencyCount);
 
-//
-// Create the main render pass
-//
-
+/// @brief Create the main render pass
 extern VOID VlkCreateMainRenderPass(VOID);

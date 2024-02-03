@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2023 Randomcode Developers
-
-Module Name:
-
-    mesh.c
-
-Abstract:
-
-    This module implements the mesh file API.
-
---*/
+/// @file mesh.c
+///
+/// @brief This module implements the mesh format
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #include "mesh.h"
 
@@ -20,31 +12,6 @@ CreateMesh(_In_ PCSTR Material,
            _In_ SIZE_T VertexCount,
            _In_reads_(IndexCount * sizeof(ivec3)) ivec3 *Indices,
            _In_ SIZE_T IndexCount)
-/*++
-
-Routine Description:
-
-    Creates a mesh from the data given.
-
-Arguments:
-
-    Material - The name of the material to use.
-
-    Vertices - The vertices to make the mesh out of.
-
-    VertexCount - The number of vertices supplied.
-
-    Indices - The indices to make the mesh's triangles out of.
-
-    IndexCount - The number of indices supplied.
-
-Return Value:
-
-    NULL - The mesh could not be created.
-
-    Non-NULL - The mesh was created successfully.
-
---*/
 {
     PMESH Mesh;
 
@@ -75,23 +42,6 @@ Return Value:
 
 PMESH
 LoadMesh(_In_ PCSTR Path)
-/*++
-
-Routine Description:
-
-    Loads a mesh.
-
-Arguments:
-
-    Path - The path to load the mesh from.
-
-Return Value:
-
-    NULL - The mesh could not be loaded.
-
-    Non-NULL - The mesh was loaded successfully.
-
---*/
 {
     PMESH Mesh;
     SIZE_T Size;

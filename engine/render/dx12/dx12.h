@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    dx12.h
-
-Abstract:
-
-    This module contains definitions used by the DirectX 12 backend.
-
---*/
+/// @file dx12.h
+///
+/// @brief This module contains definitions used by the DirectX 12 backend.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 
@@ -46,10 +38,10 @@ END_EXTERN_C
 #define DIRECTX12_FRAME_COUNT 3
 #define DIRECTX12_TARGET_FEATURE_LEVEL D3D_FEATURE_LEVEL_12_1
 
-//
-// Check if something failed
-//
-
+/// @brief Hard error if an HRESULT isn't a success value
+///
+/// @param Call The call/expression to check
+/// @param ... Anything extra to put in the if statement
 #define HRESULT_CHECK(Call, ...)                                               \
     do                                                                         \
     {                                                                          \
@@ -63,9 +55,7 @@ END_EXTERN_C
         }                                                                      \
     } while (0)
 
-//
-// Swap chains are different under vkd3d
-//
+// Swap chains are different in vkd3d
 
 #ifdef PURPL_WIN32
 typedef IDXGISwapChain1 DIRECTX12_SWAPCHAIN;
@@ -77,6 +67,7 @@ typedef IDXGISwapChain1 DIRECTX12_SWAPCHAIN;
 typedef IDXGIVkSwapChain DIRECTX12_SWAPCHAIN;
 #endif
 
+/// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
 {
     IDXGIFactory4 *Factory;
@@ -103,94 +94,50 @@ extern DIRECTX12_DATA Dx12Data;
 
 BEGIN_EXTERN_C
 
-//
-// Enable the debug layer
-//
-
+/// @brief Enable the debug layer
 extern VOID Dx12EnableDebugLayer(VOID);
 
-//
-// Get adapters
-//
-
+/// @brief Enumerate the adapters and keep ones that are usable
 extern VOID Dx12EnumerateAdapters(VOID);
 
-//
-// Set the device
-//
-
+/// @brief Set the current adapter (have to recreate the device and everything else)
+/// @param Index The index of the adapter
 extern VOID Dx12SetDevice(SIZE_T Index);
 
-//
-// Create the device
-//
-
+/// @brief Create the device
 extern VOID Dx12CreateDevice(VOID);
 
-//
-// Create the command queue
-//
-
+/// @brief Create the command queue
 extern VOID Dx12CreateCommandQueue(VOID);
 
-//
-// Create the command allocator
-//
-
+/// @brief Create the command allocator
 extern VOID Dx12CreateCommandAllocator(VOID);
 
-//
-// Create the command list
-//
-
+/// @brief Create the command list
 extern VOID Dx12CreateCommandList(VOID);
 
-//
-// Create the swap chain
-//
-
+/// @brief Create the swap chain
 extern VOID Dx12CreateSwapChain(VOID);
 
-//
-// Create the render target view heap
-//
-
+/// @brief Create the render target view heap
 extern VOID Dx12CreateRenderTargetViewHeap(VOID);
 
-//
-// Create the render target views
-//
-
+/// @brief Create the render target views
 extern VOID Dx12CreateRenderTargetViews(VOID);
 
-//
-// Create the root signature (defines what shaders receive as parameters)
-//
-
+/// @brief Create the root signature (defines what shaders receive as parameters)
 extern VOID Dx12CreateRootSignature(VOID);
 
-//
-// Load core shaders
-//
-
+/// @brief Load core shaders
 extern VOID Dx12LoadCoreShaders(VOID);
 
-//
-// Create the vertex input layout
-//
-
+/// @brief Create the vertex input layout
 extern VOID Dx12CreateVertexInputLayout(VOID);
 
-//
-// Create the pipeline state object
-//
-
+/// @brief Create the pipeline state object
 extern VOID Dx12CreatePipelineStateObject(VOID);
 
-//
-// Create the fence
-//
-
+/// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);
 
 END_EXTERN_C

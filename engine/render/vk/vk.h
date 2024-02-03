@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    vk.h
-
-Abstract:
-
-    This module contains definitions used by the Vulkan backend.
-
---*/
+/// @file vk.h
+///
+/// @brief This module contains definitions used by the Vulkan backend.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 

@@ -14,14 +14,14 @@
 ///
 /// @return The size of the block of memory
 #ifdef PURPL_USE_MIMALLOC
-#define PURPL_MSIZE(Block) mi_usable_size(Block)
+#define CmnAllocSize(Block) mi_usable_size(Block)
 #else
 #ifdef PURPL_WIN32
-#define PURPL_MSIZE(Block) _msize(Block)
+#define CmnAllocSize(Block) _msize(Block)
 #elif defined PURPL_MACOS
-#define PURPL_MSIZE(Block) malloc_size(Block)
+#define CmnAllocSize(Block) malloc_size(Block)
 #else
-#define PURPL_MSIZE(Block) malloc_usable_size(Block)
+#define CmnAllocSize(Block) malloc_usable_size(Block)
 #endif
 #endif
 

@@ -1,3 +1,6 @@
+PROJECT_NAME = Purpl Engine
+PROJECT_NUMBER = 0.0.0
+PROJECT_BRIEF = The Purpl game engine is a custom 3D game engine supporting several platforms, currently in development by Randomcode Developers.
 OUTPUT_DIRECTORY = docs
 ENABLE_PREPROCESSING = YES
 INPUT = common \

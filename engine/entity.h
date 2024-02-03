@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    entity.h
-
-Abstract:
-
-    This module defines ECS components and helper functions for entities.
-
---*/
+/// @file entity.h
+/// 
+/// @brief This module defines ECS components and helper functions for entities.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 

@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    mathutil.h
-
-Abstract:
-
-    This module defines structures and functions for cameras.
-
---*/
+/// @file entity.h
+/// 
+/// @brief This module defines structures and functions for cameras.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 

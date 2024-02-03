@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    mathutil.h
-
-Abstract:
-
-    This module defines various math utility functions.
-
---*/
+/// @file entity.h
+/// 
+/// @brief This module defines various math utility functions.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 

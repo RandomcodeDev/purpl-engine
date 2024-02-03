@@ -1,16 +1,8 @@
-/*++
-
-Copyright (c) 2024 Randomcode Developers
-
-Module Name:
-
-    engine.h
-
-Abstract:
-
-    This module defines the engine API.
-
---*/
+/// @file entity.h
+/// 
+/// @brief This module defines the engine API.
+///
+/// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
 

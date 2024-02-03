@@ -1,4 +1,4 @@
-/// @file entity.h
+/// @file engine.h
 /// 
 /// @brief This module defines the engine API.
 ///

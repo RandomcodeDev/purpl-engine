@@ -1,4 +1,4 @@
-/// @file entity.h
+/// @file mathutil.h
 /// 
 /// @brief This module defines various math utility functions.
 ///

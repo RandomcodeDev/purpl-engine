@@ -1,4 +1,4 @@
-/// @file entity.h
+/// @file camera.h
 /// 
 /// @brief This module defines structures and functions for cameras.
 ///

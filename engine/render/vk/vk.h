@@ -255,7 +255,7 @@ extern VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType,
                              _In_ _Printf_format_string_ PCSTR Name, ...);
 
 /// @brief Debug callback to log things
-/// 
+///
 /// @param MessageSeverity The severity of the message
 /// @param MessageTypes The types of the message
 /// @param CallbackData Callback data
@@ -284,7 +284,7 @@ extern VOID VlkCreateCommandPools(VOID);
 extern VOID VlkAllocateCommandBuffers(VOID);
 
 /// @brief Allocate a buffer
-/// 
+///
 /// @param Size The size of the buffer
 /// @param Usage The usage flags of the buffer
 /// @param Flags The memory flags of the buffer
@@ -295,7 +295,7 @@ extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size,
                               _Out_ PVULKAN_BUFFER Buffer);
 
 /// @brief Allocate a buffer and copy data into it
-/// 
+///
 /// @param Data The data to copy into the buffer
 /// @param Size The size of the buffer and the data
 /// @param Usage The usage of the buffer
@@ -318,7 +318,8 @@ extern VkCommandBuffer VlkBeginTransfer(VOID);
 
 /// @brief Submits and frees a command buffer from VlkBeginTransfer
 ///
-/// @param TransferBuffer The transfer command buffer from VlkBeginTransfer to submit and free
+/// @param TransferBuffer The transfer command buffer from VlkBeginTransfer to
+/// submit and free
 extern VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer);
 
 /// @brief Copy a buffer to another buffer
@@ -331,7 +332,7 @@ extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source,
                           _In_ VkDeviceSize Size);
 
 /// @brief Create an image view
-/// 
+///
 /// @param ImageView This parameter receives the created image view
 /// @param Image The image to create the view for
 /// @param Format The format of the image
@@ -341,19 +342,19 @@ extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
                                _In_ VkImageAspectFlags Aspect);
 
 /// @brief Chooses a format
-/// 
+///
 /// @param Formats The list of formats to pick from
 /// @param FormatCount The number of formats in the list
 /// @param ImageTiling The image tiling
 /// @param FormatFeatures The features
-/// 
+///
 /// @return A format that can be used
 extern VkFormat VlkChooseFormat(VkFormat *Formats, UINT32 FormatCount,
                                 VkImageTiling ImageTiling,
                                 VkFormatFeatureFlags FormatFeatures);
 
 /// @brief Changes an image's layout
-/// 
+///
 /// @param Image The image to transition the layout of
 /// @param OldLayout The current layout of the image
 /// @param NewLayout The layout to transition it to
@@ -362,7 +363,7 @@ extern VOID VlkTransitionImageLayout(_Inout_ VkImage Image,
                                      _In_ VkImageLayout NewLayout);
 
 /// @brief Copy a buffer into an image
-/// 
+///
 /// @param Buffer The buffer to copy into the image
 /// @param Image The image to copy the buffer into
 /// @param Width The width of the image
@@ -371,7 +372,7 @@ extern VOID VlkCopyBufferToImage(_In_ VkBuffer Buffer, _Out_ VkImage Image,
                                  _In_ UINT32 Width, _In_ UINT32 Height);
 
 /// @brief Create an image
-/// 
+///
 /// @param Width The width of the image
 /// @param Height The height of the image
 /// @param Format The format of the image
@@ -388,7 +389,7 @@ extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
                            _Out_ PVULKAN_IMAGE Image);
 
 /// @brief Create an initialized image
-/// 
+///
 /// @param Data The pixel data for the image
 /// @param Size The size of the data
 /// @param Width The width of the image
@@ -406,7 +407,7 @@ extern VOID VlkCreateImageWithData(
     _In_ VkImageAspectFlags Aspect, _Out_ PVULKAN_IMAGE Image);
 
 /// @brief Destroy an image
-/// 
+///
 /// @param Image The image to destroy
 extern VOID VlkDestroyImage(_Inout_ PVULKAN_IMAGE Image);
 
@@ -421,7 +422,7 @@ extern VkSurfaceFormatKHR VlkChooseSurfaceFormat(VOID);
 extern VkPresentModeKHR VlkChoosePresentMode(VOID);
 
 /// @brief Get the extent of the main surface
-/// 
+///
 /// @return The extent of the main surface
 extern VkExtent2D VlkGetSurfaceExtent(VOID);
 
@@ -432,14 +433,14 @@ extern VOID VlkCreateSwapChain(VOID);
 extern VOID VlkDestroySwapChain(VOID);
 
 /// @brief Create a render pass
-/// 
+///
 /// @param Attachments The attachments for the render pass
 /// @param AttachmentCount The number of attachments
 /// @param Subpasses The subpasses of the render pass
 /// @param SubpassCount The number of subpasses
 /// @param SubpassDependencies The subpass dependencies for the render pass
 /// @param SubpassDependencyCount The number of subpass dependencies
-/// 
+///
 /// @return A render pass
 extern VkRenderPass VlkCreateRenderPass(
     _In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,

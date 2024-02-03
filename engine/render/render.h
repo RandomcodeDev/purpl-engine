@@ -4,7 +4,6 @@
 ///
 /// @copyright (c) 2024 Randomcode Developers
 
-
 #pragma once
 
 #include "purpl/purpl.h"
@@ -41,7 +40,7 @@ typedef struct MODEL
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
-/// @brief 
+/// @brief
 /// @param Iterator Unused
 extern VOID RdrInitialize(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrInitialize);

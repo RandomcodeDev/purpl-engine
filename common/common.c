@@ -4,8 +4,8 @@
 ///
 /// @copyright (c) 2024 Randomcode Developers
 
-#include "alloc.h"
 #include "common.h"
+#include "alloc.h"
 #include "filesystem.h"
 
 VOID CmnInitialize(VOID)

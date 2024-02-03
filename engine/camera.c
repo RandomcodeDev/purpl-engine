@@ -94,7 +94,7 @@ VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
     else
     {
         VidGetSize(&Width, &Height);
-        
+
         if (RenderApi == RenderApiDirect3D12)
         {
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0},

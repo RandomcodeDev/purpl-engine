@@ -40,18 +40,21 @@ typedef struct MODEL
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
-/// @brief
-/// @param Iterator Unused
+/// @brief Initialize the render system
+/// 
+/// @param[in] Iterator Unused
 extern VOID RdrInitialize(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrInitialize);
 
 /// @brief Start recording a frame
-/// @param Iterator Unused
+/// 
+/// @param[in] Iterator Unused
 extern VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrBeginFrame);
 
 /// @brief Finish recording a frame and present it
-/// @param Iterator unused
+/// 
+/// @param[in] Iterator unused
 extern VOID RdrEndFrame(_In_ ecs_iter_t *Iterator);
 extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 
@@ -59,18 +62,23 @@ extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 extern VOID RdrShutdown(VOID);
 
 /// @brief Get the scale of the render output
+/// 
 /// @return The scale
 extern FLOAT RdrGetScale(VOID);
 
 /// @brief Set the scale of the render output
-/// @param NewScale The new scale of the render output
+/// 
+/// @param[in] NewScale The new scale of the render output
+/// 
 /// @return The old scale of the render output
 extern FLOAT RdrSetScale(FLOAT NewScale);
 
 /// @brief Get the width of the render output
+/// 
 /// @return The scaled width of the render output
 extern UINT32 RdrGetWidth(VOID);
 
 /// @brief Get the height of the render output
+/// 
 /// @return The scaled height of the render output
 extern UINT32 RdrGetHeight(VOID);

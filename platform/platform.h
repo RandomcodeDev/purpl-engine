@@ -33,8 +33,8 @@ extern VOID PlatShutdown(VOID);
 
 /// @brief Gets a stack trace in a static buffer.
 ///
-/// @param FramesToSkip The number of stack frames to skip.
-/// @param MaxFrames    The maximum number of frames to get.
+/// @param[in] FramesToSkip The number of stack frames to skip.
+/// @param[in] MaxFrames    The maximum number of frames to get.
 ///
 /// @return The address of a static buffer containing a string with
 ///         the formatted stack trace.
@@ -43,7 +43,7 @@ extern PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip,
 
 /// @brief Displays an error (and potentially gives the option to trigger a breakpoint), and exits the process
 ///
-/// @param Message The error message.
+/// @param[in] Message The error message.
 _Noreturn extern VOID PlatError(_In_ PCSTR Message);
 
 /// @brief Retrieves a string with information about the system version.
@@ -52,6 +52,7 @@ _Noreturn extern VOID PlatError(_In_ PCSTR Message);
 extern PCSTR PlatGetDescription(VOID);
 
 /// @brief Gets the return address of the calling function
+/// 
 /// @return The return address of the calling function
 extern PVOID PlatGetReturnAddress(VOID);
 
@@ -67,19 +68,21 @@ extern UINT64 PlatGetMilliseconds(VOID);
 
 /// @brief Recursively creates a directory.
 ///
-/// @param Path The path of the directory to create.
+/// @param[in] Path The path of the directory to create.
 ///
 /// @return Whether the directory could be created.
 extern BOOLEAN PlatCreateDirectory(_In_ PCSTR Path);
 
+#ifdef PURPL_HAVE_PLATPRINT
 /// @brief Output text in a platform specific way like OutputDebugString
 ///
-/// @param Text The text to output
-#ifdef PURPL_HAVE_PLATPRINT
+/// @param[in] Text The text to output
 extern VOID PlatPrint(_In_ PCSTR Text);
 #endif
 
 /// @brief Fix a path if necessary
-/// @param Path The path to fix
+/// 
+/// @param[in] Path The path to fix
+/// 
 /// @return The fixed path in a new buffer
 extern PCHAR PlatFixPath(_In_ PCSTR Path);

@@ -44,8 +44,8 @@
 
 /// @brief Round a size to an aligment
 ///
-/// @param Alignment The alignment
-/// @param Size The unrounded size
+/// @param[in] Alignment The alignment
+/// @param[in] Size The unrounded size
 ///
 /// @return The size rounded to be aligned to the alignment
 #define PURPL_ALIGN(Alignment, Size)                                           \
@@ -60,9 +60,9 @@ extern VOID CmnShutdown(VOID);
 /// @brief This routine formats a printf format string into a static
 ///        buffer for temporary usage.
 ///
-/// @param Format     The format string. You're making a bad decision if this
+/// @param[in] Format     The format string. You're making a bad decision if this
 ///                   parameter is not a string literal.
-/// @param Arguments  Arguments to the format string.
+/// @param[in] Arguments  Arguments to the format string.
 ///
 /// @return A pointer to a static buffer with the formatted string.
 extern PCSTR CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...);
@@ -70,9 +70,9 @@ extern PCSTR CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...);
 /// @brief This routine formats a printf format string into a static
 ///        buffer for temporary usage.
 ///
-/// @param Format  The format string. You're making a bad decision if this
+/// @param[in] Format  The format string. You're making a bad decision if this
 ///                parameter is not a string literal.
-/// @param ...     Arguments to the format string.
+/// @param[in] ...     Arguments to the format string.
 ///
 /// @return A pointer to a static buffer with the formatted string.
 extern PCSTR CmnFormatTempStringVarArgs(
@@ -82,9 +82,9 @@ extern PCSTR CmnFormatTempStringVarArgs(
 /// allocated
 ///        buffer.
 ///
-/// @param Format     The format string. You're making a bad decision if this
+/// @param[in] Format     The format string. You're making a bad decision if this
 ///                   parameter is not a string literal.
-/// @param Arguments  Arguments to the format string.
+/// @param[in] Arguments  Arguments to the format string.
 ///
 /// @return A pointer to a buffer with the formatted string and a NUL terminator
 ///         (size is strlen(Buffer) + 1).
@@ -94,9 +94,9 @@ extern PCHAR CmnFormatString(_In_ _Printf_format_string_ PCSTR Format, ...);
 /// allocated
 ///        buffer.
 ///
-/// @param Format  The format string. You're making a bad decision if this
+/// @param[in] Format  The format string. You're making a bad decision if this
 ///                parameter is not a string literal.
-/// @param ...     Arguments to the format string.
+/// @param[in] ...     Arguments to the format string.
 ///
 /// @return A pointer to a buffer with the formatted string.
 extern PCHAR CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
@@ -105,13 +105,13 @@ extern PCHAR CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
 /// @brief This routine converts a size into a human-readable string, using the
 ///        most appropriate unit.
 ///
-/// @param Size The size to convert.
+/// @param[in] Size The size to convert.
 ///
 /// @return The address of a static buffer containing the string.
 extern PCSTR CmnFormatSize(_In_ DOUBLE Size);
 
 /// @brief This routine displays an error message and terminates the program.
 ///
-/// @param Message The error message.
-/// @param ...     The arguments to the error message.
+/// @param[in] Message The error message.
+/// @param[in] ...     The arguments to the error message.
 _Noreturn extern VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...);

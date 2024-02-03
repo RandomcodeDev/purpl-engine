@@ -8,9 +8,11 @@
 
 #include "common.h"
 
+/// @fn CmnAllocSize
+///
 /// @brief Get size of block allocated by CmnAlloc or similar
 ///
-/// @param Block The block of memory to get the size of
+/// @param[in] Block The block of memory to get the size of
 ///
 /// @return The size of the block of memory
 #ifdef PURPL_USE_MIMALLOC
@@ -25,10 +27,12 @@
 #endif
 #endif
 
+/// @fn CmnAlloc
+///
 /// @brief Allocate memory
 ///
-/// @param Count The number of elements to allocate
-/// @param Size The size of an element
+/// @param[in] Count The number of elements to allocate
+/// @param[in] Size The size of an element
 ///
 /// @return A block of memory
 #ifdef PURPL_USE_MIMALLOC
@@ -37,10 +41,12 @@
 #define CmnAlloc(Count, Size) calloc(Count, Size)
 #endif
 
+/// @fn CmnRealloc
+///
 /// @brief Resize an allocated block of memory
 ///
-/// @param Block The block of memory to resize
-/// @param Size The new size of the block
+/// @param[in] Block The block of memory to resize
+/// @param[in] Size The new size of the block
 ///
 /// @return A block of memory with the requested size and
 /// the same data as the old block
@@ -50,10 +56,12 @@
 #define CmnRealloc(Block, Size) realloc(Block, Size)
 #endif
 
+/// @fn CmnAlignedAlloc
+///
 /// @brief Allocate aligned memory
 ///
-/// @param Alignment The alignment of the memory
-/// @param Size The size of the memory
+/// @param[in] Alignment The alignment of the memory
+/// @param[in] Size The size of the memory
 /// 
 /// @return A block of memory
 #ifdef PURPL_USE_MIMALLOC
@@ -66,9 +74,11 @@
 #endif
 #endif
 
+/// @fn CmnFree
+///
 /// @brief Free memory
 /// 
-/// @param Block The block of memory to free
+/// @param[in,out] Block The block of memory to free
 #ifdef PURPL_USE_MIMALLOC
 #define CmnFree(Block)                                                         \
     {                                                                          \
@@ -83,9 +93,11 @@
     }
 #endif
 
+/// @fn CmnAlignedFree
+///
 /// @brief Free aligned memory
 /// 
-/// @param Block The block of memory to free
+/// @param[in,out] Block The block of memory to free
 #ifdef PURPL_USE_MIMALLOC
 #define CmnAlignedFree(Block)                                                  \
     {                                                                          \
@@ -108,11 +120,13 @@
 #endif
 #endif
 
+/// @fn CmnAlignedRealloc
+///
 /// @brief Resize aligned memory
 /// 
-/// @param Block The block of memory to resize
-/// @param Alignment The new alignment
-/// @param Size The new size
+/// @param[in] Block The block of memory to resize
+/// @param[in] Alignment The new alignment
+/// @param[in] Size The new size
 /// 
 /// @return A block of memory with the same data as the old block
 #ifdef PURPL_USE_MIMALLOC

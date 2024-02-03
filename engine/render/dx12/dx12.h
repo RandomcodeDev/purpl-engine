@@ -40,8 +40,8 @@ END_EXTERN_C
 
 /// @brief Hard error if an HRESULT isn't a success value
 ///
-/// @param Call The call/expression to check
-/// @param ... Anything extra to put in the if statement
+/// @param[in] Call The call/expression to check
+/// @param[in] ... Anything extra to put in the if statement
 #define HRESULT_CHECK(Call, ...)                                               \
     do                                                                         \
     {                                                                          \
@@ -101,7 +101,8 @@ extern VOID Dx12EnableDebugLayer(VOID);
 extern VOID Dx12EnumerateAdapters(VOID);
 
 /// @brief Set the current adapter (have to recreate the device and everything else)
-/// @param Index The index of the adapter
+///
+/// @param[in] Index The index of the adapter
 extern VOID Dx12SetDevice(SIZE_T Index);
 
 /// @brief Create the device

@@ -13,7 +13,7 @@ PVOID
 CmnAlignedRealloc(PVOID Block, SIZE_T Alignment, SIZE_T Size)
 {
     PVOID NewBlock = CmnAlignedAlloc(Alignment, Size);
-    memmove(NewBlock, Block, PURPL_MIN(Size, PURPL_MSIZE(Block)));
+    memmove(NewBlock, Block, PURPL_MIN(Size, CmnAllocSize(Block)));
     CmnAlignedFree(Block);
     return NewBlock;
 }

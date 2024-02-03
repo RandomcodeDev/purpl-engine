@@ -424,8 +424,9 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
 /// @brief This routine is the entry point for debug Windows builds.
 ///        It calls WinMain with the appropriate parameters.
 ///
-/// @param argc The number of command line arguments.
-/// @param argv The command line arguments.
+/// @param[in] argc The number of command line arguments.
+/// @param[in] argv The command line arguments.
+/// 
 /// @return The return value of PurplMain
 INT main(_In_ INT argc, _In_ PCHAR argv[])
 {

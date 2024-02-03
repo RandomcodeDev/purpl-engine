@@ -25,10 +25,12 @@ typedef struct THREAD
 extern _Thread_local PTHREAD AsCurrentThread;
 
 /// @brief Create a suspended thread
-/// @param Name The name of the thread
-/// @param StackSize The size of the thread's stack
-/// @param ThreadStart The start function for the thread
-/// @param UserData Data for the thread
+/// 
+/// @param[in] Name The name of the thread
+/// @param[in] StackSize The size of the thread's stack
+/// @param[in] ThreadStart The start function for the thread
+/// @param[in] UserData Data for the thread
+/// 
 /// @return The new thread
 extern PTHREAD AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize,
                               _In_ PFN_THREAD_START ThreadStart,
@@ -36,47 +38,60 @@ extern PTHREAD AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize,
 
 /// @brief Wait for a thread to finish, get its return value, and clean up the
 /// THREAD structure
-/// @param Thread The thread to join
+/// 
+/// @param[in] Thread The thread to join
+/// 
 /// @return The thread's return value
 extern INT AsJoinThread(_In_ PTHREAD Thread);
 
 /// @brief Run a thread, use AsJoinThread to clean up its data at some point
-/// @param Thread The thread to detach
+/// 
+/// @param[in] Thread The thread to detach
 extern VOID AsDetachThread(_In_ PTHREAD Thread);
 
 /// @brief A mutex
 typedef PVOID PMUTEX;
 
 /// @brief Create a mutex
+/// 
 /// @return A mutex
 extern PMUTEX AsCreateMutex(VOID);
 
 /// @brief Lock a mutex
-/// @param Mutex The mutex to lock
-/// @param Wait Whether to wait for it to be unlocked
+/// 
+/// @param[in] Mutex The mutex to lock
+/// @param[in] Wait Whether to wait for it to be unlocked
+/// 
 /// @return Whether the mutex was locked
 extern BOOLEAN AsLockMutex(_In_ PMUTEX Mutex, _In_ BOOLEAN Wait);
 
 /// @brief Unlock a mutex
-/// @param Mutex The mutex to unlock
+/// 
+/// @param[in] Mutex The mutex to unlock
 extern VOID AsUnlockMutex(_In_ PMUTEX Mutex);
 
 /// @brief A semaphore
 typedef PVOID PSEMAPHORE;
 
 /// @brief Create a semaphore
-/// @param Max The maximum reference count for the semaphore
+/// 
+/// @param[in] Max The maximum reference count for the semaphore
+/// 
 /// @return A semaphore
 extern PSEMAPHORE AsCreateSemaphore(_In_ SIZE_T Max);
 
 /// @brief Increase the reference count of a semaphore
-/// @param Semaphore The semaphore to acquire
-/// @param Wait Whether to wait
+/// 
+/// @param[in] Semaphore The semaphore to acquire
+/// @param[in] Wait Whether to wait
+/// 
 /// @return Whether the semaphore was acquired
 extern BOOLEAN AsAcquireSemaphore(_In_ PSEMAPHORE Semaphore, _In_ BOOLEAN Wait);
 
 /// @brief Decrease the reference count of a semaphore
-/// @param Semaphore The semaphore to release
-/// @param Wait Whether to wait
+/// 
+/// @param[in] Semaphore The semaphore to release
+/// @param[in] Wait Whether to wait
+/// 
 /// @return Whether the semaphore was acquired
 extern BOOLEAN AsReleaseSemaphore(_In_ PSEMAPHORE Semaphore, _In_ BOOLEAN Wait);

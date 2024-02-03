@@ -63,7 +63,7 @@ extern ecs_entity_t EngGetMainCamera(VOID);
 
 /// @brief Set the main camera
 ///
-/// @param Entity The entity to set as the main camera
+/// @param[in] Entity The entity to set as the main camera
 extern VOID EngSetMainCamera(_In_ ecs_entity_t Entity);
 
 /// @brief Get the frame delta in seconds

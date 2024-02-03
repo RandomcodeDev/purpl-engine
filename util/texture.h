@@ -135,14 +135,14 @@ extern BOOLEAN WriteTexture(_In_ PCSTR Path, _In_ PTEXTURE Texture);
 
 /// @brief Get the number of components in a format's pixels
 ///
-/// @param Format The format
+/// @param[in] Format The format
 ///
 /// @return The number of channels in the format
 extern SIZE_T GetFormatComponents(_In_ TEXTURE_FORMAT Format);
 
 /// @brief Get the number of bytes per pixel in a format
 ///
-/// @param Format The format to get the pitch of
+/// @param[in] Format The format to get the pitch of
 ///
 /// @return The number of bytes per pixel
 extern SIZE_T GetFormatPitch(_In_ TEXTURE_FORMAT Format);
@@ -152,7 +152,7 @@ extern SIZE_T GetFormatPitch(_In_ TEXTURE_FORMAT Format);
 
 /// @brief Get the expected size of a texture's pixel data
 ///
-/// @param Texture The texture to get the size of
+/// @param[in] Texture The texture to get the size of
 ///
 /// @return The size of the pixel data
 #define GetTextureSize(Texture)                                                \
@@ -160,9 +160,9 @@ extern SIZE_T GetFormatPitch(_In_ TEXTURE_FORMAT Format);
 
 /// @brief Get the size of a texture
 ///
-/// @param Format The format
-/// @param Width The width
-/// @param Height The height
+/// @param[in] Format The format
+/// @param[in] Width The width
+/// @param[in] Height The height
 ///
 /// @return The size the texture's pixel data should be
 extern SIZE_T EstimateTextureSize(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width,
@@ -170,9 +170,9 @@ extern SIZE_T EstimateTextureSize(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width,
 
 /// @brief Get the address of a pixel by its position
 ///
-/// @param Texture The texture to get the pixel from
-/// @param X The X position of the pixel
-/// @param Y The Y position of the pixel
+/// @param[in] Texture The texture to get the pixel from
+/// @param[in] X The X position of the pixel
+/// @param[in] Y The Y position of the pixel
 ///
 /// @return The address of the pixel
 #define GetTexturePixel(Texture, X, Y)                                         \

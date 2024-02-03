@@ -52,8 +52,8 @@ END_EXTERN_C
 
 /// @brief Hard error if a VkResult isn't VK_SUCCESS
 ///
-/// @param Call The call/expression to check
-/// @param ... Anything extra to put in the if statement
+/// @param[in] Call The call/expression to check
+/// @param[in] ... Anything extra to put in the if statement
 #define VULKAN_CHECK(Call, ...)                                                \
     do                                                                         \
     {                                                                          \
@@ -242,24 +242,24 @@ extern VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID);
 
 /// @brief Get the name of a result
 ///
-/// @param Result
+/// @param[in] Result The result to get the name of
 extern PCSTR VlkGetResultString(VkResult Result);
 
 /// @brief Set an object's name
 ///
-/// @param Object The Vulkan object to name
-/// @param ObjectType The type of the object
-/// @param Name The name to set (supports printf-style formatting)
-/// @param ... Formatting arguments
+/// @param[in] Object The Vulkan object to name
+/// @param[in] ObjectType The type of the object
+/// @param[in] Name The name to set (supports printf-style formatting)
+/// @param[in] ... Formatting arguments
 extern VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType,
                              _In_ _Printf_format_string_ PCSTR Name, ...);
 
 /// @brief Debug callback to log things
 ///
-/// @param MessageSeverity The severity of the message
-/// @param MessageTypes The types of the message
-/// @param CallbackData Callback data
-/// @param UserData Not used
+/// @param[in] MessageSeverity The severity of the message
+/// @param[in] MessageTypes The types of the message
+/// @param[in] CallbackData Callback data
+/// @param[in] UserData Not used
 ///
 /// @return Always returns TRUE
 extern VkBool32 VKAPI_CALL
@@ -285,10 +285,10 @@ extern VOID VlkAllocateCommandBuffers(VOID);
 
 /// @brief Allocate a buffer
 ///
-/// @param Size The size of the buffer
-/// @param Usage The usage flags of the buffer
-/// @param Flags The memory flags of the buffer
-/// @param Buffer The buffer
+/// @param[in] Size The size of the buffer
+/// @param[in] Usage The usage flags of the buffer
+/// @param[in] Flags The memory flags of the buffer
+/// @param[out] Buffer The buffer
 extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size,
                               _In_ VkBufferUsageFlags Usage,
                               _In_ VkMemoryPropertyFlags Flags,
@@ -296,11 +296,11 @@ extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size,
 
 /// @brief Allocate a buffer and copy data into it
 ///
-/// @param Data The data to copy into the buffer
-/// @param Size The size of the buffer and the data
-/// @param Usage The usage of the buffer
-/// @param Flags The flags of the buffer
-/// @param Buffer The buffer
+/// @param[in] Data The data to copy into the buffer
+/// @param[in] Size The size of the buffer and the data
+/// @param[in] Usage The usage of the buffer
+/// @param[in] Flags The flags of the buffer
+/// @param[out] Buffer The buffer
 extern VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size,
                                       _In_ VkBufferUsageFlags Usage,
                                       _In_ VkMemoryPropertyFlags Flags,
@@ -308,7 +308,7 @@ extern VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size,
 
 /// @brief Free a buffer
 ///
-/// @param Buffer The buffer to free
+/// @param[in] Buffer The buffer to free
 extern VOID VlkFreeBuffer(_Inout_ PVULKAN_BUFFER Buffer);
 
 /// @brief Create a temporary command buffer in the transfer command pool
@@ -318,69 +318,69 @@ extern VkCommandBuffer VlkBeginTransfer(VOID);
 
 /// @brief Submits and frees a command buffer from VlkBeginTransfer
 ///
-/// @param TransferBuffer The transfer command buffer from VlkBeginTransfer to
+/// @param[in] TransferBuffer The transfer command buffer from VlkBeginTransfer to
 /// submit and free
 extern VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer);
 
 /// @brief Copy a buffer to another buffer
 ///
-/// @param Source The source buffer
-/// @param Destination The destination buffer
-/// @param Size The size of the copy
+/// @param[in] Source The source buffer
+/// @param[in] Destination The destination buffer
+/// @param[in] Size The size of the copy
 extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source,
                           _In_ PVULKAN_BUFFER Destination,
                           _In_ VkDeviceSize Size);
 
 /// @brief Create an image view
 ///
-/// @param ImageView This parameter receives the created image view
-/// @param Image The image to create the view for
-/// @param Format The format of the image
-/// @param Aspect The aspect of the image for the view
+/// @param[out] ImageView This parameter receives the created image view
+/// @param[in] Image The image to create the view for
+/// @param[in] Format The format of the image
+/// @param[in] Aspect The aspect of the image for the view
 extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
                                _In_ VkFormat Format,
                                _In_ VkImageAspectFlags Aspect);
 
 /// @brief Chooses a format
 ///
-/// @param Formats The list of formats to pick from
-/// @param FormatCount The number of formats in the list
-/// @param ImageTiling The image tiling
-/// @param FormatFeatures The features
+/// @param[in] Formats The list of formats to pick from
+/// @param[in] FormatCount The number of formats in the list
+/// @param[in] ImageTiling The image tiling
+/// @param[in] FormatFeatures The features
 ///
 /// @return A format that can be used
-extern VkFormat VlkChooseFormat(VkFormat *Formats, UINT32 FormatCount,
-                                VkImageTiling ImageTiling,
-                                VkFormatFeatureFlags FormatFeatures);
+extern VkFormat VlkChooseFormat(_In_ VkFormat *Formats, _In_ UINT32 FormatCount,
+                                _In_ VkImageTiling ImageTiling,
+                                _In_ VkFormatFeatureFlags FormatFeatures);
 
 /// @brief Changes an image's layout
 ///
-/// @param Image The image to transition the layout of
-/// @param OldLayout The current layout of the image
-/// @param NewLayout The layout to transition it to
+/// @param[in,out] Image The image to transition the layout of
+/// @param[in] OldLayout The current layout of the image
+/// @param[in] NewLayout The layout to transition it to
 extern VOID VlkTransitionImageLayout(_Inout_ VkImage Image,
                                      _In_ VkImageLayout OldLayout,
                                      _In_ VkImageLayout NewLayout);
 
 /// @brief Copy a buffer into an image
 ///
-/// @param Buffer The buffer to copy into the image
-/// @param Image The image to copy the buffer into
-/// @param Width The width of the image
-/// @param Height The height of the image
+/// @param[in] Buffer The buffer to copy into the image
+/// @param[out] Image The image to copy the buffer into
+/// @param[in] Width The width of the image
+/// @param[in] Height The height of the image
 extern VOID VlkCopyBufferToImage(_In_ VkBuffer Buffer, _Out_ VkImage Image,
                                  _In_ UINT32 Width, _In_ UINT32 Height);
 
 /// @brief Create an image
 ///
-/// @param Width The width of the image
-/// @param Height The height of the image
-/// @param Format The format of the image
-/// @param Layout The layout of the image
-/// @param Usage The usage of the image
-/// @param MemoryUsage The memory usage of the image (where to store it)
-/// @param Aspect The aspect of the image
-/// @param Image This parameter receives the created image
+/// @param[in] Width The width of the image
+/// @param[in] Height The height of the image
+/// @param[in] Format The format of the image
+/// @param[in] Layout The layout of the image
+/// @param[in] Usage The usage of the image
+/// @param[in] MemoryUsage The memory usage of the image (where to store it)
+/// @param[in] Aspect The aspect of the image
+/// @param[out] Image This parameter receives the created image
 extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
                            _In_ VkFormat Format, _In_ VkImageLayout Layout,
                            _In_ VkImageUsageFlags Usage,
@@ -390,16 +390,16 @@ extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
 
 /// @brief Create an initialized image
 ///
-/// @param Data The pixel data for the image
-/// @param Size The size of the data
-/// @param Width The width of the image
-/// @param Height The height of the image
-/// @param Format The format of the image
-/// @param Layout The layout of the image
-/// @param Usage The usage of the image
-/// @param MemoryUsage Where to store the image
-/// @param Aspect The aspect of the image
-/// @param Image This parameter receives the created image
+/// @param[in] Data The pixel data for the image
+/// @param[in] Size The size of the data
+/// @param[in] Width The width of the image
+/// @param[in] Height The height of the image
+/// @param[in] Format The format of the image
+/// @param[in] Layout The layout of the image
+/// @param[in] Usage The usage of the image
+/// @param[in] MemoryUsage Where to store the image
+/// @param[in] Aspect The aspect of the image
+/// @param[out] Image This parameter receives the created image
 extern VOID VlkCreateImageWithData(
     _In_ PVOID Data, _In_ VkDeviceSize Size, _In_ UINT32 Width,
     _In_ UINT32 Height, _In_ VkFormat Format, _In_ VkImageLayout Layout,
@@ -408,7 +408,7 @@ extern VOID VlkCreateImageWithData(
 
 /// @brief Destroy an image
 ///
-/// @param Image The image to destroy
+/// @param[in,out] Image The image to destroy
 extern VOID VlkDestroyImage(_Inout_ PVULKAN_IMAGE Image);
 
 /// @brief Choose a surface format
@@ -434,12 +434,12 @@ extern VOID VlkDestroySwapChain(VOID);
 
 /// @brief Create a render pass
 ///
-/// @param Attachments The attachments for the render pass
-/// @param AttachmentCount The number of attachments
-/// @param Subpasses The subpasses of the render pass
-/// @param SubpassCount The number of subpasses
-/// @param SubpassDependencies The subpass dependencies for the render pass
-/// @param SubpassDependencyCount The number of subpass dependencies
+/// @param[in] Attachments The attachments for the render pass
+/// @param[in] AttachmentCount The number of attachments
+/// @param[in] Subpasses The subpasses of the render pass
+/// @param[in] SubpassCount The number of subpasses
+/// @param[in] SubpassDependencies The subpass dependencies for the render pass
+/// @param[in] SubpassDependencyCount The number of subpass dependencies
 ///
 /// @return A render pass
 extern VkRenderPass VlkCreateRenderPass(

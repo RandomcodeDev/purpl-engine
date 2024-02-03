@@ -28,8 +28,9 @@ extern BOOLEAN VidUpdate(VOID);
 extern VOID VidShutdown(VOID);
 
 /// @brief Get the size of the platform video output
-/// @param Width Receives the width
-/// @param Height Receives the height
+///
+/// @param[out] Width Receives the width
+/// @param[out] Height Receives the height
 extern VOID VidGetSize(_Out_opt_ PUINT32 Width, _Out_opt_ PUINT32 Height);
 
 /// @brief Get whether the video output has been resized since the last call
@@ -39,25 +40,31 @@ extern BOOLEAN VidResized(VOID);
 extern BOOLEAN VidFocused(VOID);
 
 /// @brief Get the equivalent of a window handle (HWND, GLFWwindow, etc)
+///
 /// @return The video output object
 extern PVOID VidGetObject(VOID);
 
 /// @brief Get the current DPI
+///
 /// @return The current DPI
 extern FLOAT VidGetDpi(VOID);
 
 #ifdef PURPL_VULKAN
 /// @brief Get the address of a Vulkan symbol
-/// @param Instance The Vulkan instance
-/// @param Name The name of the symbol
+///
+/// @param[in] Instance The Vulkan instance
+/// @param[in] Name The name of the symbol
+///
 /// @return The address of the symbol
-extern PFN_vkVoidFunction PlatGetVulkanFunction(_In_ VkInstance Instance,
-                                                _In_ PCSTR Name);
+extern PVOID PlatGetVulkanFunction(_In_ PVOID Instance, _In_ PCSTR Name);
 
 /// @brief Create a Vulkan surface
-/// @param Instance The Vulkan instance
-/// @param AllocationCallbacks Allocation functions (should be the return value of VlkGetAllocationCallbacks)
-/// @param WindowHandle The handle of the window to use, if not the engine's
+///
+/// @param[in] Instance The Vulkan instance
+/// @param[in] AllocationCallbacks Allocation functions (should be the return
+/// value of VlkGetAllocationCallbacks)
+/// @param[in] WindowHandle The handle of the window to use, if not the engine's
+///
 /// @return A Vulkan surface
 extern PVOID PlatCreateVulkanSurface(_In_ PVOID Instance,
                                      _In_ PVOID AllocationCallbacks,

@@ -24,7 +24,7 @@ extern VOID EcsInitialize(VOID);
 
 /// @brief Begin an ECS frame
 ///
-/// @param Delta The amount of time since this was last called in milliseconds
+/// @param[in] Delta The amount of time since this was last called in milliseconds
 extern VOID EcsBeginFrame(_In_ UINT64 Delta);
 
 /// @brief End an ECS frame
@@ -35,14 +35,14 @@ extern VOID EcsShutdown(VOID);
 
 /// @brief Create an entity
 ///
-/// @param Name The name of the entity
+/// @param[in] Name The name of the entity
 ///
 /// @return An entity
 extern ecs_entity_t EcsCreateEntity(_In_opt_ PCSTR Name);
 
 /// @brief Set the ECS world
 ///
-/// @param World The new world to use
+/// @param[in] World The new world to use
 extern VOID EcsSetWorld(_In_ ecs_world_t *World);
 
 /// @brief Get the ECS world

@@ -15,6 +15,7 @@ VOID Dx12CreateSwapChain(VOID)
     SwapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     SwapChainDescription.Scaling = DXGI_SCALING_STRETCH;
     SwapChainDescription.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+    SwapChainDescription.SampleDesc.Count = 1;
 
     HRESULT_CHECK(Dx12Data.Factory->CreateSwapChainForHwnd(
         Dx12Data.CommandQueue, (HWND)VidGetObject(), &SwapChainDescription,

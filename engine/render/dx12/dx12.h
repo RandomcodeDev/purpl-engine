@@ -21,6 +21,9 @@ BEGIN_EXTERN_C
 #include "util/texture.h"
 END_EXTERN_C
 
+#include "directx/d3d12.h"
+#include "directx/d3dx12.h"
+
 #define D3D12MA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
 #define D3D12MA_SYSTEM_ALIGNED_FREE CmnAlignedFree
 #define D3D12MA_DEBUG_LOG_FORMAT(format, ...) LogDebug((format), __VA_ARGS__)
@@ -36,7 +39,12 @@ END_EXTERN_C
 #include "D3D12MemAlloc.h"
 
 #define DIRECTX12_FRAME_COUNT 3
+#ifdef PURPL_GDKX
+// Xbox always has DirectX 12 Ultimate
+#define DIRECTX12_TARGET_FEATURE_LEVEL D3D_FEATURE_LEVEL_12_2
+#else
 #define DIRECTX12_TARGET_FEATURE_LEVEL D3D_FEATURE_LEVEL_12_1
+#endif
 
 /// @brief Hard error if an HRESULT isn't a success value
 ///
@@ -71,14 +79,16 @@ typedef IDXGIVkSwapChain DIRECTX12_SWAPCHAIN;
 typedef struct DIRECTX12_DATA
 {
     IDXGIFactory4 *Factory;
-    IDXGIAdapter3 *Adapters;
+    IDXGIAdapter1 *Adapter;
+    DXGI_ADAPTER_DESC AdapterDescription;
     ID3D12Device *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
-    ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
     ID3D12CommandAllocator *CommandAllocator;
     ID3D12CommandQueue *CommandQueue;
     ID3D12RootSignature *RootSignature;
-    ID3D12DescriptorHeap *RenderTargetViewHeap;
+    ID3D12DescriptorHeap *RtvHeap;
+    UINT32 RtvDescriptorSize;
+    ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
     ID3D12PipelineState *PipelineState;
     ID3D12GraphicsCommandList9 *CommandList;
 
@@ -97,14 +107,6 @@ BEGIN_EXTERN_C
 /// @brief Enable the debug layer
 extern VOID Dx12EnableDebugLayer(VOID);
 
-/// @brief Enumerate the adapters and keep ones that are usable
-extern VOID Dx12EnumerateAdapters(VOID);
-
-/// @brief Set the current adapter (have to recreate the device and everything else)
-///
-/// @param[in] Index The index of the adapter
-extern VOID Dx12SetDevice(SIZE_T Index);
-
 /// @brief Create the device
 extern VOID Dx12CreateDevice(VOID);
 
@@ -121,7 +123,7 @@ extern VOID Dx12CreateCommandList(VOID);
 extern VOID Dx12CreateSwapChain(VOID);
 
 /// @brief Create the render target view heap
-extern VOID Dx12CreateRenderTargetViewHeap(VOID);
+extern VOID Dx12CreateRtvHeap(VOID);
 
 /// @brief Create the render target views
 extern VOID Dx12CreateRenderTargetViews(VOID);

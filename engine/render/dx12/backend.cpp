@@ -21,11 +21,10 @@ static VOID Initialize(VOID)
     LogDebug("Creating DXGI factory");
     HRESULT_CHECK(CreateDXGIFactory1(IID_PPV_ARGS(&Dx12Data.Factory)));
 
-    Dx12EnumerateAdapters();
     Dx12CreateDevice();
     Dx12CreateCommandQueue();
     Dx12CreateSwapChain();
-    Dx12CreateRenderTargetViewHeap();
+    Dx12CreateRtvHeap();
     Dx12CreateRenderTargetViews();
     Dx12CreateCommandAllocator();
     Dx12CreateRootSignature();

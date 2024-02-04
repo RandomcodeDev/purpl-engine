@@ -20,8 +20,8 @@ Abstract:
 
 #ifdef _MSC_VER
 #pragma comment(                                                               \
-    linker,                                                                    \
-    "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+        linker,                                                                \
+            "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
 #define IDI_ICON1 103
@@ -175,8 +175,7 @@ VOID VidInitialize(VOID)
     ShowWindow(Window, SW_SHOWDEFAULT);
 }
 
-BOOLEAN
-VidUpdate(VOID)
+BOOLEAN VidUpdate(VOID)
 {
     MSG Message;
 
@@ -210,36 +209,32 @@ VOID VidGetSize(_Out_opt_ PUINT32 Width, _Out_opt_ PUINT32 Height)
     Height ? *Height = WindowHeight : 0;
 }
 
-BOOLEAN
-VidResized(VOID)
+BOOLEAN VidResized(VOID)
 {
     BOOLEAN ReturnValue = WindowResized;
     WindowResized = FALSE;
     return ReturnValue;
 }
 
-BOOLEAN
-VidFocused(VOID)
+BOOLEAN VidFocused(VOID)
 {
     return WindowFocused;
 }
 
-PVOID
-VidGetObject(VOID)
+PVOID VidGetObject(VOID)
 {
     return Window;
 }
 
-FLOAT
-VidGetDpi(VOID)
+FLOAT VidGetDpi(VOID)
 {
     return (FLOAT)GetDpiForWindow(Window);
 }
 
 #ifdef PURPL_VULKAN
-PVOID
-PlatCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks,
-                        _In_opt_ PVOID WindowHandle)
+PVOID VidCreateVulkanSurface(_In_ PVOID Instance,
+                             _In_ PVOID AllocationCallbacks,
+                             _In_opt_ PVOID WindowHandle)
 {
     VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
     VkSurfaceKHR Surface;

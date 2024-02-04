@@ -232,9 +232,9 @@ VidGetDpi(VOID)
 }
 
 #ifdef PURPL_VULKAN
-PVOID
-PlatCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks,
-                        _In_opt_ PVOID WindowHandle)
+PVOID VidCreateVulkanSurface(_In_ PVOID Instance,
+                             _In_ PVOID AllocationCallbacks,
+                             _In_opt_ PVOID WindowHandle)
 /*++
 
 Routine Description:

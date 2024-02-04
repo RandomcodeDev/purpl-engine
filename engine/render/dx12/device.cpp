@@ -3,8 +3,11 @@
 EXTERN_C
 VOID Dx12CreateDevice(VOID)
 {
-    LogDebug("Getting first adapter");
-    HRESULT_CHECK(Dx12Data.Factory->EnumAdapters1(0, &Dx12Data.Adapter));
+    LogDebug("Getting preferred adapter");
+    // TODO: add support for choosing the power saving adapter
+    HRESULT_CHECK(Dx12Data.Factory->EnumAdapterByGpuPreference(
+        0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+        IID_PPV_ARGS(&Dx12Data.Adapter)));
     HRESULT_CHECK(Dx12Data.Adapter->GetDesc(&Dx12Data.AdapterDescription));
 
     LogDebug(

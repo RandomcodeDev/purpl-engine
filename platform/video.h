@@ -66,7 +66,7 @@ extern PVOID PlatGetVulkanFunction(_In_ PVOID Instance, _In_ PCSTR Name);
 /// @param[in] WindowHandle The handle of the window to use, if not the engine's
 ///
 /// @return A Vulkan surface
-extern PVOID PlatCreateVulkanSurface(_In_ PVOID Instance,
+extern PVOID VidCreateVulkanSurface(_In_ PVOID Instance,
                                      _In_ PVOID AllocationCallbacks,
                                      _In_opt_ PVOID WindowHandle);
 #endif

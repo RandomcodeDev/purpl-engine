@@ -22,7 +22,7 @@ VULKAN_DATA VlkData;
 
 VOID VlkCreateSurface(VOID)
 {
-    VlkData.Surface = PlatCreateVulkanSurface(
+    VlkData.Surface = VidCreateVulkanSurface(
         VlkData.Instance, VlkGetAllocationCallbacks(), NULL);
 }
 
@@ -83,6 +83,11 @@ VOID VlkCreateAllocator(VOID)
 
 static VOID Initialize(VOID)
 {
+    if (VlkData.Initialized)
+    {
+        return;
+    }
+
     LogDebug("Initializing Vulkan backend");
 
     LogDebug("Initializing volk");
@@ -155,9 +160,9 @@ static VOID Shutdown(VOID)
         VlkData.Sampler = NULL;
     }
 
-    LogDebug("Freeing uniform buffers");
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
+        LogDebug("Freeing uniform buffer %u/%u", i + 1, VULKAN_FRAME_COUNT);
         VlkFreeBuffer(&VlkData.UniformBuffers[i]);
     }
 
@@ -200,17 +205,18 @@ static VOID Shutdown(VOID)
         VlkData.CommandPool = NULL;
     }
 
-    LogDebug("Destroying semaphores");
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
         if (VlkData.AcquireSemaphores[i])
         {
+            LogDebug("Destroying acquisition semaphore %u/%u", i + 1, VULKAN_FRAME_COUNT);
             vkDestroySemaphore(VlkData.Device, VlkData.AcquireSemaphores[i],
                                VlkGetAllocationCallbacks());
             VlkData.AcquireSemaphores[i] = NULL;
         }
         if (VlkData.RenderCompleteSemaphores[i])
         {
+            LogDebug("Destroying render completion semaphore %u/%u", i + 1, VULKAN_FRAME_COUNT);
             vkDestroySemaphore(VlkData.Device,
                                VlkData.RenderCompleteSemaphores[i],
                                VlkGetAllocationCallbacks());
@@ -276,6 +282,7 @@ static VOID Shutdown(VOID)
     }
 
     memset(&VlkData, 0, sizeof(VULKAN_DATA));
+
     LogDebug("Successfully shut down Vulkan");
 }
 
@@ -287,4 +294,6 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
     Backend->Shutdown = Shutdown;
+
+    memset(&VlkData, 0, sizeof(VULKAN_DATA));
 }

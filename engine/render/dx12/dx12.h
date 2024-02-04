@@ -23,6 +23,7 @@ END_EXTERN_C
 
 #include "directx/d3d12.h"
 #include "directx/d3dx12.h"
+#include <dxgi1_6.h>
 
 #define D3D12MA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
 #define D3D12MA_SYSTEM_ALIGNED_FREE CmnAlignedFree
@@ -78,10 +79,10 @@ typedef IDXGIVkSwapChain DIRECTX12_SWAPCHAIN;
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
 {
-    IDXGIFactory4 *Factory;
+    IDXGIFactory7 *Factory;
     IDXGIAdapter1 *Adapter;
     DXGI_ADAPTER_DESC AdapterDescription;
-    ID3D12Device *Device;
+    ID3D12Device7 *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
     ID3D12CommandAllocator *CommandAllocator;
     ID3D12CommandQueue *CommandQueue;

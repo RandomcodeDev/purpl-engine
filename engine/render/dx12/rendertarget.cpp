@@ -20,7 +20,7 @@ VOID Dx12CreateRenderTargetViews(VOID)
     CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart());
     UINT32 i;
 
-    for (i = 0; i < DIRECTX12_FRAME_COUNT; i++)
+    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
     {
         HRESULT_CHECK(Dx12Data.SwapChain->GetBuffer(
             0, IID_PPV_ARGS(&Dx12Data.RenderTargets[i])));

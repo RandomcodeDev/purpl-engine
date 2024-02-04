@@ -1,5 +1,7 @@
 #include "dx12.h"
 
+// TODO: if vkd3d is gonna be used, then this should just call VidCreateDx12SwapChain (like VidCreateVulkanSurface)
+
 EXTERN_C
 VOID Dx12CreateSwapChain(VOID)
 {

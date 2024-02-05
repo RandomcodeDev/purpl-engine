@@ -2,6 +2,12 @@
 ///
 /// @brief This module contains definitions used by the DirectX 12 backend.
 ///
+/// All the DirectX 12 files are C++, but only because COM code in C looks ugly.
+/// No other C++ features are used, and it's still C. It's just to call COM functions
+/// in a way that looks OK (plus the semantics are slightly better, because the
+/// variable can be used instead of just the interface type when creating objects,
+/// which means they don't have to be kept in sync).
+///
 /// @copyright (c) 2024 Randomcode Developers
 
 #pragma once
@@ -132,14 +138,23 @@ extern VOID Dx12CreateRenderTargetViews(VOID);
 /// @brief Create the root signature (defines what shaders receive as parameters)
 extern VOID Dx12CreateRootSignature(VOID);
 
+/// @brief Determine if the pipeline state has been cached before
+extern BOOLEAN Dx12HavePipelineStateCache(VOID);
+
+/// @brief Load the cached pipeline state
+extern VOID Dx12LoadPipelineStateCache(VOID);
+
 /// @brief Load core shaders
-extern VOID Dx12LoadCoreShaders(VOID);
+extern VOID Dx12CompileCoreShaders(VOID);
 
 /// @brief Create the vertex input layout
 extern VOID Dx12CreateVertexInputLayout(VOID);
 
 /// @brief Create the pipeline state object
 extern VOID Dx12CreatePipelineStateObject(VOID);
+
+/// @brief Cache the pipeline state
+extern VOID Dx12CachePipelineState(VOID);
 
 /// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);

@@ -33,9 +33,17 @@ static VOID Initialize(VOID)
     Dx12CreateRenderTargetViews();
     Dx12CreateCommandAllocator();
     Dx12CreateRootSignature();
-    Dx12LoadCoreShaders();
-    Dx12CreateVertexInputLayout();
-    Dx12CreatePipelineStateObject();
+    if (Dx12HavePipelineStateCache())
+    {
+        Dx12LoadPipelineStateCache();
+    }
+    else
+    {
+        Dx12CompileCoreShaders();
+        Dx12CreateVertexInputLayout();
+        Dx12CreatePipelineStateObject();
+        Dx12CachePipelineState();
+    }
     Dx12CreateCommandList();
     Dx12CreateMainFence();
 

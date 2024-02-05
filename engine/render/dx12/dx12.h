@@ -29,6 +29,7 @@ END_EXTERN_C
 
 #include "directx/d3d12.h"
 #include "directx/d3dx12.h"
+#include <d3dcompiler.h>
 #include <dxgi1_6.h>
 
 #define D3D12MA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
@@ -145,10 +146,7 @@ extern BOOLEAN Dx12HavePipelineStateCache(VOID);
 extern VOID Dx12LoadPipelineStateCache(VOID);
 
 /// @brief Load core shaders
-extern VOID Dx12CompileCoreShaders(VOID);
-
-/// @brief Create the vertex input layout
-extern VOID Dx12CreateVertexInputLayout(VOID);
+extern VOID Dx12LoadCoreShaders(VOID);
 
 /// @brief Create the pipeline state object
 extern VOID Dx12CreatePipelineStateObject(VOID);

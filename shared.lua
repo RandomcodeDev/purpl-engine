@@ -22,7 +22,7 @@ function fix_target(target)
             target:set("prefixname", "lib")
             target:set("extension", ".nrs")
         end
-    else
+    elseif not is_plat("windows") then
         -- Of course POSIX or GNU or whoever gets to have "libutil.a" be a reserved name
         -- Other systems don't need this, since they have less common default library names
         if target:kind() == "static" then
@@ -124,7 +124,7 @@ function setup_shared(root, directx, vulkan)
         -- Old style casts are to match stylistically, and C++98 is defunct as hell
         -- Also, CmnFree sets the variable to NULL to reduce misuse, and uses a
         -- block to do that, but having a semi after looks normal, even if it's
-        -- technically superfluous 
+        -- technically superfluous
         add_cxflags("-Wno-gnu-line-marker", "-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
     end
 

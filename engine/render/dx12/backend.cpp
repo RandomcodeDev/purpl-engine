@@ -39,7 +39,7 @@ static VOID Initialize(VOID)
     }
     else
     {
-        Dx12CompileCoreShaders();
+        Dx12LoadCoreShaders();
         Dx12CreateVertexInputLayout();
         Dx12CreatePipelineStateObject();
         Dx12CachePipelineState();

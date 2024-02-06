@@ -22,7 +22,7 @@ VOID Dx12CreateRootSignature(VOID)
 }
 
 EXTERN_C
-ID3DBlob* Dx12LoadShader(_In_ PCHAR Path)
+ID3DBlob* Dx12LoadShader(_In_ PCSTR Path)
 {
     PBYTE ShaderData;
     SIZE_T ShaderSize;

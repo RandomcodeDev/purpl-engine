@@ -26,8 +26,7 @@ FsGetFileSize(_In_ PCSTR Path)
     File = fopen(FixedPath, "rb");
     if (!File)
     {
-        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath,
-                   strerror(errno));
+        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath, strerror(errno));
         return 0;
     }
 
@@ -47,8 +46,7 @@ FsCreateDirectory(_In_ PCSTR Path)
 }
 
 PVOID
-FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
-           _In_ SIZE_T Extra)
+FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount, _In_ SIZE_T Extra)
 {
     FILE *File;
     PVOID Buffer;
@@ -62,13 +60,11 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
     }
 
     FixedPath = PlatFixPath(Path);
-    LogTrace("Reading up to %zu byte(s) (+%zu) of file %s (%s)", MaxAmount,
-             Extra, Path, FixedPath);
+    LogTrace("Reading up to %zu byte(s) (+%zu) of file %s (%s)", MaxAmount, Extra, Path, FixedPath);
     File = fopen(FixedPath, "rb");
     if (!File)
     {
-        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath,
-                   strerror(errno));
+        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath, strerror(errno));
         *ReadAmount = 0;
         return NULL;
     }
@@ -77,8 +73,7 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
     Buffer = CmnAlloc(Size, 1);
     if (!Buffer)
     {
-        LogWarning("Failed to allocate data for file %s (%s): %s", Path,
-                   FixedPath, strerror(errno));
+        LogWarning("Failed to allocate data for file %s (%s): %s", Path, FixedPath, strerror(errno));
         *ReadAmount = 0;
         return NULL;
     }
@@ -86,8 +81,7 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
     Read = fread(Buffer, 1, Size, File);
     if (Read != Size - Extra)
     {
-        LogWarning("Failed to read file %s (%s): %s", Path, FixedPath,
-                   strerror(errno));
+        LogWarning("Failed to read file %s (%s): %s", Path, FixedPath, strerror(errno));
         *ReadAmount = 0;
         CmnFree(Buffer);
         return NULL;
@@ -99,21 +93,18 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
 }
 
 BOOLEAN
-FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data,
-            _In_ SIZE_T Size, _In_ BOOLEAN Append)
+FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data, _In_ SIZE_T Size, _In_ BOOLEAN Append)
 {
     FILE *File;
     BOOLEAN Success;
     PCSTR FixedPath;
 
     FixedPath = PlatFixPath(Path);
-    LogTrace("%s %zu byte(s) to file %s (%s)", Append ? "Appending" : "Writing",
-             Size, Path, FixedPath);
+    LogTrace("%s %zu byte(s) to file %s (%s)", Append ? "Appending" : "Writing", Size, Path, FixedPath);
     File = fopen(FixedPath, Append ? "ab" : "wb");
     if (!File)
     {
-        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath,
-                   strerror(errno));
+        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath, strerror(errno));
         return FALSE;
     }
     CmnFree(FixedPath);

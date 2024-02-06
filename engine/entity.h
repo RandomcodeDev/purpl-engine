@@ -1,5 +1,5 @@
 /// @file entity.h
-/// 
+///
 /// @brief This file defines ECS components and helper functions for entities.
 ///
 /// @copyright (c) 2024 Randomcode Developers

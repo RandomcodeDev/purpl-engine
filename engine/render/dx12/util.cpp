@@ -17,7 +17,6 @@ VOID Dx12EnableDebugLayer(VOID)
     else
     {
         _com_error Error(Result);
-        LogError("Failed to enable debug layer: %s (HRESULT 0x%08X)",
-                 Error.ErrorMessage(), Result);
+        LogError("Failed to enable debug layer: %s (HRESULT 0x%08X)", Error.ErrorMessage(), Result);
     }
 }

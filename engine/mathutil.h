@@ -1,5 +1,5 @@
 /// @file mathutil.h
-/// 
+///
 /// @brief This file defines various math utility functions.
 ///
 /// @copyright (c) 2024 Randomcode Developers
@@ -23,8 +23,7 @@ extern ECS_COMPONENT_DECLARE(TRANSFORM);
 ///
 /// @param[in] Transform        The TRANSFORM to calculate a matrix from.
 /// @param[out] TransformMatrix  The transform matrix to calculate into.
-extern VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
-                                     _Out_ mat4 TransformMatrix);
+extern VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform, _Out_ mat4 TransformMatrix);
 
 /// @brief Convert Euler angles into an axis angle.
 ///

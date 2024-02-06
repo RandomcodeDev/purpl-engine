@@ -9,24 +9,20 @@ VOID Dx12CreateRootSignature(VOID)
     LogDebug("Creating root signature");
 
     CD3DX12_ROOT_SIGNATURE_DESC RootSignatureDescription;
-    RootSignatureDescription.Init(
-        0, nullptr, 0, nullptr,
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    RootSignatureDescription.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-    HRESULT_CHECK(D3D12SerializeRootSignature(&RootSignatureDescription,
-                                              D3D_ROOT_SIGNATURE_VERSION_1,
-                                              &Signature, &Error));
-    HRESULT_CHECK(Dx12Data.Device->CreateRootSignature(
-        0, Signature->GetBufferPointer(), Signature->GetBufferSize(),
-        IID_PPV_ARGS(&Dx12Data.RootSignature)));
+    HRESULT_CHECK(
+        D3D12SerializeRootSignature(&RootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION_1, &Signature, &Error));
+    HRESULT_CHECK(Dx12Data.Device->CreateRootSignature(0, Signature->GetBufferPointer(), Signature->GetBufferSize(),
+                                                       IID_PPV_ARGS(&Dx12Data.RootSignature)));
 }
 
 EXTERN_C
-ID3DBlob* Dx12LoadShader(_In_ PCSTR Path)
+ID3DBlob *Dx12LoadShader(_In_ PCSTR Path)
 {
     PBYTE ShaderData;
     SIZE_T ShaderSize;
-    ID3DBlob* ShaderBlob;
+    ID3DBlob *ShaderBlob;
 
     LogDebug("Loading shader bytecode in %s", Path);
 
@@ -35,9 +31,9 @@ ID3DBlob* Dx12LoadShader(_In_ PCSTR Path)
     PURPL_ASSERT(ShaderData != nullptr && ShaderSize > 0);
 
     HRESULT_CHECK(D3DCreateBlob(ShaderSize, &ShaderBlob));
-    
+
     memcpy(ShaderBlob->GetBufferPointer(), ShaderData, ShaderSize);
-    
+
     CmnFree(ShaderData);
 
     return ShaderBlob;

@@ -1,18 +1,13 @@
 #include "vk.h"
 
-VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments,
-                                 _In_ SIZE_T AttachmentCount,
-                                 _In_ VkSubpassDescription *Subpasses,
-                                 _In_ SIZE_T SubpassCount,
-                                 _In_ VkSubpassDependency *SubpassDependencies,
-                                 _In_ SIZE_T SubpassDependencyCount)
+VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,
+                                 _In_ VkSubpassDescription *Subpasses, _In_ SIZE_T SubpassCount,
+                                 _In_ VkSubpassDependency *SubpassDependencies, _In_ SIZE_T SubpassDependencyCount)
 {
-    LogDebug("Creating render pass with %zu attachment(s) and %zu subpass(es)",
-             AttachmentCount, SubpassCount);
+    LogDebug("Creating render pass with %zu attachment(s) and %zu subpass(es)", AttachmentCount, SubpassCount);
 
     VkRenderPassCreateInfo RenderPassCreateInformation = {0};
-    RenderPassCreateInformation.sType =
-        VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    RenderPassCreateInformation.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     RenderPassCreateInformation.pAttachments = Attachments;
     RenderPassCreateInformation.attachmentCount = AttachmentCount;
     RenderPassCreateInformation.pSubpasses = Subpasses;
@@ -21,9 +16,8 @@ VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments,
     RenderPassCreateInformation.dependencyCount = SubpassDependencyCount;
 
     VkRenderPass RenderPass = NULL;
-    VULKAN_CHECK(vkCreateRenderPass(VlkData.Device,
-                                    &RenderPassCreateInformation,
-                                    VlkGetAllocationCallbacks(), &RenderPass));
+    VULKAN_CHECK(
+        vkCreateRenderPass(VlkData.Device, &RenderPassCreateInformation, VlkGetAllocationCallbacks(), &RenderPass));
 
     return RenderPass;
 }
@@ -58,6 +52,5 @@ VOID VlkCreateMainRenderPass(VOID)
 
     VkSubpassDescription Subpasses[] = {MainSubpass, PostProcessSubpass};
 
-    VlkData.MainRenderPass = VlkCreateRenderPass(
-        &ColorAttachment, 1, Subpasses, PURPL_ARRAYSIZE(Subpasses), NULL, 0);
+    VlkData.MainRenderPass = VlkCreateRenderPass(&ColorAttachment, 1, Subpasses, PURPL_ARRAYSIZE(Subpasses), NULL, 0);
 }

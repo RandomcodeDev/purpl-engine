@@ -22,22 +22,19 @@ _Thread_local PTHREAD AsCurrentThread;
 static VOID ThreadEntry(_In_ PVOID Thread)
 {
     AsCurrentThread = Thread;
-    AsCurrentThread->ReturnValue =
-        AsCurrentThread->ThreadStart(AsCurrentThread->UserData);
+    AsCurrentThread->ReturnValue = AsCurrentThread->ThreadStart(AsCurrentThread->UserData);
     ExitThread(AsCurrentThread->ReturnValue);
 }
 
 VOID InitializeMainThread(_In_ PFN_THREAD_START StartAddress)
 {
     AsCurrentThread = CmnAlloc(1, sizeof(THREAD));
-    strncpy(AsCurrentThread->Name, "main",
-            PURPL_ARRAYSIZE(AsCurrentThread->Name));
+    strncpy(AsCurrentThread->Name, "main", PURPL_ARRAYSIZE(AsCurrentThread->Name));
     AsCurrentThread->ThreadStart = StartAddress;
 }
 
 PTHREAD
-AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize,
-               _In_ PFN_THREAD_START ThreadStart, _In_opt_ PVOID UserData)
+AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize, _In_ PFN_THREAD_START ThreadStart, _In_opt_ PVOID UserData)
 {
     PTHREAD Thread;
     DWORD Error;
@@ -57,9 +54,7 @@ AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize,
     Thread->ThreadStart = ThreadStart;
     Thread->UserData = UserData;
 
-    Thread->Handle =
-        CreateThread(NULL, StackSize, (LPTHREAD_START_ROUTINE)ThreadEntry,
-                     Thread, CREATE_SUSPENDED, NULL);
+    Thread->Handle = CreateThread(NULL, StackSize, (LPTHREAD_START_ROUTINE)ThreadEntry, Thread, CREATE_SUSPENDED, NULL);
     if (!Thread->Handle)
     {
         Error = GetLastError();

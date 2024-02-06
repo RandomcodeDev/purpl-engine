@@ -31,3 +31,6 @@
 [submodule "deps/doxygen-awesome-css"]
 	path = deps/doxygen-awesome-css
 	url = https://github.com/jothepro/doxygen-awesome-css.git
+[submodule "deps/ufbx"]
+	path = deps/ufbx
+	url = https://github.com/ufbx/ufbx

@@ -35,10 +35,10 @@ END_EXTERN_C
 #define D3D12MA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
 #define D3D12MA_SYSTEM_ALIGNED_FREE CmnAlignedFree
 #define D3D12MA_DEBUG_LOG_FORMAT(format, ...) LogDebug((format), __VA_ARGS__)
-#define D3D12MA_HEAVY_ASSERT(expr)                                             \
-    if (!(expr))                                                               \
-    {                                                                          \
-        CmnError("D3D12MA assertion failed: " #expr);                          \
+#define D3D12MA_HEAVY_ASSERT(expr)                                                                                     \
+    if (!(expr))                                                                                                       \
+    {                                                                                                                  \
+        CmnError("D3D12MA assertion failed: " #expr);                                                                  \
     }
 #ifdef PURPL_DEBUG
 #define D3D12MA_STATS_STRING_ENABLED 1
@@ -58,17 +58,16 @@ END_EXTERN_C
 ///
 /// @param[in] Call The call/expression to check
 /// @param[in] ... Anything extra to put in the if statement
-#define HRESULT_CHECK(Call, ...)                                               \
-    do                                                                         \
-    {                                                                          \
-        HRESULT Result = (Call);                                               \
-        if (!SUCCEEDED(Result) __VA_ARGS__)                                    \
-        {                                                                      \
-            _com_error Error(Result);                                          \
-            CmnError("COM call " #Call                                         \
-                     " at %s:%d failed: %s (HRESULT 0x%08X)",                  \
-                     __FILE__, __LINE__, Error.ErrorMessage(), Result);        \
-        }                                                                      \
+#define HRESULT_CHECK(Call, ...)                                                                                       \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        HRESULT Result = (Call);                                                                                       \
+        if (!SUCCEEDED(Result) __VA_ARGS__)                                                                            \
+        {                                                                                                              \
+            _com_error Error(Result);                                                                                  \
+            CmnError("COM call " #Call " at %s:%d failed: %s (HRESULT 0x%08X)", __FILE__, __LINE__,                    \
+                     Error.ErrorMessage(), Result);                                                                    \
+        }                                                                                                              \
     } while (0)
 
 // Swap chains are different in vkd3d
@@ -150,7 +149,7 @@ extern VOID Dx12LoadPipelineStateCache(VOID);
 /// @param[in] Path The path to read the shader from
 ///
 /// @return A blob containing the shader bytecode
-extern ID3DBlob* Dx12LoadShader(_In_ PCSTR Path);
+extern ID3DBlob *Dx12LoadShader(_In_ PCSTR Path);
 
 /// @brief Create the pipeline state object
 extern VOID Dx12CreatePipelineStateObject(VOID);

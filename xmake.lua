@@ -71,9 +71,9 @@ if directx then
         )
 
         if is_plat("gdk") then
-            add_links("d3d12.lib", "dxgi.lib")
+            add_links("d3d12.lib", "dxgi.lib", "D3DCompiler.lib")
         elseif is_plat("gdkx") then
-            add_links("d3d12_xs.lib", "dxgi_xs.lib")
+            add_links("d3d12_xs.lib", "dxgi_xs.lib", "D3DCompiler_xs.lib")
         end
 
         on_load(fix_target)

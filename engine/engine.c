@@ -45,8 +45,7 @@ Return Value:
 
     LogInfo("Initializing engine");
 
-    EngineDataDirectory = CmnFormatString("%s" GAME_EXECUTABLE_NAME "/",
-                                          PlatGetUserDataDirectory());
+    EngineDataDirectory = CmnFormatString("%s" GAME_EXECUTABLE_NAME "/", PlatGetUserDataDirectory());
 
     LogInfo("Ensuring engine data directory %s exists", EngineDataDirectory);
     if (!FsCreateDirectory(EngineDataDirectory))
@@ -55,10 +54,8 @@ Return Value:
     }
     for (i = 0; i < EngineDataDirectoryCount; i++)
     {
-        LogDebug("Creating directory %s%s", EngineDataDirectory,
-                 EngineDataDirectories[i]);
-        Path = CmnFormatTempString("%s%s", EngineDataDirectory,
-                                   EngineDataDirectories[i]);
+        LogDebug("Creating directory %s%s", EngineDataDirectory, EngineDataDirectories[i]);
+        Path = CmnFormatTempString("%s%s", EngineDataDirectory, EngineDataDirectories[i]);
         if (!FsCreateDirectory(Path))
         {
             CmnError("Failed to create engine directory %s", Path);
@@ -70,10 +67,9 @@ Return Value:
     struct tm Time;
     RawTime = time(NULL);
     Time = *localtime(&RawTime);
-    Path = CmnFormatTempString(
-        "%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log", EngineDataDirectory,
-        EngineDataDirectories[EngineDataDirectoryLogs], Time.tm_year + 1900,
-        Time.tm_mon + 1, Time.tm_mday, Time.tm_hour, Time.tm_min, Time.tm_sec);
+    Path = CmnFormatTempString("%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log", EngineDataDirectory,
+                               EngineDataDirectories[EngineDataDirectoryLogs], Time.tm_year + 1900, Time.tm_mon + 1,
+                               Time.tm_mday, Time.tm_hour, Time.tm_min, Time.tm_sec);
 
     LogInfo("Opening log file %s", Path);
     FILE *LogFile = fopen(Path, "ab");
@@ -91,8 +87,7 @@ Return Value:
 
     EcsInitialize();
 
-    LogInfo("Successfully initialized engine, data directory is %s",
-            EngineDataDirectory);
+    LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);
 }
 
 static UINT64 Start;

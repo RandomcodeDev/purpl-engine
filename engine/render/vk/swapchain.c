@@ -4,8 +4,7 @@ VkSurfaceFormatKHR VlkChooseSurfaceFormat(VOID)
 {
     LogDebug("Choosing surface format");
 
-    if (stbds_arrlenu(VlkData.Gpu->SurfaceFormats) == 1 &&
-        VlkData.Gpu->SurfaceFormats[0].format == VK_FORMAT_UNDEFINED)
+    if (stbds_arrlenu(VlkData.Gpu->SurfaceFormats) == 1 && VlkData.Gpu->SurfaceFormats[0].format == VK_FORMAT_UNDEFINED)
     {
         VkSurfaceFormatKHR Format = {0};
         Format.format = VK_FORMAT_B8G8R8A8_SRGB;
@@ -19,8 +18,7 @@ VkSurfaceFormatKHR VlkChooseSurfaceFormat(VOID)
         for (i = 0; i < stbds_arrlenu(VlkData.Gpu->SurfaceFormats); i++)
         {
             VkSurfaceFormatKHR *Format = &VlkData.Gpu->SurfaceFormats[i];
-            if (Format->format == VK_FORMAT_B8G8R8A8_SRGB &&
-                Format->colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+            if (Format->format == VK_FORMAT_B8G8R8A8_SRGB && Format->colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
             {
                 return *Format;
             }
@@ -74,50 +72,37 @@ VOID VlkCreateSwapChain(VOID)
     VidGetSize(&VlkData.SwapChainExtent.width, &VlkData.SwapChainExtent.height);
 
     VkSurfaceCapabilitiesKHR SurfaceCapabilities = {0};
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-        VlkData.Gpu->Device, VlkData.Surface, &SurfaceCapabilities);
-    if (VlkData.SwapChainExtent.width >
-            SurfaceCapabilities.maxImageExtent.width ||
-        VlkData.SwapChainExtent.height >
-            SurfaceCapabilities.maxImageExtent.height)
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VlkData.Gpu->Device, VlkData.Surface, &SurfaceCapabilities);
+    if (VlkData.SwapChainExtent.width > SurfaceCapabilities.maxImageExtent.width ||
+        VlkData.SwapChainExtent.height > SurfaceCapabilities.maxImageExtent.height)
     {
-        VlkData.SwapChainExtent.width =
-            SurfaceCapabilities.maxImageExtent.width;
-        VlkData.SwapChainExtent.height =
-            SurfaceCapabilities.maxImageExtent.height;
+        VlkData.SwapChainExtent.width = SurfaceCapabilities.maxImageExtent.width;
+        VlkData.SwapChainExtent.height = SurfaceCapabilities.maxImageExtent.height;
     }
 
     VkSwapchainCreateInfoKHR SwapChainCreateInformation = {0};
-    SwapChainCreateInformation.sType =
-        VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    SwapChainCreateInformation.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     SwapChainCreateInformation.surface = VlkData.Surface;
 
-    SwapChainCreateInformation.minImageCount =
-        SurfaceCapabilities.minImageCount + 1;
+    SwapChainCreateInformation.minImageCount = SurfaceCapabilities.minImageCount + 1;
     PURPL_ASSERT(SurfaceCapabilities.maxImageCount == 0 ||
-                 SwapChainCreateInformation.minImageCount <=
-                     SurfaceCapabilities.maxImageCount);
+                 SwapChainCreateInformation.minImageCount <= SurfaceCapabilities.maxImageCount);
 
-    LogDebug("Creating %ux%u swap chain with minimum of %u images",
-             VlkData.SwapChainExtent.width, VlkData.SwapChainExtent.height,
-             SwapChainCreateInformation.minImageCount);
+    LogDebug("Creating %ux%u swap chain with minimum of %u images", VlkData.SwapChainExtent.width,
+             VlkData.SwapChainExtent.height, SwapChainCreateInformation.minImageCount);
 
     SwapChainCreateInformation.imageFormat = VlkData.SurfaceFormat.format;
-    SwapChainCreateInformation.imageColorSpace =
-        VlkData.SurfaceFormat.colorSpace;
+    SwapChainCreateInformation.imageColorSpace = VlkData.SurfaceFormat.colorSpace;
     SwapChainCreateInformation.imageExtent = VlkData.SwapChainExtent;
     SwapChainCreateInformation.imageArrayLayers = 1;
 
-    SwapChainCreateInformation.imageUsage =
-        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    SwapChainCreateInformation.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 
     if (VlkData.Gpu->GraphicsFamilyIndex != VlkData.Gpu->PresentFamilyIndex)
     {
-        UINT32 Indices[] = {VlkData.Gpu->GraphicsFamilyIndex,
-                            VlkData.Gpu->PresentFamilyIndex};
+        UINT32 Indices[] = {VlkData.Gpu->GraphicsFamilyIndex, VlkData.Gpu->PresentFamilyIndex};
 
-        SwapChainCreateInformation.imageSharingMode =
-            VK_SHARING_MODE_CONCURRENT;
+        SwapChainCreateInformation.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         SwapChainCreateInformation.queueFamilyIndexCount = 2;
         SwapChainCreateInformation.pQueueFamilyIndices = Indices;
     }
@@ -126,45 +111,35 @@ VOID VlkCreateSwapChain(VOID)
         SwapChainCreateInformation.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
     }
 
-    SwapChainCreateInformation.preTransform =
-        SurfaceCapabilities.currentTransform;
-    SwapChainCreateInformation.compositeAlpha =
-        VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    SwapChainCreateInformation.preTransform = SurfaceCapabilities.currentTransform;
+    SwapChainCreateInformation.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     SwapChainCreateInformation.presentMode = VlkData.PresentMode;
 
     SwapChainCreateInformation.clipped = TRUE;
 
-    VULKAN_CHECK(
-        vkCreateSwapchainKHR(VlkData.Device, &SwapChainCreateInformation,
-                             VlkGetAllocationCallbacks(), &VlkData.SwapChain));
-    VlkSetObjectName(VlkData.SwapChain, VK_OBJECT_TYPE_SWAPCHAIN_KHR,
-                     "Swap chain");
+    VULKAN_CHECK(vkCreateSwapchainKHR(VlkData.Device, &SwapChainCreateInformation, VlkGetAllocationCallbacks(),
+                                      &VlkData.SwapChain));
+    VlkSetObjectName(VlkData.SwapChain, VK_OBJECT_TYPE_SWAPCHAIN_KHR, "Swap chain");
 
     LogDebug("Creating swap chain image views");
 
     UINT32 ImageCount = 0;
 
-    VULKAN_CHECK(vkGetSwapchainImagesKHR(VlkData.Device, VlkData.SwapChain,
-                                         &ImageCount, NULL));
+    VULKAN_CHECK(vkGetSwapchainImagesKHR(VlkData.Device, VlkData.SwapChain, &ImageCount, NULL));
     if (ImageCount < 1)
     {
         CmnError("Swap chain has no images");
     }
 
     stbds_arrsetlen(VlkData.SwapChainImages, ImageCount);
-    VULKAN_CHECK(vkGetSwapchainImagesKHR(VlkData.Device, VlkData.SwapChain,
-                                         &ImageCount, VlkData.SwapChainImages));
+    VULKAN_CHECK(vkGetSwapchainImagesKHR(VlkData.Device, VlkData.SwapChain, &ImageCount, VlkData.SwapChainImages));
 
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
-        VlkCreateImageView(
-            &VlkData.SwapChainImageViews[i], VlkData.SwapChainImages[i],
-            VlkData.SurfaceFormat.format, VK_IMAGE_ASPECT_COLOR_BIT);
-        VlkSetObjectName(VlkData.SwapChainImages[i], VK_OBJECT_TYPE_IMAGE,
-                         "Swap chain image %u", i);
-        VlkSetObjectName(VlkData.SwapChainImageViews[i],
-                         VK_OBJECT_TYPE_IMAGE_VIEW, "Swap chain image view %u",
-                         i);
+        VlkCreateImageView(&VlkData.SwapChainImageViews[i], VlkData.SwapChainImages[i], VlkData.SurfaceFormat.format,
+                           VK_IMAGE_ASPECT_COLOR_BIT);
+        VlkSetObjectName(VlkData.SwapChainImages[i], VK_OBJECT_TYPE_IMAGE, "Swap chain image %u", i);
+        VlkSetObjectName(VlkData.SwapChainImageViews[i], VK_OBJECT_TYPE_IMAGE_VIEW, "Swap chain image view %u", i);
     }
 }
 
@@ -177,8 +152,7 @@ VOID VlkDestroySwapChain(VOID)
     {
         if (VlkData.SwapChainImageViews[i])
         {
-            vkDestroyImageView(VlkData.Device, VlkData.SwapChainImageViews[i],
-                               VlkGetAllocationCallbacks());
+            vkDestroyImageView(VlkData.Device, VlkData.SwapChainImageViews[i], VlkGetAllocationCallbacks());
             VlkData.SwapChainImageViews[i] = NULL;
         }
     }
@@ -193,8 +167,7 @@ VOID VlkDestroySwapChain(VOID)
     if (VlkData.SwapChain)
     {
         LogDebug("Destroying swap chain 0x%llX", (UINT64)VlkData.SwapChain);
-        vkDestroySwapchainKHR(VlkData.Device, VlkData.SwapChain,
-                              VlkGetAllocationCallbacks());
+        vkDestroySwapchainKHR(VlkData.Device, VlkData.SwapChain, VlkGetAllocationCallbacks());
         VlkData.SwapChain = NULL;
     }
 }

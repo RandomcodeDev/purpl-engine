@@ -48,9 +48,7 @@ static VOID MiMallocStatPrint(PCSTR Message, PVOID Argument)
 {
     UNREFERENCED_PARAMETER(Argument);
     // Don't want blanks between log messages, looks bad
-    LogDebug("%.*s",
-             strlen(Message) - (Message[strlen(Message) - 2] == '\n' ? 2 : 1),
-             Message);
+    LogDebug("%.*s", strlen(Message) - (Message[strlen(Message) - 2] == '\n' ? 2 : 1), Message);
 }
 #endif
 
@@ -82,8 +80,7 @@ CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
 }
 
 PCSTR
-CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
-                           _In_ va_list Arguments)
+CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments)
 {
     static CHAR Buffer[1024];
     va_list _Arguments;
@@ -98,8 +95,7 @@ CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
 }
 
 PCHAR
-CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
-                       _In_ va_list Arguments)
+CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments)
 {
     PCHAR Buffer;
     INT Size;
@@ -157,8 +153,7 @@ PCSTR CmnFormatSize(_In_ DOUBLE Size)
         Prefix++;
     }
 
-    snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%.02lf %s", Value,
-             Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
+    snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%.02lf %s", Value, Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
 
     return Buffer;
 }
@@ -175,18 +170,16 @@ _Noreturn VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...)
     va_start(Arguments, Message);
     FormattedMessage = CmnFormatStringVarArgs(Message, Arguments);
     va_end(Arguments);
-    BackTrace =
-        PlatCaptureStackBackTrace(1, // Don't include CmnError in the trace
+    BackTrace = PlatCaptureStackBackTrace(1, // Don't include CmnError in the trace
 #ifdef PURPL_VERBOSE
-                                  0 // Everything
+                                          0 // Everything
 #elif defined PURPL_DEBUG
-                                  5 // A bit more context
+                                          5 // A bit more context
 #else
-                                  3 // Enough
+                                          3 // Enough
 #endif
-        );
-    Formatted = CmnFormatString("Fatal error: %s\nStack trace:\n%s",
-                                FormattedMessage, BackTrace);
+    );
+    Formatted = CmnFormatString("Fatal error: %s\nStack trace:\n%s", FormattedMessage, BackTrace);
     LogFatal("%s", Formatted);
     PlatError(Formatted);
 

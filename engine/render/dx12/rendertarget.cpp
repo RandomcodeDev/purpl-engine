@@ -9,8 +9,7 @@ VOID Dx12CreateRtvHeap(VOID)
     RtvHeapDescription.NumDescriptors = DIRECTX12_FRAME_COUNT;
     RtvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     RtvHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(
-        &RtvHeapDescription, IID_PPV_ARGS(&Dx12Data.RtvHeap)));
+    HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(&RtvHeapDescription, IID_PPV_ARGS(&Dx12Data.RtvHeap)));
     Dx12Data.RtvDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 }
 
@@ -22,8 +21,7 @@ VOID Dx12CreateRenderTargetViews(VOID)
 
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
     {
-        HRESULT_CHECK(Dx12Data.SwapChain->GetBuffer(
-            0, IID_PPV_ARGS(&Dx12Data.RenderTargets[i])));
+        HRESULT_CHECK(Dx12Data.SwapChain->GetBuffer(0, IID_PPV_ARGS(&Dx12Data.RenderTargets[i])));
         Dx12Data.Device->CreateRenderTargetView(Dx12Data.RenderTargets[i], nullptr, RtvHandle);
         RtvHandle.Offset(1, Dx12Data.RtvDescriptorSize);
     }

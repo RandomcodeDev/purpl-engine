@@ -12,16 +12,12 @@ VOID VlkCreateSemaphores(VOID)
 
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
-        VULKAN_CHECK(vkCreateSemaphore(
-            VlkData.Device, &SemaphoreCreateInformation,
-            VlkGetAllocationCallbacks(), &VlkData.AcquireSemaphores[i]));
-        VlkSetObjectName(VlkData.AcquireSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE,
-                         "Acquisition semaphore %u", i);
-        VULKAN_CHECK(vkCreateSemaphore(
-            VlkData.Device, &SemaphoreCreateInformation,
-            VlkGetAllocationCallbacks(), &VlkData.RenderCompleteSemaphores[i]));
-        VlkSetObjectName(VlkData.RenderCompleteSemaphores[i],
-                         VK_OBJECT_TYPE_SEMAPHORE,
+        VULKAN_CHECK(vkCreateSemaphore(VlkData.Device, &SemaphoreCreateInformation, VlkGetAllocationCallbacks(),
+                                       &VlkData.AcquireSemaphores[i]));
+        VlkSetObjectName(VlkData.AcquireSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE, "Acquisition semaphore %u", i);
+        VULKAN_CHECK(vkCreateSemaphore(VlkData.Device, &SemaphoreCreateInformation, VlkGetAllocationCallbacks(),
+                                       &VlkData.RenderCompleteSemaphores[i]));
+        VlkSetObjectName(VlkData.RenderCompleteSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE,
                          "Render completion semaphore %u", i);
     }
 }

@@ -20,6 +20,5 @@ VOID Dx12CreateSwapChain(VOID)
     SwapChainDescription.SampleDesc.Count = 1;
 
     HRESULT_CHECK(Dx12Data.Factory->CreateSwapChainForHwnd(
-        Dx12Data.CommandQueue, (HWND)VidGetObject(), &SwapChainDescription,
-        nullptr, nullptr, &Dx12Data.SwapChain));
+        Dx12Data.CommandQueue, (HWND)VidGetObject(), &SwapChainDescription, nullptr, nullptr, &Dx12Data.SwapChain));
 }

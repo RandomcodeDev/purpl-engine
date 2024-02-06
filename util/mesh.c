@@ -7,11 +7,8 @@
 #include "mesh.h"
 
 PMESH
-CreateMesh(_In_ PCSTR Material,
-           _In_reads_(VertexCount * sizeof(VERTEX)) PVERTEX Vertices,
-           _In_ SIZE_T VertexCount,
-           _In_reads_(IndexCount * sizeof(ivec3)) ivec3 *Indices,
-           _In_ SIZE_T IndexCount)
+CreateMesh(_In_ PCSTR Material, _In_reads_(VertexCount * sizeof(VERTEX)) PVERTEX Vertices, _In_ SIZE_T VertexCount,
+           _In_reads_(IndexCount * sizeof(ivec3)) ivec3 *Indices, _In_ SIZE_T IndexCount)
 {
     PMESH Mesh;
 
@@ -58,14 +55,12 @@ LoadMesh(_In_ PCSTR Path)
 
     if (Size < MESH_HEADER_SIZE)
     {
-        LogError("Mesh is %zu bytes but should be %zu bytes", Size,
-                 MESH_HEADER_SIZE);
+        LogError("Mesh is %zu bytes but should be %zu bytes", Size, MESH_HEADER_SIZE);
         CmnFree(Mesh);
         return NULL;
     }
 
-    memmove((PBYTE)Mesh + sizeof(MESH), (PBYTE)Mesh + MESH_HEADER_SIZE,
-            Size - sizeof(MESH));
+    memmove((PBYTE)Mesh + sizeof(MESH), (PBYTE)Mesh + MESH_HEADER_SIZE, Size - sizeof(MESH));
     Mesh->Vertices = (PVERTEX)((PBYTE)Mesh + sizeof(MESH));
     Mesh->Indices = (ivec3 *)(Mesh->Vertices + Mesh->VertexCount);
     Mesh->DataSeparate = FALSE;
@@ -107,15 +102,13 @@ Return Value:
         return FALSE;
     }
 
-    if (!FsWriteFile(Path, Mesh->Vertices, Mesh->VertexCount * sizeof(VERTEX),
-                     TRUE))
+    if (!FsWriteFile(Path, Mesh->Vertices, Mesh->VertexCount * sizeof(VERTEX), TRUE))
     {
         LogError("Could not write vertex data to %s", Path);
         return FALSE;
     }
 
-    if (!FsWriteFile(Path, Mesh->Indices, Mesh->IndexCount * sizeof(ivec3),
-                     TRUE))
+    if (!FsWriteFile(Path, Mesh->Indices, Mesh->IndexCount * sizeof(ivec3), TRUE))
     {
         LogError("Could not write index data to %s", Path);
         return FALSE;

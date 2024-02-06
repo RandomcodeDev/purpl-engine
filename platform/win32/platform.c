@@ -46,16 +46,13 @@ VOID PlatInitialize(VOID)
 
 #if _WIN32_WINNT > 0x502
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &Mode);
-        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),
-                       Mode | ENABLE_VIRTUAL_TERMINAL_INPUT);
+        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), Mode | ENABLE_VIRTUAL_TERMINAL_INPUT);
 
         GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &Mode);
-        SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
-                       Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
         GetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), &Mode);
-        SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE),
-                       Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 #endif
 
         // In case running under cmd.exe, to not be on same line as prompt.
@@ -69,9 +66,7 @@ VOID PlatInitialize(VOID)
     Result = XGameRuntimeInitialize();
     if (!SUCCEEDED(Result))
     {
-        CmnError(
-            "Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X",
-            Result);
+        CmnError("Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X", Result);
     }
 #endif
 
@@ -117,8 +112,7 @@ PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
         Count = PURPL_ARRAYSIZE(BackTrace);
     }
 
-    RtlCaptureStackBackTrace(FramesToSkip + 1, PURPL_ARRAYSIZE(BackTrace),
-                             BackTrace, NULL);
+    RtlCaptureStackBackTrace(FramesToSkip + 1, PURPL_ARRAYSIZE(BackTrace), BackTrace, NULL);
 
     Offset = 0;
     for (i = 0; i < Count && BackTrace[i]; i++)
@@ -130,41 +124,33 @@ PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
         Symbol->SizeOfStruct = sizeof(SYMBOL_INFOW);
         Symbol->MaxNameLen = 32;
         Displacement = 0;
-        if (!SymFromAddrW(GetCurrentProcess(), (UINT64)BackTrace[i],
-                          &Displacement, Symbol))
+        if (!SymFromAddrW(GetCurrentProcess(), (UINT64)BackTrace[i], &Displacement, Symbol))
         {
             Error = GetLastError();
-            LogDebug("Failed to get symbol for address 0x%llX: %d (0x%X)",
-                     BackTrace[i], Error, Error);
+            LogDebug("Failed to get symbol for address 0x%llX: %d (0x%X)", BackTrace[i], Error, Error);
         }
 
-        ModuleAddress = (PVOID)SymGetModuleBase64(GetCurrentProcess(),
-                                                  (UINT64)BackTrace[i]);
+        ModuleAddress = (PVOID)SymGetModuleBase64(GetCurrentProcess(), (UINT64)BackTrace[i]);
         if (!ModuleAddress)
         {
             Error = GetLastError();
-            LogDebug("Failed to get module base for address 0x%llX: %d (0x%X)",
-                     BackTrace[i], Error, Error);
+            LogDebug("Failed to get module base for address 0x%llX: %d (0x%X)", BackTrace[i], Error, Error);
         }
 
         memset(&ModuleInfo, 0, sizeof(IMAGEHLP_MODULEW64));
         ModuleInfo.SizeOfStruct = sizeof(IMAGEHLP_MODULEW64);
-        if (!SymGetModuleInfoW64(GetCurrentProcess(), (UINT64)ModuleAddress,
-                                 &ModuleInfo))
+        if (!SymGetModuleInfoW64(GetCurrentProcess(), (UINT64)ModuleAddress, &ModuleInfo))
         {
             Error = GetLastError();
-            LogDebug("Failed to get module for address 0x%llX: %d (0x%X)",
-                     BackTrace[i], Error, Error);
+            LogDebug("Failed to get module for address 0x%llX: %d (0x%X)", BackTrace[i], Error, Error);
         }
 #endif
 
-        Written = snprintf(Buffer + Offset, PURPL_ARRAYSIZE(Buffer) - Offset,
-                           "\t%d: %ls!%ls+0x%llX (0x%llX)\n", i,
+        Written = snprintf(Buffer + Offset, PURPL_ARRAYSIZE(Buffer) - Offset, "\t%d: %ls!%ls+0x%llX (0x%llX)\n", i,
 #ifdef PURPL_GDKX
                            L"<unknown>", L"<unknown>",
 #else
-                           wcslen(ModuleInfo.ImageName) ? ModuleInfo.ImageName
-                                                        : L"<unknown>",
+                           wcslen(ModuleInfo.ImageName) ? ModuleInfo.ImageName : L"<unknown>",
                            Symbol->NameLen ? Symbol->Name : L"<unknown>",
 #endif
                            Displacement, (UINT64)BackTrace[i]);
@@ -211,46 +197,37 @@ PCSTR PlatGetDescription(VOID)
     IsWow64Process(INVALID_HANDLE_VALUE, &IsWow64);
 #endif
 
-    RegOpenKeyExA(HKEY_LOCAL_MACHINE,
-                  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 0,
-                  KEY_QUERY_VALUE, &CurrentVersionHandle);
+    RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_QUERY_VALUE,
+                  &CurrentVersionHandle);
 
     Size = sizeof(EditionId);
-    RegQueryValueExA(CurrentVersionHandle, "EditionID", NULL, NULL,
-                     (LPBYTE)EditionId, &Size);
+    RegQueryValueExA(CurrentVersionHandle, "EditionID", NULL, NULL, (LPBYTE)EditionId, &Size);
 
     Size = sizeof(ProductName);
-    RegQueryValueExA(CurrentVersionHandle, "ProductName", NULL, NULL,
-                     (LPBYTE)ProductName, &Size);
+    RegQueryValueExA(CurrentVersionHandle, "ProductName", NULL, NULL, (LPBYTE)ProductName, &Size);
 
     Size = sizeof(INT);
-    if (RegQueryValueExA(CurrentVersionHandle, "CurrentMajorVersionNumber",
-                         NULL, NULL, (LPBYTE)&CurrentMajorVersionNumber,
-                         &Size) == ERROR_SUCCESS)
+    if (RegQueryValueExA(CurrentVersionHandle, "CurrentMajorVersionNumber", NULL, NULL,
+                         (LPBYTE)&CurrentMajorVersionNumber, &Size) == ERROR_SUCCESS)
     {
         Size = sizeof(INT);
-        RegQueryValueExA(CurrentVersionHandle, "CurrentMinorVersionNumber",
-                         NULL, NULL, (LPBYTE)&CurrentMinorVersionNumber, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "CurrentMinorVersionNumber", NULL, NULL,
+                         (LPBYTE)&CurrentMinorVersionNumber, &Size);
 
         Size = sizeof(InstallationType);
-        RegQueryValueExA(CurrentVersionHandle, "InstallationType", NULL, NULL,
-                         (LPBYTE)InstallationType, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "InstallationType", NULL, NULL, (LPBYTE)InstallationType, &Size);
 
         Size = sizeof(CurrentBuildNumber);
-        RegQueryValueExA(CurrentVersionHandle, "CurrentBuildNumber", NULL, NULL,
-                         (LPBYTE)CurrentBuildNumber, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "CurrentBuildNumber", NULL, NULL, (LPBYTE)CurrentBuildNumber, &Size);
 
         Size = sizeof(INT);
-        RegQueryValueExA(CurrentVersionHandle, "UBR", NULL, NULL, (LPBYTE)&UBR,
-                         &Size);
+        RegQueryValueExA(CurrentVersionHandle, "UBR", NULL, NULL, (LPBYTE)&UBR, &Size);
 
         Size = sizeof(BuildLabEx);
-        RegQueryValueExA(CurrentVersionHandle, "BuildLabEx", NULL, NULL,
-                         (LPBYTE)&BuildLabEx, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "BuildLabEx", NULL, NULL, (LPBYTE)&BuildLabEx, &Size);
 
         Size = sizeof(DisplayVersion);
-        RegQueryValueExA(CurrentVersionHandle, "DisplayVersion", NULL, NULL,
-                         (LPBYTE)DisplayVersion, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "DisplayVersion", NULL, NULL, (LPBYTE)DisplayVersion, &Size);
 
         snprintf(Buffer, PURPL_ARRAYSIZE(Buffer),
 #ifdef _DEBUG
@@ -258,35 +235,25 @@ PCSTR PlatGetDescription(VOID)
 #else
                  "%s %s %lu.%lu.%s.%lu %s%s",
 #endif
-                 strcmp(EditionId, "SystemOS") == 0 ? "Xbox System Software"
-                                                    : "Windows",
-                 (strncmp(InstallationType, "Client",
-                          PURPL_ARRAYSIZE(InstallationType)) == 0)
-                     ? "Desktop"
-                     : InstallationType,
+                 strcmp(EditionId, "SystemOS") == 0 ? "Xbox System Software" : "Windows",
+                 (strncmp(InstallationType, "Client", PURPL_ARRAYSIZE(InstallationType)) == 0) ? "Desktop"
+                                                                                               : InstallationType,
                  CurrentMajorVersionNumber, CurrentMinorVersionNumber,
 #ifdef _DEBUG
-                 BuildLabEx,
-                 strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId,
-                 IsWow64 ? " (WoW64)" : ""
+                 BuildLabEx, strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId, IsWow64 ? " (WoW64)" : ""
 #else
-                 CurrentBuildNumber, UBR,
-                 strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId,
-                 IsWow64 ? " (WoW64)" : ""
+                 CurrentBuildNumber, UBR, strcmp(EditionId, "SystemOS") == 0 ? "" : EditionId, IsWow64 ? " (WoW64)" : ""
 #endif
         );
     }
     else
     {
         Size = sizeof(CSDVersion);
-        RegQueryValueExA(CurrentVersionHandle, "CSDVersion", NULL, NULL,
-                         (LPBYTE)BuildLab, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "CSDVersion", NULL, NULL, (LPBYTE)BuildLab, &Size);
         Size = sizeof(BuildLab);
-        RegQueryValueExA(CurrentVersionHandle, "BuildLab", NULL, NULL,
-                         (LPBYTE)BuildLab, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "BuildLab", NULL, NULL, (LPBYTE)BuildLab, &Size);
 
-        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer),
-                 "Windows %s %s %s (build lab %s%s)", ProductName, EditionId,
+        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "Windows %s %s %s (build lab %s%s)", ProductName, EditionId,
                  CSDVersion, BuildLab, IsWow64 ? ", WoW64" : "");
     }
 
@@ -297,8 +264,7 @@ _Noreturn VOID PlatError(_In_ PCSTR Message)
 {
     INT Option;
 
-    Option = MessageBoxA(NULL, Message, "Purpl Error",
-                         MB_ICONERROR | MB_ABORTRETRYIGNORE);
+    Option = MessageBoxA(NULL, Message, "Purpl Error", MB_ICONERROR | MB_ABORTRETRYIGNORE);
     switch (Option)
     {
     case IDRETRY:
@@ -326,15 +292,13 @@ PCSTR PlatGetUserDataDirectory(VOID)
 
     if (!strlen(Directory))
     {
-        SHGetFolderPathA(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL,
-                         SHGFP_TYPE_CURRENT, Directory);
+        SHGetFolderPathA(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, Directory);
         Directory[PURPL_MIN(MAX_PATH, strlen(Directory))] = '/';
 
         Path = PlatFixPath(Directory);
         if (Path)
         {
-            strncpy(Directory, Path,
-                    PURPL_MIN(strlen(Path) + 1, PURPL_ARRAYSIZE(Directory)));
+            strncpy(Directory, Path, PURPL_MIN(strlen(Path) + 1, PURPL_ARRAYSIZE(Directory)));
             CmnFree(Path);
         }
     }

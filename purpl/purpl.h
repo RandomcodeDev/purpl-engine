@@ -11,8 +11,8 @@
 #ifndef PURPL_RESOURCE_FILE
 
 #ifdef __cplusplus
-#define BEGIN_EXTERN_C                                                         \
-    extern "C"                                                                 \
+#define BEGIN_EXTERN_C                                                                                                 \
+    extern "C"                                                                                                         \
     {
 #define END_EXTERN_C }
 #else

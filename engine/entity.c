@@ -24,8 +24,7 @@ extern VOID RenderImport(_In_ ecs_world_t *World);
 
 static ecs_world_t *EngineEcsWorld;
 
-static VOID EcsLog(_In_ INT Level, _In_ PCSTR File, _In_ INT Line,
-                   _In_ PCSTR Message)
+static VOID EcsLog(_In_ INT Level, _In_ PCSTR File, _In_ INT Line, _In_ PCSTR Message)
 {
     LOG_LEVEL RealLevel;
 
@@ -83,8 +82,7 @@ VOID EcsInitialize(VOID)
     //     60
     //     );
 
-#if (defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)) &&                 \
-    !defined(PURPL_SWITCH)
+#if (defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)) && !defined(PURPL_SWITCH)
     LogTrace("Initializing ECS REST");
     ECS_IMPORT(EngineEcsWorld, FlecsMonitor);
     ecs_singleton_set(EngineEcsWorld, EcsRest, {0});

@@ -22,8 +22,7 @@ VULKAN_DATA VlkData;
 
 VOID VlkCreateSurface(VOID)
 {
-    VlkData.Surface = VidCreateVulkanSurface(
-        VlkData.Instance, VlkGetAllocationCallbacks(), NULL);
+    VlkData.Surface = VidCreateVulkanSurface(VlkData.Instance, VlkGetAllocationCallbacks(), NULL);
 }
 
 VOID VlkCreateAllocator(VOID)
@@ -40,45 +39,34 @@ VOID VlkCreateAllocator(VOID)
 
     VulkanFunctions.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
     VulkanFunctions.vkGetDeviceProcAddr = vkGetDeviceProcAddr;
-    VulkanFunctions.vkGetPhysicalDeviceProperties =
-        vkGetPhysicalDeviceProperties;
-    VulkanFunctions.vkGetPhysicalDeviceMemoryProperties =
-        vkGetPhysicalDeviceMemoryProperties;
+    VulkanFunctions.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+    VulkanFunctions.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
     VulkanFunctions.vkAllocateMemory = vkAllocateMemory;
     VulkanFunctions.vkFreeMemory = vkFreeMemory;
     VulkanFunctions.vkMapMemory = vkMapMemory;
     VulkanFunctions.vkUnmapMemory = vkUnmapMemory;
     VulkanFunctions.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
-    VulkanFunctions.vkInvalidateMappedMemoryRanges =
-        vkInvalidateMappedMemoryRanges;
+    VulkanFunctions.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
     VulkanFunctions.vkBindBufferMemory = vkBindBufferMemory;
     VulkanFunctions.vkBindImageMemory = vkBindImageMemory;
-    VulkanFunctions.vkGetBufferMemoryRequirements =
-        vkGetBufferMemoryRequirements;
+    VulkanFunctions.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
     VulkanFunctions.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
     VulkanFunctions.vkCreateBuffer = vkCreateBuffer;
     VulkanFunctions.vkDestroyBuffer = vkDestroyBuffer;
     VulkanFunctions.vkCreateImage = vkCreateImage;
     VulkanFunctions.vkDestroyImage = vkDestroyImage;
     VulkanFunctions.vkCmdCopyBuffer = vkCmdCopyBuffer;
-    VulkanFunctions.vkGetBufferMemoryRequirements2KHR =
-        vkGetBufferMemoryRequirements2;
-    VulkanFunctions.vkGetImageMemoryRequirements2KHR =
-        vkGetImageMemoryRequirements2;
+    VulkanFunctions.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2;
+    VulkanFunctions.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2;
     VulkanFunctions.vkBindBufferMemory2KHR = vkBindBufferMemory2;
     VulkanFunctions.vkBindImageMemory2KHR = vkBindImageMemory2;
-    VulkanFunctions.vkGetPhysicalDeviceMemoryProperties2KHR =
-        vkGetPhysicalDeviceMemoryProperties2;
-    VulkanFunctions.vkGetDeviceBufferMemoryRequirements =
-        vkGetDeviceBufferMemoryRequirements;
-    VulkanFunctions.vkGetDeviceImageMemoryRequirements =
-        vkGetDeviceImageMemoryRequirements;
+    VulkanFunctions.vkGetPhysicalDeviceMemoryProperties2KHR = vkGetPhysicalDeviceMemoryProperties2;
+    VulkanFunctions.vkGetDeviceBufferMemoryRequirements = vkGetDeviceBufferMemoryRequirements;
+    VulkanFunctions.vkGetDeviceImageMemoryRequirements = vkGetDeviceImageMemoryRequirements;
     AllocatorCreateInformation.pVulkanFunctions = &VulkanFunctions;
-    AllocatorCreateInformation.pAllocationCallbacks =
-        VlkGetAllocationCallbacks();
+    AllocatorCreateInformation.pAllocationCallbacks = VlkGetAllocationCallbacks();
 
-    VULKAN_CHECK(
-        vmaCreateAllocator(&AllocatorCreateInformation, &VlkData.Allocator));
+    VULKAN_CHECK(vmaCreateAllocator(&AllocatorCreateInformation, &VlkData.Allocator));
 }
 
 static VOID Initialize(VOID)
@@ -145,18 +133,15 @@ static VOID Shutdown(VOID)
 
     if (VlkData.MainRenderPass)
     {
-        LogDebug("Destroying main render pass 0x%llX",
-                 (UINT64)VlkData.MainRenderPass);
-        vkDestroyRenderPass(VlkData.Device, VlkData.MainRenderPass,
-                            VlkGetAllocationCallbacks());
+        LogDebug("Destroying main render pass 0x%llX", (UINT64)VlkData.MainRenderPass);
+        vkDestroyRenderPass(VlkData.Device, VlkData.MainRenderPass, VlkGetAllocationCallbacks());
         VlkData.MainRenderPass = NULL;
     }
 
     if (VlkData.Sampler)
     {
         LogDebug("Destroying sampler 0x%llX", (UINT64)VlkData.Sampler);
-        vkDestroySampler(VlkData.Device, VlkData.Sampler,
-                         VlkGetAllocationCallbacks());
+        vkDestroySampler(VlkData.Device, VlkData.Sampler, VlkGetAllocationCallbacks());
         VlkData.Sampler = NULL;
     }
 
@@ -168,10 +153,8 @@ static VOID Shutdown(VOID)
 
     if (VlkData.DescriptorPool)
     {
-        LogDebug("Destroying descriptor pool 0x%llX",
-                 (UINT64)VlkData.DescriptorPool);
-        vkDestroyDescriptorPool(VlkData.Device, VlkData.DescriptorPool,
-                                VlkGetAllocationCallbacks());
+        LogDebug("Destroying descriptor pool 0x%llX", (UINT64)VlkData.DescriptorPool);
+        vkDestroyDescriptorPool(VlkData.Device, VlkData.DescriptorPool, VlkGetAllocationCallbacks());
         VlkData.DescriptorPool = NULL;
     }
 
@@ -182,26 +165,22 @@ static VOID Shutdown(VOID)
     {
         if (VlkData.CommandBufferFences[i])
         {
-            vkDestroyFence(VlkData.Device, VlkData.CommandBufferFences[i],
-                           VlkGetAllocationCallbacks());
+            vkDestroyFence(VlkData.Device, VlkData.CommandBufferFences[i], VlkGetAllocationCallbacks());
             VlkData.CommandBufferFences[i] = NULL;
         }
     }
 
     if (VlkData.TransferCommandPool)
     {
-        LogDebug("Destroying transfer command pool 0x%llX",
-                 (UINT64)VlkData.TransferCommandPool);
-        vkDestroyCommandPool(VlkData.Device, VlkData.TransferCommandPool,
-                             VlkGetAllocationCallbacks());
+        LogDebug("Destroying transfer command pool 0x%llX", (UINT64)VlkData.TransferCommandPool);
+        vkDestroyCommandPool(VlkData.Device, VlkData.TransferCommandPool, VlkGetAllocationCallbacks());
         VlkData.TransferCommandPool = NULL;
     }
 
     if (VlkData.CommandPool)
     {
         LogDebug("Destroying command pool 0x%llX", (UINT64)VlkData.CommandPool);
-        vkDestroyCommandPool(VlkData.Device, VlkData.CommandPool,
-                             VlkGetAllocationCallbacks());
+        vkDestroyCommandPool(VlkData.Device, VlkData.CommandPool, VlkGetAllocationCallbacks());
         VlkData.CommandPool = NULL;
     }
 
@@ -210,16 +189,13 @@ static VOID Shutdown(VOID)
         if (VlkData.AcquireSemaphores[i])
         {
             LogDebug("Destroying acquisition semaphore %u/%u", i + 1, VULKAN_FRAME_COUNT);
-            vkDestroySemaphore(VlkData.Device, VlkData.AcquireSemaphores[i],
-                               VlkGetAllocationCallbacks());
+            vkDestroySemaphore(VlkData.Device, VlkData.AcquireSemaphores[i], VlkGetAllocationCallbacks());
             VlkData.AcquireSemaphores[i] = NULL;
         }
         if (VlkData.RenderCompleteSemaphores[i])
         {
             LogDebug("Destroying render completion semaphore %u/%u", i + 1, VULKAN_FRAME_COUNT);
-            vkDestroySemaphore(VlkData.Device,
-                               VlkData.RenderCompleteSemaphores[i],
-                               VlkGetAllocationCallbacks());
+            vkDestroySemaphore(VlkData.Device, VlkData.RenderCompleteSemaphores[i], VlkGetAllocationCallbacks());
             VlkData.RenderCompleteSemaphores[i] = NULL;
         }
     }
@@ -227,8 +203,7 @@ static VOID Shutdown(VOID)
     if (VlkData.Surface)
     {
         LogDebug("Destroying VkSurfaceKHR 0x%llX", (UINT64)VlkData.Surface);
-        vkDestroySurfaceKHR(VlkData.Instance, VlkData.Surface,
-                            VlkGetAllocationCallbacks());
+        vkDestroySurfaceKHR(VlkData.Instance, VlkData.Surface, VlkGetAllocationCallbacks());
         VlkData.Surface = NULL;
     }
 

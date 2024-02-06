@@ -43,8 +43,7 @@ VOID VlkCreateInstance(VOID)
     CreateInformation.pApplicationInfo = &ApplicationInformation;
 
     LogDebug("Required instance extensions:");
-    CreateInformation.enabledExtensionCount =
-        PURPL_ARRAYSIZE(RequiredExtensions);
+    CreateInformation.enabledExtensionCount = PURPL_ARRAYSIZE(RequiredExtensions);
     CreateInformation.ppEnabledExtensionNames = RequiredExtensions;
     for (i = 0; i < CreateInformation.enabledExtensionCount; i++)
     {
@@ -61,30 +60,24 @@ VOID VlkCreateInstance(VOID)
 
 #ifdef PURPL_VULKAN_DEBUG
     VkDebugUtilsMessengerCreateInfoEXT DebugMessengerCreateInformation = {0};
-    DebugMessengerCreateInformation.sType =
-        VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    DebugMessengerCreateInformation.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     DebugMessengerCreateInformation.messageSeverity =
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    DebugMessengerCreateInformation.messageType =
-        VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    DebugMessengerCreateInformation.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                                  VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
+                                                  VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
     DebugMessengerCreateInformation.pfnUserCallback = VlkDebugCallback;
     CreateInformation.pNext = &DebugMessengerCreateInformation;
 #endif
 
     LogTrace("Calling vkCreateInstance");
-    Result = vkCreateInstance(&CreateInformation, VlkGetAllocationCallbacks(),
-                              &VlkData.Instance);
+    Result = vkCreateInstance(&CreateInformation, VlkGetAllocationCallbacks(), &VlkData.Instance);
     if (Result == VK_ERROR_LAYER_NOT_PRESENT)
     {
         LogDebug("Validation layers not found, retrying without them");
         CreateInformation.enabledLayerCount = 0;
-        Result = vkCreateInstance(
-            &CreateInformation, VlkGetAllocationCallbacks(), &VlkData.Instance);
+        Result = vkCreateInstance(&CreateInformation, VlkGetAllocationCallbacks(), &VlkData.Instance);
     }
     if (Result != VK_SUCCESS)
     {

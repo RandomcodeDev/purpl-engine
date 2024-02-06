@@ -30,10 +30,10 @@ END_EXTERN_C
 #define VMA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
 #define VMA_SYSTEM_ALIGNED_FREE CmnAlignedFree
 #define VMA_DEBUG_LOG_FORMAT(format, ...) LogDebug((format), __VA_ARGS__)
-#define VMA_HEAVY_ASSERT(expr)                                                 \
-    if (!(expr))                                                               \
-    {                                                                          \
-        CmnError("VMA assertion failed: " #expr);                              \
+#define VMA_HEAVY_ASSERT(expr)                                                                                         \
+    if (!(expr))                                                                                                       \
+    {                                                                                                                  \
+        CmnError("VMA assertion failed: " #expr);                                                                      \
     }
 #ifdef PURPL_VULKAN_DEBUG
 #define VMA_STATS_STRING_ENABLED 1
@@ -46,16 +46,15 @@ END_EXTERN_C
 ///
 /// @param[in] Call The call/expression to check
 /// @param[in] ... Anything extra to put in the if statement
-#define VULKAN_CHECK(Call, ...)                                                \
-    do                                                                         \
-    {                                                                          \
-        VkResult Result = (Call);                                              \
-        if (Result != VK_SUCCESS __VA_ARGS__)                                  \
-        {                                                                      \
-            CmnError("Vulkan call " #Call                                      \
-                     " at %s:%d failed: %s (VkResult %d)",                     \
-                     __FILE__, __LINE__, VlkGetResultString(Result), Result);  \
-        }                                                                      \
+#define VULKAN_CHECK(Call, ...)                                                                                        \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        VkResult Result = (Call);                                                                                      \
+        if (Result != VK_SUCCESS __VA_ARGS__)                                                                          \
+        {                                                                                                              \
+            CmnError("Vulkan call " #Call " at %s:%d failed: %s (VkResult %d)", __FILE__, __LINE__,                    \
+                     VlkGetResultString(Result), Result);                                                              \
+        }                                                                                                              \
     } while (0)
 
 /// @brief A buffer allocated with VlkAllocateBuffer
@@ -243,8 +242,8 @@ extern PCSTR VlkGetResultString(VkResult Result);
 /// @param[in] ObjectType The type of the object
 /// @param[in] Name The name to set (supports printf-style formatting)
 /// @param[in] ... Formatting arguments
-extern VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType,
-                             _In_ _Printf_format_string_ PCSTR Name, ...);
+extern VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType, _In_ _Printf_format_string_ PCSTR Name,
+                             ...);
 
 /// @brief Debug callback to log things
 ///
@@ -254,11 +253,10 @@ extern VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType,
 /// @param[in] UserData Not used
 ///
 /// @return Always returns TRUE
-extern VkBool32 VKAPI_CALL
-VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
-                 _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
-                 _In_ CONST VkDebugUtilsMessengerCallbackDataEXT *CallbackData,
-                 _In_opt_ PVOID UserData);
+extern VkBool32 VKAPI_CALL VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
+                                            _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
+                                            _In_ CONST VkDebugUtilsMessengerCallbackDataEXT *CallbackData,
+                                            _In_opt_ PVOID UserData);
 
 /// @brief Get devices
 extern VOID VlkEnumeratePhysicalDevices(VOID);
@@ -281,9 +279,7 @@ extern VOID VlkAllocateCommandBuffers(VOID);
 /// @param[in] Usage The usage flags of the buffer
 /// @param[in] Flags The memory flags of the buffer
 /// @param[out] Buffer The buffer
-extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size,
-                              _In_ VkBufferUsageFlags Usage,
-                              _In_ VkMemoryPropertyFlags Flags,
+extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage, _In_ VkMemoryPropertyFlags Flags,
                               _Out_ PVULKAN_BUFFER Buffer);
 
 /// @brief Allocate a buffer and copy data into it
@@ -293,10 +289,8 @@ extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size,
 /// @param[in] Usage The usage of the buffer
 /// @param[in] Flags The flags of the buffer
 /// @param[out] Buffer The buffer
-extern VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size,
-                                      _In_ VkBufferUsageFlags Usage,
-                                      _In_ VkMemoryPropertyFlags Flags,
-                                      _Out_ PVULKAN_BUFFER Buffer);
+extern VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage,
+                                      _In_ VkMemoryPropertyFlags Flags, _Out_ PVULKAN_BUFFER Buffer);
 
 /// @brief Free a buffer
 ///
@@ -319,9 +313,7 @@ extern VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer);
 /// @param[in] Source The source buffer
 /// @param[in] Destination The destination buffer
 /// @param[in] Size The size of the copy
-extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source,
-                          _In_ PVULKAN_BUFFER Destination,
-                          _In_ VkDeviceSize Size);
+extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source, _In_ PVULKAN_BUFFER Destination, _In_ VkDeviceSize Size);
 
 /// @brief Create an image view
 ///
@@ -329,8 +321,7 @@ extern VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source,
 /// @param[in] Image The image to create the view for
 /// @param[in] Format The format of the image
 /// @param[in] Aspect The aspect of the image for the view
-extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
-                               _In_ VkFormat Format,
+extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image, _In_ VkFormat Format,
                                _In_ VkImageAspectFlags Aspect);
 
 /// @brief Chooses a format
@@ -341,8 +332,7 @@ extern VOID VlkCreateImageView(_Out_ VkImageView *ImageView, _In_ VkImage Image,
 /// @param[in] FormatFeatures The features
 ///
 /// @return A format that can be used
-extern VkFormat VlkChooseFormat(_In_ VkFormat *Formats, _In_ UINT32 FormatCount,
-                                _In_ VkImageTiling ImageTiling,
+extern VkFormat VlkChooseFormat(_In_ VkFormat *Formats, _In_ UINT32 FormatCount, _In_ VkImageTiling ImageTiling,
                                 _In_ VkFormatFeatureFlags FormatFeatures);
 
 /// @brief Changes an image's layout
@@ -350,9 +340,7 @@ extern VkFormat VlkChooseFormat(_In_ VkFormat *Formats, _In_ UINT32 FormatCount,
 /// @param[in,out] Image The image to transition the layout of
 /// @param[in] OldLayout The current layout of the image
 /// @param[in] NewLayout The layout to transition it to
-extern VOID VlkTransitionImageLayout(_Inout_ VkImage Image,
-                                     _In_ VkImageLayout OldLayout,
-                                     _In_ VkImageLayout NewLayout);
+extern VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayout, _In_ VkImageLayout NewLayout);
 
 /// @brief Copy a buffer into an image
 ///
@@ -360,8 +348,7 @@ extern VOID VlkTransitionImageLayout(_Inout_ VkImage Image,
 /// @param[out] Image The image to copy the buffer into
 /// @param[in] Width The width of the image
 /// @param[in] Height The height of the image
-extern VOID VlkCopyBufferToImage(_In_ VkBuffer Buffer, _Out_ VkImage Image,
-                                 _In_ UINT32 Width, _In_ UINT32 Height);
+extern VOID VlkCopyBufferToImage(_In_ VkBuffer Buffer, _Out_ VkImage Image, _In_ UINT32 Width, _In_ UINT32 Height);
 
 /// @brief Create an image
 ///
@@ -373,12 +360,9 @@ extern VOID VlkCopyBufferToImage(_In_ VkBuffer Buffer, _Out_ VkImage Image,
 /// @param[in] MemoryUsage The memory usage of the image (where to store it)
 /// @param[in] Aspect The aspect of the image
 /// @param[out] Image This parameter receives the created image
-extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
-                           _In_ VkFormat Format, _In_ VkImageLayout Layout,
-                           _In_ VkImageUsageFlags Usage,
-                           _In_ VmaMemoryUsage MemoryUsage,
-                           _In_ VkImageAspectFlags Aspect,
-                           _Out_ PVULKAN_IMAGE Image);
+extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height, _In_ VkFormat Format, _In_ VkImageLayout Layout,
+                           _In_ VkImageUsageFlags Usage, _In_ VmaMemoryUsage MemoryUsage,
+                           _In_ VkImageAspectFlags Aspect, _Out_ PVULKAN_IMAGE Image);
 
 /// @brief Create an initialized image
 ///
@@ -392,11 +376,10 @@ extern VOID VlkCreateImage(_In_ UINT32 Width, _In_ UINT32 Height,
 /// @param[in] MemoryUsage Where to store the image
 /// @param[in] Aspect The aspect of the image
 /// @param[out] Image This parameter receives the created image
-extern VOID VlkCreateImageWithData(
-    _In_ PVOID Data, _In_ VkDeviceSize Size, _In_ UINT32 Width,
-    _In_ UINT32 Height, _In_ VkFormat Format, _In_ VkImageLayout Layout,
-    _In_ VkImageUsageFlags Usage, _In_ VmaMemoryUsage MemoryUsage,
-    _In_ VkImageAspectFlags Aspect, _Out_ PVULKAN_IMAGE Image);
+extern VOID VlkCreateImageWithData(_In_ PVOID Data, _In_ VkDeviceSize Size, _In_ UINT32 Width, _In_ UINT32 Height,
+                                   _In_ VkFormat Format, _In_ VkImageLayout Layout, _In_ VkImageUsageFlags Usage,
+                                   _In_ VmaMemoryUsage MemoryUsage, _In_ VkImageAspectFlags Aspect,
+                                   _Out_ PVULKAN_IMAGE Image);
 
 /// @brief Destroy an image
 ///
@@ -434,11 +417,10 @@ extern VOID VlkDestroySwapChain(VOID);
 /// @param[in] SubpassDependencyCount The number of subpass dependencies
 ///
 /// @return A render pass
-extern VkRenderPass VlkCreateRenderPass(
-    _In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,
-    _In_ VkSubpassDescription *Subpasses, _In_ SIZE_T SubpassCount,
-    _In_ VkSubpassDependency *SubpassDependencies,
-    _In_ SIZE_T SubpassDependencyCount);
+extern VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,
+                                        _In_ VkSubpassDescription *Subpasses, _In_ SIZE_T SubpassCount,
+                                        _In_ VkSubpassDependency *SubpassDependencies,
+                                        _In_ SIZE_T SubpassDependencyCount);
 
 /// @brief Create the main render pass
 extern VOID VlkCreateMainRenderPass(VOID);

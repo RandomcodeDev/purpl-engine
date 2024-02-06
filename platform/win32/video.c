@@ -19,9 +19,9 @@ Abstract:
 // #include "imgui_backends/imgui_impl_win32.h"
 
 #ifdef _MSC_VER
-#pragma comment(                                                               \
-        linker,                                                                \
-            "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+    linker,                                                                                                            \
+    "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
 #define IDI_ICON1 103
@@ -31,8 +31,7 @@ static HWND Window = NULL;
 static CHAR WindowClassName[] = "PurplWindow";
 
 #ifdef PURPL_DEBUG
-static CHAR WindowTitle[128] =
-    GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
 #else
 static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
 #endif
@@ -43,8 +42,7 @@ static BOOLEAN WindowResized;
 static BOOLEAN WindowFocused;
 static BOOLEAN WindowClosed;
 
-static LRESULT CALLBACK WindowProcedure(_In_ HWND MessageWindow,
-                                        _In_ UINT Message, _In_ WPARAM Wparam,
+static LRESULT CALLBACK WindowProcedure(_In_ HWND MessageWindow, _In_ UINT Message, _In_ WPARAM Wparam,
                                         _In_ LPARAM Lparam)
 {
     //    ImGuiIO* Io = igGetIO();
@@ -79,8 +77,7 @@ static LRESULT CALLBACK WindowProcedure(_In_ HWND MessageWindow,
             if (NewWidth != WindowWidth || NewHeight != WindowHeight)
             {
                 WindowResized = TRUE;
-                LogInfo("Window resized from %dx%d to %dx%d", WindowWidth,
-                        WindowHeight, NewWidth, NewHeight);
+                LogInfo("Window resized from %dx%d to %dx%d", WindowWidth, WindowHeight, NewWidth, NewHeight);
             }
             WindowWidth = NewWidth;
             WindowHeight = NewHeight;
@@ -117,8 +114,7 @@ static VOID RegisterWindowClass(VOID)
     WindowClass.lpszClassName = WindowClassName;
     if (!RegisterClassExA(&WindowClass))
     {
-        CmnError("Failed to register window class: error 0x%X (%d)",
-                 GetLastError, GetLastError);
+        CmnError("Failed to register window class: error 0x%X (%d)", GetLastError, GetLastError);
     }
 
     LogDebug("Window class registered");
@@ -136,17 +132,13 @@ static VOID InitializeWindow(VOID)
     WindowWidth = ClientArea.right - ClientArea.left;
     WindowHeight = ClientArea.bottom - ClientArea.top;
 
-    LogDebug("Creating %dx%d window titled %s", WindowWidth, WindowHeight,
-             WindowTitle);
+    LogDebug("Creating %dx%d window titled %s", WindowWidth, WindowHeight, WindowTitle);
 
-    Window =
-        CreateWindowExA(0, WindowClassName, WindowTitle, WS_OVERLAPPEDWINDOW,
-                        CW_USEDEFAULT, CW_USEDEFAULT, WindowWidth, WindowHeight,
-                        NULL, NULL, GetModuleHandleA(NULL), NULL);
+    Window = CreateWindowExA(0, WindowClassName, WindowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                             WindowWidth, WindowHeight, NULL, NULL, GetModuleHandleA(NULL), NULL);
     if (!Window)
     {
-        CmnError("Failed to create window: error 0x%X (%d)", GetLastError(),
-                 GetLastError());
+        CmnError("Failed to create window: error 0x%X (%d)", GetLastError(), GetLastError());
     }
 
     GetClientRect(Window, &ClientArea);
@@ -232,9 +224,7 @@ FLOAT VidGetDpi(VOID)
 }
 
 #ifdef PURPL_VULKAN
-PVOID VidCreateVulkanSurface(_In_ PVOID Instance,
-                             _In_ PVOID AllocationCallbacks,
-                             _In_opt_ PVOID WindowHandle)
+PVOID VidCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks, _In_opt_ PVOID WindowHandle)
 {
     VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
     VkSurfaceKHR Surface;
@@ -247,15 +237,13 @@ PVOID VidCreateVulkanSurface(_In_ PVOID Instance,
     SurfaceCreateInfo.hwnd = WindowHandle ? WindowHandle : Window;
 
     Surface = NULL;
-    Result = vkCreateWin32SurfaceKHR(Instance, &SurfaceCreateInfo,
-                                     AllocationCallbacks, &Surface);
+    Result = vkCreateWin32SurfaceKHR(Instance, &SurfaceCreateInfo, AllocationCallbacks, &Surface);
     if (Result != VK_SUCCESS)
     {
         CmnError("Failed to create VkSurfaceKHR: VkResult %d", Result);
     }
 
-    LogDebug("Successfully created Vulkan surface with handle 0x%llX",
-             (UINT64)Surface);
+    LogDebug("Successfully created Vulkan surface with handle 0x%llX", (UINT64)Surface);
 
     return Surface;
 }

@@ -29,8 +29,7 @@ static UINT8 FormatPitches[TextureFormatCount] = {
 };
 
 PTEXTURE
-CreateTexture(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width, _In_ UINT32 Height,
-              _In_ PVOID Data)
+CreateTexture(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width, _In_ UINT32 Height, _In_ PVOID Data)
 /*++
 
 Routine Description:
@@ -56,8 +55,7 @@ Return Value:
     PTEXTURE Texture;
     SIZE_T Size;
 
-    if (Format <= TextureFormatUndefined || Format >= TextureFormatCount ||
-        Width <= 0 || Height <= 0)
+    if (Format <= TextureFormatUndefined || Format >= TextureFormatCount || Width <= 0 || Height <= 0)
     {
         LogError("Cannot create invalid texture");
         return NULL;
@@ -132,8 +130,7 @@ Return Value:
     RequiredSize = TEXTURE_HEADER_SIZE;
     if (Size < RequiredSize)
     {
-        LogError("Texture is %zu bytes but should be %zu bytes", Size,
-                 RequiredSize);
+        LogError("Texture is %zu bytes but should be %zu bytes", Size, RequiredSize);
         CmnFree(Texture);
         return NULL;
     }
@@ -143,8 +140,7 @@ Return Value:
     RealTexture = CmnAlloc(1, sizeof(TEXTURE) + GetTextureSize(*Texture));
     if (!RealTexture)
     {
-        LogError("Failed to allocate %zu bytes for texture",
-                 sizeof(TEXTURE) + GetTextureSize(*Texture));
+        LogError("Failed to allocate %zu bytes for texture", sizeof(TEXTURE) + GetTextureSize(*Texture));
         CmnFree(Texture);
         return NULL;
     }
@@ -153,8 +149,8 @@ Return Value:
     memcpy(RealTexture, Texture, sizeof(TEXTURE));
     RealTexture->DataSeparate = FALSE;
     RealTexture->Pixels = (PBYTE)RealTexture + sizeof(TEXTURE);
-    if (ZSTD_decompress(RealTexture->Pixels, GetTextureSize(*Texture), Data,
-                        Texture->CompressedSize) != GetTextureSize(*Texture))
+    if (ZSTD_decompress(RealTexture->Pixels, GetTextureSize(*Texture), Data, Texture->CompressedSize) !=
+        GetTextureSize(*Texture))
     {
         LogError("Decompressed pixels are not the expected size");
         CmnFree(RealTexture);
@@ -206,9 +202,8 @@ Return Value:
     }
 
     LogDebug("Compressing texture");
-    Texture->CompressedSize =
-        ZSTD_compress(Data, ZSTD_COMPRESSBOUND(GetTextureSize(*Texture)),
-                      Texture->Pixels, GetTextureSize(*Texture), ZSTD_btultra2);
+    Texture->CompressedSize = ZSTD_compress(Data, ZSTD_COMPRESSBOUND(GetTextureSize(*Texture)), Texture->Pixels,
+                                            GetTextureSize(*Texture), ZSTD_btultra2);
     if (ZSTD_isError(Texture->CompressedSize))
     {
         LogError("Failed to compress texture");
@@ -251,8 +246,7 @@ Return Value:
 
 --*/
 {
-    return FormatComponents[PURPL_CLAMP(Format, TextureFormatUndefined,
-                                        TextureFormatCount - 1)];
+    return FormatComponents[PURPL_CLAMP(Format, TextureFormatUndefined, TextureFormatCount - 1)];
 }
 
 SIZE_T
@@ -273,13 +267,11 @@ Return Value:
 
 --*/
 {
-    return FormatPitches[PURPL_CLAMP(Format, TextureFormatUndefined,
-                                     TextureFormatCount - 1)];
+    return FormatPitches[PURPL_CLAMP(Format, TextureFormatUndefined, TextureFormatCount - 1)];
 }
 
 SIZE_T
-EstimateTextureSize(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width,
-                    _In_ UINT32 Height)
+EstimateTextureSize(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width, _In_ UINT32 Height)
 /*++
 
 Routine Description:

@@ -1,5 +1,5 @@
 /// @file engine.h
-/// 
+///
 /// @brief This file defines the engine API.
 ///
 /// @copyright (c) 2024 Randomcode Developers

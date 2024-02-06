@@ -34,8 +34,7 @@ VOID Dx12CreatePipelineStateObject(VOID)
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDescription = {};
     PsoDescription.InputLayout.pInputElementDescs = InputElementDescriptions;
-    PsoDescription.InputLayout.NumElements =
-        PURPL_ARRAYSIZE(InputElementDescriptions);
+    PsoDescription.InputLayout.NumElements = PURPL_ARRAYSIZE(InputElementDescriptions);
     PsoDescription.pRootSignature = Dx12Data.RootSignature;
     PsoDescription.VS.pShaderBytecode = (PBYTE)VertexShader->GetBufferPointer();
     PsoDescription.VS.BytecodeLength = VertexShader->GetBufferSize();
@@ -43,17 +42,15 @@ VOID Dx12CreatePipelineStateObject(VOID)
     PsoDescription.PS.BytecodeLength = PixelShader->GetBufferSize();
     PsoDescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     PsoDescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-    PsoDescription.DepthStencilState.DepthEnable =
-        FALSE; // TODO: figure out how to do depth
+    // TODO: figure out how to do depth
+    PsoDescription.DepthStencilState.DepthEnable = FALSE;
     PsoDescription.DepthStencilState.StencilEnable = FALSE;
     PsoDescription.SampleMask = UINT32_MAX;
-    PsoDescription.PrimitiveTopologyType =
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    PsoDescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     PsoDescription.NumRenderTargets = 1;
     PsoDescription.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     PsoDescription.SampleDesc.Count = 1;
-    HRESULT_CHECK(Dx12Data.Device->CreateGraphicsPipelineState(
-        &PsoDescription, IID_PPV_ARGS(&Dx12Data.PipelineState)));
+    HRESULT_CHECK(Dx12Data.Device->CreateGraphicsPipelineState(&PsoDescription, IID_PPV_ARGS(&Dx12Data.PipelineState)));
 }
 
 EXTERN_C

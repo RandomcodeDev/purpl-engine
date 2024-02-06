@@ -14,15 +14,12 @@ Abstract:
 
 #include "purpl/purpl.h"
 
+#include "common/alloc.h"
 #include "common/common.h"
 
 #include "util/texture.h"
 
-_Noreturn
-VOID
-Usage(
-    VOID
-    )
+_Noreturn VOID Usage(VOID)
 /*++
 
 Routine Description:
@@ -42,16 +39,13 @@ Return Value:
     printf("Usage:\n"
            "\n"
            "\tto <input image> <output Purpl texture>\t\t\t- Create a texture\n"
-           "\tfrom <input Purpl texture> <output PNG image>\t\t- Convert a texture to a regular image\n"
-           );
+           "\tfrom <input Purpl texture> <output PNG image>\t\t- Convert a "
+           "texture to a regular image\n");
     exit(EINVAL);
 }
 
 UINT32
-ConvertFormat(
-    UINT32 Format,
-    BOOLEAN ToStb
-    )
+ConvertFormat(UINT32 Format, BOOLEAN ToStb)
 /*++
 
 Routine Description:
@@ -70,9 +64,9 @@ Return Value:
 
 --*/
 {
-    if ( ToStb )
+    if (ToStb)
     {
-        switch ( Format )
+        switch (Format)
         {
         default:
         case TextureFormatUndefined:
@@ -87,7 +81,7 @@ Return Value:
     }
     else
     {
-        switch ( Format )
+        switch (Format)
         {
         default:
         case STBI_default:
@@ -102,11 +96,7 @@ Return Value:
     }
 }
 
-INT
-ConvertTo(
-    _In_ PCSTR Source,
-    _In_ PCSTR Destination
-    )
+INT ConvertTo(_In_ PCSTR Source, _In_ PCSTR Destination)
 /*++
 
 Routine Description:
@@ -134,42 +124,33 @@ Return Value:
     printf("Converting image %s to Purpl texture %s\n", Source, Destination);
 
     printf("Loading image %s\n", Source);
-    ImageBytes = stbi_load(
-        Source,
-        (PINT32)&Width,
-        (PINT32)&Height,
-        (PINT32)&Format,
-        STBI_rgb_alpha // Vulkan doesn't like R8G8B8_SRGB
+    ImageBytes =
+        stbi_load(Source, (PINT32)&Width, (PINT32)&Height, (PINT32)&Format,
+                  STBI_rgb_alpha // Vulkan doesn't like R8G8B8_SRGB
         );
-    if ( !ImageBytes )
+    if (!ImageBytes)
     {
         fprintf(stderr, "Failed to load image %s: %s", Source, strerror(errno));
         return errno;
     }
 
     printf("Creating Purpl texture\n");
-    Texture = CreateTexture(
-        TextureFormatRgba8,
-//        ConvertFormat(
-//            Format,
-//            FALSE
-//            ),
-        Width,
-        Height,
-        ImageBytes
-        );
-    if ( !Texture )
+    Texture = CreateTexture(TextureFormatRgba8,
+                            //        ConvertFormat(
+                            //            Format,
+                            //            FALSE
+                            //            ),
+                            Width, Height, ImageBytes);
+    if (!Texture)
     {
         fprintf(stderr, "Failed to convert image %s\n", Source);
     }
 
     printf("Writing texture to %s\n", Destination);
-    if ( !WriteTexture(
-        Destination,
-        Texture
-        ) )
+    if (!WriteTexture(Destination, Texture))
     {
-        fprintf(stderr, "Failed to write texture to %s: %s\n", Destination, strerror(errno));
+        fprintf(stderr, "Failed to write texture to %s: %s\n", Destination,
+                strerror(errno));
         return errno;
     }
 
@@ -179,11 +160,7 @@ Return Value:
     return 0;
 }
 
-INT
-ConvertFrom(
-    _In_ PCSTR Source,
-    _In_ PCSTR Destination
-    )
+INT ConvertFrom(_In_ PCSTR Source, _In_ PCSTR Destination)
 /*++
 
 Routine Description:
@@ -202,30 +179,26 @@ Return Value:
 
 --*/
 {
-    //PBYTE ImageBytes;
+    // PBYTE ImageBytes;
     PTEXTURE Texture;
 
     printf("Converting Purpl texture %s to PNG %s\n", Source, Destination);
 
     printf("Loading texture %s\n", Source);
-    Texture = LoadTexture(
-        Source
-        );
-    if ( !Texture )
+    Texture = LoadTexture(Source);
+    if (!Texture)
     {
-        fprintf(stderr, "Failed to load texture %s: %s", Source, strerror(errno));
+        fprintf(stderr, "Failed to load texture %s: %s", Source,
+                strerror(errno));
         return errno;
     }
 
-    printf("Writing PNG %s from format %d texture\n", Destination, Texture->Format);
-    stbi_write_png(
-        Destination,
-        Texture->Width,
-        Texture->Height,
-        (INT32)GetFormatComponents(Texture->Format),
-        Texture->Pixels,
-        (INT32)Texture->Width * (INT32)GetFormatPitch(Texture->Format)
-        );
+    printf("Writing PNG %s from format %d texture\n", Destination,
+           Texture->Format);
+    stbi_write_png(Destination, Texture->Width, Texture->Height,
+                   (INT32)GetFormatComponents(Texture->Format), Texture->Pixels,
+                   (INT32)Texture->Width *
+                       (INT32)GetFormatPitch(Texture->Format));
 
     CmnFree(Texture);
     printf("Done\n");
@@ -248,22 +221,14 @@ typedef enum MESHTOOL_MODE
 // Functions for each mode
 //
 
-typedef INT
-(*PFNMESHTOOL_OPERATION)(
-    _In_ PCSTR Source,
-    _In_ PCSTR Destination
-    );
+typedef INT (*PFNMESHTOOL_OPERATION)(_In_ PCSTR Source, _In_ PCSTR Destination);
 PFNMESHTOOL_OPERATION Operations[TextureToolModeCount] = {
     (PFNMESHTOOL_OPERATION)Usage,
     ConvertTo,
     ConvertFrom,
 };
 
-INT
-main(
-    INT argc,
-    PCHAR* argv
-    )
+INT main(INT argc, PCHAR *argv)
 /*++
 
 Routine Description:
@@ -287,25 +252,22 @@ Return Value:
     MESHTOOL_MODE Mode;
     INT Result;
 
-    printf("Purpl Texture Tool v" GAME_VERSION_STRING " (supports texture format v" PURPL_STRINGIZE_EXPAND(TEXTURE_FORMAT_VERSION) ") on %s\n\n", PlatGetDescription());
+    printf("Purpl Texture Tool v" GAME_VERSION_STRING
+           " (supports texture format v" PURPL_STRINGIZE_EXPAND(
+               TEXTURE_FORMAT_VERSION) ") on %s\n\n",
+           PlatGetDescription());
 
     CmnInitialize();
 
-    if ( argc < 4 )
+    if (argc < 4)
     {
         Mode = TextureToolModeNone;
     }
-    else if ( strcmp(
-                argv[1],
-                "to"
-                ) == 0 )
+    else if (strcmp(argv[1], "to") == 0)
     {
         Mode = TextureToolModeConvertTo;
     }
-    else if ( strcmp(
-                 argv[1],
-                 "from"
-                 ) == 0 )
+    else if (strcmp(argv[1], "from") == 0)
     {
         Mode = TextureToolModeConvertFrom;
     }
@@ -314,10 +276,7 @@ Return Value:
         Mode = TextureToolModeNone;
     }
 
-    Result = Operations[Mode](
-        argv[2],
-        argv[3]
-        );
+    Result = Operations[Mode](argv[2], argv[3]);
 
     CmnShutdown();
 

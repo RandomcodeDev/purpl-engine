@@ -24,8 +24,7 @@ VOID MathImport(_In_ ecs_world_t *World)
     ECS_COMPONENT_DEFINE(World, TRANSFORM);
 }
 
-VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
-                              _Out_ mat4 TransformMatrix)
+VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform, _Out_ mat4 TransformMatrix)
 {
     if (!Transform || !TransformMatrix)
     {
@@ -34,8 +33,7 @@ VOID MthCreateTransformMatrix(_In_ PTRANSFORM Transform,
 
     glm_mat4_identity(TransformMatrix);
     glm_translate(TransformMatrix, Transform->Position);
-    glm_rotate(TransformMatrix, glm_rad(Transform->Rotation[3]),
-               Transform->Rotation);
+    glm_rotate(TransformMatrix, glm_rad(Transform->Rotation[3]), Transform->Rotation);
     glm_scale(TransformMatrix, Transform->Scale);
 }
 

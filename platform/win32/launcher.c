@@ -148,8 +148,7 @@ LPSTR *WINAPI CommandLineToArgvA(_In_ LPCSTR lpCmdline, _Out_ PINT numargs)
      * with it. This way the caller can make a single LocalFree() call to free
      * both, as per MSDN.
      */
-    argv = CmnAlloc(
-        (argc + 1) * sizeof(LPSTR) + (strlen(lpCmdline) + 1) * sizeof(CHAR), 1);
+    argv = CmnAlloc((argc + 1) * sizeof(LPSTR) + (strlen(lpCmdline) + 1) * sizeof(CHAR), 1);
     if (!argv)
         return NULL;
     cmdline = (LPSTR)(argv + argc + 1);
@@ -279,8 +278,7 @@ extern VOID InitializeMainThread(_In_ PFN_THREAD_START StartAddress);
 /// @param Show              Window show state.
 ///
 /// @return An appropriate status code.
-INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
-            _In_ PCHAR CommandLine, _In_ INT Show)
+INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ PCHAR CommandLine, _In_ INT Show)
 {
     INT Result;
     // Don't care about checking for a console parent process on Xbox, since
@@ -329,8 +327,8 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
         Error = GetLastError();
         LogError("Failed to initialize DbgHelp: %d (0x%X)", Error, Error);
     }
-    if (!SymLoadModuleEx(GetCurrentProcess(), NULL, GAME_EXECUTABLE_NAME ".exe",
-                         NULL, (UINT64)GetModuleHandleA(NULL), 0, NULL, 0))
+    if (!SymLoadModuleEx(GetCurrentProcess(), NULL, GAME_EXECUTABLE_NAME ".exe", NULL, (UINT64)GetModuleHandleA(NULL),
+                         0, NULL, 0))
     {
         Error = GetLastError();
         LogError("Failed to load symbols: %d (0x%X)", Error, Error);
@@ -362,8 +360,7 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
         if (ParentProcess)
         {
             // TODO: Figure out why this doesn't work properly
-            GetProcessImageFileNameA(ParentProcess, ParentExeName,
-                                     PURPL_ARRAYSIZE(ParentExeName));
+            GetProcessImageFileNameA(ParentProcess, ParentExeName, PURPL_ARRAYSIZE(ParentExeName));
 
             Size = 0;
             EnumProcessModules(ParentProcess, ParentModules, 0, &Size);
@@ -372,35 +369,26 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
 
             for (i = 0; i < Size / sizeof(HMODULE); i++)
             {
-                GetModuleFileNameA(ParentModules[i], ModuleName,
-                                   PURPL_ARRAYSIZE(ModuleName));
-                if (strncmp(ParentExeName, ModuleName,
-                            PURPL_ARRAYSIZE(ModuleName)) == 0)
+                GetModuleFileNameA(ParentModules[i], ModuleName, PURPL_ARRAYSIZE(ModuleName));
+                if (strncmp(ParentExeName, ModuleName, PURPL_ARRAYSIZE(ModuleName)) == 0)
                 {
-                    GetModuleInformation(ParentProcess, ParentModules[i],
-                                         &ModuleInfo, sizeof(ModuleInfo));
+                    GetModuleInformation(ParentProcess, ParentModules[i], &ModuleInfo, sizeof(ModuleInfo));
                     break;
                 }
             }
 
-            ReadProcessMemory(ParentProcess, ModuleInfo.lpBaseOfDll,
-                              &ParentDosHeader, sizeof(IMAGE_DOS_HEADER), NULL);
+            ReadProcessMemory(ParentProcess, ModuleInfo.lpBaseOfDll, &ParentDosHeader, sizeof(IMAGE_DOS_HEADER), NULL);
             if (ParentDosHeader.e_magic == IMAGE_DOS_SIGNATURE)
             {
-                ReadProcessMemory(ParentProcess,
-                                  (PVOID)((UINT_PTR)ModuleInfo.lpBaseOfDll +
-                                          ParentDosHeader.e_lfanew),
-                                  &ParentHeaders, sizeof(IMAGE_NT_HEADERS),
-                                  NULL);
+                ReadProcessMemory(ParentProcess, (PVOID)((UINT_PTR)ModuleInfo.lpBaseOfDll + ParentDosHeader.e_lfanew),
+                                  &ParentHeaders, sizeof(IMAGE_NT_HEADERS), NULL);
 
                 if (ParentHeaders.Signature == IMAGE_NT_SIGNATURE &&
-                    ParentHeaders.OptionalHeader.Subsystem !=
-                        IMAGE_SUBSYSTEM_WINDOWS_CUI)
+                    ParentHeaders.OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI)
                 {
                     printf("Engine (PID %llu, parent PID %llu) returned %d. "
                            "Press any key to exit...",
-                           (UINT64)EngineProcessId, (UINT64)ParentProcessId,
-                           Result);
+                           (UINT64)EngineProcessId, (UINT64)ParentProcessId, Result);
 
                     // Disable line input so any key works and not just Enter
                     Mode = 0;
@@ -426,7 +414,7 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance,
 ///
 /// @param[in] argc The number of command line arguments.
 /// @param[in] argv The command line arguments.
-/// 
+///
 /// @return The return value of PurplMain
 INT main(_In_ INT argc, _In_ PCHAR argv[])
 {

@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements a rudimentary tool for working with meshes.
+    This file implements a rudimentary tool for working with meshes.
 
 --*/
 

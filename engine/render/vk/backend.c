@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the Vulkan backend.
+    This file implements the Vulkan backend.
 
 --*/
 

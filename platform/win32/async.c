@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the Windows async backend.
+    This file implements the Windows async backend.
 
 --*/
 

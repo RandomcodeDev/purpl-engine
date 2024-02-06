@@ -1,6 +1,6 @@
 /// @file engine.h
 /// 
-/// @brief This module defines the engine API.
+/// @brief This file defines the engine API.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

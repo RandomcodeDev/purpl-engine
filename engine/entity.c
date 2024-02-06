@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements functions related to the entity component system.
+    This file implements functions related to the entity component system.
 
 --*/
 

@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements various math utility functions.
+    This file implements various math utility functions.
 
 --*/
 

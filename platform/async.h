@@ -1,6 +1,6 @@
 /// @file async.h
 ///
-/// @brief This module contains the async abstraction API.
+/// @brief This file contains the async abstraction API.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

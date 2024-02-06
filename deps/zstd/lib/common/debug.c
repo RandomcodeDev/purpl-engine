@@ -14,7 +14,7 @@
 
 
 /*
- * This module only hosts one global variable
+ * This file only hosts one global variable
  * which can be used to dynamically influence the verbosity of traces,
  * such as DEBUGLOG and RAWLOG
  */

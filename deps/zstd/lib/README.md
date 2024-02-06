@@ -73,10 +73,10 @@ The file structure is designed to make this selection manually achievable for an
 
 - `lib/dictBuilder` : makes it possible to generate dictionaries from a set of samples.
         The API is exposed in `lib/dictBuilder/zdict.h`.
-        This module depends on both `lib/common` and `lib/compress` .
+        This file depends on both `lib/common` and `lib/compress` .
 
 - `lib/legacy` : makes it possible to decompress legacy zstd formats, starting from `v0.1.0`.
-        This module depends on `lib/common` and `lib/decompress`.
+        This file depends on `lib/common` and `lib/decompress`.
         To enable this feature, define `ZSTD_LEGACY_SUPPORT` during compilation.
         Specifying a number limits versions supported to that version onward.
         For example, `ZSTD_LEGACY_SUPPORT=2` means : "support legacy formats >= v0.2.0".

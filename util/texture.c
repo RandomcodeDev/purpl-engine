@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the texture format routines.
+    This file implements the texture format routines.
 
 --*/
 

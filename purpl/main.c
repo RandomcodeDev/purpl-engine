@@ -1,6 +1,6 @@
 /// @file main.c
 ///
-/// @brief This module implements the cross-platform entry point.
+/// @brief This file implements the cross-platform entry point.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

@@ -1,6 +1,6 @@
 /// @file launcher.c
 ///
-/// @brief This module implements the Windows entry point.
+/// @brief This file implements the Windows entry point.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

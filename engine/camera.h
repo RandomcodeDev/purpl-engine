@@ -1,6 +1,6 @@
 /// @file camera.h
 /// 
-/// @brief This module defines structures and functions for cameras.
+/// @brief This file defines structures and functions for cameras.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

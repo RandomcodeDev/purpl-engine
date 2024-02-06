@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements miscellaneous Unix-like abstractions.
+    This file implements miscellaneous Unix-like abstractions.
 
 --*/
 

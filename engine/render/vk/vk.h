@@ -1,6 +1,6 @@
 /// @file vk.h
 ///
-/// @brief This module contains definitions used by the Vulkan backend.
+/// @brief This file contains definitions used by the Vulkan backend.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

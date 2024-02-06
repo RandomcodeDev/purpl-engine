@@ -1,6 +1,6 @@
 /// @file stb.c
 ///
-/// @brief This module is used for the stb implementations.
+/// @brief This file is used for the stb implementations.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

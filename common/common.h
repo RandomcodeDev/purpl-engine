@@ -1,6 +1,6 @@
 /// @file common.h
 ///
-/// @brief This module contains definitions for the common library.
+/// @brief This file contains definitions for the common library.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

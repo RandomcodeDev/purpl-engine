@@ -1,6 +1,6 @@
 /// @file entity.h
 /// 
-/// @brief This module defines ECS components and helper functions for entities.
+/// @brief This file defines ECS components and helper functions for entities.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

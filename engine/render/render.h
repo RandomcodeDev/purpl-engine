@@ -1,6 +1,6 @@
 /// @file render.h
 ///
-/// @brief This module declares the render API.
+/// @brief This file declares the render API.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

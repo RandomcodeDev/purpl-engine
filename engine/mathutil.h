@@ -1,6 +1,6 @@
 /// @file mathutil.h
 /// 
-/// @brief This module defines various math utility functions.
+/// @brief This file defines various math utility functions.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

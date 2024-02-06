@@ -1,6 +1,6 @@
 /// @file alloc.c
 ///
-/// @brief This module implements any wrappers from alloc.h that can't be
+/// @brief This file implements any wrappers from alloc.h that can't be
 ///  implemented with macros
 ///
 /// @copyright (c) 2024 Randomcode Developers

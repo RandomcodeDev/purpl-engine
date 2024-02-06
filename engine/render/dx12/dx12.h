@@ -1,6 +1,6 @@
 /// @file dx12.h
 ///
-/// @brief This module contains definitions used by the DirectX 12 backend.
+/// @brief This file contains definitions used by the DirectX 12 backend.
 ///
 /// All the DirectX 12 files are C++, but only because COM code in C looks ugly.
 /// No other C++ features are used, and it's still C. It's just to call COM functions

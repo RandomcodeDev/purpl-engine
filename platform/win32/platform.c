@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements miscellaneous Windows abstractions.
+    This file implements miscellaneous Windows abstractions.
 
 --*/
 

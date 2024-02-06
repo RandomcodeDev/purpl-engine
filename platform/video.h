@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module contains the video abstraction API.
+    This file contains the video abstraction API.
 
 --*/
 

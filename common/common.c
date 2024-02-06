@@ -1,6 +1,6 @@
 /// @file common.c
 ///
-/// @brief This module implements assorted common functions.
+/// @brief This file implements assorted common functions.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

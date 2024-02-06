@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the entrypoint for Unix-like operating systems.
+    This file implements the entrypoint for Unix-like operating systems.
 
 --*/
 

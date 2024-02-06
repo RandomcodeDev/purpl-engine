@@ -1,6 +1,6 @@
 /// @file texture.h
 ///
-/// @brief This module defines the texture API
+/// @brief This file defines the texture API
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

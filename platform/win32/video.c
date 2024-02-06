@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the Windows video functions.
+    This file implements the Windows video functions.
 
 --*/
 

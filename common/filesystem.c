@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the common filesystem library.
+    This file implements the common filesystem library.
 
 --*/
 

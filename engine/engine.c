@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the engine API.
+    This file implements the engine API.
 
 --*/
 

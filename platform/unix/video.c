@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module abstracts the Unix video functions.
+    This file abstracts the Unix video functions.
 
 --*/
 

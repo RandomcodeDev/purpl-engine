@@ -1,6 +1,6 @@
 /// @file mesh.c
 ///
-/// @brief This module implements the mesh format
+/// @brief This file implements the mesh format
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

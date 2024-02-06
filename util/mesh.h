@@ -1,6 +1,6 @@
 /// @file mesh.h
 ///
-/// @brief This module defines the mesh API.
+/// @brief This file defines the mesh API.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

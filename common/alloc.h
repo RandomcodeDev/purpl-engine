@@ -1,6 +1,6 @@
 /// @file alloc.h
 ///
-/// @brief This module defines wrappers for various memory management functions.
+/// @brief This file defines wrappers for various memory management functions.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

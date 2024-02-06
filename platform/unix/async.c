@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements the Unix async backend.
+    This file implements the Unix async backend.
 
 --*/
 

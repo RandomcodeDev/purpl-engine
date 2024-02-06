@@ -1,6 +1,6 @@
 /// @file camera.c
 ///
-/// @brief This module implements camera functions.
+/// @brief This file implements camera functions.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

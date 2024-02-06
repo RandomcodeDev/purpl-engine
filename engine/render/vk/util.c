@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module implements miscellaneous Vulkan helper functions, including
+    This file implements miscellaneous Vulkan helper functions, including
     moving images and buffers around, and getting human readable information.
 
 --*/

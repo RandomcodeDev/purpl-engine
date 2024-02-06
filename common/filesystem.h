@@ -1,6 +1,6 @@
 /// @file filesystem.h
 ///
-/// @brief This module contains definitions for the common filesystem library.
+/// @brief This file contains definitions for the common filesystem library.
 ///
 /// @copyright (c) 2024 Randomcode Developers
 

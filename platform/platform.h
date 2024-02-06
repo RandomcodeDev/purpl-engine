@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    This module contains the platform abstraction API.
+    This file contains the platform abstraction API.
 
 --*/
 

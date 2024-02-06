@@ -22,37 +22,23 @@ VOID Dx12CreateRootSignature(VOID)
 }
 
 EXTERN_C
-VOID Dx12LoadCoreShaders(VOID)
+ID3DBlob* Dx12LoadShader(_In_ PCHAR Path)
 {
-    PCHAR VertexShaderData;
-    SIZE_T VertexShaderSize;
-    PCHAR PixelShaderData;
-    SIZE_T PixelShaderSize;
-    ID3DBlob* VertexShader;
-    ID3DBlob* PixelShader;
+    PBYTE ShaderData;
+    SIZE_T ShaderSize;
+    ID3DBlob* ShaderBlob;
 
-#ifdef PURPL_DEBUG
-    CONST UINT32 CompileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-    CONST UINT32 CompileFlags = 0;
-#endif
+    LogDebug("Loading shader bytecode in %s", Path);
 
-    LogDebug("Reading shader bytecode");
+    ShaderSize = 0;
+    ShaderData = (PBYTE)FsReadFile(Path, 0, &ShaderSize, 0);
+    PURPL_ASSERT(ShaderData != nullptr && ShaderSize > 0);
 
-    VertexShaderSize = 0;
-    VertexShaderData = (PCHAR)FsReadFile("assets/shaders/directx12/shaders.vs.cso", 0, &VertexShaderSize, 0);
-    PURPL_ASSERT(VertexShaderData != nullptr && VertexShaderSize > 0);
-
-    PixelShaderSize = 0;
-    PixelShaderData = (PCHAR)FsReadFile("assets/shaders/directx12/shaders.ps.cso", 0, &PixelShaderSize, 0);
-    PURPL_ASSERT(PixelShaderData != nullptr && PixelShaderSize > 0);
-
-    HRESULT_CHECK(D3DCreateBlob(VertexShaderSize, &VertexShader));
-    HRESULT_CHECK(D3DCreateBlob(PixelShaderSize, &PixelShader));
+    HRESULT_CHECK(D3DCreateBlob(ShaderSize, &ShaderBlob));
     
-    memcpy(VertexShader->GetBufferPointer(), VertexShaderData, VertexShaderSize);
-    memcpy(PixelShader->GetBufferPointer(), PixelShaderData, PixelShaderSize);
+    memcpy(ShaderBlob->GetBufferPointer(), ShaderData, ShaderSize);
     
-    CmnFree(VertexShaderData);
-    CmnFree(PixelShaderData);
+    CmnFree(ShaderData);
+
+    return ShaderBlob;
 }

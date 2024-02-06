@@ -145,8 +145,12 @@ extern BOOLEAN Dx12HavePipelineStateCache(VOID);
 /// @brief Load the cached pipeline state
 extern VOID Dx12LoadPipelineStateCache(VOID);
 
-/// @brief Load core shaders
-extern VOID Dx12LoadCoreShaders(VOID);
+/// @brief Load shader bytecode into a blob
+///
+/// @param[in] Path The path to read the shader from
+///
+/// @return A blob containing the shader bytecode
+extern ID3DBlob* Dx12LoadShader(_In_ PCHAR Path);
 
 /// @brief Create the pipeline state object
 extern VOID Dx12CreatePipelineStateObject(VOID);

@@ -66,7 +66,7 @@ VOID PlatInitialize(VOID)
     Result = XGameRuntimeInitialize();
     if (!SUCCEEDED(Result))
     {
-        CmnError("Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X", Result); 
+        CmnError("Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X", Result);
     }
 #endif
 

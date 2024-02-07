@@ -14,8 +14,10 @@ VOID Dx12LoadPipelineStateCache(VOID)
 EXTERN_C
 VOID Dx12CreatePipelineStateObject(VOID)
 {
-    ID3DBlob *VertexShader;
-    ID3DBlob *PixelShader;
+    PBYTE VertexShader;
+    SIZE_T VertexShaderSize;
+    PBYTE PixelShader;
+    SIZE_T PixelShaderSize;
 
     LogDebug("Creating pipeline state object");
 
@@ -29,17 +31,19 @@ VOID Dx12CreatePipelineStateObject(VOID)
         {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT,
          D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
-    VertexShader = Dx12LoadShader("assets/shaders/directx12/shaders.vs.cso");
-    PixelShader = Dx12LoadShader("assets/shaders/directx12/shaders.ps.cso");
+    VertexShaderSize = 0;
+    VertexShader = (PBYTE)FsReadFile("assets/shaders/directx12/shaders.vs.cso", 0, &VertexShaderSize, 0);
+    PixelShaderSize = 0;
+    PixelShader = (PBYTE)FsReadFile("assets/shaders/directx12/shaders.ps.cso", 0, &PixelShaderSize, 0);
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDescription = {};
     PsoDescription.InputLayout.pInputElementDescs = InputElementDescriptions;
     PsoDescription.InputLayout.NumElements = PURPL_ARRAYSIZE(InputElementDescriptions);
     PsoDescription.pRootSignature = Dx12Data.RootSignature;
-    PsoDescription.VS.pShaderBytecode = (PBYTE)VertexShader->GetBufferPointer();
-    PsoDescription.VS.BytecodeLength = VertexShader->GetBufferSize();
-    PsoDescription.PS.pShaderBytecode = (PBYTE)PixelShader->GetBufferPointer();
-    PsoDescription.PS.BytecodeLength = PixelShader->GetBufferSize();
+    PsoDescription.VS.pShaderBytecode = VertexShader;
+    PsoDescription.VS.BytecodeLength = VertexShaderSize;
+    PsoDescription.PS.pShaderBytecode = PixelShader;
+    PsoDescription.PS.BytecodeLength = PixelShaderSize;
     PsoDescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     PsoDescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     // TODO: figure out how to do depth
@@ -50,6 +54,7 @@ VOID Dx12CreatePipelineStateObject(VOID)
     PsoDescription.NumRenderTargets = 1;
     PsoDescription.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     PsoDescription.SampleDesc.Count = 1;
+
     HRESULT_CHECK(Dx12Data.Device->CreateGraphicsPipelineState(&PsoDescription, IID_PPV_ARGS(&Dx12Data.PipelineState)));
 }
 

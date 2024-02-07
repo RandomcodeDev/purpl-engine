@@ -24,7 +24,12 @@ static VOID Initialize(VOID)
 #endif
 
     LogDebug("Creating DXGI factory");
-    HRESULT_CHECK(CreateDXGIFactory1(IID_PPV_ARGS(&Dx12Data.Factory)));
+#ifdef PURPL_DEBUG
+    CONST UINT32 FactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
+#else
+    CONST UINT32 FactoryFlags = 0;
+#endif
+    HRESULT_CHECK(CreateDXGIFactory2(FactoryFlags, IID_PPV_ARGS(&Dx12Data.Factory)));
 
     Dx12CreateDevice();
     Dx12CreateCommandQueue();

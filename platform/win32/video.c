@@ -15,6 +15,7 @@ Abstract:
 #include "common/common.h"
 
 #include "platform/platform.h"
+#include "platform/video.h"
 
 // #include "imgui_backends/imgui_impl_win32.h"
 

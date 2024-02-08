@@ -79,7 +79,7 @@ function setup_shared(root, directx, vulkan)
         path.join(root, "deps/flecs"),
         path.join(root, "deps/mimalloc/include"),
         path.join(root, "deps/zstd/lib"),
-        "$(buildir)/config"
+        path.join(root, "$(buildir)/config")
     )
 
     if directx then

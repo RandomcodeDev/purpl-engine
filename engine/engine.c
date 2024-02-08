@@ -84,8 +84,10 @@ Return Value:
     LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
 
     VidInitialize();
-
     EcsInitialize();
+#ifdef PURPL_DISCORD
+    DiscordInitialize();
+#endif
 
     LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);
 }
@@ -97,6 +99,9 @@ static DOUBLE Time;
 static UINT FramesThisSecond;
 static UINT FramesPerSecond;
 static DOUBLE Delta;
+#ifdef PURPL_DISCORD
+static UINT64 DiscordTimer;
+#endif
 
 DOUBLE
 EngGetDelta(VOID)
@@ -126,6 +131,10 @@ VOID EngMainLoop(VOID)
         Running = VidUpdate();
 
         EngStartFrame();
+
+#ifdef PURPL_DISCORD
+        DiscordUpdate();
+#endif
 
         ecs_progress(EcsGetWorld(), (FLOAT)Delta);
 

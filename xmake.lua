@@ -45,7 +45,9 @@ if discord then
         end
 
         on_load(fix_target)
+    target_end()
 
+    add_defines("PURPL_DISCORD")
     add_includedirs("deps/discord-rpc/include", "deps/rapidjson/include")
 end
 
@@ -63,6 +65,8 @@ target("engine")
     add_files("engine/*.c")
     add_deps("common", "cjson", "flecs", "platform", "render", "util")
     if discord then
+        add_headerfiles("engine/discord/*.h")
+        add_files("engine/discord/*.c")
         add_deps("discord")
     end
 

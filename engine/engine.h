@@ -18,9 +18,12 @@
 #include "render/render.h"
 
 #include "camera.h"
-#include "discord.h"
 #include "entity.h"
 #include "mathutil.h"
+
+#ifdef PURPL_DISCORD
+#include "discord/discord.h"
+#endif
 
 /// @brief The engine's data directory
 extern PCHAR EngineDataDirectory;

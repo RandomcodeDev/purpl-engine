@@ -80,6 +80,10 @@
 
 #include "cJSON.h"
 
+#ifdef PURPL_DISCORD
+#include "discord_rpc.h"
+#endif
+
 #if defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)
 #define FLECS_HTTP
 #define FLECS_REST

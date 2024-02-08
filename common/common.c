@@ -153,7 +153,17 @@ PCSTR CmnFormatSize(_In_ DOUBLE Size)
         Prefix++;
     }
 
-    snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%.02lf %s", Value, Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
+    // If close enough to 2 places of pi, use the character
+    if (abs(Value - M_PI) < 1e-2)
+    {
+        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "π %s",
+                 Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
+    }
+    else
+    {
+        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%.02lf %s", Value,
+                 Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
+    }
 
     return Buffer;
 }

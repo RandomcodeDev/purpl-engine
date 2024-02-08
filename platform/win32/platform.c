@@ -21,6 +21,10 @@ Abstract:
 extern HRESULT XGameRuntimeInitialize(VOID);
 #endif
 
+DWORD InitialConsoleInputMode;
+DWORD InitialConsoleOutputMode;
+DWORD InitialConsoleErrorMode;
+
 VOID PlatInitialize(VOID)
 {
     BOOL HaveConsole;
@@ -36,7 +40,6 @@ VOID PlatInitialize(VOID)
     )
     {
         FILE *File;
-        DWORD Mode;
 
         LogDebug("Attaching console");
 
@@ -45,14 +48,14 @@ VOID PlatInitialize(VOID)
         freopen_s(&File, "CONOUT$", "w", stderr);
 
 #if _WIN32_WINNT > 0x502
-        GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &Mode);
-        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), Mode | ENABLE_VIRTUAL_TERMINAL_INPUT);
+        GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &InitialConsoleInputMode);
+        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), InitialConsoleInputMode | ENABLE_VIRTUAL_TERMINAL_INPUT);
 
-        GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &Mode);
-        SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &InitialConsoleOutputMode);
+        SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), InitialConsoleOutputMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
-        GetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), &Mode);
-        SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        GetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), &InitialConsoleErrorMode);
+        SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), InitialConsoleErrorMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 #endif
 
         // In case running under cmd.exe, to not be on same line as prompt.
@@ -76,6 +79,12 @@ VOID PlatInitialize(VOID)
 VOID PlatShutdown(VOID)
 {
     LogInfo("Deinitializing Windows resources");
+
+#if _WIN32_WINNT > 0x502
+    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), InitialConsoleInputMode);
+    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), InitialConsoleOutputMode);
+    SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), InitialConsoleErrorMode);
+#endif
 
 #ifndef PURPL_GDKX
     LogDebug("Unloading debug information");

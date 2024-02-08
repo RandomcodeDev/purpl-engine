@@ -379,7 +379,7 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
                 }
             }
 
-            if (!strlen(ParentExeDosPath, 0))
+            if (!strlen(ParentExeDosPath))
             {
                 strncpy(ParentExeDosPath, ParentExePath, PURPL_ARRAYSIZE(ParentExePath));
             }

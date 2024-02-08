@@ -78,8 +78,8 @@ VOID PlatShutdown(VOID)
     LogInfo("Deinitializing Windows resources");
 
 #ifndef PURPL_GDKX
-    // LogDebug("Unloading debug information");
-    // SymCleanup(GetCurrentProcess());
+    LogDebug("Unloading debug information");
+    SymCleanup(GetCurrentProcess());
 #endif
 
     LogInfo("Windows deinitialization succeeded");

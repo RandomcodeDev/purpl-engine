@@ -3,20 +3,20 @@
 #include "discord.h"
 
 static BOOLEAN Connected;
-static CONST DiscordUser *User;
+static DiscordUser User;
 static UINT64 ApiCooldown;
 
 static VOID Ready(CONST DiscordUser *NewUser)
 {
-    User = NewUser;
+    User = *NewUser;
     Connected = TRUE;
-    LogInfo("Discord connected %s#%s (%s)", User->username, User->discriminator, User->userId);
+    LogInfo("Discord connected %s#%s (%s)", User.username, User.discriminator, User.userId);
 }
 
 static VOID Disconnected(INT ErrorCode, PCSTR Message)
 {
     Connected = FALSE;
-    User = NULL;
+    memset(&User, 0, sizeof(DiscordUser));
 
     if (ErrorCode != 0)
     {
@@ -45,12 +45,8 @@ static BOOLEAN IsFriend(UINT64 Id)
 
 static PCSTR GetGameString()
 {
-    if (!User)
-    {
-        return "the game";
-    }
-
-    switch (atoll(User->userId))
+    UINT64 UserId = strtoll(User.userId ? User.userId : "", NULL, 10);
+    switch (UserId)
     {
     case 532320702611587112:
         return "my game";
@@ -59,7 +55,7 @@ static PCSTR GetGameString()
     case 1078816552629051423:
         return "my brother's game";
     default:
-        if (IsFriend(atoll(User->userId)))
+        if (IsFriend(UserId))
         {
             return "my friend's game";
         }
@@ -83,11 +79,6 @@ VOID DiscordInitialize(VOID)
 
 VOID DiscordUpdate()
 {
-    if (!User)
-    {
-        return;
-    }
-
     DiscordRichPresence Presence = {0};
 #ifdef PURPL_DEBUG
     Presence.state = CmnFormatString("Testing %s", GetGameString());

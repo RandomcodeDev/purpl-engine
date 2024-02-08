@@ -66,6 +66,7 @@
 #include <dlfcn.h>
 #include <execinfo.h>
 #include <pthread.h>
+#include <signal.h>
 #endif
 
 #include <malloc.h>

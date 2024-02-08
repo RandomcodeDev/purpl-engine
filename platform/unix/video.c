@@ -21,8 +21,7 @@ Abstract:
 static GLFWwindow *Window;
 
 #ifdef PURPL_DEBUG
-static CHAR WindowTitle[128] =
-    GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
 #else
 static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
 #endif
@@ -38,13 +37,11 @@ static VOID GlfwErrorCallback(_In_ INT Error, _In_ PCSTR Description)
     LogError("GLFW error %d: %s", Error, Description);
 }
 
-static VOID GlfwResizeCallback(_In_ GLFWwindow *ResizedWindow, _In_ INT Width,
-                               _In_ INT Height)
+static VOID GlfwResizeCallback(_In_ GLFWwindow *ResizedWindow, _In_ INT Width, _In_ INT Height)
 {
     if (ResizedWindow == Window)
     {
-        LogInfo("Window resized from %ux%u to %dx%d", WindowWidth, WindowHeight,
-                Width, Height);
+        LogInfo("Window resized from %ux%u to %dx%d", WindowWidth, WindowHeight, Width, Height);
         WindowWidth = Width;
         WindowHeight = Height;
         WindowResized = TRUE;
@@ -60,16 +57,28 @@ static VOID GlfwFocusCallback(_In_ GLFWwindow *FocusWindow, _In_ INT Focused)
     }
 }
 
+static VOID CtrlCHandler(_In_ INT Signal, _In_ siginfo_t *SignalInformation, _In_opt_ PVOID UserData)
+{
+    if (Signal == SIGINT)
+    {
+        LogInfo("Received keyboard interrupt");
+        WindowClosed = TRUE;
+    }
+}
+
 VOID VidInitialize(VOID)
 {
     PCSTR GlfwError;
 
     LogInfo("Initializing Unix video using GLFW");
 
+    struct sigaction SignalAction = {0};
+    SignalAction.sa_sigaction = CtrlCHandler;
+    sigaction(SIGINT, &SignalAction, NULL);
+
     if (!glfwInit())
     {
-        CmnError("Failed to initialize GLFW: %d %s", glfwGetError(&GlfwError),
-                 GlfwError);
+        CmnError("Failed to initialize GLFW: %d %s", glfwGetError(&GlfwError), GlfwError);
     }
 
     glfwSetErrorCallback(GlfwErrorCallback);
@@ -78,15 +87,12 @@ VOID VidInitialize(VOID)
 
     WindowWidth = 1280;
     WindowHeight = 720;
-    LogInfo("Creating %ux%u window titled " GAME_NAME, WindowWidth,
-            WindowHeight);
+    LogInfo("Creating %ux%u window titled " GAME_NAME, WindowWidth, WindowHeight);
 
-    Window =
-        glfwCreateWindow(WindowWidth, WindowHeight, WindowTitle, NULL, NULL);
+    Window = glfwCreateWindow(WindowWidth, WindowHeight, WindowTitle, NULL, NULL);
     if (!Window)
     {
-        CmnError("Failed to create window: %d %s", glfwGetError(&GlfwError),
-                 GlfwError);
+        CmnError("Failed to create window: %d %s", glfwGetError(&GlfwError), GlfwError);
     }
 
     glfwSetWindowSizeCallback(Window, GlfwResizeCallback);
@@ -117,7 +123,10 @@ Return Value:
 {
     glfwPollEvents();
 
-    WindowClosed = (BOOLEAN)glfwWindowShouldClose(Window);
+    if (!WindowClosed)
+    {
+        WindowClosed = (BOOLEAN)glfwWindowShouldClose(Window);
+    }
 
     glfwGetWindowSize(Window, &WindowWidth, &WindowHeight);
 
@@ -232,9 +241,7 @@ VidGetDpi(VOID)
 }
 
 #ifdef PURPL_VULKAN
-PVOID VidCreateVulkanSurface(_In_ PVOID Instance,
-                             _In_ PVOID AllocationCallbacks,
-                             _In_opt_ PVOID WindowHandle)
+PVOID VidCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks, _In_opt_ PVOID WindowHandle)
 /*++
 
 Routine Description:
@@ -263,9 +270,7 @@ Return Value:
 
     LogDebug("Creating Vulkan surface with glfwCreateWindowSurface");
 
-    Result =
-        glfwCreateWindowSurface(Instance, WindowHandle ? WindowHandle : Window,
-                                AllocationCallbacks, &Surface);
+    Result = glfwCreateWindowSurface(Instance, WindowHandle ? WindowHandle : Window, AllocationCallbacks, &Surface);
     if (Result != VK_SUCCESS)
     {
         LogError("Failed to create Vulkan surface: VkResult %d", Result);

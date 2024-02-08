@@ -205,6 +205,17 @@ void LogMessage(LOG_LEVEL Level, CONST char *File, uint64_t Line, bool HexLine, 
         .Level = Level,
     };
 
+#ifdef _MSC_VER
+    while (strstr(Event.File++, "purpl-engine"))
+    {
+        Event.File = strstr(Event.File - 1, "purpl-engine") + 12;
+        if (Event.File > File + strlen(File))
+        {
+            Event.File = File;
+        }
+    }
+#endif
+
     LogLock();
 
     if (!LogState.Quiet && Level >= LogState.Level)

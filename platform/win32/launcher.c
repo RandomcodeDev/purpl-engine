@@ -8,6 +8,7 @@
 
 #include "common/alloc.h"
 #include "common/common.h"
+#include "common/filesystem.h"
 
 // hinting the nvidia driver to use the dedicated graphics card in an optimus
 // configuration for more info, see:
@@ -290,14 +291,14 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
     UINT32 EngineProcessId;
     UINT32 ParentProcessId;
     HANDLE ParentProcess;
-    CHAR ParentExeName[MAX_PATH] = {0};
-    HMODULE *ParentModules = NULL;
-    DWORD Size;
-    DWORD i;
-    CHAR ModuleName[MAX_PATH] = {0};
-    MODULEINFO ModuleInfo = {0};
-    IMAGE_DOS_HEADER ParentDosHeader = {0};
-    IMAGE_NT_HEADERS ParentHeaders = {0};
+    CHAR ParentExePath[MAX_PATH] = {0};
+    CHAR ParentExeDevicePath[MAX_PATH] = {0};
+    CHAR DriveLetter[] = " :";
+    CHAR DevicePath[MAX_PATH] = {0};
+    CHAR ParentExeDosPath[MAX_PATH] = {0};
+    PIMAGE_DOS_HEADER ParentDosHeader = {0};
+    PIMAGE_NT_HEADERS ParentHeaders = {0};
+    SIZE_T Size;
     DWORD Mode;
 #endif
 
@@ -356,46 +357,57 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
             }
         } while (Process32Next(Snapshot, &ProcessEntry));
 
-        ParentProcess = OpenProcess(PROCESS_VM_READ, FALSE, ParentProcessId);
+        ParentProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, ParentProcessId);
         if (ParentProcess)
         {
-            // TODO: Figure out why this doesn't work properly
-            GetProcessImageFileNameA(ParentProcess, ParentExeName, PURPL_ARRAYSIZE(ParentExeName));
+            GetProcessImageFileNameA(ParentProcess, ParentExePath, PURPL_ARRAYSIZE(ParentExePath));
+            CloseHandle(ParentProcess);
 
-            Size = 0;
-            EnumProcessModules(ParentProcess, ParentModules, 0, &Size);
-            ParentModules = CmnAlloc(1, Size);
-            EnumProcessModules(ParentProcess, ParentModules, Size, &Size);
-
-            for (i = 0; i < Size / sizeof(HMODULE); i++)
+            if (strncmp(ParentExePath, "\\Device\\", 8) == 0)
             {
-                GetModuleFileNameA(ParentModules[i], ModuleName, PURPL_ARRAYSIZE(ModuleName));
-                if (strncmp(ParentExeName, ModuleName, PURPL_ARRAYSIZE(ModuleName)) == 0)
+                for (CHAR c = 'A'; c <= 'Z'; c++)
                 {
-                    GetModuleInformation(ParentProcess, ParentModules[i], &ModuleInfo, sizeof(ModuleInfo));
-                    break;
+                    strncpy(ParentExeDevicePath, ParentExePath, strchr(ParentExePath + 8, '\\') - ParentExePath);
+                    DriveLetter[0] = c;
+                    QueryDosDeviceA(DriveLetter, DevicePath, PURPL_ARRAYSIZE(DevicePath));
+                    if (strcmp(DevicePath, ParentExeDevicePath) == 0)
+                    {
+                        snprintf(ParentExeDosPath, PURPL_ARRAYSIZE(ParentExeDosPath), "%c:%s", c,
+                                 ParentExePath + strlen(ParentExeDevicePath));
+                        break;
+                    }
                 }
             }
 
-            ReadProcessMemory(ParentProcess, ModuleInfo.lpBaseOfDll, &ParentDosHeader, sizeof(IMAGE_DOS_HEADER), NULL);
-            if (ParentDosHeader.e_magic == IMAGE_DOS_SIGNATURE)
+            if (!strlen(ParentExeDosPath, 0))
             {
-                ReadProcessMemory(ParentProcess, (PVOID)((UINT_PTR)ModuleInfo.lpBaseOfDll + ParentDosHeader.e_lfanew),
-                                  &ParentHeaders, sizeof(IMAGE_NT_HEADERS), NULL);
+                strncpy(ParentExeDosPath, ParentExePath, PURPL_ARRAYSIZE(ParentExePath));
+            }
 
-                if (ParentHeaders.Signature == IMAGE_NT_SIGNATURE &&
-                    ParentHeaders.OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI)
+            ParentDosHeader = (PIMAGE_DOS_HEADER)FsReadFile(ParentExeDosPath, 0, sizeof(IMAGE_DOS_HEADER), &Size, 0);
+            if (ParentDosHeader && ParentDosHeader->e_magic == IMAGE_DOS_SIGNATURE)
+            {
+                ParentHeaders = (PIMAGE_NT_HEADERS)FsReadFile(ParentExeDosPath, ParentDosHeader->e_lfanew,
+                                                              sizeof(IMAGE_NT_HEADERS), &Size, 0);
+                if (ParentHeaders && ParentHeaders->Signature == IMAGE_NT_SIGNATURE)
                 {
-                    printf("Engine (PID %llu, parent PID %llu) returned %d. "
-                           "Press any key to exit...",
-                           (UINT64)EngineProcessId, (UINT64)ParentProcessId, Result);
+                    // Check bitness, offset of Subsystem is different
+                    if ((ParentHeaders->FileHeader.Machine & IMAGE_FILE_32BIT_MACHINE &&
+                         (PIMAGE_NT_HEADERS32)ParentHeaders->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI) ||
+                        !(ParentHeaders->FileHeader.Machine & IMAGE_FILE_32BIT_MACHINE) &&
+                            (PIMAGE_NT_HEADERS64)ParentHeaders->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI)
+                    {
+                        printf("Engine (PID %llu, parent PID %llu) returned %d. "
+                               "Press any key to exit...",
+                               (UINT64)EngineProcessId, (UINT64)ParentProcessId, Result);
 
-                    // Disable line input so any key works and not just Enter
-                    Mode = 0;
-                    GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &Mode);
-                    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), 0);
-                    (VOID) getchar();
-                    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), Mode);
+                        // Disable line input so any key works and not just Enter
+                        Mode = 0;
+                        GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &Mode);
+                        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), 0);
+                        (VOID) getchar();
+                        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), Mode);
+                    }
                 }
             }
         }

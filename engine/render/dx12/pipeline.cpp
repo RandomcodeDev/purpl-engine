@@ -32,9 +32,9 @@ VOID Dx12CreatePipelineStateObject(VOID)
          D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
     VertexShaderSize = 0;
-    VertexShader = (PBYTE)FsReadFile("assets/shaders/directx12/shaders.vs.cso", 0, &VertexShaderSize, 0);
+    VertexShader = (PBYTE)FsReadFile("assets/shaders/directx12/shaders.vs.cso", 0, 0, &VertexShaderSize, 0);
     PixelShaderSize = 0;
-    PixelShader = (PBYTE)FsReadFile("assets/shaders/directx12/shaders.ps.cso", 0, &PixelShaderSize, 0);
+    PixelShader = (PBYTE)FsReadFile("assets/shaders/directx12/shaders.ps.cso", 0, 0, &PixelShaderSize, 0);
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDescription = {};
     PsoDescription.InputLayout.pInputElementDescs = InputElementDescriptions;

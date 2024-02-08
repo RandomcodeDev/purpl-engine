@@ -119,7 +119,7 @@ Return Value:
     LogInfo("Loading texture %s", Path);
 
     Size = 0;
-    Texture = FsReadFile(Path, 0, &Size, sizeof(TEXTURE) - TEXTURE_HEADER_SIZE);
+    Texture = FsReadFile(Path, 0, 0, &Size, sizeof(TEXTURE) - TEXTURE_HEADER_SIZE);
     if (!ValidateTexture(Texture))
     {
         LogError("Texture %s is invalid", Path);

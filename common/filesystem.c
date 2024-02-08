@@ -14,8 +14,7 @@ Abstract:
 
 #include "filesystem.h"
 
-SIZE_T
-FsGetFileSize(_In_ PCSTR Path)
+SIZE_T FsGetFileSize(_In_ PCSTR Path)
 {
     FILE *File;
     SIZE_T Size;
@@ -38,15 +37,14 @@ FsGetFileSize(_In_ PCSTR Path)
     return Size;
 }
 
-BOOLEAN
-FsCreateDirectory(_In_ PCSTR Path)
+BOOLEAN FsCreateDirectory(_In_ PCSTR Path)
 {
     LogTrace("Creating directory %s", Path);
     return PlatCreateDirectory(Path);
 }
 
-PVOID
-FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount, _In_ SIZE_T Extra)
+PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T Offset, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
+                 _In_ SIZE_T Extra)
 {
     FILE *File;
     PVOID Buffer;
@@ -60,7 +58,8 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount, _In
     }
 
     FixedPath = PlatFixPath(Path);
-    LogTrace("Reading up to %zu byte(s) (+%zu) of file %s (%s)", MaxAmount, Extra, Path, FixedPath);
+    LogTrace("Reading up to %zu byte(s) (+%zu) of file %s (%s) starting at 0x%llX", MaxAmount, Extra, Path, FixedPath,
+             (UINT64)Offset);
     File = fopen(FixedPath, "rb");
     if (!File)
     {
@@ -69,7 +68,14 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount, _In
         return NULL;
     }
 
-    Size = PURPL_MAX(MaxAmount, FsGetFileSize(Path)) + Extra;
+    if (MaxAmount > 0)
+    {
+        Size = MaxAmount + Extra;
+    }
+    else
+    {
+        Size = FsGetFileSize(Path) + Extra;
+    }
     Buffer = CmnAlloc(Size, 1);
     if (!Buffer)
     {
@@ -77,6 +83,8 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount, _In
         *ReadAmount = 0;
         return NULL;
     }
+
+    fseek(File, Offset, SEEK_SET);
 
     Read = fread(Buffer, 1, Size, File);
     if (Read != Size - Extra)
@@ -92,8 +100,7 @@ FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount, _In
     return Buffer;
 }
 
-BOOLEAN
-FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data, _In_ SIZE_T Size, _In_ BOOLEAN Append)
+BOOLEAN FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data, _In_ SIZE_T Size, _In_ BOOLEAN Append)
 {
     FILE *File;
     BOOLEAN Success;

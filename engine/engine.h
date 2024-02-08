@@ -18,6 +18,7 @@
 #include "render/render.h"
 
 #include "camera.h"
+#include "discord.h"
 #include "entity.h"
 #include "mathutil.h"
 

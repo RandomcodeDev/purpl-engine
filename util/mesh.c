@@ -46,7 +46,7 @@ LoadMesh(_In_ PCSTR Path)
     LogInfo("Loading mesh %s", Path);
 
     Size = 0;
-    Mesh = FsReadFile(Path, 0, &Size, sizeof(MESH) - MESH_HEADER_SIZE);
+    Mesh = FsReadFile(Path, 0, 0, &Size, sizeof(MESH) - MESH_HEADER_SIZE);
     if (!ValidateMesh(Mesh))
     {
         LogError("Mesh %s is invalid", Path);

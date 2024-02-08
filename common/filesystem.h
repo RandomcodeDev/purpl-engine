@@ -32,6 +32,7 @@ FsCreateDirectory(_In_ PCSTR Path);
 /// @brief This routine reads a file into a buffer which it allocates.
 ///
 /// @param[in] Path       The path to the file to read.
+/// @param[in] Offset     The offset from the start of the file.
 /// @param[in] MaxAmount  The maximum number of bytes to read, or zero for the whole
 /// file.
 /// @param[out] ReadAmount A pointer to a variable that receives the number of bytes
@@ -40,7 +41,7 @@ FsCreateDirectory(_In_ PCSTR Path);
 /// @param[in] Extra      Number of extra bytes to allocate.
 ///
 /// @return A pointer to a buffer containing the file's contents, or NULL.
-extern PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T MaxAmount,
+extern PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T Offset, _In_ SIZE_T MaxAmount,
                         _Out_ PSIZE_T ReadAmount, _In_ SIZE_T Extra);
 
 /// @brief Write to a file

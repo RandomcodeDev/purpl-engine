@@ -22,10 +22,32 @@ else
 end
 
 directx = is_plat("gdk", "gdkx")
+discord = is_plat("gdk", "gdkx", "macos", "linux", "freebsd")
 vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 
 includes("shared.lua")
 setup_shared("$(scriptdir)", directx, vulkan)
+
+if discord then
+    target("discord")
+        set_kind("static")
+        add_headerfiles("deps/discord-rpc/include/*.h", "deps/discord-rpc/src/*.h")
+        add_files(
+            "deps/discord-rpc/src/discord_rpc.cpp",
+            "deps/discord-rpc/src/rpc_connection.cpp",
+            "deps/discord-rpc/src/serialization.cpp"
+        )
+
+        if is_plat("gdk", "gdkx") then
+            add_files("deps/discord-rpc/src/*_win.cpp")
+        elseif is_plat("linux", "freebsd") then
+            add_files("deps/discord-rpc/src/*_linux.cpp", "deps/discord-rpc/src/*_unix.cpp")
+        end
+
+        on_load(fix_target)
+
+    add_includedirs("deps/discord-rpc/include", "deps/rapidjson/include")
+end
 
 target("flecs")
     set_kind("static")
@@ -40,6 +62,9 @@ target("engine")
     add_headerfiles("engine/*.h")
     add_files("engine/*.c")
     add_deps("common", "cjson", "flecs", "platform", "render", "util")
+    if discord then
+        add_deps("discord")
+    end
 
     on_load(fix_target)
 

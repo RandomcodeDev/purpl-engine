@@ -34,3 +34,9 @@
 [submodule "deps/ufbx"]
 	path = deps/ufbx
 	url = https://github.com/ufbx/ufbx
+[submodule "deps/discord-rpc"]
+	path = deps/discord-rpc
+	url = https://github.com/discord/discord-rpc
+[submodule "deps/rapidjson"]
+	path = deps/rapidjson
+	url = https://github.com/Tencent/rapidjson

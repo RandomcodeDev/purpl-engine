@@ -205,16 +205,14 @@ void LogMessage(LOG_LEVEL Level, CONST char *File, uint64_t Line, bool HexLine, 
         .Level = Level,
     };
 
-#ifdef _MSC_VER
-    while (strstr(Event.File++, "purpl-engine"))
+    while (strstr(Event.File, "purpl-engine"))
     {
-        Event.File = strstr(Event.File - 1, "purpl-engine") + 12;
+        Event.File = strstr(Event.File, "purpl-engine") + 12 + 1; // also skip the slash
         if (Event.File > File + strlen(File))
         {
             Event.File = File;
         }
     }
-#endif
 
     LogLock();
 

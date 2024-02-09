@@ -4,7 +4,6 @@
 
 static BOOLEAN Connected;
 static DiscordUser User;
-static UINT64 ApiCooldown;
 
 static VOID Ready(CONST DiscordUser *NewUser)
 {
@@ -24,7 +23,7 @@ static VOID Disconnected(INT ErrorCode, PCSTR Message)
     }
     else
     {
-        LogInfo("Discord disconnected: %s", Message);
+        LogInfo("Discord disconnected%s%s", Message ? ": " : "", Message);
     }
 }
 
@@ -79,7 +78,7 @@ static PCSTR GetGameString()
         }
         else
         {
-            return "the game";
+            return "the game"; // you just lost the game
         }
     }
 }
@@ -95,7 +94,7 @@ VOID DiscordInitialize(VOID)
     Discord_Initialize(PURPL_STRINGIZE_EXPAND(GAME_DISCORD_APP_ID), &EventHandlers, TRUE, NULL);
 }
 
-VOID DiscordUpdate()
+VOID DiscordUpdate(VOID)
 {
     DiscordRichPresence Presence = {0};
 #ifdef PURPL_DEBUG

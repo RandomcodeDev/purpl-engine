@@ -1,3 +1,5 @@
+#include "engine/engine.h"
+
 #include "render.h"
 
 ecs_entity_t ecs_id(MODEL);
@@ -6,6 +8,8 @@ RENDER_API RenderApi;
 
 static RENDER_BACKEND Backend;
 static FLOAT Scale;
+static UINT32 LastWidth;
+static UINT32 LastHeight;
 
 #ifdef PURPL_DIRECTX
 extern VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend);
@@ -31,9 +35,9 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     LogInfo("Initializing renderer");
     RdrSetScale(1.0f);
 
-#ifdef PURPL_DIRECTX
-    RenderApi = RenderApiDirect3D12;
-#elif defined(PURPL_VULKAN)
+//#ifdef PURPL_DIRECTX
+//    RenderApi = RenderApiDirect3D12;
+#if defined(PURPL_VULKAN)
     RenderApi = RenderApiVulkan;
 #endif
     switch (RenderApi)
@@ -62,7 +66,7 @@ VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 {
     if (Backend.BeginFrame)
     {
-        Backend.BeginFrame();
+        Backend.BeginFrame(EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight);
     }
 }
 ecs_entity_t ecs_id(RdrBeginFrame);
@@ -73,6 +77,9 @@ VOID RdrEndFrame(_In_ ecs_iter_t *Iterator)
     {
         Backend.EndFrame();
     }
+
+    LastWidth = RdrGetWidth();
+    LastHeight = RdrGetHeight();
 }
 ecs_entity_t ecs_id(RdrEndFrame);
 

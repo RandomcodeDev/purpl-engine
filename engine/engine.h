@@ -70,3 +70,6 @@ extern UINT32 EngGetFramerate(VOID);
 
 /// @brief Get the runtime of the engine
 extern UINT64 EngGetRuntime(VOID);
+
+/// @brief Get whether the video has been resized
+extern BOOLEAN EngHasVideoResized(VOID);

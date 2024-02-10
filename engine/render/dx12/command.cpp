@@ -22,4 +22,8 @@ VOID Dx12CreateCommandAllocator(VOID)
 EXTERN_C
 VOID Dx12CreateCommandList(VOID)
 {
+    LogDebug("Creating command list");
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, Dx12Data.CommandAllocator,
+                                                     Dx12Data.PipelineState, IID_PPV_ARGS(&Dx12Data.CommandList)));
+    HRESULT_CHECK(Dx12Data.CommandList->Close());
 }

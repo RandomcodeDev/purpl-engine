@@ -65,10 +65,6 @@ VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID)
 PCSTR
 VlkGetResultString(VkResult Result)
 {
-    // Stolen from
-    // https://github.com/libsdl-org/SDL/blob/a4c6b38fef2ff046e38072200b096c03389bfa28/src/video/SDL_vulkan_utils.c#L29,
-    // but it's just a table that I could probably generate somehow (and, in
-    // fact, should)
     switch (Result)
     {
     case VK_SUCCESS:
@@ -131,10 +127,6 @@ VlkGetResultString(VkResult Result)
         return PURPL_STRINGIZE(VK_ERROR_VALIDATION_FAILED_EXT);
     case VK_ERROR_INVALID_SHADER_NV:
         return PURPL_STRINGIZE(VK_ERROR_INVALID_SHADER_NV);
-#if VK_HEADER_VERSION >= 135 && VK_HEADER_VERSION < 162
-    case VK_ERROR_INCOMPATIBLE_VERSION_KHR:
-        return PURPL_STRINGIZE(VK_ERROR_INCOMPATIBLE_VERSION_KHR);
-#endif
     case VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT:
         return PURPL_STRINGIZE(VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT);
     case VK_ERROR_NOT_PERMITTED_EXT:
@@ -151,6 +143,18 @@ VlkGetResultString(VkResult Result)
         return PURPL_STRINGIZE(VK_OPERATION_NOT_DEFERRED_KHR);
     case VK_PIPELINE_COMPILE_REQUIRED_EXT:
         return PURPL_STRINGIZE(VK_PIPELINE_COMPILE_REQUIRED_EXT);
+    case VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR:
+        return PURPL_STRINGIZE(VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR);
+    case VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR:
+        return PURPL_STRINGIZE(VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR);
+    case VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR:
+        return PURPL_STRINGIZE(VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR);
+    case VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR:
+        return PURPL_STRINGIZE(VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR);
+    case VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR:
+        return PURPL_STRINGIZE(VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR);
+    case VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR:
+        return PURPL_STRINGIZE(VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR);
     default:
         return "VK_UNKNOWN";
         break;
@@ -230,56 +234,6 @@ VkBool32 VKAPI_CALL VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT
     return TRUE;
 }
 
-VOID VlkAllocateBuffer(_In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage, _In_ VkMemoryPropertyFlags Flags,
-                       _Out_ PVULKAN_BUFFER Buffer)
-{
-    memset(Buffer, 0, sizeof(VULKAN_BUFFER));
-    Buffer->Size = Size;
-
-    VkBufferCreateInfo BufferCreateInformation = {0};
-    BufferCreateInformation.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    BufferCreateInformation.size = Buffer->Size;
-    BufferCreateInformation.usage = Usage;
-    BufferCreateInformation.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-    VmaAllocationCreateInfo AllocationCreateInformation = {0};
-    AllocationCreateInformation.requiredFlags = Flags;
-
-    // LogTrace("Allocating %zu-byte buffer 0x%llX", Size, (UINT64)Buffer);
-    VULKAN_CHECK(vmaCreateBuffer(VlkData.Allocator, &BufferCreateInformation, &AllocationCreateInformation,
-                                 &Buffer->Buffer, &Buffer->Allocation, NULL));
-}
-
-VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage,
-                               _In_ VkMemoryPropertyFlags Flags, _Out_ PVULKAN_BUFFER Buffer)
-{
-    VULKAN_BUFFER StagingBuffer;
-    PVOID BufferAddress;
-
-    VlkAllocateBuffer(Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &StagingBuffer);
-
-    BufferAddress = NULL;
-    vmaMapMemory(VlkData.Allocator, StagingBuffer.Allocation, &BufferAddress);
-    memcpy(BufferAddress, Data, Size);
-    vmaUnmapMemory(VlkData.Allocator, StagingBuffer.Allocation);
-
-    VlkAllocateBuffer(Size, Usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT, Flags, Buffer);
-    VlkCopyBuffer(&StagingBuffer, Buffer, Size);
-    VlkFreeBuffer(&StagingBuffer);
-}
-
-VOID VlkFreeBuffer(_Inout_ PVULKAN_BUFFER Buffer)
-{
-    // LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
-    if (Buffer->Allocation)
-    {
-        vmaUnmapMemory(VlkData.Allocator, Buffer->Allocation);
-        vmaDestroyBuffer(VlkData.Allocator, Buffer->Buffer, Buffer->Allocation);
-    }
-    memset(Buffer, 0, sizeof(VULKAN_BUFFER));
-}
-
 VkCommandBuffer VlkBeginTransfer(VOID)
 {
     VkCommandBufferAllocateInfo CommandBufferAllocateInformation = {0};
@@ -319,20 +273,4 @@ VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer)
 
     // LogTrace("Destroying transfer command buffer");
     vkFreeCommandBuffers(VlkData.Device, VlkData.TransferCommandPool, 1, &TransferBuffer);
-}
-
-VOID VlkCopyBuffer(_In_ PVULKAN_BUFFER Source, _In_ PVULKAN_BUFFER Destination, _In_ VkDeviceSize Size)
-{
-    VkCommandBuffer TransferBuffer;
-
-    // LogTrace("Copying Vulkan buffer 0x%llX to 0x%llX", (UINT64)Source,
-    // (UINT64)Destination);
-
-    TransferBuffer = VlkBeginTransfer();
-
-    VkBufferCopy CopyRegion = {0};
-    CopyRegion.size = Size;
-    vkCmdCopyBuffer(TransferBuffer, Source->Buffer, Destination->Buffer, 1, &CopyRegion);
-
-    VlkEndTransfer(TransferBuffer);
 }

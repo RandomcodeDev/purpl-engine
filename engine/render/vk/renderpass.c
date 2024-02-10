@@ -26,31 +26,96 @@ VOID VlkCreateMainRenderPass(VOID)
 {
     LogDebug("Creating main render render pass");
 
-    VkAttachmentDescription ColorAttachment = {0};
-    ColorAttachment.format = VlkData.SurfaceFormat.format;
-    ColorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    ColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    ColorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    ColorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    ColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    ColorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    ColorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    VkAttachmentDescription MainColorAttachment = {0};
+    MainColorAttachment.format = VlkData.SurfaceFormat.format;
+    MainColorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    MainColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    MainColorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    MainColorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    MainColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    MainColorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    MainColorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkAttachmentReference ColorAttachmentReference = {0};
-    ColorAttachmentReference.attachment = 0;
-    ColorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    VkAttachmentReference MainColorAttachmentReference = {0};
+    MainColorAttachmentReference.attachment = 0;
+    MainColorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    VkAttachmentDescription PostProcessColorAttachment = {0};
+    PostProcessColorAttachment.format = VlkData.SurfaceFormat.format;
+    PostProcessColorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    PostProcessColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+    PostProcessColorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    PostProcessColorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    PostProcessColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    PostProcessColorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    PostProcessColorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    VkAttachmentReference PostProcessColorAttachmentReference = {0};
+    PostProcessColorAttachmentReference.attachment = 1;
+    PostProcessColorAttachmentReference.layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    VkAttachmentDescription DepthStencilAttachment = {0};
+    DepthStencilAttachment.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+    DepthStencilAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    DepthStencilAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    DepthStencilAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    DepthStencilAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    DepthStencilAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+    DepthStencilAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    DepthStencilAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+    VkAttachmentReference DepthStencilAttachmentReference = {0};
+    DepthStencilAttachmentReference.attachment = 2;
+    DepthStencilAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
     VkSubpassDescription MainSubpass = {0};
     MainSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     MainSubpass.colorAttachmentCount = 1;
-    MainSubpass.pColorAttachments = &ColorAttachmentReference;
+    MainSubpass.pColorAttachments = &MainColorAttachmentReference;
+    MainSubpass.pDepthStencilAttachment = &DepthStencilAttachmentReference;
 
     VkSubpassDescription PostProcessSubpass = {0};
     PostProcessSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     PostProcessSubpass.colorAttachmentCount = 1;
-    PostProcessSubpass.pColorAttachments = &ColorAttachmentReference;
+    PostProcessSubpass.pColorAttachments = &PostProcessColorAttachmentReference;
+    PostProcessSubpass.pDepthStencilAttachment = &DepthStencilAttachmentReference;
 
+    VkSubpassDependency PostProcessDependency = {0};
+    PostProcessDependency.srcSubpass = 0;
+    PostProcessDependency.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    PostProcessDependency.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    PostProcessDependency.dstSubpass = 1;
+    PostProcessDependency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    PostProcessDependency.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+
+    VkAttachmentDescription Attachments[] = {MainColorAttachment, PostProcessColorAttachment, DepthStencilAttachment};
     VkSubpassDescription Subpasses[] = {MainSubpass, PostProcessSubpass};
+    VkSubpassDependency SubpassDependencies[] = {PostProcessDependency};
 
-    VlkData.MainRenderPass = VlkCreateRenderPass(&ColorAttachment, 1, Subpasses, PURPL_ARRAYSIZE(Subpasses), NULL, 0);
+    VlkData.MainRenderPass =
+        VlkCreateRenderPass(Attachments, PURPL_ARRAYSIZE(Attachments), Subpasses, PURPL_ARRAYSIZE(Subpasses),
+                            SubpassDependencies, PURPL_ARRAYSIZE(SubpassDependencies));
+}
+
+VOID VlkCreateRendetTargets(VOID)
+{
+    LogDebug("Creating color image");
+    VlkCreateImage(RdrGetWidth(), RdrGetHeight(), VlkData.SurfaceFormat.format,
+                   VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                   VMA_MEMORY_USAGE_GPU_ONLY, VK_IMAGE_ASPECT_COLOR_BIT, &VlkData.ColorTarget);
+
+    LogDebug("Creating depth image");
+    VlkCreateImage(RdrGetWidth(), RdrGetHeight(), VK_FORMAT_D32_SFLOAT_S8_UINT,
+                   VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                   VMA_MEMORY_USAGE_GPU_ONLY, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_DEPTH_BIT,
+                   &VlkData.DepthTarget);
+}
+
+VOID VlkDestroyRenderTargets(VOID)
+{
+    LogDebug("Destroying depth image");
+    VlkDestroyImage(&VlkData.DepthTarget);
+
+    LogDebug("Destroying color image");
+    VlkDestroyImage(&VlkData.ColorTarget);
 }

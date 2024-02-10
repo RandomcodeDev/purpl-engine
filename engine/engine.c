@@ -99,9 +99,7 @@ static DOUBLE Time;
 static UINT FramesThisSecond;
 static UINT FramesPerSecond;
 static DOUBLE Delta;
-#ifdef PURPL_DISCORD
-static UINT64 DiscordTimer;
-#endif
+static BOOLEAN Resized;
 
 DOUBLE
 EngGetDelta(VOID)
@@ -172,6 +170,8 @@ VOID EngStartFrame(VOID)
     Seconds -= Hours * 60 * 60;
     Minutes = Seconds / 60;
     Seconds -= Minutes * 60;
+
+    Resized = VidResized();
 }
 
 // TODO: integrate into EngMainLoop?
@@ -207,4 +207,9 @@ VOID EngSetMainCamera(_In_ ecs_entity_t Camera)
         EngineMainCamera = Camera;
         CalculateCameraMatrices(CameraComponent);
     }
+}
+
+BOOLEAN EngHasVideoResized(VOID)
+{
+    return Resized;
 }

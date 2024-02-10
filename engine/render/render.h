@@ -27,7 +27,7 @@ extern RENDER_API RenderApi;
 typedef struct RENDER_BACKEND
 {
     VOID (*Initialize)(VOID);
-    VOID (*BeginFrame)(VOID);
+    VOID (*BeginFrame)(_In_ BOOLEAN WindowResized);
     VOID (*EndFrame)(VOID);
     VOID (*Shutdown)(VOID);
 } RENDER_BACKEND, *PRENDER_BACKEND;

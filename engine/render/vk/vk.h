@@ -184,6 +184,12 @@ typedef struct VULKAN_DATA
     /// @brief The current index in the swap chain
     UINT32 SwapChainIndex;
 
+    /// @brief Color render target
+    VULKAN_IMAGE ColorTarget;
+
+    /// @brief Depth render target
+    VULKAN_IMAGE DepthTarget;
+
     /// @brief Main render pass, outputs to the screen
     VkRenderPass MainRenderPass;
 
@@ -424,3 +430,15 @@ extern VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachment
 
 /// @brief Create the main render pass
 extern VOID VlkCreateMainRenderPass(VOID);
+
+/// @brief Create render targets
+extern VOID VlkCreateRendetTargets(VOID);
+
+/// @brief Destroy render targets
+extern VOID VlkDestroyRendetTargets(VOID);
+
+/// @brief Create framebuffers for the swap chain images
+extern VOID VlkCreateScreenFramebuffers(VOID);
+
+/// @brief Destroy screen framebuffers
+extern VOID VlkDestroyScreenFramebuffers(VOID);

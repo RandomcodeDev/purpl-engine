@@ -53,7 +53,7 @@ static VOID Initialize(VOID)
     LogDebug("Successfully initialized DirectX 12 backend");
 }
 
-static VOID BeginFrame(VOID)
+static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 {
 }
 

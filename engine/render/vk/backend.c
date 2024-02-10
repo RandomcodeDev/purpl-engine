@@ -95,6 +95,8 @@ static VOID Initialize(VOID)
     VlkCreateAllocator();
     VlkCreateSwapChain();
     VlkCreateMainRenderPass();
+    VlkCreateRendetTargets();
+    VlkCreateScreenFramebuffers();
 
     VlkData.FrameIndex = 0;
     VlkData.Initialized = TRUE;
@@ -107,20 +109,185 @@ static VOID IncrementFrameIndex(VOID)
     VlkData.FrameIndex = (VlkData.FrameIndex + 1) % VULKAN_FRAME_COUNT;
 }
 
-static VOID BeginFrame(VOID)
+static VOID HandleResize(VOID)
 {
     if (!VlkData.Initialized)
     {
         return;
     }
+
+    LogDebug("Handling resize");
+
+    vkDeviceWaitIdle(VlkData.Device);
+
+    VlkDestroyScreenFramebuffers();
+    vkDestroyRenderPass(VlkData.Device, VlkData.MainRenderPass, VlkGetAllocationCallbacks());
+    VlkDestroyRenderTargets();
+    VlkDestroySwapChain();
+    VlkCreateSwapChain();
+    VlkCreateRendetTargets();
+    VlkCreateMainRenderPass();
+    VlkCreateScreenFramebuffers();
+
+    // https://stackoverflow.com/questions/70762372/how-to-recreate-swapchain-after-vkacquirenextimagekhr-is-vk-suboptimal-khr
+    CONST VkPipelineStageFlags WaitDestinationStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    VkSubmitInfo SubmitInformation = {0};
+    SubmitInformation.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    SubmitInformation.waitSemaphoreCount = 1;
+    SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
+    SubmitInformation.pWaitDstStageMask = &WaitDestinationStage;
+    vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, NULL);
+}
+
+static VOID BeginFrame(_In_ BOOLEAN WindowResized)
+{
+    VkResult Result;
+    VkCommandBuffer CurrentCommandBuffer;
+
+    if (!VlkData.Initialized)
+    {
+        return;
+    }
+
+    VULKAN_CHECK(
+        vkWaitForFences(VlkData.Device, 1, &VlkData.CommandBufferFences[VlkData.FrameIndex], TRUE, UINT64_MAX));
+
+    VlkData.SwapChainIndex = 0;
+    Result = vkAcquireNextImageKHR(VlkData.Device, VlkData.SwapChain, UINT64_MAX,
+                                   VlkData.AcquireSemaphores[VlkData.FrameIndex], NULL, &VlkData.SwapChainIndex);
+    if (Result == VK_ERROR_OUT_OF_DATE_KHR || Result == VK_SUBOPTIMAL_KHR || WindowResized)
+    {
+        if (!WindowResized)
+        {
+            LogDebug("Got %s (VkResult %d) when acquiring next swap chain image",
+                     VlkGetResultString(Result), Result);
+        }
+
+        HandleResize();
+
+        VULKAN_CHECK(vkAcquireNextImageKHR(VlkData.Device, VlkData.SwapChain, UINT64_MAX,
+                                           VlkData.AcquireSemaphores[VlkData.FrameIndex], NULL,
+                                           &VlkData.SwapChainIndex));
+        VlkData.Resized = TRUE;
+    }
+    else if (Result != VK_SUCCESS)
+    {
+        CmnError("Failed to acquire next image: %s (VkResult %d)", VlkGetResultString(Result), Result);
+    }
+
+    CurrentCommandBuffer = VlkData.CommandBuffers[VlkData.FrameIndex];
+
+    VULKAN_CHECK(vkResetFences(VlkData.Device, 1, &VlkData.CommandBufferFences[VlkData.FrameIndex]));
+    VULKAN_CHECK(vkResetCommandBuffer(VlkData.CommandBuffers[VlkData.FrameIndex], 0));
+
+    VkCommandBufferBeginInfo CommandBufferBeginInformation = {0};
+    CommandBufferBeginInformation.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    CommandBufferBeginInformation.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    VULKAN_CHECK(vkBeginCommandBuffer(CurrentCommandBuffer, &CommandBufferBeginInformation));
+
+    if (VlkData.Resized)
+    {
+        CONST VkImageMemoryBarrier LayoutBarrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+                                                    .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                                    .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+                                                    .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+                                                    .image = VlkData.SwapChainImages[VlkData.SwapChainIndex],
+                                                    .subresourceRange = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                                                                         .baseMipLevel = 0,
+                                                                         .levelCount = 1,
+                                                                         .baseArrayLayer = 0,
+                                                                         .layerCount = 1}};
+
+        vkCmdPipelineBarrier(VlkData.CommandBuffers[VlkData.FrameIndex], VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &LayoutBarrier);
+    }
+
+    VkClearValue ClearValues[3] = {0};
+    ClearValues[0].color.float32[0] = 0.0f;
+    ClearValues[0].color.float32[1] = 0.0f;
+    ClearValues[0].color.float32[2] = 0.0f;
+    ClearValues[0].color.float32[3] = 0.0f;
+    ClearValues[2].depthStencil.depth = 1.0f;
+    ClearValues[2].depthStencil.stencil = 1.0f;
+
+    VkRect2D Scissor = {0};
+    Scissor.extent.width = RdrGetWidth();
+    Scissor.extent.height = RdrGetHeight();
+
+    VkRenderPassBeginInfo RenderPassBeginInformation = {0};
+    RenderPassBeginInformation.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    RenderPassBeginInformation.renderPass = VlkData.MainRenderPass;
+    RenderPassBeginInformation.framebuffer = VlkData.ScreenFramebuffers[VlkData.FrameIndex];
+    RenderPassBeginInformation.pClearValues = ClearValues;
+    RenderPassBeginInformation.clearValueCount = PURPL_ARRAYSIZE(ClearValues);
+    RenderPassBeginInformation.renderArea = Scissor;
+
+    vkCmdBeginRenderPass(CurrentCommandBuffer, &RenderPassBeginInformation, VK_SUBPASS_CONTENTS_INLINE);
+
+    VkViewport Viewport = {0};
+    Viewport.width = (FLOAT)Scissor.extent.width;
+    Viewport.height = (FLOAT)Scissor.extent.height;
+    Viewport.minDepth = 0.0f;
+    Viewport.maxDepth = 1.0f;
+
+    vkCmdSetScissor(CurrentCommandBuffer, 0, 1, &Scissor);
+    vkCmdSetViewport(CurrentCommandBuffer, 0, 1, &Viewport);
+    vkCmdSetPrimitiveTopology(CurrentCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 }
 
 static VOID EndFrame(VOID)
 {
+    VkResult Result;
+    VkCommandBuffer CurrentCommandBuffer;
+
     if (!VlkData.Initialized)
     {
         return;
     }
+
+    if (VlkData.Resized)
+    {
+        VlkData.Resized = FALSE;
+    }
+
+    CurrentCommandBuffer = VlkData.CommandBuffers[VlkData.FrameIndex];
+
+    vkCmdNextSubpass(CurrentCommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdEndRenderPass(CurrentCommandBuffer);
+    VULKAN_CHECK(vkEndCommandBuffer(CurrentCommandBuffer));
+
+    VkSubmitInfo SubmitInformation = {0};
+    SubmitInformation.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+    VkPipelineStageFlags WaitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    SubmitInformation.pWaitDstStageMask = &WaitStage;
+
+    SubmitInformation.waitSemaphoreCount = 1;
+    SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
+    SubmitInformation.signalSemaphoreCount = 1;
+    SubmitInformation.pSignalSemaphores = &VlkData.RenderCompleteSemaphores[VlkData.FrameIndex];
+    SubmitInformation.commandBufferCount = 1;
+    SubmitInformation.pCommandBuffers = &CurrentCommandBuffer;
+
+    VULKAN_CHECK(
+        vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, VlkData.CommandBufferFences[VlkData.FrameIndex]));
+
+    VkPresentInfoKHR PresentInformation = {0};
+    PresentInformation.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    PresentInformation.pSwapchains = &VlkData.SwapChain;
+    PresentInformation.swapchainCount = 1;
+    PresentInformation.pWaitSemaphores = &VlkData.RenderCompleteSemaphores[VlkData.FrameIndex];
+    PresentInformation.waitSemaphoreCount = 1;
+    PresentInformation.pImageIndices = &VlkData.SwapChainIndex;
+
+    Result = vkQueuePresentKHR(VlkData.PresentQueue, &PresentInformation);
+    if (Result != VK_ERROR_OUT_OF_DATE_KHR && Result != VK_SUCCESS)
+    {
+        CmnError("Failed to present frame: %s", VlkGetResultString(Result));
+    }
+
+    IncrementFrameIndex();
 }
 
 static VOID Shutdown(VOID)
@@ -130,6 +297,10 @@ static VOID Shutdown(VOID)
     LogDebug("Shutting down Vulkan");
     VlkData.Initialized = FALSE;
     vkDeviceWaitIdle(VlkData.Device);
+
+    VlkDestroyScreenFramebuffers();
+
+    VlkDestroyImage(&VlkData.DepthTarget);
 
     if (VlkData.MainRenderPass)
     {

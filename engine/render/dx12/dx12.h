@@ -97,7 +97,7 @@ typedef struct DIRECTX12_DATA
     UINT32 RtvDescriptorSize;
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
     ID3D12PipelineState *PipelineState;
-    ID3D12GraphicsCommandList9 *CommandList;
+    ID3D12GraphicsCommandList7 *CommandList;
 
     UINT32 FrameIndex;
     PVOID FenceEvent;

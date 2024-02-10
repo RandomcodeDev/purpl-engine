@@ -1,4 +1,5 @@
 /// @file discord.h
+/// @file discord.h
 ///
 /// @brief This file defines functions for interfacing with Discord
 ///

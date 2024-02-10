@@ -129,21 +129,11 @@ PCSTR CmnFormatSize(_In_ DOUBLE Size)
     DOUBLE Value;
     UINT8 Prefix;
 
-    // TODO: if this is ever somehow a bottleneck, remove everything past
-    // tibibytes and make the buffer 16 bytes.
-
-    CONST PCSTR Units[] = {"B",
-                           "kiB",
-                           "MiB",
-                           "GiB",
-                           "TiB",
-                           "PiB (damn)",
-                           "EiB (are you sure?)",
-                           "ZiB (who are you?)",
-                           "YiB (what are you doing?)",
-                           "RiB (why are you doing this?)",
-                           "QiB (HOW ARE YOU DOING THIS?)",
-                           "?B (what did you do?)"};
+    CONST PCSTR Units[] = {"B", "kiB", "MiB", "GiB", "TiB", "PiB (damn)", "EiB (are you sure?)",
+                           // NOTE: these don't all go in increments of 1024, but they're physically
+                           // impossible and here as a joke anyway
+                           "ZiB (who are you?)", "YiB (what are you doing?)", "RiB (why are you doing this?)",
+                           "QiB (HOW ARE YOU DOING THIS?)", "?B (what did you do?)"};
 
     Value = Size;
     Prefix = 0;
@@ -156,8 +146,7 @@ PCSTR CmnFormatSize(_In_ DOUBLE Size)
     // If close enough to 2 places of pi, use the character
     if (abs(Value - M_PI) < 1e-2)
     {
-        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "π %s",
-                 Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
+        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "π %s", Units[PURPL_MIN(Prefix, PURPL_ARRAYSIZE(Units) - 1)]);
     }
     else
     {

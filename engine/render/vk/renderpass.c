@@ -74,10 +74,13 @@ VOID VlkCreateMainRenderPass(VOID)
     MainSubpass.pColorAttachments = &MainColorAttachmentReference;
     MainSubpass.pDepthStencilAttachment = &DepthStencilAttachmentReference;
 
+    VkAttachmentReference PostProcessAttachments[] = {MainColorAttachmentReference,
+                                                      PostProcessColorAttachmentReference};
+
     VkSubpassDescription PostProcessSubpass = {0};
     PostProcessSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    PostProcessSubpass.colorAttachmentCount = 1;
-    PostProcessSubpass.pColorAttachments = &PostProcessColorAttachmentReference;
+    PostProcessSubpass.colorAttachmentCount = PURPL_ARRAYSIZE(PostProcessAttachments);
+    PostProcessSubpass.pColorAttachments = PostProcessAttachments;
     PostProcessSubpass.pDepthStencilAttachment = &DepthStencilAttachmentReference;
 
     VkSubpassDependency PostProcessDependency = {0};
@@ -97,7 +100,7 @@ VOID VlkCreateMainRenderPass(VOID)
                             SubpassDependencies, PURPL_ARRAYSIZE(SubpassDependencies));
 }
 
-VOID VlkCreateRendetTargets(VOID)
+VOID VlkCreateRenderTargets(VOID)
 {
     LogDebug("Creating color image");
     VlkCreateImage(RdrGetWidth(), RdrGetHeight(), VlkData.SurfaceFormat.format,

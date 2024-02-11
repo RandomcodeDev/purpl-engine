@@ -95,7 +95,7 @@ static VOID Initialize(VOID)
     VlkCreateAllocator();
     VlkCreateSwapChain();
     VlkCreateMainRenderPass();
-    VlkCreateRendetTargets();
+    VlkCreateRenderTargets();
     VlkCreateScreenFramebuffers();
 
     VlkData.FrameIndex = 0;
@@ -125,7 +125,7 @@ static VOID HandleResize(VOID)
     VlkDestroyRenderTargets();
     VlkDestroySwapChain();
     VlkCreateSwapChain();
-    VlkCreateRendetTargets();
+    VlkCreateRenderTargets();
     VlkCreateMainRenderPass();
     VlkCreateScreenFramebuffers();
 
@@ -300,7 +300,7 @@ static VOID Shutdown(VOID)
 
     VlkDestroyScreenFramebuffers();
 
-    VlkDestroyImage(&VlkData.DepthTarget);
+    VlkDestroyRenderTargets();
 
     if (VlkData.MainRenderPass)
     {

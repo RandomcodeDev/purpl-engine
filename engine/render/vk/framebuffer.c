@@ -20,8 +20,8 @@ VOID VlkCreateScreenFramebuffers(VOID)
 
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
-        Attachments[0] = VlkData.SwapChainImageViews[i];
-        Attachments[1] = VlkData.ColorTarget.View;
+        Attachments[0] = VlkData.ColorTarget.View;
+        Attachments[1] = VlkData.SwapChainImageViews[i];
         VULKAN_CHECK(vkCreateFramebuffer(VlkData.Device, &FramebufferCreateInformation, VlkGetAllocationCallbacks(),
                                          &VlkData.ScreenFramebuffers[i]));
     }

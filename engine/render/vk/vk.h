@@ -432,10 +432,10 @@ extern VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachment
 extern VOID VlkCreateMainRenderPass(VOID);
 
 /// @brief Create render targets
-extern VOID VlkCreateRendetTargets(VOID);
+extern VOID VlkCreateRenderTargets(VOID);
 
 /// @brief Destroy render targets
-extern VOID VlkDestroyRendetTargets(VOID);
+extern VOID VlkDestroyRenderTargets(VOID);
 
 /// @brief Create framebuffers for the swap chain images
 extern VOID VlkCreateScreenFramebuffers(VOID);

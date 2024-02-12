@@ -22,9 +22,9 @@ Abstract:
 static GLFWwindow *Window;
 
 #ifdef PURPL_DEBUG
-static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING " commit " PURPL_BRANCH "-" PURPL_COMMIT;
 #else
-static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
+static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING;
 #endif
 INT WindowWidth;
 INT WindowHeight;
@@ -88,7 +88,7 @@ VOID VidInitialize(VOID)
 
     WindowWidth = 1280;
     WindowHeight = 720;
-    LogInfo("Creating %ux%u window titled " GAME_NAME, WindowWidth, WindowHeight);
+    LogInfo("Creating %ux%u window titled " PURPL_NAME, WindowWidth, WindowHeight);
 
     Window = glfwCreateWindow(WindowWidth, WindowHeight, WindowTitle, NULL, NULL);
     if (!Window)

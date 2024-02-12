@@ -1,4 +1,8 @@
-add_rules("mode.debug", "mode.release")
+add_rules(
+    "mode.debug",
+    "mode.release",
+    "plugin.vsxmake.autoupdate"
+)
 
 set_project("purpl-engine-tools")
 

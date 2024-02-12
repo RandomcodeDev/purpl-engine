@@ -77,7 +77,7 @@ VOID DiscordInitialize(VOID)
     EventHandlers.ready = Ready;
     EventHandlers.disconnected = Disconnected;
     EventHandlers.errored = Disconnected;
-    Discord_Initialize(PURPL_STRINGIZE_EXPAND(GAME_DISCORD_APP_ID), &EventHandlers, TRUE, NULL);
+    Discord_Initialize(PURPL_STRINGIZE_EXPAND(PURPL_DISCORD_APP_ID), &EventHandlers, TRUE, NULL);
 }
 
 VOID DiscordUpdate(VOID)
@@ -88,13 +88,7 @@ VOID DiscordUpdate(VOID)
 #else
     Presence.state = CmnFormatString("Playing %s on %s", GetGameString(), PlatGetDescription());
 #endif
-    Presence.details = CmnFormatString("v%s commit %s-%s, %s build", GAME_VERSION_STRING, GAME_COMMIT, GAME_BRANCH,
-#ifdef PURPL_DEBUG
-                                       "debug"
-#else
-                                       "release"
-#endif
-    );
+    Presence.details = CmnFormatString("v%s commit %s-%s, " PURPL_BUILD_TYPE " build", PURPL_VERSION_STRING, PURPL_COMMIT, PURPL_BRANCH);
     Discord_UpdatePresence(&Presence);
 
     CmnFree(Presence.state);

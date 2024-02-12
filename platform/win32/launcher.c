@@ -328,7 +328,7 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
         Error = GetLastError();
         LogError("Failed to initialize DbgHelp: %d (0x%X)", Error, Error);
     }
-    if (!SymLoadModuleEx(GetCurrentProcess(), NULL, GAME_EXECUTABLE_NAME ".exe", NULL, (UINT64)GetModuleHandleA(NULL),
+    if (!SymLoadModuleEx(GetCurrentProcess(), NULL, PURPL_EXECUTABLE_NAME ".exe", NULL, (UINT64)GetModuleHandleA(NULL),
                          0, NULL, 0))
     {
         Error = GetLastError();

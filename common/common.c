@@ -19,7 +19,6 @@ VOID CmnInitialize(VOID)
 
     mi_option_set(mi_option_reserve_huge_os_pages, 2);
     mi_option_set(mi_option_show_errors, TRUE);
-    mi_option_set(mi_option_show_stats, TRUE);
 #else
     LogInfo("Using libc allocator");
 #endif

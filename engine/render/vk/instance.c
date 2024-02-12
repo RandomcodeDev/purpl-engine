@@ -36,9 +36,9 @@ VOID VlkCreateInstance(VOID)
 
     VkApplicationInfo ApplicationInformation = {0};
     ApplicationInformation.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    ApplicationInformation.pApplicationName = GAME_NAME;
+    ApplicationInformation.pApplicationName = PURPL_NAME;
     ApplicationInformation.pEngineName = "Purpl Engine";
-    ApplicationInformation.engineVersion = GAME_VERSION;
+    ApplicationInformation.engineVersion = PURPL_VERSION;
     ApplicationInformation.apiVersion = VK_API_VERSION_1_3;
     CreateInformation.pApplicationInfo = &ApplicationInformation;
 

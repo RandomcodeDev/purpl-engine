@@ -45,7 +45,7 @@ Return Value:
 
     LogInfo("Initializing engine");
 
-    EngineDataDirectory = CmnFormatString("%s" GAME_EXECUTABLE_NAME "/", PlatGetUserDataDirectory());
+    EngineDataDirectory = CmnFormatString("%s" PURPL_EXECUTABLE_NAME "/", PlatGetUserDataDirectory());
 
     LogInfo("Ensuring engine data directory %s exists", EngineDataDirectory);
     if (!FsCreateDirectory(EngineDataDirectory))

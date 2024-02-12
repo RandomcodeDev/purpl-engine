@@ -128,7 +128,8 @@ target("render")
 
 target("purpl")
     set_kind("binary")
-    add_headerfiles("purpl/*.h")
+    add_headerfiles("assets/*", "assets/shaders/*", "purpl/*.h") -- header files in this case are just anything
+                                                                 -- that doesn't participate in the build
     add_files("purpl/*.c")
     add_deps("common", "engine", "platform", "util")
     set_default(true)

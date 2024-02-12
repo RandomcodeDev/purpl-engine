@@ -439,7 +439,7 @@ Return Value:
     MESHTOOL_MODE Mode;
     INT Result;
 
-    printf("Purpl Mesh Tool v" GAME_VERSION_STRING " (supports mesh format v" PURPL_STRINGIZE_EXPAND(MESH_FORMAT_VERSION) ") on %s\n\n", PlatGetDescription());
+    printf("Purpl Mesh Tool v" PURPL_VERSION_STRING " (supports mesh format v" PURPL_STRINGIZE_EXPAND(MESH_FORMAT_VERSION) ") on %s\n\n", PlatGetDescription());
 
     CmnInitialize();
 

@@ -252,7 +252,7 @@ Return Value:
     MESHTOOL_MODE Mode;
     INT Result;
 
-    printf("Purpl Texture Tool v" GAME_VERSION_STRING
+    printf("Purpl Texture Tool v" PURPL_VERSION_STRING
            " (supports texture format v" PURPL_STRINGIZE_EXPAND(
                TEXTURE_FORMAT_VERSION) ") on %s\n\n",
            PlatGetDescription());

@@ -31,7 +31,7 @@ function fix_target(target)
     end
 end
 
-default_mimalloc = not is_plat("switch")
+use_mimalloc = not is_plat("switch")
 
 function setup_shared(root, directx, vulkan)
     set_version("0.0.0", {build = "%Y%m%d%H%M"})
@@ -132,9 +132,10 @@ function setup_shared(root, directx, vulkan)
         add_files(path.join(root, "deps/cjson/cJSON.c"))
         on_load(fix_target)
 
-    if default_mimalloc then
+    if use_mimalloc then
         target("mimalloc")
             set_kind("static")
+
             add_files(
                 path.join(root, "deps/mimalloc/src/alloc.c"),
                 path.join(root, "deps/mimalloc/src/alloc-aligned.c"),
@@ -152,6 +153,7 @@ function setup_shared(root, directx, vulkan)
                 path.join(root, "deps/mimalloc/src/stats.c"),
                 path.join(root, "deps/mimalloc/src/prim/prim.c")
             )
+
             if is_plat("windows", "gdk", "gdkx") then
                 add_files(path.join(root, "deps/mimalloc/src/prim/windows/*.c"))
             elseif is_plat("macos") then
@@ -159,6 +161,11 @@ function setup_shared(root, directx, vulkan)
             else
                 add_files(path.join(root, "deps/mimalloc/src/prim/unix/*.c"))
             end
+
+            if is_mode("debug") then
+                add_defines("MI_DEBUG=3", "MI_SECURE=4")
+            end
+
             add_forceincludes("stdio.h")
             on_load(fix_target)
     end
@@ -182,18 +189,16 @@ function setup_shared(root, directx, vulkan)
         set_description("Enable verbose logging")
         add_defines("PURPL_VERBOSE")
 
-    option("mimalloc")
-        set_default(default_mimalloc)
-        set_description("Enable the use of mimalloc")
-        add_defines("PURPL_USE_MIMALLOC")
-        add_links("mimalloc")
-
     target("common")
         set_kind("static")
+
         set_configdir("$(buildir)/config")
+        set_configvar("USE_MIMALLOC", use_mimalloc and 1 or 0)
         add_configfiles(path.join(root, "purpl/config.h.in"))
-        add_headerfiles(path.join(root, "common/*.h"))
+        
+        add_headerfiles(path.join(root, "common/*.h"), path.join(root, "purpl/config.h.in"))
         add_files(path.join(root, "common/*.c"))
+        
         add_deps("platform", "stb")
         on_load(fix_target)
 
@@ -226,6 +231,11 @@ function setup_shared(root, directx, vulkan)
             )
             add_switch_links()
         end
+
+        if use_mimalloc then
+            add_deps("mimalloc")
+        end
+
         on_load(fix_target)
 
     target("util")

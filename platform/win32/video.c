@@ -32,9 +32,9 @@ static HWND Window = NULL;
 static CHAR WindowClassName[] = "PurplWindow";
 
 #ifdef PURPL_DEBUG
-static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING " commit " GAME_BRANCH "-" GAME_COMMIT;
+static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING " commit " PURPL_BRANCH "-" PURPL_COMMIT;
 #else
-static CHAR WindowTitle[128] = GAME_NAME " v" GAME_VERSION_STRING;
+static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING;
 #endif
 static INT32 WindowWidth;
 static INT32 WindowHeight;

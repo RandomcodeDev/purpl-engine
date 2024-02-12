@@ -86,10 +86,10 @@ VOID VlkCreateMainRenderPass(VOID)
     VkSubpassDependency PostProcessDependency = {0};
     PostProcessDependency.srcSubpass = 0;
     PostProcessDependency.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    PostProcessDependency.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    PostProcessDependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     PostProcessDependency.dstSubpass = 1;
     PostProcessDependency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    PostProcessDependency.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    PostProcessDependency.dstStageMask = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
 
     VkAttachmentDescription Attachments[] = {MainColorAttachment, PostProcessColorAttachment, DepthStencilAttachment};
     VkSubpassDescription Subpasses[] = {MainSubpass, PostProcessSubpass};

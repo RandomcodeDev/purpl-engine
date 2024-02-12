@@ -43,7 +43,7 @@ VOID VlkCreateMainRenderPass(VOID)
     VkAttachmentDescription PostProcessColorAttachment = {0};
     PostProcessColorAttachment.format = VlkData.SurfaceFormat.format;
     PostProcessColorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    PostProcessColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+    PostProcessColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     PostProcessColorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     PostProcessColorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     PostProcessColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -52,7 +52,7 @@ VOID VlkCreateMainRenderPass(VOID)
 
     VkAttachmentReference PostProcessColorAttachmentReference = {0};
     PostProcessColorAttachmentReference.attachment = 1;
-    PostProcessColorAttachmentReference.layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    PostProcessColorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkAttachmentDescription DepthStencilAttachment = {0};
     DepthStencilAttachment.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
@@ -83,13 +83,21 @@ VOID VlkCreateMainRenderPass(VOID)
     PostProcessSubpass.pColorAttachments = PostProcessAttachments;
     PostProcessSubpass.pDepthStencilAttachment = &DepthStencilAttachmentReference;
 
+    VkSubpassDependency MainDependency = {0};
+    MainDependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    MainDependency.srcAccessMask = 0;
+    MainDependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    MainDependency.dstSubpass = 0;
+    MainDependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    MainDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
     VkSubpassDependency PostProcessDependency = {0};
     PostProcessDependency.srcSubpass = 0;
-    PostProcessDependency.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    PostProcessDependency.srcAccessMask = 0;
     PostProcessDependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     PostProcessDependency.dstSubpass = 1;
-    PostProcessDependency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
     PostProcessDependency.dstStageMask = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+    PostProcessDependency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
     VkAttachmentDescription Attachments[] = {MainColorAttachment, PostProcessColorAttachment, DepthStencilAttachment};
     VkSubpassDescription Subpasses[] = {MainSubpass, PostProcessSubpass};

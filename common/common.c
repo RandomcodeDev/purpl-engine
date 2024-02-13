@@ -65,8 +65,7 @@ VOID CmnShutdown(VOID)
 #endif
 }
 
-PCSTR
-CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
+PCSTR CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
 {
     va_list Arguments;
     PCSTR Formatted;
@@ -78,8 +77,7 @@ CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)
     return Formatted;
 }
 
-PCSTR
-CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments)
+PCSTR CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments)
 {
     static CHAR Buffer[1024];
     va_list _Arguments;
@@ -93,8 +91,7 @@ CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_lis
     return Buffer;
 }
 
-PCHAR
-CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments)
+PCHAR CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments)
 {
     PCHAR Buffer;
     INT Size;

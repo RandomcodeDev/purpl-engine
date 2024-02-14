@@ -92,7 +92,7 @@ if directx then
         set_kind("static")
         add_headerfiles("engine/render/dx12/*.h")
         add_files(
-            "deps/DirectX-Headers/src/*.cpp",
+            "deps/DirectX-Headers/src/dxguids.cpp",
             "deps/D3D12MemoryAllocator/src/Common.cpp",
             "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp",
             --"engine/render/dx12/*.c",
@@ -128,8 +128,13 @@ target("render")
 
 target("purpl")
     set_kind("binary")
-    add_headerfiles("assets/*", "assets/shaders/*", "purpl/*.h") -- header files in this case are just anything
-                                                                 -- that doesn't participate in the build
+    -- header files in this case are just anything that doesn't participate in the build
+    add_headerfiles(
+        "assets/*",
+        "assets/shaders/*",
+        "purpl/*.h",
+        "shared.lua"
+    )
     add_files("purpl/*.c")
     add_deps("common", "engine", "platform", "util")
     set_default(true)

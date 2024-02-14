@@ -24,7 +24,7 @@ function fix_target(target)
         end
     elseif not is_plat("windows") then
         -- Of course POSIX or GNU or whoever gets to have "libutil.a" be a reserved name
-        -- Other systems don't need this, since they have less common default library names
+        -- Other systems don't need this, since they don't pull shit like this
         if target:kind() == "static" then
             target:set("suffixname", "-purpl")
         end
@@ -123,7 +123,8 @@ function setup_shared(root, directx, vulkan)
         -- Also, CmnFree sets the variable to NULL to reduce misuse, and uses a
         -- block to do that, but having a semi after looks normal, even if it's
         -- technically superfluous
-        add_cxflags("-Wno-gnu-line-marker", "-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", "-Wno-extra-semi-stmt", {force = true})
+        add_cxflags("-Wno-gnu-line-marker", "-Wno-extra-semi-stmt", {force = true})
+        add_cxxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", {force = true})
     end
 
     target("cjson")

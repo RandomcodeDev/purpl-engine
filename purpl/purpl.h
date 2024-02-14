@@ -32,26 +32,26 @@
 #include <wchar.h>
 
 #ifdef PURPL_WIN32
-#if __STDC_VERSION__ <= 201100l
+#if !defined(__clang__) && __STDC_VERSION__ <= 201100l
 #define _Noreturn __declspec(noreturn)
 #define _Thread_local __declspec(thread)
 #endif
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h>
 
 #ifdef __cplusplus
 #include <comdef.h>
 #endif
 #include <ShlObj.h>
 #include <shellapi.h>
-#include <uxtheme.h>
+#include <Uxtheme.h>
 #include <windowsx.h>
 
 #ifndef PURPL_GDKX
-#include <dbghelp.h>
-#include <psapi.h>
-#include <tlhelp32.h>
+#include <DbgHelp.h>
+#include <Psapi.h>
+#include <TlHelp32.h>
 #endif
 #endif
 

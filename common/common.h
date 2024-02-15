@@ -13,7 +13,7 @@
 #include "log.h"
 
 //
-// Assert that a condition is true or kill the program
+// Quit if a condition is false
 //
 
 #define PURPL_ASSERT(Condition)                                                \
@@ -52,7 +52,10 @@
     ((((Size) / (Alignment)) + 1) * (Alignment))
 
 /// @brief Initialize the common library
-extern VOID CmnInitialize(VOID);
+///
+/// @param[in] Arguments The command line arguments from PurplMain
+/// @param[in] ArgumentCount The number of command line arguments
+extern VOID CmnInitialize(_In_opt_ PCHAR* Arguments, _In_opt_ UINT ArgumentCount);
 
 /// @brief Shut down the common library
 extern VOID CmnShutdown(VOID);

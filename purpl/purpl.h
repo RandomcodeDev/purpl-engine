@@ -120,7 +120,7 @@ BEGIN_EXTERN_C
 /// @param Arguments The command line arguments
 ///
 /// @return 0 on success, otherwise does not return
-extern INT PurplMain(_In_ INT ArgumentCount, _In_ PCHAR *Arguments);
+extern INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount);
 
 #endif
 

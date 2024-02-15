@@ -8,9 +8,12 @@
 #include "alloc.h"
 #include "filesystem.h"
 
-VOID CmnInitialize(VOID)
+VOID CmnInitialize(_In_opt_ PCHAR* Arguments, _In_opt_ UINT ArgumentCount)
 {
     LOG_LEVEL Level;
+
+    UNREFERENCED_PARAMETER(ArgumentCount);
+    UNREFERENCED_PARAMETER(Arguments);
 
     PlatInitialize();
 

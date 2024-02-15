@@ -336,7 +336,7 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
     }
 #endif
 
-    Result = PurplMain(ArgumentCount, Arguments);
+    Result = PurplMain(Arguments, ArgumentCount);
 
     // Check if the parent process is a console, and pause if it isn't. No
     // error checking because the program is done anyway.

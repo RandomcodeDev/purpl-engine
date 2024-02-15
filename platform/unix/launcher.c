@@ -44,7 +44,7 @@ Return Value:
 
     InitializeMainThread((PFN_THREAD_START)main);
 
-    Result = PurplMain(argc, argv);
+    Result = PurplMain(argv, argc);
 
     return Result;
 }

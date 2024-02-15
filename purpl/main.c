@@ -10,12 +10,9 @@
 
 #include "engine/engine.h"
 
-INT PurplMain(_In_ INT ArgumentCount, _In_ PCHAR *Arguments)
+INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 {
-    UNREFERENCED_PARAMETER(ArgumentCount);
-    UNREFERENCED_PARAMETER(Arguments);
-
-    CmnInitialize();
+    CmnInitialize(Arguments, ArgumentCount);
     EngInitialize();
 
     EngMainLoop();

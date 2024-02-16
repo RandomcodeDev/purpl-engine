@@ -37,6 +37,7 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     LogInfo("Initializing renderer");
     RdrSetScale(1.0f);
 
+    // TODO: make a setting for this
 //#ifdef PURPL_DIRECTX
 //    RenderApi = RenderApiDirect3D12;
 #if defined(PURPL_VULKAN)

@@ -44,11 +44,14 @@ if discord then
             add_files("deps/discord-rpc/src/*_linux.cpp", "deps/discord-rpc/src/*_unix.cpp")
         end
 
+        set_warnings("none")
         on_load(fix_target)
     target_end()
 
     add_defines("PURPL_DISCORD")
     add_includedirs("deps/discord-rpc/include", "deps/rapidjson/include")
+
+    set_group("Engine")
 end
 
 target("flecs")
@@ -56,6 +59,8 @@ target("flecs")
     add_defines("FLECS_STATIC")
     add_headerfiles("deps/flecs/flecs.h")
     add_files("deps/flecs/flecs.c")
+    set_warnings("none")
+    set_group("External")
 
     on_load(fix_target)
 
@@ -72,6 +77,8 @@ if vulkan then
         if is_plat("switch") then
             add_switch_vulkan_links()
         end
+
+        set_group("Engine/Render System")
 
         on_load(fix_target)
 end
@@ -94,6 +101,8 @@ if directx then
             add_links("d3d12_xs.lib", "dxgi_xs.lib")
         end
 
+        set_group("Engine/Render System")
+
         on_load(fix_target)
 end
 
@@ -113,6 +122,8 @@ target("render")
         add_deps("render-vk")
     end
 
+    set_group("Engine/Render System")
+
     on_load(fix_target)
 
 target("engine")
@@ -125,6 +136,8 @@ target("engine")
         add_files("engine/discord/*.c")
         add_deps("discord")
     end
+
+    set_group("Engine")
 
     on_load(fix_target)
 
@@ -159,6 +172,8 @@ target("purpl")
         add_files("../platform/switch/launcher.cpp")
         after_build(switch_postbuild)
     end
+
+    set_group("")
 
     on_load(fix_target)
     before_build(function (target)

@@ -53,6 +53,9 @@
 #include <Psapi.h>
 #include <TlHelp32.h>
 #endif
+
+#define strcasecmp _stricmp
+#define fseek64 _fseeki64
 #endif
 
 #ifdef PURPL_UNIX
@@ -109,7 +112,9 @@
 #ifndef _Noreturn
 #define _Noreturn [[noreturn]]
 #endif
+#ifndef _Thread_local
 #define _Thread_local thread_local
+#endif
 #endif
 
 BEGIN_EXTERN_C

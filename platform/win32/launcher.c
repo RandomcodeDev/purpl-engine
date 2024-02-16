@@ -400,9 +400,9 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
                 {
                     // Check bitness, offset of Subsystem is different
                     if ((ParentHeaders->FileHeader.Machine & IMAGE_FILE_32BIT_MACHINE &&
-                         (PIMAGE_NT_HEADERS32)ParentHeaders->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI) ||
+                         ((PIMAGE_NT_HEADERS32)ParentHeaders)->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI) ||
                         !(ParentHeaders->FileHeader.Machine & IMAGE_FILE_32BIT_MACHINE) &&
-                            (PIMAGE_NT_HEADERS64)ParentHeaders->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI)
+                            ((PIMAGE_NT_HEADERS64)ParentHeaders)->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI)
                     {
                         printf("Engine (PID %llu, parent PID %llu) returned %d.\n"
                                "Press any key to exit...",

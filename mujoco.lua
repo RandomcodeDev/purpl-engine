@@ -5,6 +5,9 @@ target("ccd")
     add_headerfiles("deps/ccd/*.h", "deps/external/ccd/src/*.h", "deps/external/ccd/src/ccd/*.h")
     add_files("deps/external/ccd/src/*.c")
     add_includedirs("deps/external/ccd/src")
+    
+    set_warnings("none")
+    set_group("External")
 
     on_load(fix_target)
 
@@ -12,6 +15,9 @@ target("qhull")
     set_kind("static")
     add_headerfiles("deps/external/qhull/src/libqhull_r/*.h")
     add_files("deps/external/qhull/src/libqhull_r/*.c")
+    
+    set_warnings("none")
+    set_group("External")
 
     on_load(fix_target)
 
@@ -21,6 +27,9 @@ target("sdflib")
     add_files("deps/external/sdflib/src/sdf/*.cpp")
     add_includedirs("deps/external/sdflib/include", "deps/external/sdflib/libs/InteractiveComputerGraphics", "deps/external/sdflib/src")
     add_packages("cereal", "glm", "spdlog")
+    
+    set_warnings("none")
+    set_group("External")
 
     on_load(fix_target)
 
@@ -31,5 +40,8 @@ target("mujoco")
     add_includedirs("deps/external/ccd/src", "deps/external/qhull/src/libqhull_r", "deps/external/sdflib/include", "deps/mujoco/src")
     add_deps("ccd", "qhull", "sdflib")
     add_defines("MJ_STATIC=1")
+    
+    set_warnings("none")
+    set_group("External")
 
     on_load(fix_target)

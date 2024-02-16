@@ -32,6 +32,8 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 
 VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
+    UNREFERENCED_PARAMETER(Iterator);
+
     LogInfo("Initializing renderer");
     RdrSetScale(1.0f);
 
@@ -64,6 +66,8 @@ ecs_entity_t ecs_id(RdrInitialize);
 
 VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 {
+    UNREFERENCED_PARAMETER(Iterator);
+
     if (Backend.BeginFrame)
     {
         Backend.BeginFrame(EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight);
@@ -73,6 +77,8 @@ ecs_entity_t ecs_id(RdrBeginFrame);
 
 VOID RdrEndFrame(_In_ ecs_iter_t *Iterator)
 {
+    UNREFERENCED_PARAMETER(Iterator);
+
     if (Backend.EndFrame)
     {
         Backend.EndFrame();
@@ -102,36 +108,32 @@ VOID RenderImport(_In_ ecs_world_t *World)
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 
-FLOAT
-RdrGetScale(VOID)
+FLOAT RdrGetScale(VOID)
 {
     return Scale;
 }
 
-FLOAT
-RdrSetScale(FLOAT NewScale)
+FLOAT RdrSetScale(FLOAT NewScale)
 {
     FLOAT OldScale = Scale;
     Scale = NewScale;
     return OldScale;
 }
 
-UINT32
-RdrGetWidth(VOID)
+UINT32 RdrGetWidth(VOID)
 {
     UINT32 Width;
 
     VidGetSize(&Width, NULL);
 
-    return Width * Scale;
+    return (UINT32)(Width * Scale);
 }
 
-UINT32
-RdrGetHeight(VOID)
+UINT32 RdrGetHeight(VOID)
 {
     UINT32 Height;
 
     VidGetSize(NULL, &Height);
 
-    return Height * Scale;
+    return (UINT32)(Height * Scale);
 }

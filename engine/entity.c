@@ -61,6 +61,8 @@ VOID EcsInitialize(VOID)
     ecs_os_api_t OsApi = ecs_os_api;
     OsApi.log_ = EcsLog;
 #ifdef PURPL_USE_MIMALLOC
+    // Technically parameters differ, but every architecture where size_t isn't 32-bit uses registers, which means it
+    // should be OK (and it should be easy enough to figure out whether this is causing problems if not)
     OsApi.malloc_ = mi_malloc;
     OsApi.calloc_ = mi_calloc;
     OsApi.realloc_ = mi_realloc;
@@ -96,7 +98,7 @@ ecs_entity_t EcsCreateEntity(_In_opt_ PCSTR Name)
 
 extern VOID CameraImport(_In_ ecs_world_t *World);
 #ifdef PURPL_DISCORD
-extern VOID DiscordImport(_In_ ecs_world_t* World);
+extern VOID DiscordImport(_In_ ecs_world_t *World);
 #endif
 extern VOID MathImport(_In_ ecs_world_t *World);
 extern VOID RenderImport(_In_ ecs_world_t *World);

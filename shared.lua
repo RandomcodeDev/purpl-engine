@@ -42,6 +42,7 @@ function setup_shared(root, directx, vulkan)
     add_defines("_GNU_SOURCE")
 
     set_languages("gnu11", "cxx23")
+    set_exceptions("cxx")
 
     if is_plat("windows") then
         add_defines("PURPL_WIN32")
@@ -111,9 +112,31 @@ function setup_shared(root, directx, vulkan)
     end
 
     if is_plat("windows", "gdk", "gdkx") then
-        -- These are just noise, like alignment and stuff
-        add_cxflags("-wd4820", "-wd4255", "-wd4464", "-wd4668", "-wd5045", {force = true})
-
+        add_cxflags("-Qspectre")
+        -- all of these are either external or inconsequential
+        add_cxflags(
+            "-wd4820", -- padded
+            "-wd4365", -- signed/unsigned mismatch (generally doesn't matter)
+            "-wd4255", -- () to (void)
+            "-wd4244", -- int to float
+            "-wd4464", -- relative include path has ./.., this is fine because the build is setup right
+            "-wd4061", -- enum not explicitly handled by a case label
+            "-wd4062",
+            "-wd4324", -- padded for alignment specifier
+            "-wd4005", -- macro redefinition
+            "-wd4668", -- x is not defined as a preprocessor macro, replacing with 0 for #if
+            "-wd4113", -- Spectre mitigation
+            "-wd5045",
+            "-wd4191", -- casting function pointer (used for InitializeMainThread, it doesn't call the pointer)
+            "-wd5029", -- nonstandard extension: alignment attributes don't apply to functions
+        {force = true})
+        add_cxxflags(
+            "-wd5204", -- virtual function something something
+            "-wd5027", -- move asignment operator was defined as deleted
+            "-wd4626", -- asignment operator was defined as deleted
+            "-wd4623", -- default constructor was defined as deleted
+            "-wd4625", -- copy constructor was defined as deleted
+        {force = true})
         add_linkdirs(
             path.join(os.getenv("GRDKLatest"), "GameKit/Lib/amd64")
         )
@@ -132,6 +155,8 @@ function setup_shared(root, directx, vulkan)
         set_kind("static")
         add_headerfiles(path.join(root, "deps/cjson/cJSON.h"))
         add_files(path.join(root, "deps/cjson/cJSON.c"))
+        set_warnings("none")
+        set_group("External")
         on_load(fix_target)
 
     if use_mimalloc then
@@ -168,6 +193,10 @@ function setup_shared(root, directx, vulkan)
                 add_defines("MI_DEBUG=3", "MI_SECURE=4")
             end
 
+            set_warnings("none")
+
+            set_group("External")
+
             add_forceincludes("stdio.h")
             on_load(fix_target)
     end
@@ -175,6 +204,8 @@ function setup_shared(root, directx, vulkan)
     target("stb")
         set_kind("static")
         add_files(path.join(root, "deps/stb.c"))
+        set_warnings("none")
+        set_group("External")
         on_load(fix_target)
 
     target("zstd")
@@ -184,6 +215,8 @@ function setup_shared(root, directx, vulkan)
         if is_plat("linux", "freebsd") then
             add_files(path.join(root, "deps/zstd/lib/**/*.S"))
         end
+        set_warnings("none")
+        set_group("External")
         on_load(fix_target)
 
     option("verbose")
@@ -200,6 +233,8 @@ function setup_shared(root, directx, vulkan)
         
         add_headerfiles(path.join(root, "common/*.h"), path.join(root, "purpl/*.h*"), path.join(root, "shared.lua"))
         add_files(path.join(root, "common/*.c"))
+
+        set_group("Support")
         
         add_deps("platform", "stb")
         on_load(fix_target)
@@ -238,6 +273,8 @@ function setup_shared(root, directx, vulkan)
             add_deps("mimalloc")
         end
 
+        set_group("Support")
+
         on_load(fix_target)
 
     target("util")
@@ -245,5 +282,6 @@ function setup_shared(root, directx, vulkan)
         add_headerfiles(path.join(root, "util/*.h"))
         add_files(path.join(root, "util/*.c"))
         add_deps("cjson", "common", "zstd")
+        set_group("Support")
         on_load(fix_target)
 end

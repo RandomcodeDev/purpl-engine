@@ -88,7 +88,7 @@ VOID PlatShutdown(VOID)
     LogInfo("Windows deinitialization succeeded");
 }
 
-PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
+PCSTR PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip, _In_ UINT64 MaxFrames)
 {
     static CHAR Buffer[UINT16_MAX];
     PVOID BackTrace[32] = {0};
@@ -98,13 +98,13 @@ PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
     BYTE SymbolBuffer[sizeof(SYMBOL_INFOW) + 31 * sizeof(WCHAR)];
     IMAGEHLP_MODULEW64 ModuleInfo = {0};
 #endif
-    SIZE_T Offset;
+    UINT64 Offset;
     INT32 Written;
     PVOID ModuleAddress = NULL;
     // PVOID ModuleHandle = NULL;
     INT i;
     DWORD Error;
-    SIZE_T Count;
+    UINT64 Count;
 
     if (MaxFrames > 0)
     {
@@ -324,7 +324,7 @@ BOOLEAN PlatCreateDirectory(_In_ PCSTR Path)
 
     CHAR TempPath[256];
     PCHAR p = NULL;
-    SIZE_T Length;
+    UINT64 Length;
 
     snprintf(TempPath, sizeof(TempPath), "%s", Path);
     Length = strlen(TempPath);
@@ -382,4 +382,30 @@ PlatFixPath(_In_ PCSTR Path)
     }
 
     return FixedPath;
+}
+
+UINT64 PlatGetFileSize(_In_ PCSTR Path)
+{
+    HANDLE File;
+    LARGE_INTEGER Size = {0};
+    OFSTRUCT OpenStruct = {0};
+    DWORD Error;
+
+    OpenStruct.cBytes = sizeof(OFSTRUCT);
+    File = OpenFile(Path, &OpenStruct, OF_READ);
+    if (!File)
+    {
+        Error = OpenStruct.nErrCode;
+        LogWarning("Failed to open file %s to get its size: error %d (0x%X)", Error, Error);
+        return 0;
+    }
+
+    if (!GetFileSizeEx(File, &Size))
+    {
+        Error = GetLastError();
+        LogWarning("Failed to get size of file %s: error %d (0x%X)", Error, Error);
+        return 0;
+    }
+
+    return (UINT64)Size.QuadPart;
 }

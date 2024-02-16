@@ -19,7 +19,7 @@
 /// @param[in] Path The path to the file
 /// 
 /// @return The size of the file in bytes
-extern SIZE_T FsGetFileSize(_In_ PCSTR Path);
+extern UINT64 FsGetFileSize(_In_ PCSTR Path);
 
 /// @brief Creates a directory
 /// 
@@ -41,8 +41,8 @@ FsCreateDirectory(_In_ PCSTR Path);
 /// @param[in] Extra      Number of extra bytes to allocate.
 ///
 /// @return A pointer to a buffer containing the file's contents, or NULL.
-extern PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T Offset, _In_ SIZE_T MaxAmount,
-                        _Out_ PSIZE_T ReadAmount, _In_ SIZE_T Extra);
+extern PVOID FsReadFile(_In_ PCSTR Path, _In_ UINT64 Offset, _In_ UINT64 MaxAmount,
+                        _Out_ PUINT64 ReadAmount, _In_ UINT64 Extra);
 
 /// @brief Write to a file
 /// 
@@ -53,4 +53,4 @@ extern PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T Offset, _In_ SIZE_T MaxAmou
 /// 
 /// @return Whether the write succeded
 extern BOOLEAN FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data,
-                           _In_ SIZE_T Size, _In_ BOOLEAN Append);
+                           _In_ UINT64 Size, _In_ BOOLEAN Append);

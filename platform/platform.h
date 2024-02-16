@@ -38,8 +38,8 @@ extern VOID PlatShutdown(VOID);
 ///
 /// @return The address of a static buffer containing a string with
 ///         the formatted stack trace.
-extern PCSTR PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip,
-                                       _In_ SIZE_T MaxFrames);
+extern PCSTR PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip,
+                                       _In_ UINT64 MaxFrames);
 
 /// @brief Displays an error (and potentially gives the option to trigger a breakpoint), and exits the process
 ///
@@ -86,3 +86,10 @@ extern VOID PlatPrint(_In_ PCSTR Text);
 /// 
 /// @return The fixed path in a new buffer
 extern PCHAR PlatFixPath(_In_ PCSTR Path);
+
+/// @brief Get a file's size (this exists because it's probably more performant than using fopen/fseek/ftell)
+///
+/// @param[in] Path The path to the file to get the size of
+///
+/// @return The size of the file (returns zero if it doesn't exist)
+extern UINT64 PlatGetFileSize(_In_ PCSTR Path);

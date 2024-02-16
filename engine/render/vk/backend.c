@@ -193,7 +193,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
     ClearValues[0].color.float32[2] = 0.0f;
     ClearValues[0].color.float32[3] = 1.0f;
 
-    ClearValues[1].color.float32[0] = 0.0f;
+    ClearValues[1].color.float32[0] = 1.0f;
     ClearValues[1].color.float32[1] = 0.0f;
     ClearValues[1].color.float32[2] = 0.0f;
     ClearValues[1].color.float32[3] = 0.0f;

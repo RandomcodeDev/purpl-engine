@@ -14,27 +14,9 @@ Abstract:
 
 #include "filesystem.h"
 
-SIZE_T FsGetFileSize(_In_ PCSTR Path)
+UINT64 FsGetFileSize(_In_ PCSTR Path)
 {
-    FILE *File;
-    SIZE_T Size;
-    PCSTR FixedPath;
-
-    FixedPath = PlatFixPath(Path);
-    LogTrace("Getting size of file %s (%s)", Path, FixedPath);
-    File = fopen(FixedPath, "rb");
-    if (!File)
-    {
-        LogWarning("Failed to open file %s (%s): %s", Path, FixedPath, strerror(errno));
-        return 0;
-    }
-
-    fseek(File, 0, SEEK_END);
-    Size = ftell(File);
-
-    CmnFree(FixedPath);
-    fclose(File);
-    return Size;
+    return PlatGetFileSize(Path);
 }
 
 BOOLEAN FsCreateDirectory(_In_ PCSTR Path)
@@ -43,13 +25,13 @@ BOOLEAN FsCreateDirectory(_In_ PCSTR Path)
     return PlatCreateDirectory(Path);
 }
 
-PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T Offset, _In_ SIZE_T MaxAmount, _Out_ PSIZE_T ReadAmount,
-                 _In_ SIZE_T Extra)
+PVOID FsReadFile(_In_ PCSTR Path, _In_ UINT64 Offset, _In_ UINT64 MaxAmount, _Out_ PUINT64 ReadAmount,
+                 _In_ UINT64 Extra)
 {
     FILE *File;
     PVOID Buffer;
-    SIZE_T Size;
-    SIZE_T Read;
+    UINT64 Size;
+    UINT64 Read;
     PCSTR FixedPath;
 
     if (!ReadAmount)
@@ -100,7 +82,7 @@ PVOID FsReadFile(_In_ PCSTR Path, _In_ SIZE_T Offset, _In_ SIZE_T MaxAmount, _Ou
     return Buffer;
 }
 
-BOOLEAN FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data, _In_ SIZE_T Size, _In_ BOOLEAN Append)
+BOOLEAN FsWriteFile(_In_ PCSTR Path, _In_reads_bytes_(Size) PVOID Data, _In_ UINT64 Size, _In_ BOOLEAN Append)
 {
     FILE *File;
     BOOLEAN Success;

@@ -76,6 +76,7 @@ function setup_shared(root, directx, vulkan)
         path.join(root, "deps/cjson"),
         path.join(root, "deps/flecs"),
         path.join(root, "deps/mimalloc/include"),
+        path.join(root, "deps/mujoco/include"),
         path.join(root, "deps/zstd/lib"),
         path.absolute("$(buildir)/config")
     )

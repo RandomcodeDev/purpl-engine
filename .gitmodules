@@ -40,3 +40,15 @@
 [submodule "deps/rapidjson"]
 	path = deps/rapidjson
 	url = https://github.com/Tencent/rapidjson
+[submodule "deps/mujoco"]
+	path = deps/mujoco
+	url = https://github.com/google-deepmind/mujoco
+[submodule "deps/sdflib"]
+	path = deps/external/sdflib
+	url = https://github.com/UPC-ViRVIG/SdfLib
+[submodule "deps/ccd"]
+	path = deps/external/ccd
+	url = https://github.com/danfis/libccd
+[submodule "deps/qhull"]
+	path = deps/external/qhull
+	url = https://github.com/qhull/qhull

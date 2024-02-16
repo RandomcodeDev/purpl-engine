@@ -19,6 +19,7 @@ Abstract:
 
 #ifdef PURPL_GDK
 extern HRESULT XGameRuntimeInitialize(VOID);
+extern VOID XGameRuntimeUninitialize(VOID);
 #endif
 
 DWORD InitialConsoleInputMode;
@@ -84,6 +85,9 @@ VOID PlatShutdown(VOID)
     LogDebug("Unloading debug information");
     SymCleanup(GetCurrentProcess());
 #endif
+
+    LogDebug("Shutting down Xbox Gaming Runtime Services");
+    XGameRuntimeUninitialize();
 
     LogInfo("Windows deinitialization succeeded");
 }

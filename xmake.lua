@@ -59,18 +59,7 @@ target("flecs")
 
     on_load(fix_target)
 
-target("engine")
-    set_kind("static")
-    add_headerfiles("engine/*.h")
-    add_files("engine/*.c")
-    add_deps("common", "cjson", "flecs", "platform", "render", "util")
-    if discord then
-        add_headerfiles("engine/discord/*.h")
-        add_files("engine/discord/*.c")
-        add_deps("discord")
-    end
-
-    on_load(fix_target)
+includes("mujoco.lua")
 
 if vulkan then
     target("render-vk")
@@ -122,6 +111,19 @@ target("render")
     end
     if vulkan then
         add_deps("render-vk")
+    end
+
+    on_load(fix_target)
+
+target("engine")
+    set_kind("static")
+    add_headerfiles("engine/*.h")
+    add_files("engine/*.c")
+    add_deps("common", "cjson", "flecs", "mujoco", "platform", "render", "util")
+    if discord then
+        add_headerfiles("engine/discord/*.h")
+        add_files("engine/discord/*.c")
+        add_deps("discord")
     end
 
     on_load(fix_target)

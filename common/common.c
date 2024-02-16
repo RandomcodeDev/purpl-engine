@@ -23,13 +23,17 @@ VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount)
 
     PlatInitialize();
 
+    CONST UINT8 HugePageCount = 2;
 #ifdef PURPL_USE_MIMALLOC
     LogInfo("Using mimalloc allocator");
 
-    mi_option_set(mi_option_reserve_huge_os_pages, 2);
+    mi_option_set(mi_option_reserve_huge_os_pages, HugePageCount);
     mi_option_set(mi_option_show_errors, TRUE);
 #else
     LogInfo("Using libc allocator");
+
+    // Reserve 2 GiB of memory, just like mimalloc
+    free(malloc(HugePageCount * 1024 * 1024 * 1024));
 #endif
 
     // TODO: implement mutexes
@@ -65,14 +69,14 @@ VOID CmnShutdown(VOID)
 {
     PlatShutdown();
 
-    LogInfo("Common library shut down");
-
 #ifdef PURPL_USE_MIMALLOC
     // Some memory will still be in use because of the THREAD for the main
     // thread, which is managed by the launcher, and therefore can't be freed
     // before this function
     mi_stats_print_out(MiMallocStatPrint, NULL);
 #endif
+
+    LogInfo("Common library shut down");
 }
 
 PCSTR CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...)

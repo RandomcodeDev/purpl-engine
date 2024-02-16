@@ -80,12 +80,6 @@ VOID PlatShutdown(VOID)
 {
     LogInfo("Deinitializing Windows resources");
 
-#if _WIN32_WINNT > 0x502
-    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), InitialConsoleInputMode);
-    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), InitialConsoleOutputMode);
-    SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), InitialConsoleErrorMode);
-#endif
-
 #ifndef PURPL_GDKX
     LogDebug("Unloading debug information");
     SymCleanup(GetCurrentProcess());

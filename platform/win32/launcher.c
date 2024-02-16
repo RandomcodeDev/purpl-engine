@@ -271,6 +271,10 @@ LPSTR *WINAPI CommandLineToArgvA(_In_ LPCSTR lpCmdline, _Out_ PINT numargs)
 
 extern VOID InitializeMainThread(_In_ PFN_THREAD_START StartAddress);
 
+extern DWORD InitialConsoleInputMode;
+extern DWORD InitialConsoleOutputMode;
+extern DWORD InitialConsoleErrorMode;
+
 /// @brief This routine is the entry point for non-debug Windows builds.
 ///
 /// @param Instance          Module handle.
@@ -313,9 +317,6 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
         ParsedArguments = TRUE;
     }
 
-    // Get a ton of memory so it doesn't have to be requested from the OS later
-    free(malloc(1ULL * 1024 * 1024 * 1024));
-
 #ifndef PURPL_DEBUG
     InitializeMainThread(WinMain);
 #endif
@@ -342,6 +343,12 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
     // error checking because the program is done anyway.
 
 #ifndef PURPL_GDKX
+#if _WIN32_WINNT > 0x502
+    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), InitialConsoleInputMode);
+    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), InitialConsoleOutputMode);
+    SetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), InitialConsoleErrorMode);
+#endif
+
     Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     ProcessEntry.dwSize = sizeof(PROCESSENTRY32);
     ParentProcessId = 0;
@@ -397,7 +404,7 @@ INT WinMain(_In_ HINSTANCE Instance, _In_opt_ HINSTANCE PreviousInstance, _In_ P
                         !(ParentHeaders->FileHeader.Machine & IMAGE_FILE_32BIT_MACHINE) &&
                             (PIMAGE_NT_HEADERS64)ParentHeaders->OptionalHeader.Subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI)
                     {
-                        printf("Engine (PID %llu, parent PID %llu) returned %d. "
+                        printf("Engine (PID %llu, parent PID %llu) returned %d.\n"
                                "Press any key to exit...",
                                (UINT64)EngineProcessId, (UINT64)ParentProcessId, Result);
 

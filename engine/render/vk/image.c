@@ -83,53 +83,55 @@ VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayou
     Barrier.subresourceRange.baseArrayLayer = 0;
     Barrier.subresourceRange.layerCount = 1;
 
+    // Table of known transitions
+    struct LAYOUT_TRANSITION
+    {
+        VkImageLayout OldLayout;
+        VkImageLayout NewLayout;
+        VkAccessFlags InitialAccessMask;
+        VkAccessFlags FinalAccessMask;
+        VkPipelineStageFlags SourceStage;
+        VkPipelineStageFlags DestinationStage;
+    } LayoutTransitions[] = {
+        {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0, VK_ACCESS_TRANSFER_WRITE_BIT,
+         VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT},
+        {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT,
+         VK_ACCESS_TRANSFER_READ_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+        {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 0,
+         VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
+        {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0,
+         VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+         VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
+        {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, VK_ACCESS_MEMORY_READ_BIT,
+         VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT}};
+
     if (OldLayout == NewLayout)
     {
         return;
     }
-    else if (OldLayout == VK_IMAGE_LAYOUT_UNDEFINED && NewLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
-    {
-        Barrier.srcAccessMask = 0;
-        Barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-        SourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        DestinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    }
-    else if (OldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && NewLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-    {
-        Barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        Barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    // Cleaner than massive set of if statements but a little slower
 
-        SourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        DestinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    }
-    else if (OldLayout == VK_IMAGE_LAYOUT_UNDEFINED && NewLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+    BOOLEAN Known = FALSE;
+    for (SIZE_T i = 0; i < PURPL_ARRAYSIZE(LayoutTransitions); i++)
     {
-        Barrier.srcAccessMask = 0;
-        Barrier.dstAccessMask =
-            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        if (LayoutTransitions[i].OldLayout == OldLayout && LayoutTransitions[i].NewLayout == NewLayout)
+        {
+            Barrier.srcAccessMask = LayoutTransitions[i].InitialAccessMask;
+            Barrier.dstAccessMask = LayoutTransitions[i].FinalAccessMask;
+            SourceStage = LayoutTransitions[i].SourceStage;
+            DestinationStage = LayoutTransitions[i].DestinationStage;
 
-        SourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        DestinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            Known = TRUE;
+            break;
+        }
     }
-    else if (OldLayout == VK_IMAGE_LAYOUT_UNDEFINED && NewLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
-    {
-        Barrier.srcAccessMask = 0;
-        Barrier.dstAccessMask =
-            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-        SourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        DestinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    }
-    else
+    if (!Known)
     {
         LogWarning("Unknown layout transition");
-
-        Barrier.srcAccessMask = 0;
-        Barrier.dstAccessMask = 0;
-
-        SourceStage = 0;
-        DestinationStage = 0;
+        return;
     }
 
     TransferBuffer = VlkBeginTransfer();

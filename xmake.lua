@@ -132,8 +132,7 @@ target("purpl")
     add_headerfiles(
         "assets/*",
         "assets/shaders/*",
-        "purpl/*.h",
-        "shared.lua"
+        "purpl/*.h"
     )
     add_files("purpl/*.c")
     add_deps("common", "engine", "platform", "util")

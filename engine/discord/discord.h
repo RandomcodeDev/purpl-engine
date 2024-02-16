@@ -16,14 +16,14 @@
 
 #include "platform/platform.h"
 
-/// @brief Cooldown (in milliseconds) between API calls
-#define DISCORD_API_COOLDOWN 1000 / 50
+/// @brief Delay in seconds between updates
+#define DISCORD_UPDATE_INTERVAL 1.0f
 
 /// @brief Initialize Discord RPC
-extern VOID DiscordInitialize(VOID);
+extern ECS_SYSTEM_DECLARE(DiscordInitialize);
 
 /// @brief Update Discord RPC
-extern VOID DiscordUpdate(VOID);
+extern ECS_SYSTEM_DECLARE(DiscordUpdate);
 
 /// @brief Shut down Discord RPC
 extern VOID DiscordShutdown(VOID);

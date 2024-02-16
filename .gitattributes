@@ -1,3 +1,4 @@
 * text eol=lf
+*.py text eol=lf mode=0755
 tools/*
 tools/linux/*/* binary eol=lf mode=0755

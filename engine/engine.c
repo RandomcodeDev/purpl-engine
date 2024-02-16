@@ -85,9 +85,6 @@ Return Value:
 
     VidInitialize();
     EcsInitialize();
-#ifdef PURPL_DISCORD
-    DiscordInitialize();
-#endif
 
     LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);
 }
@@ -129,13 +126,7 @@ VOID EngMainLoop(VOID)
         Running = VidUpdate();
 
         EngStartFrame();
-
-#ifdef PURPL_DISCORD
-        DiscordUpdate();
-#endif
-
         ecs_progress(EcsGetWorld(), (FLOAT)Delta);
-
         EngEndFrame();
     }
 }
@@ -184,6 +175,9 @@ VOID EngShutdown(VOID)
 {
     LogInfo("Shutting down engine");
 
+#ifdef PURPL_DISCORD
+    DiscordShutdown();
+#endif
     EcsShutdown();
     RdrShutdown();
     VidShutdown();

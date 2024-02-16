@@ -101,7 +101,7 @@ VOID VlkCreateMainRenderPass(VOID)
 
     VkSubpassDependency EndDependency = {0};
     EndDependency.srcSubpass = 0;
-    EndDependency.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    EndDependency.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
     EndDependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     EndDependency.dstSubpass = VK_SUBPASS_EXTERNAL;
     EndDependency.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;

@@ -8,7 +8,13 @@
 #include "alloc.h"
 #include "filesystem.h"
 
-VOID CmnInitialize(_In_opt_ PCHAR* Arguments, _In_opt_ UINT ArgumentCount)
+// TODO: implement mutexes
+static VOID LogLock(BOOLEAN Lock, PVOID Mutex)
+{
+    // Lock ? AsLockMutex(Mutex, TRUE) : AsUnlockMutex(Mutex);
+}
+
+VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount)
 {
     LOG_LEVEL Level;
 
@@ -26,7 +32,8 @@ VOID CmnInitialize(_In_opt_ PCHAR* Arguments, _In_opt_ UINT ArgumentCount)
     LogInfo("Using libc allocator");
 #endif
 
-    LogSetLock(NULL, NULL);
+    // TODO: implement mutexes
+    // LogSetLock(LogLock, AsCreateMutex());
 
 #ifdef PURPL_DEBUG
 #ifdef PURPL_VERBOSE

@@ -137,6 +137,8 @@ static VOID HandleResize(VOID)
     SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
     SubmitInformation.pWaitDstStageMask = &WaitDestinationStage;
     vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, NULL);
+
+    vkDeviceWaitIdle(VlkData.Device);
 }
 
 static VOID BeginFrame(_In_ BOOLEAN WindowResized)
@@ -159,8 +161,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
     {
         if (!WindowResized)
         {
-            LogDebug("Got %s (VkResult %d) when acquiring next swap chain image",
-                     VlkGetResultString(Result), Result);
+            LogDebug("Got %s (VkResult %d) when acquiring next swap chain image", VlkGetResultString(Result), Result);
         }
 
         HandleResize();
@@ -184,23 +185,6 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
     CommandBufferBeginInformation.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     CommandBufferBeginInformation.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     VULKAN_CHECK(vkBeginCommandBuffer(CurrentCommandBuffer, &CommandBufferBeginInformation));
-
-    if (VlkData.Resized)
-    {
-        CONST VkImageMemoryBarrier LayoutBarrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                                                    .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                                    .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-                                                    .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                                    .image = VlkData.SwapChainImages[VlkData.SwapChainIndex],
-                                                    .subresourceRange = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                                                                         .baseMipLevel = 0,
-                                                                         .levelCount = 1,
-                                                                         .baseArrayLayer = 0,
-                                                                         .layerCount = 1}};
-
-        vkCmdPipelineBarrier(VlkData.CommandBuffers[VlkData.FrameIndex], VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &LayoutBarrier);
-    }
 
     VkClearValue ClearValues[3] = {0};
 
@@ -255,6 +239,8 @@ static VOID EndFrame(VOID)
     if (VlkData.Resized)
     {
         VlkData.Resized = FALSE;
+        VlkTransitionImageLayout(VlkData.SwapChainImages[VlkData.SwapChainIndex], VK_IMAGE_LAYOUT_UNDEFINED,
+                                 VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
     }
 
     CurrentCommandBuffer = VlkData.CommandBuffers[VlkData.FrameIndex];
@@ -270,12 +256,12 @@ static VOID EndFrame(VOID)
     VkPipelineStageFlags WaitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     SubmitInformation.pWaitDstStageMask = &WaitStage;
 
-    SubmitInformation.waitSemaphoreCount = 1;
     SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
-    SubmitInformation.signalSemaphoreCount = 1;
+    SubmitInformation.waitSemaphoreCount = 1;
     SubmitInformation.pSignalSemaphores = &VlkData.RenderCompleteSemaphores[VlkData.FrameIndex];
-    SubmitInformation.commandBufferCount = 1;
+    SubmitInformation.signalSemaphoreCount = 1;
     SubmitInformation.pCommandBuffers = &CurrentCommandBuffer;
+    SubmitInformation.commandBufferCount = 1;
 
     VULKAN_CHECK(
         vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, VlkData.CommandBufferFences[VlkData.FrameIndex]));

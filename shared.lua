@@ -197,7 +197,7 @@ function setup_shared(root, directx, vulkan)
         set_configvar("USE_MIMALLOC", use_mimalloc and 1 or 0)
         add_configfiles(path.join(root, "purpl/config.h.in"))
         
-        add_headerfiles(path.join(root, "common/*.h"), path.join(root, "purpl/config.h.in"))
+        add_headerfiles(path.join(root, "common/*.h"), path.join(root, "purpl/*.h*"), path.join(root, "shared.lua"))
         add_files(path.join(root, "common/*.c"))
         
         add_deps("platform", "stb")

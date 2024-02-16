@@ -124,16 +124,19 @@ static VOID RegisterWindowClass(VOID)
 static VOID InitializeWindow(VOID)
 {
     RECT ClientArea;
+    RECT AdjustedClientArea;
 
     ClientArea.left = 0;
     ClientArea.right = (UINT32)(GetSystemMetrics(SM_CXSCREEN) / 1.5);
     ClientArea.top = 0;
     ClientArea.bottom = (UINT32)(GetSystemMetrics(SM_CYSCREEN) / 1.5);
-    AdjustWindowRect(&ClientArea, WS_OVERLAPPEDWINDOW, FALSE);
-    WindowWidth = ClientArea.right - ClientArea.left;
-    WindowHeight = ClientArea.bottom - ClientArea.top;
+    AdjustedClientArea = ClientArea;
+    AdjustWindowRect(&AdjustedClientArea, WS_OVERLAPPEDWINDOW, FALSE);
+    WindowWidth = AdjustedClientArea.right - AdjustedClientArea.left;
+    WindowHeight = AdjustedClientArea.bottom - AdjustedClientArea.top;
 
-    LogDebug("Creating %dx%d window titled %s", WindowWidth, WindowHeight, WindowTitle);
+    LogDebug("Creating %dx%d (for internal size %dx%d) window titled %s", WindowWidth, WindowHeight,
+             ClientArea.right - ClientArea.left, ClientArea.bottom - ClientArea.top, WindowTitle);
 
     Window = CreateWindowExA(0, WindowClassName, WindowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
                              WindowWidth, WindowHeight, NULL, NULL, GetModuleHandleA(NULL), NULL);

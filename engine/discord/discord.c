@@ -69,7 +69,7 @@ static PCSTR GetGameString()
     }
 }
 
-VOID DiscordInitialize(VOID)
+VOID DiscordInitialize(_In_ ecs_iter_t *Iterator)
 {
     LogInfo("Attempting to initialize Discord");
 
@@ -79,8 +79,9 @@ VOID DiscordInitialize(VOID)
     EventHandlers.errored = Disconnected;
     Discord_Initialize(PURPL_STRINGIZE_EXPAND(PURPL_DISCORD_APP_ID), &EventHandlers, TRUE, NULL);
 }
+ecs_entity_t ecs_id(DiscordInitialize);
 
-VOID DiscordUpdate(VOID)
+VOID DiscordUpdate(_In_ ecs_iter_t *Iterator)
 {
     DiscordRichPresence Presence = {0};
 #ifdef PURPL_DEBUG
@@ -88,13 +89,27 @@ VOID DiscordUpdate(VOID)
 #else
     Presence.state = CmnFormatString("Playing %s on %s", GetGameString(), PlatGetDescription());
 #endif
-    Presence.details = CmnFormatString("v%s commit %s-%s, " PURPL_BUILD_TYPE " build", PURPL_VERSION_STRING, PURPL_COMMIT, PURPL_BRANCH);
+    Presence.details = CmnFormatString("v%s commit %s-%s, " PURPL_BUILD_TYPE " build", PURPL_VERSION_STRING,
+                                       PURPL_COMMIT, PURPL_BRANCH);
     Discord_UpdatePresence(&Presence);
 
     CmnFree(Presence.state);
     CmnFree(Presence.details);
 
     Discord_RunCallbacks();
+}
+ecs_entity_t ecs_id(DiscordUpdate);
+
+VOID DiscordImport(_In_ ecs_world_t *World)
+{
+    LogTrace("Importing Discord ECS module");
+
+    ECS_MODULE(World, Discord);
+
+    ECS_SYSTEM_DEFINE(World, DiscordInitialize, EcsOnStart);
+    ecs_system(World, {.entity = ecs_entity(World, {.name = "DiscordUpdate", .add = {ecs_dependson(EcsOnUpdate)}}),
+                       .callback = DiscordUpdate,
+                       .interval = DISCORD_UPDATE_INTERVAL});
 }
 
 VOID DiscordShutdown(VOID)

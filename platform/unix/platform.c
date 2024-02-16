@@ -57,7 +57,7 @@ Return Value:
 }
 
 PCSTR
-PlatCaptureStackBackTrace(_In_ SIZE_T FramesToSkip, _In_ SIZE_T MaxFrames)
+PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip, _In_ UINT64 MaxFrames)
 /*++
 
 Routine Description:
@@ -80,9 +80,9 @@ Return Value:
     static CHAR Buffer[2048];
     PVOID Frames[32];
     PCHAR *Symbols;
-    SIZE_T Size;
-    SIZE_T Offset;
-    SIZE_T i;
+    UINT64 Size;
+    UINT64 Offset;
+    UINT64 i;
 
     memset(Buffer, 0, PURPL_ARRAYSIZE(Buffer));
 
@@ -178,8 +178,7 @@ _Noreturn VOID PlatError(_In_ PCSTR Message)
     }
 }
 
-PVOID
-PlatGetReturnAddress(VOID)
+PVOID PlatGetReturnAddress(VOID)
 /*++
 
 Routine Description:
@@ -205,8 +204,7 @@ Return Value:
 #endif
 }
 
-PCSTR
-PlatGetUserDataDirectory(VOID)
+PCSTR PlatGetUserDataDirectory(VOID)
 {
     static CHAR Directory[MAX_PATH + 1];
 
@@ -232,8 +230,7 @@ PlatGetUserDataDirectory(VOID)
     return Directory;
 }
 
-UINT64
-PlatGetMilliseconds(VOID)
+UINT64 PlatGetMilliseconds(VOID)
 {
     struct timespec Time = {0};
 
@@ -242,14 +239,13 @@ PlatGetMilliseconds(VOID)
     return Time.tv_sec * 1000 + Time.tv_nsec / 1000000;
 }
 
-BOOLEAN
-PlatCreateDirectory(_In_ PCSTR Path)
+BOOLEAN PlatCreateDirectory(_In_ PCSTR Path)
 {
     // https://stackoverflow.com/questions/2336242/recursive-mkdir-system-call-on-unix
 
     CHAR TempPath[256];
     PCHAR p = NULL;
-    SIZE_T Length;
+    UINT64 Length;
 
     snprintf(TempPath, sizeof(TempPath), "%s", Path);
     Length = strlen(TempPath);
@@ -272,8 +268,15 @@ PlatCreateDirectory(_In_ PCSTR Path)
     return TRUE;
 }
 
-PCHAR
-PlatFixPath(_In_ PCSTR Path)
+PCHAR PlatFixPath(_In_ PCSTR Path)
 {
     return CmnFormatString("%s", Path);
+}
+
+UINT64 PlatGetFileSize(_In_ PCSTR Path)
+{
+    struct stat64 StatBuffer = {0};
+
+    stat64(Path, &StatBuffer);
+    return StatBuffer.st_size;
 }

@@ -32,7 +32,7 @@ extern _Thread_local PTHREAD AsCurrentThread;
 /// @param[in] UserData Data for the thread
 /// 
 /// @return The new thread
-extern PTHREAD AsCreateThread(_In_opt_ PCSTR Name, _In_ SIZE_T StackSize,
+extern PTHREAD AsCreateThread(_In_opt_ PCSTR Name, _In_ UINT64 StackSize,
                               _In_ PFN_THREAD_START ThreadStart,
                               _In_opt_ PVOID UserData);
 
@@ -78,7 +78,7 @@ typedef PVOID PSEMAPHORE;
 /// @param[in] Max The maximum reference count for the semaphore
 /// 
 /// @return A semaphore
-extern PSEMAPHORE AsCreateSemaphore(_In_ SIZE_T Max);
+extern PSEMAPHORE AsCreateSemaphore(_In_ UINT64 Max);
 
 /// @brief Increase the reference count of a semaphore
 /// 

@@ -55,7 +55,7 @@
 #endif
 
 #define strcasecmp _stricmp
-#define fseek64 _fseeki64
+#define fseeko64 _fseeki64
 #endif
 
 #ifdef PURPL_UNIX

@@ -66,7 +66,7 @@ PVOID FsReadFile(_In_ PCSTR Path, _In_ UINT64 Offset, _In_ UINT64 MaxAmount, _Ou
         return NULL;
     }
 
-    fseek64(File, Offset, SEEK_SET);
+    fseeko64(File, Offset, SEEK_SET);
 
     Read = fread(Buffer, 1, Size, File);
     if (Read != Size - Extra)

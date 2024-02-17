@@ -153,7 +153,7 @@ VOID VlkDestroySwapChain(VOID)
         if (VlkData.SwapChainImageViews[i])
         {
             vkDestroyImageView(VlkData.Device, VlkData.SwapChainImageViews[i], VlkGetAllocationCallbacks());
-            VlkData.SwapChainImageViews[i] = NULL;
+            VlkData.SwapChainImageViews[i] = VK_NULL_HANDLE;
         }
     }
 
@@ -168,6 +168,6 @@ VOID VlkDestroySwapChain(VOID)
     {
         LogDebug("Destroying swap chain 0x%llX", (UINT64)VlkData.SwapChain);
         vkDestroySwapchainKHR(VlkData.Device, VlkData.SwapChain, VlkGetAllocationCallbacks());
-        VlkData.SwapChain = NULL;
+        VlkData.SwapChain = VK_NULL_HANDLE;
     }
 }

@@ -260,6 +260,9 @@ function setup_shared(root, directx, vulkan)
                 path.join(root, "platform/unix/video.c")
             )
             add_packages("glfw")
+            if is_arch("x86") then
+                add_links("atomic")
+            end
         elseif is_plat("switch") then
             add_files(
                 path.join(root, "../platform/switch/async.cpp"),

@@ -127,6 +127,10 @@ Return Value:
     if (!WindowClosed)
     {
         WindowClosed = (BOOLEAN)glfwWindowShouldClose(Window);
+        if (WindowClosed)
+        {
+            LogDebug("Window closed");
+        }
     }
 
     glfwGetWindowSize(Window, &WindowWidth, &WindowHeight);
@@ -242,7 +246,7 @@ VidGetDpi(VOID)
 }
 
 #ifdef PURPL_VULKAN
-PVOID VidCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks, _In_opt_ PVOID WindowHandle)
+VkSurfaceKHR VidCreateVulkanSurface(_In_ VkInstance Instance, _In_ PVOID AllocationCallbacks, _In_opt_ PVOID WindowHandle)
 /*++
 
 Routine Description:
@@ -275,7 +279,7 @@ Return Value:
     if (Result != VK_SUCCESS)
     {
         LogError("Failed to create Vulkan surface: VkResult %d", Result);
-        return NULL;
+        return VK_NULL_HANDLE;
     }
 
     return Surface;

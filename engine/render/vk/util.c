@@ -121,7 +121,7 @@ PCSTR VlkGetResultString(VkResult Result)
 #undef X
 }
 
-VOID VlkSetObjectName(_In_ PVOID Object, _In_ VkObjectType ObjectType, _In_ _Printf_format_string_ PCSTR Name, ...)
+VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_ _Printf_format_string_ PCSTR Name, ...)
 {
     // UNREFERENCED_PARAMETER(Object);
     // UNREFERENCED_PARAMETER(ObjectType);
@@ -228,7 +228,7 @@ VOID VlkEndTransfer(_In_ VkCommandBuffer TransferBuffer)
     SubmitInformation.pCommandBuffers = &TransferBuffer;
 
     // LogTrace("Submitting transfer command buffer");
-    vkQueueSubmit(VlkData.GraphicsQueue, 1, &SubmitInformation, NULL);
+    vkQueueSubmit(VlkData.GraphicsQueue, 1, &SubmitInformation, VK_NULL_HANDLE);
     vkQueueWaitIdle(VlkData.GraphicsQueue);
 
     // LogTrace("Destroying transfer command buffer");

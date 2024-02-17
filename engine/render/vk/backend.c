@@ -136,7 +136,7 @@ static VOID HandleResize(VOID)
     SubmitInformation.waitSemaphoreCount = 1;
     SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
     SubmitInformation.pWaitDstStageMask = &WaitDestinationStage;
-    vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, NULL);
+    vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, VK_NULL_HANDLE);
 
     vkDeviceWaitIdle(VlkData.Device);
 }
@@ -156,7 +156,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 
     VlkData.SwapChainIndex = 0;
     Result = vkAcquireNextImageKHR(VlkData.Device, VlkData.SwapChain, UINT64_MAX,
-                                   VlkData.AcquireSemaphores[VlkData.FrameIndex], NULL, &VlkData.SwapChainIndex);
+                                   VlkData.AcquireSemaphores[VlkData.FrameIndex], VK_NULL_HANDLE, &VlkData.SwapChainIndex);
     if (Result == VK_ERROR_OUT_OF_DATE_KHR || Result == VK_SUBOPTIMAL_KHR || WindowResized)
     {
         if (!WindowResized)
@@ -167,7 +167,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
         HandleResize();
 
         VULKAN_CHECK(vkAcquireNextImageKHR(VlkData.Device, VlkData.SwapChain, UINT64_MAX,
-                                           VlkData.AcquireSemaphores[VlkData.FrameIndex], NULL,
+                                           VlkData.AcquireSemaphores[VlkData.FrameIndex], VK_NULL_HANDLE,
                                            &VlkData.SwapChainIndex));
         VlkData.Resized = TRUE;
     }
@@ -299,14 +299,14 @@ static VOID Shutdown(VOID)
     {
         LogDebug("Destroying main render pass 0x%llX", (UINT64)VlkData.MainRenderPass);
         vkDestroyRenderPass(VlkData.Device, VlkData.MainRenderPass, VlkGetAllocationCallbacks());
-        VlkData.MainRenderPass = NULL;
+        VlkData.MainRenderPass = VK_NULL_HANDLE;
     }
 
     if (VlkData.Sampler)
     {
         LogDebug("Destroying sampler 0x%llX", (UINT64)VlkData.Sampler);
         vkDestroySampler(VlkData.Device, VlkData.Sampler, VlkGetAllocationCallbacks());
-        VlkData.Sampler = NULL;
+        VlkData.Sampler = VK_NULL_HANDLE;
     }
 
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
@@ -319,7 +319,7 @@ static VOID Shutdown(VOID)
     {
         LogDebug("Destroying descriptor pool 0x%llX", (UINT64)VlkData.DescriptorPool);
         vkDestroyDescriptorPool(VlkData.Device, VlkData.DescriptorPool, VlkGetAllocationCallbacks());
-        VlkData.DescriptorPool = NULL;
+        VlkData.DescriptorPool = VK_NULL_HANDLE;
     }
 
     VlkDestroySwapChain();
@@ -330,7 +330,7 @@ static VOID Shutdown(VOID)
         if (VlkData.CommandBufferFences[i])
         {
             vkDestroyFence(VlkData.Device, VlkData.CommandBufferFences[i], VlkGetAllocationCallbacks());
-            VlkData.CommandBufferFences[i] = NULL;
+            VlkData.CommandBufferFences[i] = VK_NULL_HANDLE;
         }
     }
 
@@ -338,14 +338,14 @@ static VOID Shutdown(VOID)
     {
         LogDebug("Destroying transfer command pool 0x%llX", (UINT64)VlkData.TransferCommandPool);
         vkDestroyCommandPool(VlkData.Device, VlkData.TransferCommandPool, VlkGetAllocationCallbacks());
-        VlkData.TransferCommandPool = NULL;
+        VlkData.TransferCommandPool = VK_NULL_HANDLE;
     }
 
     if (VlkData.CommandPool)
     {
         LogDebug("Destroying command pool 0x%llX", (UINT64)VlkData.CommandPool);
         vkDestroyCommandPool(VlkData.Device, VlkData.CommandPool, VlkGetAllocationCallbacks());
-        VlkData.CommandPool = NULL;
+        VlkData.CommandPool = VK_NULL_HANDLE;
     }
 
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
@@ -354,13 +354,13 @@ static VOID Shutdown(VOID)
         {
             LogDebug("Destroying acquisition semaphore %u/%u", i + 1, VULKAN_FRAME_COUNT);
             vkDestroySemaphore(VlkData.Device, VlkData.AcquireSemaphores[i], VlkGetAllocationCallbacks());
-            VlkData.AcquireSemaphores[i] = NULL;
+            VlkData.AcquireSemaphores[i] = VK_NULL_HANDLE;
         }
         if (VlkData.RenderCompleteSemaphores[i])
         {
             LogDebug("Destroying render completion semaphore %u/%u", i + 1, VULKAN_FRAME_COUNT);
             vkDestroySemaphore(VlkData.Device, VlkData.RenderCompleteSemaphores[i], VlkGetAllocationCallbacks());
-            VlkData.RenderCompleteSemaphores[i] = NULL;
+            VlkData.RenderCompleteSemaphores[i] = VK_NULL_HANDLE;
         }
     }
 
@@ -368,21 +368,21 @@ static VOID Shutdown(VOID)
     {
         LogDebug("Destroying VkSurfaceKHR 0x%llX", (UINT64)VlkData.Surface);
         vkDestroySurfaceKHR(VlkData.Instance, VlkData.Surface, VlkGetAllocationCallbacks());
-        VlkData.Surface = NULL;
+        VlkData.Surface = VK_NULL_HANDLE;
     }
 
     if (VlkData.Allocator)
     {
         LogDebug("Destroying VmaAllocator 0x%llX", (UINT64)VlkData.Device);
         vmaDestroyAllocator(VlkData.Allocator);
-        VlkData.Allocator = NULL;
+        VlkData.Allocator = VK_NULL_HANDLE;
     }
 
     if (VlkData.Device)
     {
         LogDebug("Destroying VkDevice 0x%llX", (UINT64)VlkData.Device);
         vkDestroyDevice(VlkData.Device, VlkGetAllocationCallbacks());
-        VlkData.Device = NULL;
+        VlkData.Device = VK_NULL_HANDLE;
     }
 
     if (VlkData.Gpus)
@@ -417,7 +417,7 @@ static VOID Shutdown(VOID)
     {
         LogDebug("Destroying VkInstance 0x%llX", (UINT64)VlkData.Instance);
         vkDestroyInstance(VlkData.Instance, VlkGetAllocationCallbacks());
-        VlkData.Instance = NULL;
+        VlkData.Instance = VK_NULL_HANDLE;
     }
 
     memset(&VlkData, 0, sizeof(VULKAN_DATA));

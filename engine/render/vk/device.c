@@ -278,18 +278,18 @@ VOID VlkCreateLogicalDevice(VOID)
     LogTrace("Calling vkCreateDevice");
     VULKAN_CHECK(
         vkCreateDevice(VlkData.Gpu->Device, &DeviceCreateInformation, VlkGetAllocationCallbacks(), &VlkData.Device));
-    VlkSetObjectName(VlkData.Device, VK_OBJECT_TYPE_DEVICE, "Logical device");
+    VlkSetObjectName((UINT64)VlkData.Device, VK_OBJECT_TYPE_DEVICE, "Logical device");
 
     LogDebug("Retrieving queues");
 
     vkGetDeviceQueue(VlkData.Device, VlkData.Gpu->GraphicsFamilyIndex, 0, &VlkData.GraphicsQueue);
-    VlkSetObjectName(VlkData.GraphicsQueue, VK_OBJECT_TYPE_QUEUE, "Graphics queue");
+    VlkSetObjectName((UINT64)VlkData.GraphicsQueue, VK_OBJECT_TYPE_QUEUE, "Graphics queue");
     vkGetDeviceQueue(VlkData.Device, VlkData.Gpu->PresentFamilyIndex, 0, &VlkData.PresentQueue);
-    VlkSetObjectName(VlkData.PresentQueue, VK_OBJECT_TYPE_QUEUE, "Presentation queue");
+    VlkSetObjectName((UINT64)VlkData.PresentQueue, VK_OBJECT_TYPE_QUEUE, "Presentation queue");
 
-    VlkSetObjectName(VlkData.Instance, VK_OBJECT_TYPE_INSTANCE, "Instance");
+    VlkSetObjectName((UINT64)VlkData.Instance, VK_OBJECT_TYPE_INSTANCE, "Instance");
 
-    VlkSetObjectName(VlkData.Surface, VK_OBJECT_TYPE_SURFACE_KHR, "Surface");
+    VlkSetObjectName((UINT64)VlkData.Surface, VK_OBJECT_TYPE_SURFACE_KHR, "Surface");
 
     LogDebug("Loading device functions");
     volkLoadDevice(VlkData.Device);

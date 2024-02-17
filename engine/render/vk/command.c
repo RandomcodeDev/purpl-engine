@@ -38,7 +38,7 @@ VOID VlkAllocateCommandBuffers(VOID)
     VULKAN_CHECK(vkAllocateCommandBuffers(VlkData.Device, &CommandBufferAllocateInformation, VlkData.CommandBuffers));
     for (i = 0; i < VULKAN_FRAME_COUNT; i++)
     {
-        VlkSetObjectName(VlkData.CommandBuffers[i], VK_OBJECT_TYPE_COMMAND_BUFFER, "Command buffer %u", i);
+        VlkSetObjectName((UINT64)VlkData.CommandBuffers[i], VK_OBJECT_TYPE_COMMAND_BUFFER, "Command buffer %u", i);
     }
 
     LogDebug("Creating command buffer fences");

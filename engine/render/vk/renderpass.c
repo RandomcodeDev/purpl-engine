@@ -15,7 +15,7 @@ VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_
     RenderPassCreateInformation.pDependencies = SubpassDependencies;
     RenderPassCreateInformation.dependencyCount = SubpassDependencyCount;
 
-    VkRenderPass RenderPass = NULL;
+    VkRenderPass RenderPass = VK_NULL_HANDLE;
     VULKAN_CHECK(
         vkCreateRenderPass(VlkData.Device, &RenderPassCreateInformation, VlkGetAllocationCallbacks(), &RenderPass));
 

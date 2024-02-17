@@ -21,8 +21,8 @@ Abstract:
 
 #ifdef _MSC_VER
 #pragma comment(                                                                                                       \
-    linker,                                                                                                            \
-    "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+        linker,                                                                                                        \
+            "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
 #define IDI_ICON1 103
@@ -228,7 +228,8 @@ FLOAT VidGetDpi(VOID)
 }
 
 #ifdef PURPL_VULKAN
-PVOID VidCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks, _In_opt_ PVOID WindowHandle)
+VkSurfaceKHR VidCreateVulkanSurface(_In_ VkInstance Instance, _In_ PVOID AllocationCallbacks,
+                                    _In_opt_ PVOID WindowHandle)
 {
     VkWin32SurfaceCreateInfoKHR SurfaceCreateInfo = {0};
     VkSurfaceKHR Surface;
@@ -244,7 +245,8 @@ PVOID VidCreateVulkanSurface(_In_ PVOID Instance, _In_ PVOID AllocationCallbacks
     Result = vkCreateWin32SurfaceKHR(Instance, &SurfaceCreateInfo, AllocationCallbacks, &Surface);
     if (Result != VK_SUCCESS)
     {
-        CmnError("Failed to create VkSurfaceKHR: VkResult %d", Result);
+        LogError("Failed to create Vulkan surface: VkResult %d", Result);
+        return VK_NULL_HANDLE;
     }
 
     LogDebug("Successfully created Vulkan surface with handle 0x%llX", (UINT64)Surface);

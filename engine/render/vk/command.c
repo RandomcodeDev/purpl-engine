@@ -13,14 +13,14 @@ VOID VlkCreateCommandPools(VOID)
     LogTrace("Creating primary command pool");
     VULKAN_CHECK(vkCreateCommandPool(VlkData.Device, &CommandPoolCreateInformation, VlkGetAllocationCallbacks(),
                                      &VlkData.CommandPool));
-    VlkSetObjectName(VlkData.CommandPool, VK_OBJECT_TYPE_COMMAND_POOL, "Command pool");
+    VlkSetObjectName((UINT64)VlkData.CommandPool, VK_OBJECT_TYPE_COMMAND_POOL, "Command pool");
 
     CommandPoolCreateInformation.flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
 
     LogTrace("Creating transfer command pool");
     VULKAN_CHECK(vkCreateCommandPool(VlkData.Device, &CommandPoolCreateInformation, VlkGetAllocationCallbacks(),
                                      &VlkData.TransferCommandPool));
-    VlkSetObjectName(VlkData.TransferCommandPool, VK_OBJECT_TYPE_COMMAND_POOL, "Transfer command pool");
+    VlkSetObjectName((UINT64)VlkData.TransferCommandPool, VK_OBJECT_TYPE_COMMAND_POOL, "Transfer command pool");
 }
 
 VOID VlkAllocateCommandBuffers(VOID)
@@ -51,6 +51,6 @@ VOID VlkAllocateCommandBuffers(VOID)
     {
         VULKAN_CHECK(vkCreateFence(VlkData.Device, &FenceCreateInformation, VlkGetAllocationCallbacks(),
                                    &VlkData.CommandBufferFences[i]));
-        VlkSetObjectName(VlkData.CommandBufferFences[i], VK_OBJECT_TYPE_FENCE, "Command buffer fence %u", i);
+        VlkSetObjectName((UINT64)VlkData.CommandBufferFences[i], VK_OBJECT_TYPE_FENCE, "Command buffer fence %u", i);
     }
 }

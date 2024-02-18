@@ -132,8 +132,8 @@ function setup_shared(root, directx, vulkan)
         {force = true})
         add_cxxflags(
             "-wd5204", -- virtual function something something
-            "-wd5027", -- move asignment operator was defined as deleted
-            "-wd4626", -- asignment operator was defined as deleted
+            "-wd5027", -- move assignment operator was defined as deleted
+            "-wd4626", -- assignment operator was defined as deleted
             "-wd4623", -- default constructor was defined as deleted
             "-wd4625", -- copy constructor was defined as deleted
         {force = true})
@@ -143,12 +143,16 @@ function setup_shared(root, directx, vulkan)
     end
 
     if is_plat("linux", "freebsd", "switch") then
-        -- Old style casts are to match stylistically, and C++98 is defunct as hell
-        -- Also, CmnFree sets the variable to NULL to reduce misuse, and uses a
-        -- block to do that, but having a semi after looks normal, even if it's
-        -- technically superfluous
-        add_cxflags("-Wno-gnu-line-marker", "-Wno-extra-semi-stmt", {force = true})
-        add_cxxflags("-Wno-c++98-compat", "-Wno-c++98-compat-pedantic", "-Wno-old-style-cast", {force = true})
+        add_cxflags(
+            "-Wno-gnu-line-marker",
+            "-Wno-gnu-zero-variadic-macro-arguments",
+            "-Wno-extra-semi-stmt",
+        {force = true})
+        add_cxxflags(
+            "-Wno-c++98-compat",
+            "-Wno-c++98-compat-pedantic",
+            "-Wno-old-style-cast",
+        {force = true})
     end
 
     target("cjson")

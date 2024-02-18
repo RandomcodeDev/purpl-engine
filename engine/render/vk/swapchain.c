@@ -119,7 +119,7 @@ VOID VlkCreateSwapChain(VOID)
 
     VULKAN_CHECK(vkCreateSwapchainKHR(VlkData.Device, &SwapChainCreateInformation, VlkGetAllocationCallbacks(),
                                       &VlkData.SwapChain));
-    VlkSetObjectName(VlkData.SwapChain, VK_OBJECT_TYPE_SWAPCHAIN_KHR, "Swap chain");
+    VlkSetObjectName((UINT64)VlkData.SwapChain, VK_OBJECT_TYPE_SWAPCHAIN_KHR, "Swap chain");
 
     LogDebug("Creating swap chain image views");
 
@@ -138,8 +138,8 @@ VOID VlkCreateSwapChain(VOID)
     {
         VlkCreateImageView(&VlkData.SwapChainImageViews[i], VlkData.SwapChainImages[i], VlkData.SurfaceFormat.format,
                            VK_IMAGE_ASPECT_COLOR_BIT);
-        VlkSetObjectName(VlkData.SwapChainImages[i], VK_OBJECT_TYPE_IMAGE, "Swap chain image %u", i);
-        VlkSetObjectName(VlkData.SwapChainImageViews[i], VK_OBJECT_TYPE_IMAGE_VIEW, "Swap chain image view %u", i);
+        VlkSetObjectName((UINT64)VlkData.SwapChainImages[i], VK_OBJECT_TYPE_IMAGE, "Swap chain image %u", i);
+        VlkSetObjectName((UINT64)VlkData.SwapChainImageViews[i], VK_OBJECT_TYPE_IMAGE_VIEW, "Swap chain image view %u", i);
     }
 }
 

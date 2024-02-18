@@ -14,10 +14,10 @@ VOID VlkCreateSemaphores(VOID)
     {
         VULKAN_CHECK(vkCreateSemaphore(VlkData.Device, &SemaphoreCreateInformation, VlkGetAllocationCallbacks(),
                                        &VlkData.AcquireSemaphores[i]));
-        VlkSetObjectName(VlkData.AcquireSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE, "Acquisition semaphore %u", i);
+        VlkSetObjectName((UINT64)VlkData.AcquireSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE, "Acquisition semaphore %u", i);
         VULKAN_CHECK(vkCreateSemaphore(VlkData.Device, &SemaphoreCreateInformation, VlkGetAllocationCallbacks(),
                                        &VlkData.RenderCompleteSemaphores[i]));
-        VlkSetObjectName(VlkData.RenderCompleteSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE,
+        VlkSetObjectName((UINT64)VlkData.RenderCompleteSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE,
                          "Render completion semaphore %u", i);
     }
 }

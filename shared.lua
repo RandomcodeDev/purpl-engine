@@ -112,7 +112,7 @@ function setup_shared(root, directx, vulkan)
     end
 
     if is_plat("windows", "gdk", "gdkx") then
-        add_cxflags("-Qspectre")
+        add_cxflags("-Qspectre", {force = true})
         -- all of these are either external or inconsequential
         add_cxflags(
             "-wd4820", -- padded

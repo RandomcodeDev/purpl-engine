@@ -31,4 +31,4 @@ LANGUAGE LANG_ENGLISH,
     // Icon
     //
 
-    103 ICON "platform\\win32\\purpl.ico"
+    103 ICON "platform/win32/purpl.ico"

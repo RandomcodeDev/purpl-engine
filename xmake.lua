@@ -6,8 +6,8 @@ add_rules(
 
 set_project("purpl-engine")
 
-set_allowedplats("gdk", "gdkx", "linux", "freebsd", "switch")
-set_allowedarchs("gdk|x64", "gdkx|x64", "switch|arm64")
+set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch")
+set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64")
 
 if os.isfile("../platform/switch/switch.lua") then
     includes("../platform/switch/switch.lua")
@@ -22,7 +22,7 @@ else
 end
 
 directx = is_plat("gdk", "gdkx")
-discord = is_plat("gdk", "gdkx", "macos", "linux", "freebsd")
+discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
 vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 
 includes("shared.lua")
@@ -153,14 +153,16 @@ target("purpl")
     add_deps("common", "engine", "platform", "util")
     set_default(true)
 
-    if is_plat("gdk", "gdkx") then
+    if is_plat("gdk", "gdkx", "windows") then
         add_files("platform/win32/launcher.c", "platform/win32/purpl.rc")
-        add_links("xgameruntime.lib")
-        after_build(function (target)
-            if not os.exists(path.join(target:targetdir(), "MicrosoftGame.Config")) then
-                os.ln(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
-            end
-        end)
+        if not is_plat("windows") then
+            add_links("xgameruntime.lib")
+            after_build(function (target)
+                if not os.exists(path.join(target:targetdir(), "MicrosoftGame.Config")) then
+                    os.ln(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
+                end
+            end)
+        end
         if is_mode("debug") then
             add_ldflags("-subsystem:console")
         else

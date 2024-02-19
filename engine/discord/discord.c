@@ -71,6 +71,8 @@ static PCSTR GetGameString()
 
 VOID DiscordInitialize(_In_ ecs_iter_t *Iterator)
 {
+    UNREFERENCED_PARAMETER(Iterator);
+
     LogInfo("Attempting to initialize Discord");
 
     DiscordEventHandlers EventHandlers = {0};
@@ -83,6 +85,8 @@ ecs_entity_t ecs_id(DiscordInitialize);
 
 VOID DiscordUpdate(_In_ ecs_iter_t *Iterator)
 {
+    UNREFERENCED_PARAMETER(Iterator);
+
     DiscordRichPresence Presence = {0};
 #ifdef PURPL_DEBUG
     Presence.state = CmnFormatString("Testing %s on %s", GetGameString(), PlatGetDescription());

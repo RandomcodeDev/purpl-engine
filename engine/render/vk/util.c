@@ -17,17 +17,21 @@ Abstract:
 
 static PVOID Allocate(PVOID pUserData, SIZE_T size, SIZE_T alignment, VkSystemAllocationScope allocationScope)
 {
+    UNREFERENCED_PARAMETER(pUserData);
+    UNREFERENCED_PARAMETER(allocationScope);
     return CmnAlignedAlloc(alignment, size);
 }
 
 static void Free(PVOID pUserData, PVOID pMemory)
 {
+    UNREFERENCED_PARAMETER(pUserData);
     CmnAlignedFree(pMemory);
 }
 
 static void LogInternalAllocation(PVOID pUserData, SIZE_T size, VkInternalAllocationType allocationType,
                                   VkSystemAllocationScope allocationScope)
 {
+    UNREFERENCED_PARAMETER(pUserData);
     LogTrace("Vulkan allocation made:");
     LogTrace("\tSize: %zu", size);
     LogTrace("\tType: %d", allocationType);
@@ -37,6 +41,7 @@ static void LogInternalAllocation(PVOID pUserData, SIZE_T size, VkInternalAlloca
 static void LogInternalFree(PVOID pUserData, SIZE_T size, VkInternalAllocationType allocationType,
                             VkSystemAllocationScope allocationScope)
 {
+    UNREFERENCED_PARAMETER(pUserData);
     LogTrace("Vulkan allocation freed:");
     LogTrace("\tSize: %zu", size);
     LogTrace("\tType: %d", allocationType);
@@ -46,6 +51,8 @@ static void LogInternalFree(PVOID pUserData, SIZE_T size, VkInternalAllocationTy
 static void *Reallocate(PVOID pUserData, PVOID pOriginal, SIZE_T size, SIZE_T alignment,
                         VkSystemAllocationScope allocationScope)
 {
+    UNREFERENCED_PARAMETER(pUserData);
+    UNREFERENCED_PARAMETER(allocationScope);
     return CmnAlignedRealloc(pOriginal, alignment, size);
 }
 
@@ -184,7 +191,7 @@ VkBool32 VKAPI_CALL VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT
              (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) ? "general " : "",
              (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) ? "performance " : "",
              (MessageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ? "validation " : "");
-    Type[0] = toupper(Type[0]);
+    Type[0] = (CHAR)toupper(Type[0]);
     LogMessage(Level,
                "Vulkan",                       // "File"
                (UINT64)PlatGetReturnAddress(), // "Line"

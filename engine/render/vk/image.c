@@ -47,7 +47,7 @@ VkFormat VlkChooseFormat(VkFormat *Formats, UINT32 FormatCount, VkImageTiling Im
 
     CmnError("Failed to find supported format");
 
-    return VK_FORMAT_UNDEFINED;
+//    return VK_FORMAT_UNDEFINED;
 }
 
 VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayout, _In_ VkImageLayout NewLayout)
@@ -82,6 +82,9 @@ VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayou
     Barrier.subresourceRange.levelCount = 1;
     Barrier.subresourceRange.baseArrayLayer = 0;
     Barrier.subresourceRange.layerCount = 1;
+    
+    SourceStage = 0;
+    DestinationStage = 0;
 
     // Table of known transitions
     struct LAYOUT_TRANSITION

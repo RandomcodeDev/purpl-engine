@@ -1,8 +1,8 @@
 #include "vk.h"
 
-VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,
-                                 _In_ VkSubpassDescription *Subpasses, _In_ SIZE_T SubpassCount,
-                                 _In_ VkSubpassDependency *SubpassDependencies, _In_ SIZE_T SubpassDependencyCount)
+VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_ UINT32 AttachmentCount,
+                                 _In_ VkSubpassDescription *Subpasses, _In_ UINT32 SubpassCount,
+                                 _In_ VkSubpassDependency *SubpassDependencies, _In_ UINT32 SubpassDependencyCount)
 {
     LogDebug("Creating render pass with %zu attachment(s) and %zu subpass(es)", AttachmentCount, SubpassCount);
 

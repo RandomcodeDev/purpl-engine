@@ -56,7 +56,8 @@ LPSTR *WINAPI CommandLineToArgvA(_In_ LPCSTR lpCmdline, _Out_ PINT numargs)
         size = sizeof(LPSTR) * 2 + deslen * sizeof(CHAR);
         for (;;)
         {
-            if (!(argv = CmnAlloc(size, 1)))
+            argv = CmnAlloc(size, 1);
+            if (!argv)
                 return NULL;
             len = GetModuleFileNameA(0, (LPSTR)(argv + 2), deslen);
             if (!len)

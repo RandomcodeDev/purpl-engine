@@ -92,7 +92,7 @@ VOID PlatShutdown(VOID)
     LogInfo("Windows deinitialization succeeded");
 }
 
-PCSTR PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip, _In_ UINT64 MaxFrames)
+PCSTR PlatCaptureStackBackTrace(_In_ UINT32 FramesToSkip, _In_ UINT32 MaxFrames)
 {
     static CHAR Buffer[UINT16_MAX];
     PVOID BackTrace[32] = {0};
@@ -106,7 +106,7 @@ PCSTR PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip, _In_ UINT64 MaxFrames)
     INT32 Written;
     PVOID ModuleAddress = NULL;
     // PVOID ModuleHandle = NULL;
-    INT i;
+    UINT64 i;
     DWORD Error;
     UINT64 Count;
 
@@ -153,7 +153,7 @@ PCSTR PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip, _In_ UINT64 MaxFrames)
         }
 #endif
 
-        Written = snprintf(Buffer + Offset, PURPL_ARRAYSIZE(Buffer) - Offset, "\t%d: %ls!%ls+0x%llX (0x%llX)\n", i,
+        Written = snprintf(Buffer + Offset, PURPL_ARRAYSIZE(Buffer) - Offset, "\t%lld: %ls!%ls+0x%llX (0x%llX)\n", i,
 #ifdef PURPL_GDKX
                            L"<unknown>", L"<unknown>",
 #else
@@ -396,7 +396,7 @@ UINT64 PlatGetFileSize(_In_ PCSTR Path)
     DWORD Error;
 
     OpenStruct.cBytes = sizeof(OFSTRUCT);
-    File = OpenFile(Path, &OpenStruct, OF_READ);
+    File = (HANDLE)(UINT_PTR)OpenFile(Path, &OpenStruct, OF_READ);
     if (!File)
     {
         Error = OpenStruct.nErrCode;
@@ -410,6 +410,8 @@ UINT64 PlatGetFileSize(_In_ PCSTR Path)
         LogWarning("Failed to get size of file %s: error %d (0x%X)", Error, Error);
         return 0;
     }
+
+    CloseHandle(File);
 
     return (UINT64)Size.QuadPart;
 }

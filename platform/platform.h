@@ -38,8 +38,7 @@ extern VOID PlatShutdown(VOID);
 ///
 /// @return The address of a static buffer containing a string with
 ///         the formatted stack trace.
-extern PCSTR PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip,
-                                       _In_ UINT64 MaxFrames);
+extern PCSTR PlatCaptureStackBackTrace(_In_ UINT32 FramesToSkip, _In_ UINT32 MaxFrames);
 
 /// @brief Displays an error (and potentially gives the option to trigger a breakpoint), and exits the process
 ///
@@ -52,7 +51,7 @@ _Noreturn extern VOID PlatError(_In_ PCSTR Message);
 extern PCSTR PlatGetDescription(VOID);
 
 /// @brief Gets the return address of the calling function
-/// 
+///
 /// @return The return address of the calling function
 extern PVOID PlatGetReturnAddress(VOID);
 
@@ -81,9 +80,9 @@ extern VOID PlatPrint(_In_ PCSTR Text);
 #endif
 
 /// @brief Fix a path if necessary
-/// 
+///
 /// @param[in] Path The path to fix
-/// 
+///
 /// @return The fixed path in a new buffer
 extern PCHAR PlatFixPath(_In_ PCSTR Path);
 

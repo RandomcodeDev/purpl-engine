@@ -49,11 +49,11 @@ END_EXTERN_C
 #define VULKAN_CHECK(Call, ...)                                                                                        \
     do                                                                                                                 \
     {                                                                                                                  \
-        VkResult Result = (Call);                                                                                      \
-        if (Result != VK_SUCCESS __VA_ARGS__)                                                                          \
+        VkResult Result_ = (Call);                                                                                     \
+        if (Result_ != VK_SUCCESS __VA_ARGS__)                                                                         \
         {                                                                                                              \
             CmnError("Vulkan call " #Call " at %s:%d failed: %s (VkResult %d)", __FILE__, __LINE__,                    \
-                     VlkGetResultString(Result), Result);                                                              \
+                     VlkGetResultString(Result_), Result_);                                                            \
         }                                                                                                              \
     } while (0)
 
@@ -423,10 +423,10 @@ extern VOID VlkDestroySwapChain(VOID);
 /// @param[in] SubpassDependencyCount The number of subpass dependencies
 ///
 /// @return A render pass
-extern VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_ SIZE_T AttachmentCount,
-                                        _In_ VkSubpassDescription *Subpasses, _In_ SIZE_T SubpassCount,
+extern VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_ UINT32 AttachmentCount,
+                                        _In_ VkSubpassDescription *Subpasses, _In_ UINT32 SubpassCount,
                                         _In_ VkSubpassDependency *SubpassDependencies,
-                                        _In_ SIZE_T SubpassDependencyCount);
+                                        _In_ UINT32 SubpassDependencyCount);
 
 /// @brief Create the main render pass
 extern VOID VlkCreateMainRenderPass(VOID);

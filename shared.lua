@@ -111,8 +111,9 @@ function setup_shared(root, directx, vulkan)
         end
     end
 
+    -- TODO: make this portable to non-MSVC flags (if xmake ever gets a way to detect the toolchain)
     if is_plat("windows", "gdk", "gdkx") then
-        add_cxflags("-Qspectre", {force = true})
+        add_cxflags("-Qspectre", "-EHsc", {force = true})
         -- all of these are either external or inconsequential
         add_cxflags(
             "-wd4820", -- padded
@@ -129,13 +130,26 @@ function setup_shared(root, directx, vulkan)
             "-wd5045",
             "-wd4191", -- casting function pointer (used for InitializeMainThread, it doesn't call the pointer)
             "-wd5029", -- nonstandard extension: alignment attributes don't apply to functions
+            "-wd4090", -- different const qualifiers (mainly from freeing things that are const)
+            "-wd5039", -- exception nonsense (external)
+            "-wd4127", -- conditional expression is constant (external)
+            "-wd4100", -- unreferenced formal parameter (external)
+            "-wd4189", -- local variable is initialized but not referenced (external)
         {force = true})
         add_cxxflags(
             "-wd5204", -- virtual function something something
             "-wd5027", -- move assignment operator was defined as deleted
+            "-wd5026",
             "-wd4626", -- assignment operator was defined as deleted
             "-wd4623", -- default constructor was defined as deleted
             "-wd4625", -- copy constructor was defined as deleted
+            "-wd4355", -- this used in base member initializer list
+            "-wd4267", -- conversion from size_t to _Ty (in C++ <utility>, not my problem)
+            "-wd5267", -- definition of implicit copy constructor is deprecated because it has a user-provided destructor
+            "-wd4505", -- unreferenced function with internal linkage has been removed
+            "-wd4800", -- implicit conversion to bool, possible information loss
+            "-wd5262", -- implicit fallthrough use [[fallthrough]]
+            "-wd4388", -- signed/unsigned mismatch
         {force = true})
         add_linkdirs(
             path.join(os.getenv("GRDKLatest"), "GameKit/Lib/amd64")

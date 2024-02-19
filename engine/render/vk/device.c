@@ -98,7 +98,7 @@ VOID VlkEnumeratePhysicalDevices(VOID)
 
         LogTrace("Getting extensions");
         UINT32 ExtensionCount = 0;
-        Result = vkEnumerateDeviceExtensionProperties(CurrentGpu->Device, VlkGetAllocationCallbacks(), &ExtensionCount,
+        Result = vkEnumerateDeviceExtensionProperties(CurrentGpu->Device, NULL, &ExtensionCount,
                                                       NULL);
         if (Result != VK_SUCCESS)
         {
@@ -116,7 +116,7 @@ VOID VlkEnumeratePhysicalDevices(VOID)
         }
 
         stbds_arrsetlen(CurrentGpu->ExtensionProperties, ExtensionCount);
-        Result = vkEnumerateDeviceExtensionProperties(CurrentGpu->Device, VlkGetAllocationCallbacks(), &ExtensionCount,
+        Result = vkEnumerateDeviceExtensionProperties(CurrentGpu->Device, NULL, &ExtensionCount,
                                                       CurrentGpu->ExtensionProperties);
         if (Result != VK_SUCCESS)
         {

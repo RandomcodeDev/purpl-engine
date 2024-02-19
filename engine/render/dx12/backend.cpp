@@ -55,6 +55,7 @@ static VOID Initialize(VOID)
 
 static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 {
+    UNREFERENCED_PARAMETER(WindowResized);
 }
 
 static VOID EndFrame(VOID)

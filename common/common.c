@@ -9,10 +9,10 @@
 #include "filesystem.h"
 
 // TODO: implement mutexes
-static VOID LogLock(BOOLEAN Lock, PVOID Mutex)
-{
+//static VOID LogLock(BOOLEAN Lock, PVOID Mutex)
+//{
     // Lock ? AsLockMutex(Mutex, TRUE) : AsUnlockMutex(Mutex);
-}
+//}
 
 VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount)
 {
@@ -191,10 +191,4 @@ _Noreturn VOID CmnError(_In_ _Printf_format_string_ PCSTR Message, ...)
     Formatted = CmnFormatString("Fatal error: %s\nStack trace:\n%s", FormattedMessage, BackTrace);
     LogFatal("%s", Formatted);
     PlatError(Formatted);
-
-    // Just in case PlatformError doesn't kill the process
-    while (1)
-    {
-        abort();
-    }
 }

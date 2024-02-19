@@ -61,12 +61,12 @@ END_EXTERN_C
 #define HRESULT_CHECK(Call, ...)                                                                                       \
     do                                                                                                                 \
     {                                                                                                                  \
-        HRESULT Result = (Call);                                                                                       \
-        if (!SUCCEEDED(Result) __VA_ARGS__)                                                                            \
+        HRESULT Result_ = (Call);                                                                                      \
+        if (!SUCCEEDED(Result_) __VA_ARGS__)                                                                           \
         {                                                                                                              \
-            _com_error Error(Result);                                                                                  \
+            _com_error Error_(Result_);                                                                                \
             CmnError("COM call " #Call " at %s:%d failed: %s (HRESULT 0x%08X)", __FILE__, __LINE__,                    \
-                     Error.ErrorMessage(), Result);                                                                    \
+                     Error_.ErrorMessage(), Result_);                                                                  \
         }                                                                                                              \
     } while (0)
 

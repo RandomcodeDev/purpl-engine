@@ -90,7 +90,7 @@ typedef struct DIRECTX12_DATA
     DXGI_ADAPTER_DESC AdapterDescription;
     ID3D12Device7 *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
-    ID3D12CommandAllocator *CommandAllocator;
+    ID3D12CommandAllocator *CommandAllocators[DIRECTX12_FRAME_COUNT];
     ID3D12CommandQueue *CommandQueue;
     ID3D12RootSignature *RootSignature;
     ID3D12DescriptorHeap *RtvHeap;
@@ -98,16 +98,24 @@ typedef struct DIRECTX12_DATA
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
     ID3D12PipelineState *PipelineState;
     ID3D12GraphicsCommandList7 *CommandList;
+    ID3D12GraphicsCommandList7 *TransferCommandList;
 
     UINT32 FrameIndex;
     PVOID FenceEvent;
     ID3D12Fence *Fence;
-    UINT64 FenceValue;
+    UINT64 FenceValues[DIRECTX12_FRAME_COUNT];
 
     BOOLEAN Initialized;
 } DIRECTX12_DATA, *PDIRECTX12_DATA;
 
 extern DIRECTX12_DATA Dx12Data;
+
+/// @brief A buffer
+typedef struct DIRECTX12_BUFFER
+{
+    ID3D12Resource *Resource;
+    UINT64 Size;
+} DIRECTX12_BUFFER, *PDIRECTX12_BUFFER;
 
 BEGIN_EXTERN_C
 
@@ -121,9 +129,9 @@ extern VOID Dx12CreateDevice(VOID);
 extern VOID Dx12CreateCommandQueue(VOID);
 
 /// @brief Create the command allocator
-extern VOID Dx12CreateCommandAllocator(VOID);
+extern VOID Dx12CreateCommandAllocators(VOID);
 
-/// @brief Create the command list
+/// @brief Create the command lists
 extern VOID Dx12CreateCommandList(VOID);
 
 /// @brief Create the swap chain
@@ -152,5 +160,46 @@ extern VOID Dx12CachePipelineState(VOID);
 
 /// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);
+
+/// @brief Create a buffer
+///
+/// @param[out] Buffer The buffer to initialize
+/// @param[in] Size The size of the buffer
+/// @param[in] HeapProperties The heap properties to use
+/// @param[in] HeapFlags The heap flags to use
+/// @param[in] ResourceDescription The resource description to use
+/// @param[in] ResourceState The state to put the buffer resource in
+extern VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ UINT64 Size,
+                             _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties, _In_ D3D12_HEAP_FLAGS HeapFlags,
+                             _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
+                             _In_ D3D12_RESOURCE_STATES ResourceState);
+
+/// @brief Copy data to a CPU-visible buffer
+///
+/// @param Buffer The buffer to copy to
+/// @param Data The data to copy to the buffer
+/// @param Size The size of the data
+extern VOID Dx12CopyDataToCpuBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _In_ UINT64 Size);
+
+/// @brief Copy data to an upload buffer and copy that to a GPU-only buffer
+///
+/// @param Buffer The buffer to upload to
+/// @param Data The data to upload
+/// @param Size The size of the data
+extern VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _In_ UINT64 Size);
+
+/// @brief Create a buffer with data in it
+///
+/// @param[out] Buffer The buffer to initialize
+/// @param[in] Data The data to copy to the buffer
+/// @param[in] Size The size of the buffer
+/// @param[in] HeapProperties The heap properties to use
+/// @param[in] HeapFlags The heap flags to use
+/// @param[in] ResourceDescription The resource description to use
+/// @param[in] ResourceState The state to put the buffer resource in
+extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data, _In_ SIZE_T Size,
+                              _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties, _In_ D3D12_HEAP_FLAGS HeapFlags,
+                              _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
+                              _In_ D3D12_RESOURCE_STATES ResourceState);
 
 END_EXTERN_C

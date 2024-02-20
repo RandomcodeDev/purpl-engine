@@ -36,7 +36,7 @@ static VOID Initialize(VOID)
     Dx12CreateSwapChain();
     Dx12CreateRtvHeap();
     Dx12CreateRenderTargetViews();
-    Dx12CreateCommandAllocator();
+    Dx12CreateCommandAllocators();
     Dx12CreateRootSignature();
     if (Dx12HavePipelineStateCache())
     {
@@ -68,16 +68,22 @@ static VOID Shutdown(VOID)
 
     LogDebug("Shutting down DirectX 12");
 
-    if (Dx12Data.Fence)
+    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.Fences); i++)
     {
-        LogDebug("Releasing fence");
-        Dx12Data.Fence->Release();
+        if (Dx12Data.Fences[i])
+        {
+            LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.Fences));
+            Dx12Data.Fences[i]->Release();
+        }
     }
 
-    if (Dx12Data.CommandList)
+    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.CommandLists); i++)
     {
-        LogDebug("Releasing command list");
-        Dx12Data.CommandList->Release();
+        if (Dx12Data.CommandLists[i])
+        {
+            LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.CommandLists));
+            Dx12Data.CommandLists[i]->Release();
+        }
     }
 
     if (Dx12Data.PipelineState)

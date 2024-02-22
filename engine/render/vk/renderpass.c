@@ -4,7 +4,8 @@ VkRenderPass VlkCreateRenderPass(_In_ VkAttachmentDescription *Attachments, _In_
                                  _In_ VkSubpassDescription *Subpasses, _In_ UINT32 SubpassCount,
                                  _In_ VkSubpassDependency *SubpassDependencies, _In_ UINT32 SubpassDependencyCount)
 {
-    LogDebug("Creating render pass with %zu attachment(s) and %zu subpass(es)", AttachmentCount, SubpassCount);
+    LogDebug("Creating render pass with %u attachment(s), %u subpass(es), and %u subpass dependenc(ies)",
+             AttachmentCount, SubpassCount, SubpassDependencyCount);
 
     VkRenderPassCreateInfo RenderPassCreateInformation = {0};
     RenderPassCreateInformation.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -100,7 +101,7 @@ VOID VlkCreateMainRenderPass(VOID)
     PostProcessDependency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
     VkSubpassDependency EndDependency = {0};
-    EndDependency.srcSubpass = 0;
+    EndDependency.srcSubpass = 1;
     EndDependency.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
     EndDependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     EndDependency.dstSubpass = VK_SUBPASS_EXTERNAL;

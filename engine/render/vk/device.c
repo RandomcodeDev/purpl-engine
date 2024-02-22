@@ -268,12 +268,17 @@ VOID VlkCreateLogicalDevice(VOID)
     // DeviceRobustness2Features.nullDescriptor = TRUE;
     // DeviceRobustness2Features.pNext = &DescriptorIndexingFeatures;
 
+    VkPhysicalDeviceVulkan12Features Device12Features = {0};
+    Device12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    Device12Features.bufferDeviceAddress = TRUE;
+    Device12Features.bufferDeviceAddressCaptureReplay = TRUE;
+
     DeviceCreateInformation.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     DeviceCreateInformation.pQueueCreateInfos = QueueCreateInfos;
     DeviceCreateInformation.pEnabledFeatures = &DeviceFeatures;
     DeviceCreateInformation.ppEnabledExtensionNames = RequiredDeviceExtensions;
     DeviceCreateInformation.enabledExtensionCount = PURPL_ARRAYSIZE(RequiredDeviceExtensions);
-    // DeviceCreateInformation.pNext = &DescriptorIndexingFeatures;
+    DeviceCreateInformation.pNext = &Device12Features;
 
     LogTrace("Calling vkCreateDevice");
     VULKAN_CHECK(

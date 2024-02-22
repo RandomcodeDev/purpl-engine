@@ -40,7 +40,7 @@ static VOID GlfwErrorCallback(_In_ INT Error, _In_ PCSTR Description)
 
 static VOID GlfwResizeCallback(_In_ GLFWwindow *ResizedWindow, _In_ INT Width, _In_ INT Height)
 {
-    if (ResizedWindow == Window)
+    if (ResizedWindow == Window && (Width != WindowWidth || Height != WindowHeight))
     {
         LogInfo("Window resized from %ux%u to %dx%d", WindowWidth, WindowHeight, Width, Height);
         WindowWidth = Width;

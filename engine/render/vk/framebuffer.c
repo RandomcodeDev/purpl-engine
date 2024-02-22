@@ -7,7 +7,9 @@ VOID VlkCreateScreenFramebuffers(VOID)
 
     Attachments[2] = VlkData.DepthTarget.View;
 
-    LogDebug("Creating %d framebuffers", VULKAN_FRAME_COUNT);
+    stbds_arrsetlen(VlkData.ScreenFramebuffers, stbds_arrlenu(VlkData.SwapChainImages));
+
+    LogDebug("Creating %d framebuffers", stbds_arrlenu(VlkData.ScreenFramebuffers));
 
     VkFramebufferCreateInfo FramebufferCreateInformation = {0};
     FramebufferCreateInformation.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -18,7 +20,7 @@ VOID VlkCreateScreenFramebuffers(VOID)
     FramebufferCreateInformation.height = RdrGetHeight();
     FramebufferCreateInformation.layers = 1;
 
-    for (i = 0; i < VULKAN_FRAME_COUNT; i++)
+    for (i = 0; i < stbds_arrlenu(VlkData.ScreenFramebuffers); i++)
     {
         Attachments[0] = VlkData.ColorTarget.View;
         Attachments[1] = VlkData.SwapChainImageViews[i];
@@ -31,12 +33,19 @@ VOID VlkDestroyScreenFramebuffers(VOID)
 {
     UINT32 i;
 
-    LogDebug("Destroying framebuffers");
-    for (i = 0; i < VULKAN_FRAME_COUNT; i++)
+    if (!VlkData.ScreenFramebuffers)
+    {
+        return;
+    }
+
+    for (i = 0; i < stbds_arrlenu(VlkData.ScreenFramebuffers); i++)
     {
         if (VlkData.ScreenFramebuffers[i])
         {
+            LogDebug("Destroying framebuffer %u/%u", i + 1, stbds_arrlenu(VlkData.ScreenFramebuffers));
             vkDestroyFramebuffer(VlkData.Device, VlkData.ScreenFramebuffers[i], VlkGetAllocationCallbacks());
         }
     }
+
+    stbds_arrfree(VlkData.ScreenFramebuffers);
 }

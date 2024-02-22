@@ -100,6 +100,7 @@ static VOID Initialize(VOID)
 
     VlkData.FrameIndex = 0;
     VlkData.Initialized = TRUE;
+    VlkData.Resized = TRUE;
 
     LogDebug("Successfully initialized Vulkan backend");
 }
@@ -208,7 +209,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
     VkRenderPassBeginInfo RenderPassBeginInformation = {0};
     RenderPassBeginInformation.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     RenderPassBeginInformation.renderPass = VlkData.MainRenderPass;
-    RenderPassBeginInformation.framebuffer = VlkData.ScreenFramebuffers[VlkData.FrameIndex];
+    RenderPassBeginInformation.framebuffer = VlkData.ScreenFramebuffers[VlkData.SwapChainIndex];
     RenderPassBeginInformation.pClearValues = ClearValues;
     RenderPassBeginInformation.clearValueCount = PURPL_ARRAYSIZE(ClearValues);
     RenderPassBeginInformation.renderArea = Scissor;
@@ -264,7 +265,7 @@ static VOID EndFrame(VOID)
     SubmitInformation.commandBufferCount = 1;
 
     VULKAN_CHECK(
-        vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, VlkData.CommandBufferFences[VlkData.FrameIndex]));
+        vkQueueSubmit(VlkData.GraphicsQueue, 1, &SubmitInformation, VlkData.CommandBufferFences[VlkData.FrameIndex]));
 
     VkPresentInfoKHR PresentInformation = {0};
     PresentInformation.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

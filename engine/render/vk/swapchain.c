@@ -134,7 +134,8 @@ VOID VlkCreateSwapChain(VOID)
     stbds_arrsetlen(VlkData.SwapChainImages, ImageCount);
     VULKAN_CHECK(vkGetSwapchainImagesKHR(VlkData.Device, VlkData.SwapChain, &ImageCount, VlkData.SwapChainImages));
 
-    for (i = 0; i < VULKAN_FRAME_COUNT; i++)
+    stbds_arrsetlen(VlkData.SwapChainImageViews, stbds_arrlenu(VlkData.SwapChainImages));
+    for (i = 0; i < stbds_arrlenu(VlkData.SwapChainImageViews); i++)
     {
         VlkCreateImageView(&VlkData.SwapChainImageViews[i], VlkData.SwapChainImages[i], VlkData.SurfaceFormat.format,
                            VK_IMAGE_ASPECT_COLOR_BIT);
@@ -147,14 +148,19 @@ VOID VlkDestroySwapChain(VOID)
 {
     UINT32 i;
 
-    LogDebug("Destroying swap chain image views");
-    for (i = 0; i < VULKAN_FRAME_COUNT; i++)
+    if (VlkData.SwapChainImageViews)
     {
-        if (VlkData.SwapChainImageViews[i])
+        for (i = 0; i < stbds_arrlenu(VlkData.SwapChainImageViews); i++)
         {
-            vkDestroyImageView(VlkData.Device, VlkData.SwapChainImageViews[i], VlkGetAllocationCallbacks());
-            VlkData.SwapChainImageViews[i] = VK_NULL_HANDLE;
+            if (VlkData.SwapChainImageViews[i])
+            {
+                LogDebug("Destroying swap chain image view %u/%u", i + 1, stbds_arrlenu(VlkData.SwapChainImageViews));
+                vkDestroyImageView(VlkData.Device, VlkData.SwapChainImageViews[i], VlkGetAllocationCallbacks());
+                VlkData.SwapChainImageViews[i] = VK_NULL_HANDLE;
+            }
         }
+        stbds_arrfree(VlkData.SwapChainImageViews);
+        VlkData.SwapChainImageViews = NULL;
     }
 
     if (VlkData.SwapChainImages)

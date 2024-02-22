@@ -57,7 +57,7 @@ Return Value:
 }
 
 PCSTR
-PlatCaptureStackBackTrace(_In_ UINT64 FramesToSkip, _In_ UINT64 MaxFrames)
+PlatCaptureStackBackTrace(_In_ UINT32 FramesToSkip, _In_ UINT32 MaxFrames)
 /*++
 
 Routine Description:

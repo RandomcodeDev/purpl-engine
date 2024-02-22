@@ -179,7 +179,7 @@ typedef struct VULKAN_DATA
     VkImage *SwapChainImages;
 
     /// @brief Views of the images in the swap chain
-    VkImageView SwapChainImageViews[VULKAN_FRAME_COUNT];
+    VkImageView *SwapChainImageViews;
 
     /// @brief The current index in the swap chain
     UINT32 SwapChainIndex;
@@ -194,7 +194,7 @@ typedef struct VULKAN_DATA
     VkRenderPass MainRenderPass;
 
     /// @brief Framebuffers for the screen, tied to swap chain images
-    VkFramebuffer ScreenFramebuffers[VULKAN_FRAME_COUNT];
+    VkFramebuffer *ScreenFramebuffers;
 
     /// @brief Main descriptor pool
     VkDescriptorPool DescriptorPool;

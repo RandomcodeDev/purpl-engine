@@ -24,7 +24,7 @@ VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount)
     PlatInitialize();
 
     CONST UINT8 HugePageCount = 2;
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     LogInfo("Using mimalloc allocator");
 
     mi_option_set(mi_option_reserve_huge_os_pages, HugePageCount);
@@ -42,7 +42,7 @@ VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount)
 #ifdef PURPL_DEBUG
 #ifdef PURPL_VERBOSE
     Level = LogLevelTrace;
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     mi_option_set(mi_option_verbose, TRUE);
 #endif
 #else
@@ -56,7 +56,7 @@ VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount)
     LogInfo("Common library initialized");
 }
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 static VOID MiMallocStatPrint(PCSTR Message, PVOID Argument)
 {
     UNREFERENCED_PARAMETER(Argument);
@@ -69,7 +69,7 @@ VOID CmnShutdown(VOID)
 {
     PlatShutdown();
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     // Some memory will still be in use because of the THREAD for the main
     // thread, which is managed by the launcher, and therefore can't be freed
     // before this function

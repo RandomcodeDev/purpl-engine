@@ -68,23 +68,20 @@ static VOID Shutdown(VOID)
 
     LogDebug("Shutting down DirectX 12");
 
-    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.Fences); i++)
-    {
-        if (Dx12Data.Fences[i])
-        {
-            LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.Fences));
-            Dx12Data.Fences[i]->Release();
-        }
-    }
+//    if (Dx12Data.Fences[i])
+//    {
+//        LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.Fences));
+//        Dx12Data.Fences[i]->Release();
+//    }
 
-    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.CommandLists); i++)
-    {
-        if (Dx12Data.CommandLists[i])
-        {
-            LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.CommandLists));
-            Dx12Data.CommandLists[i]->Release();
-        }
-    }
+//    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.CommandLists); i++)
+//    {
+//        if (Dx12Data.CommandLists[i])
+//        {
+//            LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.CommandLists));
+//            Dx12Data.CommandLists[i]->Release();
+//        }
+//    }
 
     if (Dx12Data.PipelineState)
     {
@@ -98,11 +95,11 @@ static VOID Shutdown(VOID)
         Dx12Data.RootSignature->Release();
     }
 
-    if (Dx12Data.CommandAllocator)
-    {
-        LogDebug("Releasing command allocator");
-        Dx12Data.CommandAllocator->Release();
-    }
+//    if (Dx12Data.CommandAllocator)
+//    {
+//        LogDebug("Releasing command allocator");
+//        Dx12Data.CommandAllocator->Release();
+//    }
 
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
     {

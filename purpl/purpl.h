@@ -93,7 +93,7 @@
 #endif
 #include "flecs.h"
 
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #include "mimalloc.h"
 #endif
 

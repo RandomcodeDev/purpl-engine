@@ -60,7 +60,7 @@ VOID EcsInitialize(VOID)
     ecs_os_set_api_defaults();
     ecs_os_api_t OsApi = ecs_os_api;
     OsApi.log_ = EcsLog;
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
     // Technically parameters differ, but every architecture where size_t isn't 32-bit uses registers, which means it
     // should be OK (and it should be easy enough to figure out whether this is causing problems if not)
     OsApi.malloc_ = mi_malloc;

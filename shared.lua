@@ -151,6 +151,9 @@ function setup_shared(root, directx, vulkan)
             "-wd5262", -- implicit fallthrough use [[fallthrough]]
             "-wd4388", -- signed/unsigned mismatch
         {force = true})
+        add_includedirs(
+            path.join(os.getenv("GRDKLatest"), "GameKit/Include")
+        )
         add_linkdirs(
             path.join(os.getenv("GRDKLatest"), "GameKit/Lib/amd64")
         )
@@ -161,11 +164,32 @@ function setup_shared(root, directx, vulkan)
             "-Wno-gnu-line-marker",
             "-Wno-gnu-zero-variadic-macro-arguments",
             "-Wno-extra-semi-stmt",
+            "-Wno-padded",
+            "-Wno-comma",
+            "-Wno-gnu-anonymous-struct",
+            "-Wno-bad-function-cast",
+            "-Wno-nested-anon-types",
+            "-Wno-reserved-identifier",
+            "-Wno-unknown-warning-option",
+            "-Wno-switch-enum",
+            "-Wno-four-char-constants",
+            "-Wno-missing-declarations",
+            "-Wno-nullability-extension",
+            "-Wno-format-nonliteral",
+            "-Wno-sign-conversion",
         {force = true})
+        if is_arch("arm64") then
+            add_cxflags(
+                "-Wno-float-equal",
+                "-Wno-double-promotion",
+                "-Wno-implicit-int-float-conversion",
+            {force = true})
+        end
         add_cxxflags(
             "-Wno-c++98-compat",
             "-Wno-c++98-compat-pedantic",
             "-Wno-old-style-cast",
+            "-Wno-zero-as-null-pointer-constant",
         {force = true})
     end
 
@@ -264,7 +288,7 @@ function setup_shared(root, directx, vulkan)
         if is_plat("gdk", "gdkx", "windows") then
             add_files(
                 path.join(root, "platform/win32/async.c"),
-                path.join(root, "platform/win32/platform.c"),
+                path.join(root, "platform/win32/platform.cpp"),
                 path.join(root, "platform/win32/video.c")
             )
             add_links("advapi32", "kernel32", "shell32", "user32")

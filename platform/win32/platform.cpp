@@ -12,15 +12,18 @@ Abstract:
 
 --*/
 
+#include "purpl/purpl.h"
+
+#ifdef PURPL_GDK
+#include <XGameRuntimeInit.h>
+#endif
+
+BEGIN_EXTERN_C
+
 #include "common/alloc.h"
 #include "common/common.h"
 
 #include "platform/platform.h"
-
-#ifdef PURPL_GDK
-extern HRESULT XGameRuntimeInitialize(VOID);
-extern VOID XGameRuntimeUninitialize(VOID);
-#endif
 
 DWORD InitialConsoleInputMode;
 DWORD InitialConsoleOutputMode;
@@ -68,7 +71,7 @@ VOID PlatInitialize(VOID)
 #ifdef PURPL_GDK
     LogInfo("Initializing Xbox Gaming Runtime Services");
     Result = XGameRuntimeInitialize();
-    if (!SUCCEEDED(Result))
+    if (FAILED(Result))
     {
         CmnError("Failed to initialize Xbox Gaming Runtime Services: HRESULT 0x%08X", Result);
     }
@@ -104,8 +107,8 @@ PCSTR PlatCaptureStackBackTrace(_In_ UINT32 FramesToSkip, _In_ UINT32 MaxFrames)
 #endif
     UINT64 Offset;
     INT32 Written;
-    PVOID ModuleAddress = NULL;
-    // PVOID ModuleHandle = NULL;
+    PVOID ModuleAddress = nullptr;
+    // PVOID ModuleHandle = nullptr;
     UINT64 i;
     DWORD Error;
     UINT64 Count;
@@ -119,12 +122,11 @@ PCSTR PlatCaptureStackBackTrace(_In_ UINT32 FramesToSkip, _In_ UINT32 MaxFrames)
         Count = PURPL_ARRAYSIZE(BackTrace);
     }
 
-    RtlCaptureStackBackTrace(FramesToSkip + 1, PURPL_ARRAYSIZE(BackTrace), BackTrace, NULL);
+    RtlCaptureStackBackTrace(FramesToSkip + 1, PURPL_ARRAYSIZE(BackTrace), BackTrace, nullptr);
 
     Offset = 0;
     for (i = 0; i < Count && BackTrace[i]; i++)
     {
-        // To the best of my knowledge, this isn't supported on Xbox
 #ifndef PURPL_GDKX
         memset(SymbolBuffer, 0, sizeof(SymbolBuffer));
         Symbol = (PSYMBOL_INFOW)SymbolBuffer;
@@ -197,7 +199,7 @@ PCSTR PlatGetDescription(VOID)
     CHAR CSDVersion[8] = {0};
     CHAR BuildLab[64] = {0};
 
-    // PCSTR Name = NULL;
+    // PCSTR Name = nullptr;
 
     BOOL IsWow64 = FALSE;
 #ifdef _M_IX86
@@ -208,33 +210,33 @@ PCSTR PlatGetDescription(VOID)
                   &CurrentVersionHandle);
 
     Size = sizeof(EditionId);
-    RegQueryValueExA(CurrentVersionHandle, "EditionID", NULL, NULL, (LPBYTE)EditionId, &Size);
+    RegQueryValueExA(CurrentVersionHandle, "EditionID", nullptr, nullptr, (LPBYTE)EditionId, &Size);
 
     Size = sizeof(ProductName);
-    RegQueryValueExA(CurrentVersionHandle, "ProductName", NULL, NULL, (LPBYTE)ProductName, &Size);
+    RegQueryValueExA(CurrentVersionHandle, "ProductName", nullptr, nullptr, (LPBYTE)ProductName, &Size);
 
     Size = sizeof(INT);
-    if (RegQueryValueExA(CurrentVersionHandle, "CurrentMajorVersionNumber", NULL, NULL,
+    if (RegQueryValueExA(CurrentVersionHandle, "CurrentMajorVersionNumber", nullptr, nullptr,
                          (LPBYTE)&CurrentMajorVersionNumber, &Size) == ERROR_SUCCESS)
     {
         Size = sizeof(INT);
-        RegQueryValueExA(CurrentVersionHandle, "CurrentMinorVersionNumber", NULL, NULL,
+        RegQueryValueExA(CurrentVersionHandle, "CurrentMinorVersionNumber", nullptr, nullptr,
                          (LPBYTE)&CurrentMinorVersionNumber, &Size);
 
         Size = sizeof(InstallationType);
-        RegQueryValueExA(CurrentVersionHandle, "InstallationType", NULL, NULL, (LPBYTE)InstallationType, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "InstallationType", nullptr, nullptr, (LPBYTE)InstallationType, &Size);
 
         Size = sizeof(CurrentBuildNumber);
-        RegQueryValueExA(CurrentVersionHandle, "CurrentBuildNumber", NULL, NULL, (LPBYTE)CurrentBuildNumber, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "CurrentBuildNumber", nullptr, nullptr, (LPBYTE)CurrentBuildNumber, &Size);
 
         Size = sizeof(INT);
-        RegQueryValueExA(CurrentVersionHandle, "UBR", NULL, NULL, (LPBYTE)&UBR, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "UBR", nullptr, nullptr, (LPBYTE)&UBR, &Size);
 
         Size = sizeof(BuildLabEx);
-        RegQueryValueExA(CurrentVersionHandle, "BuildLabEx", NULL, NULL, (LPBYTE)&BuildLabEx, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "BuildLabEx", nullptr, nullptr, (LPBYTE)&BuildLabEx, &Size);
 
         Size = sizeof(DisplayVersion);
-        RegQueryValueExA(CurrentVersionHandle, "DisplayVersion", NULL, NULL, (LPBYTE)DisplayVersion, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "DisplayVersion", nullptr, nullptr, (LPBYTE)DisplayVersion, &Size);
 
         snprintf(Buffer, PURPL_ARRAYSIZE(Buffer),
 #ifdef _DEBUG
@@ -256,9 +258,9 @@ PCSTR PlatGetDescription(VOID)
     else
     {
         Size = sizeof(CSDVersion);
-        RegQueryValueExA(CurrentVersionHandle, "CSDVersion", NULL, NULL, (LPBYTE)BuildLab, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "CSDVersion", nullptr, nullptr, (LPBYTE)BuildLab, &Size);
         Size = sizeof(BuildLab);
-        RegQueryValueExA(CurrentVersionHandle, "BuildLab", NULL, NULL, (LPBYTE)BuildLab, &Size);
+        RegQueryValueExA(CurrentVersionHandle, "BuildLab", nullptr, nullptr, (LPBYTE)BuildLab, &Size);
 
         snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "Windows %s %s %s (build lab %s%s)", ProductName, EditionId,
                  CSDVersion, BuildLab, IsWow64 ? ", WoW64" : "");
@@ -271,7 +273,7 @@ _Noreturn VOID PlatError(_In_ PCSTR Message)
 {
     INT Option;
 
-    Option = MessageBoxA(NULL, Message, "Purpl Error", MB_ICONERROR | MB_ABORTRETRYIGNORE);
+    Option = MessageBoxA(nullptr, Message, "Purpl Error", MB_ICONERROR | MB_ABORTRETRYIGNORE);
     switch (Option)
     {
     case IDRETRY:
@@ -287,7 +289,7 @@ PVOID PlatGetReturnAddress(VOID)
 {
     PVOID ReturnAddress;
 
-    RtlCaptureStackBackTrace(2, 1, &ReturnAddress, NULL);
+    RtlCaptureStackBackTrace(2, 1, &ReturnAddress, nullptr);
 
     return ReturnAddress;
 }
@@ -299,7 +301,7 @@ PCSTR PlatGetUserDataDirectory(VOID)
 
     if (!strlen(Directory))
     {
-        SHGetFolderPathA(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, Directory);
+        SHGetFolderPathA(nullptr, CSIDL_APPDATA | CSIDL_FLAG_CREATE, nullptr, SHGFP_TYPE_CURRENT, Directory);
         Directory[PURPL_MIN(MAX_PATH, strlen(Directory))] = '/';
 
         Path = PlatFixPath(Directory);
@@ -327,7 +329,7 @@ BOOLEAN PlatCreateDirectory(_In_ PCSTR Path)
     // literally Unix version but replace mkdir with CreateDirectoryA
 
     CHAR TempPath[256];
-    PCHAR p = NULL;
+    PCHAR p = nullptr;
     UINT64 Length;
 
     snprintf(TempPath, sizeof(TempPath), "%s", Path);
@@ -341,11 +343,11 @@ BOOLEAN PlatCreateDirectory(_In_ PCSTR Path)
         if (*p == '/')
         {
             *p = 0;
-            CreateDirectoryA(Path, NULL);
+            CreateDirectoryA(Path, nullptr);
             *p = '/';
         }
     }
-    CreateDirectoryA(Path, NULL);
+    CreateDirectoryA(Path, nullptr);
 
     // should probably for real check return values
     return TRUE;
@@ -356,21 +358,20 @@ VOID PlatPrint(_In_ PCSTR Text)
     OutputDebugStringA(Text);
 }
 
-PCHAR
-PlatFixPath(_In_ PCSTR Path)
+PCHAR PlatFixPath(_In_ PCSTR Path)
 {
     PCHAR FixedPath;
     UINT i;
 
     if (!Path || !strlen(Path))
     {
-        return NULL;
+        return nullptr;
     }
 
-    FixedPath = CmnAlloc(1, strlen(Path) + 1);
+    FixedPath = (PCHAR)CmnAlloc(1, strlen(Path) + 1);
     if (!FixedPath)
     {
-        return NULL;
+        return nullptr;
     }
 
     for (i = 0; i < strlen(Path); i++)
@@ -391,8 +392,8 @@ PlatFixPath(_In_ PCSTR Path)
 UINT64 PlatGetFileSize(_In_ PCSTR Path)
 {
     HANDLE File;
-    LARGE_INTEGER Size = {0};
-    OFSTRUCT OpenStruct = {0};
+    LARGE_INTEGER Size = {};
+    OFSTRUCT OpenStruct = {};
     DWORD Error;
 
     OpenStruct.cBytes = sizeof(OFSTRUCT);
@@ -415,3 +416,5 @@ UINT64 PlatGetFileSize(_In_ PCSTR Path)
 
     return (UINT64)Size.QuadPart;
 }
+
+END_EXTERN_C

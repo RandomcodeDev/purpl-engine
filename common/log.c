@@ -38,7 +38,7 @@ static struct LOG_STATE
 {
     void *Data;
     PFN_LOG_LOCK Lock;
-    int Level;
+    LOG_LEVEL Level;
     bool Quiet;
     LOG_CALLBACK Callbacks[LOG_MAX_CALLBACKS];
 } LogState;
@@ -49,6 +49,7 @@ static CONST char *LevelStrings[] = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR", 
 static CONST char *LevelColours[] = {"\x1b[38;5;197m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"};
 #endif
 
+#ifndef PURPL_SWITCH
 static void StdoutCallback(LOG_EVENT *Event)
 {
     char Buffer[64] = {0};
@@ -71,9 +72,10 @@ static void StdoutCallback(LOG_EVENT *Event)
     fprintf(Event->Data, "\n");
     fflush(Event->Data);
 }
+#endif
 
 #ifdef PURPL_HAVE_PLATPRINT
-void PlatPrintCallback(LOG_EVENT *Event)
+static void PlatPrintCallback(LOG_EVENT *Event)
 /*++
 
 Routine Description:

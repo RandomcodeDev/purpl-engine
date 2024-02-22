@@ -15,7 +15,7 @@
 /// @param[in] Block The block of memory to get the size of
 ///
 /// @return The size of the block of memory
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnAllocSize(Block) mi_usable_size(Block)
 #else
 #ifdef PURPL_WIN32
@@ -35,7 +35,7 @@
 /// @param[in] Size The size of an element
 ///
 /// @return A block of memory
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnAlloc(Count, Size) mi_calloc(Count, Size)
 #else
 #define CmnAlloc(Count, Size) calloc(Count, Size)
@@ -50,7 +50,7 @@
 ///
 /// @return A block of memory with the requested size and
 /// the same data as the old block
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnRealloc(Block, Size) mi_realloc(Block, Size)
 #else
 #define CmnRealloc(Block, Size) realloc(Block, Size)
@@ -64,7 +64,7 @@
 /// @param[in] Size The size of the memory
 /// 
 /// @return A block of memory
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnAlignedAlloc(Alignment, Size) mi_aligned_alloc(Alignment, Size)
 #else
 #ifdef PURPL_WIN32
@@ -79,16 +79,16 @@
 /// @brief Free memory
 /// 
 /// @param[in,out] Block The block of memory to free
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnFree(Block)                                                         \
     {                                                                          \
-        (Block) ? mi_free(Block) : (VOID)0;                                    \
+        (Block) ? mi_free((PVOID)(Block)) : (VOID)0;                           \
         (Block) = NULL;                                                        \
     }
 #else
 #define CmnFree(Block)                                                         \
     {                                                                          \
-        (Block) ? free(Block) : (VOID)0;                                       \
+        (Block) ? free((PVOID)(Block)) : (VOID)0;                              \
         (Block) = NULL;                                                        \
     }
 #endif
@@ -98,7 +98,7 @@
 /// @brief Free aligned memory
 /// 
 /// @param[in,out] Block The block of memory to free
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnAlignedFree(Block)                                                  \
     {                                                                          \
         (Block) ? mi_free(Block) : (VOID)0;                                    \
@@ -129,7 +129,7 @@
 /// @param[in] Size The new size
 /// 
 /// @return A block of memory with the same data as the old block
-#ifdef PURPL_USE_MIMALLOC
+#if PURPL_USE_MIMALLOC
 #define CmnAlignedRealloc(Block, Alignment, Size)                              \
     mi_aligned_recalloc(Block, 1, Size, Alignment)
 #else

@@ -135,24 +135,24 @@ typedef GUID CLSID;
 #define REFIID const IID &
 #define REFCLSID const IID &
 
-__inline int InlineIsEqualGUID(REFGUID rguid1, REFGUID rguid2)
-{
-    return (
-        ((uint32_t *)&rguid1)[0] == ((uint32_t *)&rguid2)[0] &&
-        ((uint32_t *)&rguid1)[1] == ((uint32_t *)&rguid2)[1] &&
-        ((uint32_t *)&rguid1)[2] == ((uint32_t *)&rguid2)[2] &&
-        ((uint32_t *)&rguid1)[3] == ((uint32_t *)&rguid2)[3]);
-}
+//__inline int InlineIsEqualGUID(REFGUID rguid1, REFGUID rguid2)
+//{
+//    return (
+//        ((uint32_t *)&rguid1)[0] == ((uint32_t *)&rguid2)[0] &&
+//        ((uint32_t *)&rguid1)[1] == ((uint32_t *)&rguid2)[1] &&
+//        ((uint32_t *)&rguid1)[2] == ((uint32_t *)&rguid2)[2] &&
+//        ((uint32_t *)&rguid1)[3] == ((uint32_t *)&rguid2)[3]);
+//}
 
-inline bool operator==(REFGUID guidOne, REFGUID guidOther)
-{
-    return !!InlineIsEqualGUID(guidOne, guidOther);
-}
+//inline bool operator==(REFGUID guidOne, REFGUID guidOther)
+//{
+//    return !!InlineIsEqualGUID(guidOne, guidOther);
+//}
 
-inline bool operator!=(REFGUID guidOne, REFGUID guidOther)
-{
-    return !(guidOne == guidOther);
-}
+//inline bool operator!=(REFGUID guidOne, REFGUID guidOther)
+//{
+//    return !(guidOne == guidOther);
+//}
 
 #else
 #define REFGUID const GUID *

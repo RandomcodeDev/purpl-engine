@@ -4,16 +4,8 @@ add_rules(
     "plugin.vsxmake.autoupdate"
 )
 
-set_project("purpl-engine")
-
-set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch")
-set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64")
-
 if os.isfile("../platform/switch/switch.lua") then
     includes("../platform/switch/switch.lua")
-    if is_plat("switch") then
-        add_switch_settings()
-    end
 else
     function add_switch_links() end
     function add_switch_vulkan_links() end
@@ -21,12 +13,20 @@ else
     function add_switch_renderapi() end
 end
 
+set_project("purpl-engine")
+
+set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch")
+set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64")
+
 directx = is_plat("gdk", "gdkx")
 discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
 vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 
 includes("shared.lua")
 setup_shared("$(scriptdir)", directx, vulkan)
+if is_plat("switch") then
+    add_switch_settings()
+end
 
 if discord then
     target("discord")
@@ -156,11 +156,10 @@ target("purpl")
     if is_plat("gdk", "gdkx", "windows") then
         add_files("platform/win32/launcher.c", "platform/win32/purpl.rc")
         if not is_plat("windows") then
+            add_headerfiles("platform/gdk/MicrosoftGameConfig.mgc")
             add_links("xgameruntime.lib")
             after_build(function (target)
-                if not os.exists(path.join(target:targetdir(), "MicrosoftGame.Config")) then
-                    os.ln(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
-                end
+                os.cp(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
             end)
         end
         if is_mode("debug") then
@@ -171,6 +170,7 @@ target("purpl")
     elseif is_plat("linux", "freebsd") then
         add_files("platform/unix/launcher.c")
     elseif is_plat("switch") then
+        add_headerfiles("../platform/switch/switch.lua")
         add_files("../platform/switch/launcher.cpp")
         after_build(switch_postbuild)
     end
@@ -181,5 +181,9 @@ target("purpl")
     before_build(function (target)
         if not os.exists(path.join(target:targetdir(), "assets")) then
             os.ln(path.absolute("assets/out"), path.join(target:targetdir(), "assets"))
+        end
+
+        if is_plat("gdk", "gdkx") and not os.exists(path.join(target:targetdir(), "GdkAssets")) then
+            os.ln(path.absolute("platform/gdk/GdkAssets"), path.join(target:targetdir(), "GdkAssets"))
         end
     end)

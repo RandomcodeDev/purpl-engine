@@ -115,12 +115,14 @@ PCSTR VlkGetResultString(VkResult Result)
     X(VK_OPERATION_DEFERRED_KHR)
     X(VK_OPERATION_NOT_DEFERRED_KHR)
     X(VK_PIPELINE_COMPILE_REQUIRED_EXT)
+#ifndef PURPL_SWITCH
     X(VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR)
     X(VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR)
     X(VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR)
     X(VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR)
     X(VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR)
     X(VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR)
+#endif
     default:
         return "VK_UNKNOWN";
     }
@@ -130,9 +132,6 @@ PCSTR VlkGetResultString(VkResult Result)
 
 VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_ _Printf_format_string_ PCSTR Name, ...)
 {
-    // UNREFERENCED_PARAMETER(Object);
-    // UNREFERENCED_PARAMETER(ObjectType);
-    // UNREFERENCED_PARAMETER(Name);
     //  Seems to crash a lot
 #ifndef PURPL_SWITCH
 #ifdef PURPL_VULKAN_DEBUG
@@ -154,8 +153,14 @@ VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_ _Pr
 
         vkSetDebugUtilsObjectNameEXT(VlkData.Device, &NameInformation);
     }
+
+    return;
 #endif
 #endif
+    
+    UNREFERENCED_PARAMETER(Object);
+    UNREFERENCED_PARAMETER(ObjectType);
+    UNREFERENCED_PARAMETER(Name);
 }
 
 VkBool32 VKAPI_CALL VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,

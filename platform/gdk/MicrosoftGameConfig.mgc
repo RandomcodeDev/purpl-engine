@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Game configVersion="0">
-
-  <Identity Name="62281MobSlicer152.PurplEngineTest"
-            Publisher="CN=226F0228-2A14-49C0-8CB9-FDB4B16D6A76"
-            Version="1.0.0.0"/>
-  
+<Game
+  configVersion="0">
+  <Identity
+    Name="62281MobSlicer152.PurplEngineTest"
+    Publisher="CN=226F0228-2A14-49C0-8CB9-FDB4B16D6A76"
+    Version="1.0.0.0" />
+  <ShellVisuals
+    DefaultDisplayName="Purpl Engine"
+    PublisherDisplayName="MobSlicer152"
+    StoreLogo="GdkAssets\StoreLogo.png"
+    Square150x150Logo="GdkAssets\Square150x150Logo.png"
+    Square44x44Logo="GdkAssets\Square44x44Logo.png"
+    Square480x480Logo="GdkAssets\LargeLogo.png"
+    Description="Purpl game engine"
+    ForegroundText="dark"
+    BackgroundColor="#000000"
+    SplashScreenImage="GdkAssets\SplashScreenImage.png" />
   <ExecutableList>
-    <Executable Name="purpl.exe"
-                Id="Game" />
+    <Executable
+      Name="purpl.exe"
+      Id="Game" />
   </ExecutableList>
- 
-  <ShellVisuals DefaultDisplayName="Purpl Engine"
-                PublisherDisplayName="MobSlicer152"
-                Square480x480Logo="LargeLogo.png"
-                Square150x150Logo="Logo.png"
-                Square44x44Logo="SmallLogo.png"
-                Description="Purpl game engine"
-                ForegroundText="dark"
-                BackgroundColor="#000000"
-                SplashScreenImage="SplashScreen.png"
-                StoreLogo="StoreLogo.png"/>
-
+  <AdvancedUserModel>true</AdvancedUserModel>
 </Game>

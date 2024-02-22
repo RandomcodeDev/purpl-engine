@@ -18,23 +18,147 @@ Abstract:
 
 #include "GLFW/glfw3.h"
 
-VOID PlatInitialize(VOID)
-/*++
-
-Routine Description:
-
-    Performs platform-specific initialization.
-
-Arguments:
-
-    None.
-
-Return Value:
-
-    None.
-
---*/
+extern BOOLEAN WindowClosed;
+static VOID SignalHandler(_In_ INT Signal, _In_ siginfo_t *SignalInformation, _In_opt_ PVOID UserData)
 {
+    PCSTR BaseErrorType = "Unknown error";
+    PCSTR ErrorType = "unknown error";
+    BOOLEAN Fatal = FALSE;
+
+    switch (Signal)
+    {
+    case SIGILL:
+        Fatal = TRUE;
+        BaseErrorType = "Illegal operation";
+        switch (SignalInformation->si_code)
+        {
+        case ILL_ILLOPC:
+            ErrorType = "illegal opcode";
+            break;
+        case ILL_ILLOPN:
+            ErrorType = "illegal operand";
+            break;
+        case ILL_ILLADR:
+            ErrorType = "illegal addressing mode";
+            break;
+        case ILL_ILLTRP:
+            ErrorType = "illegal trap";
+            break;
+        case ILL_PRVOPC:
+            ErrorType = "privileged opcode";
+            break;
+        case ILL_PRVREG:
+            ErrorType = "privileged register";
+            break;
+        case ILL_COPROC:
+            ErrorType = "coprocessor error";
+            break;
+        case ILL_BADSTK:
+            ErrorType = "internal stack error";
+            break;
+        }
+        break;
+    case SIGSEGV:
+        Fatal = TRUE;
+        BaseErrorType = "Segmentation fault";
+        switch (SignalInformation->si_code)
+        {
+        case SEGV_MAPERR:
+            ErrorType = "address not mapped to object";
+            break;
+        case SEGV_ACCERR:
+            ErrorType = "invalid permissions for mapped object";
+            break;
+#ifdef PURPL_LINUX
+        case SEGV_BNDERR:
+            ErrorType = "failed bounds checks";
+            break;
+        case SEGV_PKUERR:
+            ErrorType = "access was denied by memory protection keys";
+            break;
+#endif
+        }
+        break;
+    case SIGFPE:
+        Fatal = TRUE;
+        BaseErrorType = "Arithmetic error";
+        switch (SignalInformation->si_code)
+        {
+        case FPE_INTDIV:
+            ErrorType = "integer divide by zero";
+            break;
+        case FPE_INTOVF:
+            ErrorType = "integer overflow";
+            break;
+        case FPE_FLTDIV:
+            ErrorType = "floating-point divide by zero";
+            break;
+        case FPE_FLTOVF:
+            ErrorType = "floating-point overflow";
+            break;
+        case FPE_FLTUND:
+            ErrorType = "floating-point underflow";
+            break;
+        case FPE_FLTRES:
+            ErrorType = "floating-point inexact result";
+            break;
+        case FPE_FLTINV:
+            ErrorType = "floating-point invalid operation";
+            break;
+        case FPE_FLTSUB:
+            ErrorType = "subscript out of range";
+            break;
+        }
+        break;
+    case SIGBUS:
+        Fatal = TRUE;
+        BaseErrorType = "Bus error";
+        switch (SignalInformation->si_code)
+        {
+        case BUS_ADRALN:
+            ErrorType = "invalid address alignment";
+            break;
+        case BUS_ADRERR:
+            ErrorType = "nonexistent physical address";
+            break;
+        case BUS_OBJERR:
+            ErrorType = "object-specific hardware error";
+            break;
+        case BUS_MCEERR_AR:
+            ErrorType = "hardware memory error consumed on a machine check; action required";
+            break;
+        case BUS_MCEERR_AO:
+            ErrorType = "hardware memory error detected in process but not consumed; action optional";
+            break;
+        }
+        break;
+    case SIGINT:
+    case SIGQUIT:
+    case SIGTERM:
+        LogInfo("Received quit signal %d, errno %d", Signal, SignalInformation->si_errno);
+        WindowClosed = TRUE;
+        break;
+    default:
+        LogInfo("Received signal %d", Signal);
+        break;
+    }
+
+    CmnError("%s at 0x%llX: error %d: %s (si_code %d)", BaseErrorType, (UINT64)SignalInformation->si_addr,
+             SignalInformation->si_errno, ErrorType, SignalInformation->si_code);
+}
+
+VOID PlatInitialize(VOID)
+{
+    LogDebug("Registering signal handler");
+    struct sigaction SignalAction = {0};
+    SignalAction.sa_sigaction = SignalHandler;
+    sigaction(SIGILL, &SignalAction, NULL);
+    sigaction(SIGSEGV, &SignalAction, NULL);
+    sigaction(SIGFPE, &SignalAction, NULL);
+    sigaction(SIGBUS, &SignalAction, NULL);
+    sigaction(SIGINT, &SignalAction, NULL);
+    sigaction(SIGQUIT, &SignalAction, NULL);
+    sigaction(SIGTERM, &SignalAction, NULL);
 }
 
 VOID PlatShutdown(VOID)
@@ -96,9 +220,8 @@ Return Value:
     Offset = 0;
     for (i = FramesToSkip; i < Size; i++)
     {
-        Offset +=
-            snprintf(Buffer + Offset, PURPL_ARRAYSIZE(Buffer) - Offset,
-                     "\t%zu: %s (0x%llx)\n", i, Symbols[i], (UINT64)Frames[i]);
+        Offset += snprintf(Buffer + Offset, PURPL_ARRAYSIZE(Buffer) - Offset, "\t%zu: %s (0x%llx)\n", i, Symbols[i],
+                           (UINT64)Frames[i]);
     }
 
     free(Symbols);
@@ -151,14 +274,12 @@ Return Value:
         End = strchr(BuildId, '\n');
         if (End)
             *End = 0;
-        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%s %s, kernel %s %s %s",
-                 Name, BuildId, UtsName.sysname, UtsName.release,
-                 UtsName.machine);
+        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%s %s, kernel %s %s %s", Name, BuildId, UtsName.sysname,
+                 UtsName.release, UtsName.machine);
     }
     else
     {
-        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%s %s %s", UtsName.sysname,
-                 UtsName.release, UtsName.machine);
+        snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%s %s %s", UtsName.sysname, UtsName.release, UtsName.machine);
     }
 
     return Buffer;
@@ -210,15 +331,13 @@ PCSTR PlatGetUserDataDirectory(VOID)
 
     if (!strlen(Directory))
     {
-        if (getenv("XDG_USER_DATA_HOME") &&
-            strlen(getenv("XDG_USER_DATA_HOME")))
+        if (getenv("XDG_USER_DATA_HOME") && strlen(getenv("XDG_USER_DATA_HOME")))
         {
             strncpy(Directory, getenv("XDG_USER_DATA_HOME"), MAX_PATH);
         }
         else if (getenv("HOME") && strlen(getenv("HOME")))
         {
-            snprintf(Directory, PURPL_ARRAYSIZE(Directory), "%s/.local/share/",
-                     getenv("HOME"));
+            snprintf(Directory, PURPL_ARRAYSIZE(Directory), "%s/.local/share/", getenv("HOME"));
         }
         else
         {

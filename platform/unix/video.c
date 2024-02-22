@@ -26,11 +26,11 @@ static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING " commit " P
 #else
 static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING;
 #endif
-INT WindowWidth;
-INT WindowHeight;
+static INT WindowWidth;
+static INT WindowHeight;
 
-BOOLEAN WindowResized;
-BOOLEAN WindowFocused;
+static BOOLEAN WindowResized;
+static BOOLEAN WindowFocused;
 BOOLEAN WindowClosed;
 
 static VOID GlfwErrorCallback(_In_ INT Error, _In_ PCSTR Description)
@@ -58,24 +58,11 @@ static VOID GlfwFocusCallback(_In_ GLFWwindow *FocusWindow, _In_ INT Focused)
     }
 }
 
-static VOID CtrlCHandler(_In_ INT Signal, _In_ siginfo_t *SignalInformation, _In_opt_ PVOID UserData)
-{
-    if (Signal == SIGINT)
-    {
-        LogInfo("Received keyboard interrupt");
-        WindowClosed = TRUE;
-    }
-}
-
 VOID VidInitialize(VOID)
 {
     PCSTR GlfwError;
 
     LogInfo("Initializing Unix video using GLFW");
-
-    struct sigaction SignalAction = {0};
-    SignalAction.sa_sigaction = CtrlCHandler;
-    sigaction(SIGINT, &SignalAction, NULL);
 
     if (!glfwInit())
     {
@@ -88,7 +75,7 @@ VOID VidInitialize(VOID)
 
     WindowWidth = 1280;
     WindowHeight = 720;
-    LogInfo("Creating %ux%u window titled " PURPL_NAME, WindowWidth, WindowHeight);
+    LogInfo("Creating %ux%u window titled %s", WindowWidth, WindowHeight, WindowTitle);
 
     Window = glfwCreateWindow(WindowWidth, WindowHeight, WindowTitle, NULL, NULL);
     if (!Window)

@@ -200,7 +200,7 @@ VkBool32 VKAPI_CALL VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT
     LogMessage(Level,
                "Vulkan",                       // "File"
                (UINT64)PlatGetReturnAddress(), // "Line"
-               true,                           // Display it in hex cause it's an address
+               true,                        // Display it in hex cause it's an address
                "%s: %s", Type, CallbackData->pMessage);
 
     return TRUE;

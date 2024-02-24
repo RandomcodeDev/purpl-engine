@@ -16,11 +16,11 @@
 // Quit if a condition is false
 //
 
-#define PURPL_ASSERT(Condition)                                                \
-    do                                                                         \
-    {                                                                          \
-        if (!(Condition))                                                      \
-            CmnError("Assertion failed: " #Condition);                         \
+#define PURPL_ASSERT(Condition)                                                                                        \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (!(Condition))                                                                                              \
+            CmnError("Assertion failed: " #Condition);                                                                 \
     } while (0);
 
 /// @brief Size of an array
@@ -33,8 +33,7 @@
 #define PURPL_MIN(A, B) ((A) < (B) ? (A) : (B))
 
 /// @brief Clamp a value to a range
-#define PURPL_CLAMP(Value, Min, Max)                                           \
-    ((Value) > (Max) ? (Max) : (Value) < (Min) ? (Min) : (Value))
+#define PURPL_CLAMP(Value, Min, Max) ((Value) > (Max) ? (Max) : (Value) < (Min) ? (Min) : (Value))
 
 /// @brief Make a string
 #define PURPL_STRINGIZE(X) #X
@@ -48,14 +47,21 @@
 /// @param[in] Size The unrounded size
 ///
 /// @return The size rounded to be aligned to the alignment
-#define PURPL_ALIGN(Alignment, Size)                                           \
-    ((((Size) / (Alignment)) + 1) * (Alignment))
+#define PURPL_ALIGN(Alignment, Size) ((((Size) / (Alignment)) + 1) * (Alignment))
+
+#define PURPL_SWAP(Type, A, B)                                                                                         \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        Type Swap_ = A;                                                                                                \
+        A = B;                                                                                                         \
+        B = A;                                                                                                         \
+    } while (0)
 
 /// @brief Initialize the common library
 ///
 /// @param[in] Arguments The command line arguments from PurplMain
 /// @param[in] ArgumentCount The number of command line arguments
-extern VOID CmnInitialize(_In_opt_ PCHAR* Arguments, _In_opt_ UINT ArgumentCount);
+extern VOID CmnInitialize(_In_opt_ PCHAR *Arguments, _In_opt_ UINT ArgumentCount);
 
 /// @brief Shut down the common library
 extern VOID CmnShutdown(VOID);
@@ -78,8 +84,7 @@ extern PCSTR CmnFormatTempString(_In_ _Printf_format_string_ PCSTR Format, ...);
 /// @param[in] ...     Arguments to the format string.
 ///
 /// @return A pointer to a static buffer with the formatted string.
-extern PCSTR CmnFormatTempStringVarArgs(
-    _In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments);
+extern PCSTR CmnFormatTempStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments);
 
 /// @brief This routine formats a printf format string into a dynamically
 /// allocated
@@ -102,8 +107,7 @@ extern PCHAR CmnFormatString(_In_ _Printf_format_string_ PCSTR Format, ...);
 /// @param[in] ...     Arguments to the format string.
 ///
 /// @return A pointer to a buffer with the formatted string.
-extern PCHAR CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format,
-                                    _In_ va_list Arguments);
+extern PCHAR CmnFormatStringVarArgs(_In_ _Printf_format_string_ PCSTR Format, _In_ va_list Arguments);
 
 /// @brief This routine converts a size into a human-readable string, using the
 ///        most appropriate unit.

@@ -12,6 +12,7 @@ Abstract:
 
 --*/
 
+#include "common/alloc.h"
 #include "common/common.h"
 
 #include "platform/platform.h"
@@ -21,8 +22,8 @@ Abstract:
 
 #ifdef _MSC_VER
 #pragma comment(                                                                                                       \
-        linker,                                                                                                        \
-            "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+    linker,                                                                                                            \
+    "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
 #define IDI_ICON1 103
@@ -38,10 +39,14 @@ static CHAR WindowTitle[128] = PURPL_NAME " v" PURPL_VERSION_STRING;
 #endif
 static INT32 WindowWidth;
 static INT32 WindowHeight;
+static INT32 ExtraWidth;
+static INT32 ExtraHeight;
 
 static BOOLEAN WindowResized;
 static BOOLEAN WindowFocused;
 static BOOLEAN WindowClosed;
+
+static HDC WindowDeviceContext;
 
 static LRESULT CALLBACK WindowProcedure(_In_ HWND MessageWindow, _In_ UINT Message, _In_ WPARAM Wparam,
                                         _In_ LPARAM Lparam)
@@ -58,7 +63,7 @@ static LRESULT CALLBACK WindowProcedure(_In_ HWND MessageWindow, _In_ UINT Messa
     //        return TRUE;
     //    }
 
-    if (!Window || MessageWindow == Window)
+    if (MessageWindow == Window)
     {
         switch (Message)
         {
@@ -115,7 +120,8 @@ static VOID RegisterWindowClass(VOID)
     WindowClass.lpszClassName = WindowClassName;
     if (!RegisterClassExA(&WindowClass))
     {
-        CmnError("Failed to register window class: error 0x%X (%d)", GetLastError, GetLastError);
+        DWORD Error = GetLastError();
+        CmnError("Failed to register window class: error 0x%X (%d)", Error, Error);
     }
 
     LogDebug("Window class registered");
@@ -135,6 +141,9 @@ static VOID InitializeWindow(VOID)
     WindowWidth = AdjustedClientArea.right - AdjustedClientArea.left;
     WindowHeight = AdjustedClientArea.bottom - AdjustedClientArea.top;
 
+    ExtraWidth = ClientArea.left - AdjustedClientArea.left;
+    ExtraHeight = ClientArea.top - AdjustedClientArea.top;
+
     LogDebug("Creating %dx%d (for internal size %dx%d) window titled %s", WindowWidth, WindowHeight,
              ClientArea.right - ClientArea.left, ClientArea.bottom - ClientArea.top, WindowTitle);
 
@@ -152,6 +161,8 @@ static VOID InitializeWindow(VOID)
     WindowResized = FALSE;
     WindowFocused = TRUE;
     WindowClosed = FALSE;
+
+    WindowDeviceContext = GetWindowDC(Window);
 
     LogDebug("Successfully created window with handle 0x%llX", (UINT64)Window);
 }
@@ -192,6 +203,8 @@ VOID VidShutdown(VOID)
     LogInfo("Shutting down Windows video");
 
     // ImGui_ImplWin32_Shutdown();
+
+    ReleaseDC(Window, WindowDeviceContext);
 
     LogDebug("Destroying window");
     DestroyWindow(Window);
@@ -254,3 +267,114 @@ VkSurfaceKHR VidCreateVulkanSurface(_In_ VkInstance Instance, _In_ PVOID Allocat
     return Surface;
 }
 #endif
+
+typedef struct WINDOWS_FRAMEBUFFER_DATA
+{
+    HDC DeviceContext;
+    HBITMAP Bitmap;
+    BITMAPINFO BitmapInfo;
+} WINDOWS_FRAMEBUFFER_DATA, *PWINDOWS_FRAMEBUFFER_DATA;
+
+static BOOLEAN CreateFramebufferBitmap(_In_ PVIDEO_FRAMEBUFFER Framebuffer,
+                                       _Inout_ PWINDOWS_FRAMEBUFFER_DATA FramebufferData)
+{
+    DWORD Error;
+
+    FramebufferData->Bitmap = CreateDIBSection(FramebufferData->DeviceContext, &FramebufferData->BitmapInfo, 0,
+                                               &Framebuffer->Pixels, NULL, 0);
+    if (!FramebufferData->Bitmap)
+    {
+        Error = GetLastError();
+        LogError("Failed to create bitmap: %d (0x%X)", Error, Error);
+        ReleaseDC(Window, FramebufferData->DeviceContext);
+        CmnFree(Framebuffer);
+        return FALSE;
+    }
+
+    SelectObject(FramebufferData->DeviceContext, FramebufferData->Bitmap);
+
+    return TRUE;
+}
+
+PVIDEO_FRAMEBUFFER VidCreateFramebuffer(VOID)
+{
+    PVIDEO_FRAMEBUFFER Framebuffer;
+    PWINDOWS_FRAMEBUFFER_DATA FramebufferData;
+
+    if (!Window)
+    {
+        LogWarning("Not creating framebuffer without window");
+        return NULL;
+    }
+
+    Framebuffer = CmnAlloc(1, sizeof(VIDEO_FRAMEBUFFER) + sizeof(WINDOWS_FRAMEBUFFER_DATA));
+    if (!Framebuffer)
+    {
+        LogError("Failed to allocate framebuffer structure");
+        return NULL;
+    }
+
+    Framebuffer->Handle = Framebuffer + 1;
+    FramebufferData = Framebuffer->Handle;
+
+    Framebuffer->Width = WindowWidth;
+    Framebuffer->Height = WindowHeight;
+
+    PBITMAPINFO BitmapInfo = &FramebufferData->BitmapInfo;
+    BitmapInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    BitmapInfo->bmiHeader.biWidth = Framebuffer->Width;
+    BitmapInfo->bmiHeader.biHeight = Framebuffer->Height;
+    BitmapInfo->bmiHeader.biCompression = BI_RGB;
+    BitmapInfo->bmiHeader.biBitCount = 32;
+    BitmapInfo->bmiHeader.biPlanes = 1;
+
+    FramebufferData->DeviceContext = CreateCompatibleDC(WindowDeviceContext);
+
+    if (!CreateFramebufferBitmap(Framebuffer, FramebufferData))
+    {
+        return NULL;
+    }
+
+    return Framebuffer;
+}
+
+VOID VidDisplayFramebuffer(_Inout_ PVIDEO_FRAMEBUFFER Framebuffer)
+{
+    if (!Framebuffer)
+    {
+        return;
+    }
+
+    PWINDOWS_FRAMEBUFFER_DATA FramebufferData = Framebuffer->Handle;
+    StretchDIBits(WindowDeviceContext, ExtraWidth, WindowHeight + ExtraHeight, WindowWidth, -WindowHeight, 0, 0, Framebuffer->Width, Framebuffer->Height,
+                  Framebuffer->Pixels, &FramebufferData->BitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+
+    if (Framebuffer->Width != (UINT32)WindowWidth || Framebuffer->Height != (UINT32)WindowHeight)
+    {
+        PWINDOWS_FRAMEBUFFER_DATA FramebufferData = Framebuffer->Handle;
+        DeleteObject(FramebufferData->Bitmap);
+
+        Framebuffer->Width = WindowWidth;
+        Framebuffer->Height = WindowHeight;
+
+        PBITMAPINFO BitmapInfo = &FramebufferData->BitmapInfo;
+        BitmapInfo->bmiHeader.biWidth = Framebuffer->Width;
+        BitmapInfo->bmiHeader.biHeight = Framebuffer->Height;
+
+        PURPL_ASSERT(CreateFramebufferBitmap(Framebuffer, FramebufferData));
+    }
+}
+
+VOID VidDestroyFramebuffer(_In_ PVIDEO_FRAMEBUFFER Framebuffer)
+{
+    PWINDOWS_FRAMEBUFFER_DATA FramebufferData = Framebuffer->Handle;
+    DeleteObject(FramebufferData->Bitmap);
+    DeleteDC(FramebufferData->DeviceContext);
+    CmnFree(Framebuffer);
+}
+
+UINT32 VidConvertPixel(_In_ UINT32 Pixel)
+{
+    // Rotate RGBA to ARGB
+    return _rotr(Pixel, 8);
+}

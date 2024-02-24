@@ -207,12 +207,15 @@ void LogMessage(LOG_LEVEL Level, CONST char *File, uint64_t Line, bool HexLine, 
         .Level = Level,
     };
 
-    while (strstr(Event.File, "purpl-engine"))
+    if (Event.File)
     {
-        Event.File = strstr(Event.File, "purpl-engine") + 12 + 1; // also skip the slash
-        if (Event.File > File + strlen(File))
+        while (strstr(Event.File, "purpl-engine"))
         {
-            Event.File = File;
+            Event.File = strstr(Event.File, "purpl-engine") + 12 + 1; // also skip the slash
+            if (Event.File > File + strlen(File))
+            {
+                Event.File = File;
+            }
         }
     }
 

@@ -114,7 +114,7 @@ typedef struct TEXTURE
 /// @param Data The pixel data for the image (should be at least
 /// EstimateTextureSize bytes)
 ///
-/// @return A texture
+/// @return A texture which can be freed with CmnFree
 extern PTEXTURE CreateTexture(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width,
                               _In_ UINT32 Height, _In_ PVOID Data);
 
@@ -122,7 +122,7 @@ extern PTEXTURE CreateTexture(_In_ TEXTURE_FORMAT Format, _In_ UINT32 Width,
 ///
 /// @param Path The path to the texture file
 ///
-/// @return The loaded texture
+/// @return The loaded texture, which can be freed with CmnFree
 extern PTEXTURE LoadTexture(_In_ PCSTR Path);
 
 /// @brief Write a texture to a file

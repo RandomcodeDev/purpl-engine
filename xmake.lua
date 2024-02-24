@@ -106,7 +106,18 @@ if directx then
         on_load(fix_target)
 end
 
-add_switch_renderapi()
+if is_plat("switch") then
+    add_switch_renderapi()
+end
+
+target("render-swrast")
+    set_kind("static")
+    add_headerfiles("engine/render/swrast/*.h")
+    add_files("engine/render/swrast/*.c")
+
+    set_group("Engine/Render System")
+
+    on_load(fix_target)
 
 target("render")
     set_kind("static")
@@ -121,6 +132,7 @@ target("render")
     if vulkan then
         add_deps("render-vk")
     end
+    add_deps("render-swrast")
 
     set_group("Engine/Render System")
 

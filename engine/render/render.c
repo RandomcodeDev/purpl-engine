@@ -30,6 +30,8 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 }
 #endif
 
+extern VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend);
+
 VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
     UNREFERENCED_PARAMETER(Iterator);
@@ -38,10 +40,11 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     RdrSetScale(1.0f);
 
     // TODO: make a setting for this
+    RenderApi = RenderApiSoftwareRasterizer;
 //#ifdef PURPL_DIRECTX
 //    RenderApi = RenderApiDirect3D12;
 #if defined(PURPL_VULKAN)
-    RenderApi = RenderApiVulkan;
+    //RenderApi = RenderApiVulkan;
 #endif
     switch (RenderApi)
     {
@@ -53,6 +56,9 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
         break;
     case RenderApiVulkan:
         VlkInitializeBackend(&Backend);
+        break;
+    case RenderApiSoftwareRasterizer:
+        SwrsInitializeBackend(&Backend);
         break;
     }
 
@@ -107,6 +113,82 @@ VOID RenderImport(_In_ ecs_world_t *World)
     ECS_SYSTEM_DEFINE(World, RdrInitialize, EcsOnStart);
     ECS_SYSTEM_DEFINE(World, RdrBeginFrame, EcsPreUpdate);
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
+
+    ECS_COMPONENT_DEFINE(World, MODEL);
+}
+
+PVOID RdrUseTexture(_In_ PTEXTURE Texture)
+{
+    if (Backend.UseTexture)
+    {
+        return Backend.UseTexture(Texture);
+    }
+    else
+    {
+        return Texture;
+    }
+}
+
+VOID RdrReleaseTexture(_In_ PVOID TextureHandle)
+{
+    if (Backend.ReleaseTexture)
+    {
+        Backend.ReleaseTexture(TextureHandle);
+    }
+}
+
+BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_ PCSTR ShaderName)
+{
+    if (!Material || !TextureHandle || !ShaderName)
+    {
+        return FALSE;
+    }
+
+    Material->TextureHandle = TextureHandle;
+    Material->ShaderName = ShaderName;
+
+    if (Backend.CreateMaterial)
+    {
+        Backend.CreateMaterial(Material);
+    }
+
+    return TRUE;
+}
+
+VOID RdrDestroyMaterial(_In_ PMATERIAL Material)
+{
+    if (Backend.DestroyMaterial)
+    {
+        Backend.DestroyMaterial(Material);
+    }
+}
+
+BOOLEAN RdrCreateModel(_Out_ PMODEL Model, _In_ PMESH Mesh, _In_ PMATERIAL Material)
+{
+    if (!Model || !Mesh || !Material)
+    {
+        return FALSE;
+    }
+
+    Model->Material = Material;
+    if (Backend.CreateModel)
+    {
+        Backend.CreateModel(Model, Mesh);
+    }
+    else
+    {
+        Model->MeshHandle = Mesh;
+    }
+
+    return TRUE;
+}
+
+VOID RdrDestroyModel(_In_ PMODEL Model)
+{
+    if (Backend.DestroyModel)
+    {
+        Backend.DestroyModel(Model);
+    }
 }
 
 FLOAT RdrGetScale(VOID)

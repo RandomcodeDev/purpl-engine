@@ -69,3 +69,37 @@ extern PVOID PlatGetVulkanFunction(_In_ PVOID Instance, _In_ PCSTR Name);
 extern VkSurfaceKHR VidCreateVulkanSurface(_In_ VkInstance Instance, _In_ PVOID AllocationCallbacks,
                                            _In_opt_ PVOID WindowHandle);
 #endif
+
+/// @brief Assumed size of one pixel
+#define VIDEO_FRAMEBUFFER_PIXEL_SIZE 4
+
+/// @brief A framebuffer
+typedef struct VIDEO_FRAMEBUFFER
+{
+    PUINT32 Pixels;
+    UINT32 Width;
+    UINT32 Height;
+    PVOID Handle;
+} VIDEO_FRAMEBUFFER, *PVIDEO_FRAMEBUFFER;
+
+/// @brief Create a framebuffer
+///
+/// @return A framebuffer
+extern PVIDEO_FRAMEBUFFER VidCreateFramebuffer(VOID);
+
+/// @brief Display a framebuffer's contents, and update it if necessary
+///
+/// @param[in,out] Framebuffer The framebuffer to display/update
+extern VOID VidDisplayFramebuffer(_Inout_ PVIDEO_FRAMEBUFFER Framebuffer);
+
+/// @brief Destroy a framebuffer
+///
+/// @param[in] Framebuffer The framebuffer to destroy
+extern VOID VidDestroyFramebuffer(_In_ PVIDEO_FRAMEBUFFER Framebuffer);
+
+/// @brief Convert a pixel from 32-bit RGBA
+///
+/// @param[in] Pixel The color to convert
+///
+/// @return An equivalent value for the framebuffer
+extern UINT32 VidConvertPixel(_In_ UINT32 Pixel);

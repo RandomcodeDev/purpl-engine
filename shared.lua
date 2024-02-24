@@ -291,7 +291,7 @@ function setup_shared(root, directx, vulkan)
                 path.join(root, "platform/win32/platform.cpp"),
                 path.join(root, "platform/win32/video.c")
             )
-            add_links("advapi32", "kernel32", "shell32", "user32")
+            add_links("advapi32", "gdi32", "kernel32", "shell32", "user32")
             if not is_plat("gdkx") then
                 add_links("dbghelp")
             end

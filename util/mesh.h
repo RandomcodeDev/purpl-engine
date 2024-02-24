@@ -74,7 +74,7 @@ typedef struct MESH
 /// @param Indices The index data of the mesh
 /// @param IndexCount The number of indices
 ///
-/// @return A mesh
+/// @return A mesh which can be freed with CmnFree.
 extern PMESH CreateMesh(_In_ PCSTR Material,
                         _In_reads_(VertexCount * sizeof(VERTEX))
                             PVERTEX Vertices,
@@ -86,7 +86,7 @@ extern PMESH CreateMesh(_In_ PCSTR Material,
 ///
 /// @param Path The path of the mesh file
 ///
-/// @return The loaded mesh
+/// @return The loaded mesh, which can be freed with CmnFree.
 extern PMESH LoadMesh(_In_ PCSTR Path);
 
 /// @brief Write a mesh

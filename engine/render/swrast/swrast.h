@@ -11,6 +11,8 @@
 #include "common/common.h"
 #include "common/log.h"
 
+#include "engine/mathutil.h"
+
 #include "engine/render/render.h"
 
 #include "platform/video.h"
@@ -41,3 +43,9 @@ extern VOID SwrsSetPixel(_In_ UINT32 X, _In_ UINT32 Y, _In_ UINT32 Pixel);
 /// @param[in] End The ending point
 /// @param[in] Pixel The pixel to write (in framebuffer format)
 extern VOID SwrsDrawLine(_In_ ivec2 Start, _In_ ivec2 End, _In_ UINT32 Pixel);
+
+/// @brief Draw a model
+///
+/// @param[in] Model The model to draw
+/// @param[in] Transform Where to draw the model
+extern VOID SwrsDrawModel(_In_ PMODEL Model, _In_ mat4 Object, _In_ mat4 World, _In_ mat4 Projection);

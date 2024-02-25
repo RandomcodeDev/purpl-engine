@@ -72,6 +72,7 @@ VOID EcsInitialize(VOID)
 
     LogTrace("Creating ECS world");
     EcsSetWorld(ecs_init());
+    ecs_progress(EngineEcsWorld, 0.0f);
 }
 
 VOID EcsBeginFrame(_In_ UINT64 Delta)

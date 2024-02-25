@@ -11,6 +11,8 @@
 #include "common/common.h"
 #include "common/log.h"
 
+#include "engine/mathutil.h"
+
 #include "platform/video.h"
 
 #include "util/mesh.h"
@@ -58,6 +60,7 @@ typedef struct RENDER_BACKEND
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
 
     VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh);
+    VOID (*DrawModel)(_In_ PMODEL Model, _In_ mat4 Object, _In_ mat4 World, _In_ mat4 Projection);
     VOID (*DestroyModel)(_In_ PMODEL Model);
 } RENDER_BACKEND, *PRENDER_BACKEND;
 
@@ -66,6 +69,9 @@ extern ECS_SYSTEM_DECLARE(RdrInitialize);
 
 /// @brief Start recording a frame
 extern ECS_SYSTEM_DECLARE(RdrBeginFrame);
+
+/// @brief Draw a model
+extern ECS_SYSTEM_DECLARE(RdrDrawModel);
 
 /// @brief Finish recording a frame and present it
 extern ECS_SYSTEM_DECLARE(RdrEndFrame);

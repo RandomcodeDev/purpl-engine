@@ -41,10 +41,10 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 
     // TODO: make a setting for this
     RenderApi = RenderApiSoftwareRasterizer;
-//#ifdef PURPL_DIRECTX
-//    RenderApi = RenderApiDirect3D12;
+// #ifdef PURPL_DIRECTX
+//     RenderApi = RenderApiDirect3D12;
 #if defined(PURPL_VULKAN)
-    //RenderApi = RenderApiVulkan;
+    // RenderApi = RenderApiVulkan;
 #endif
     switch (RenderApi)
     {
@@ -82,6 +82,25 @@ VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 }
 ecs_entity_t ecs_id(RdrBeginFrame);
 
+VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
+{
+    PMODEL Model = ecs_field(Iterator, MODEL, 1);
+    PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 2);
+    PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
+    CalculateCameraMatrices(Camera);
+
+    if (Backend.DrawModel)
+    {
+        for (INT32 i = 0; i < Iterator->count; i++)
+        {
+            mat4 ModelTransform;
+            MthCreateTransformMatrix(&Transform[i], ModelTransform);
+            Backend.DrawModel(&Model[i], ModelTransform, Camera->View, Camera->Projection);
+        }
+    }
+}
+ecs_entity_t ecs_id(RdrDrawModel);
+
 VOID RdrEndFrame(_In_ ecs_iter_t *Iterator)
 {
     UNREFERENCED_PARAMETER(Iterator);
@@ -110,11 +129,12 @@ VOID RenderImport(_In_ ecs_world_t *World)
 
     ECS_MODULE(World, Render);
 
+    ECS_COMPONENT_DEFINE(World, MODEL);
+
     ECS_SYSTEM_DEFINE(World, RdrInitialize, EcsOnStart);
     ECS_SYSTEM_DEFINE(World, RdrBeginFrame, EcsPreUpdate);
+    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, MODEL, TRANSFORM);
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
-
-    ECS_COMPONENT_DEFINE(World, MODEL);
 }
 
 PVOID RdrUseTexture(_In_ PTEXTURE Texture)

@@ -346,8 +346,9 @@ VOID VidDisplayFramebuffer(_Inout_ PVIDEO_FRAMEBUFFER Framebuffer)
     }
 
     PWINDOWS_FRAMEBUFFER_DATA FramebufferData = Framebuffer->Handle;
-    StretchDIBits(WindowDeviceContext, ExtraWidth, WindowHeight + ExtraHeight, WindowWidth, -WindowHeight, 0, 0, Framebuffer->Width, Framebuffer->Height,
-                  Framebuffer->Pixels, &FramebufferData->BitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(WindowDeviceContext, ExtraWidth, WindowHeight + ExtraHeight, WindowWidth, -WindowHeight, 0, 0,
+                  Framebuffer->Width, Framebuffer->Height, Framebuffer->Pixels, &FramebufferData->BitmapInfo,
+                  DIB_RGB_COLORS, SRCCOPY);
 
     if (Framebuffer->Width != (UINT32)WindowWidth || Framebuffer->Height != (UINT32)WindowHeight)
     {

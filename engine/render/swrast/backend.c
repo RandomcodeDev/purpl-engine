@@ -14,7 +14,6 @@ static VOID Initialize(VOID)
 
 static VOID BeginFrame(_In_ BOOLEAN Resized)
 {
-    SwrsDrawLine((ivec2){0, 0}, (ivec2){500, 100}, SWRS_PIXEL(135, 0, 255, 255));
 }
 
 static VOID EndFrame(VOID)
@@ -37,4 +36,6 @@ VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
     Backend->Shutdown = Shutdown;
+
+    Backend->DrawModel = SwrsDrawModel;
 }

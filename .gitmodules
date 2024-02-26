@@ -10,12 +10,6 @@
 [submodule "deps/stb"]
 	path = deps/stb
 	url = https://github.com/nothings/stb
-[submodule "deps/cglm"]
-	path = deps/cglm
-	url = https://github.com/recp/cglm
-[submodule "deps/mimalloc"]
-	path = deps/mimalloc
-	url = https://github.com/microsoft/mimalloc
 [submodule "deps/zstd"]
 	path = deps/zstd
 	url = https://github.com/facebook/zstd
@@ -52,3 +46,6 @@
 [submodule "deps/qhull"]
 	path = deps/external/qhull
 	url = https://github.com/qhull/qhull
+[submodule "support"]
+	path = support
+	url = https://github.com/RandomcodeDev/purpl-support.git

@@ -4,8 +4,8 @@ add_rules(
     "plugin.vsxmake.autoupdate"
 )
 
-if os.isfile("../platform/switch/switch.lua") then
-    includes("../platform/switch/switch.lua")
+if os.isfile(path.join("..", "platform", "switch", "switch.lua")) then
+    includes(path.join("..", "platform", "switch", "switch.lua"))
 else
     function add_switch_links() end
     function add_switch_vulkan_links() end
@@ -22,8 +22,9 @@ directx = is_plat("gdk", "gdkx")
 discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
 vulkan = is_plat("gdk", "linux", "freebsd", "switch")
 
-includes("shared.lua")
-setup_shared("$(scriptdir)", directx, vulkan)
+includes(path.join("support", "support.lua"))
+includes(path.join("xmake", "shared.lua"))
+setup_shared(".", directx, vulkan)
 if is_plat("switch") then
     add_switch_settings()
 end
@@ -31,17 +32,17 @@ end
 if discord then
     target("discord")
         set_kind("static")
-        add_headerfiles("deps/discord-rpc/include/*.h", "deps/discord-rpc/src/*.h")
+        add_headerfiles(path.join("deps", "discord-rpc", "include", "*.h"), path.join("deps", "discord-rpc", "src", "*.h"))
         add_files(
-            "deps/discord-rpc/src/discord_rpc.cpp",
-            "deps/discord-rpc/src/rpc_connection.cpp",
-            "deps/discord-rpc/src/serialization.cpp"
+            path.join("deps", "discord-rpc", "src", "discord_rpc.cpp"),
+            path.join("deps", "discord-rpc", "src", "rpc_connection.cpp"),
+            path.join("deps", "discord-rpc", "src", "serialization.cpp")
         )
 
         if is_plat("gdk", "gdkx") then
-            add_files("deps/discord-rpc/src/*_win.cpp")
+            add_files(path.join("deps", "discord-rpc", "src", "*_win.cpp"))
         elseif is_plat("linux", "freebsd") then
-            add_files("deps/discord-rpc/src/*_linux.cpp", "deps/discord-rpc/src/*_unix.cpp")
+            add_files(path.join("deps", "discord-rpc", "src", "*_linux.cpp"), path.join("deps", "discord-rpc", "src", "*_unix.cpp"))
         end
 
         set_warnings("none")
@@ -49,7 +50,7 @@ if discord then
     target_end()
 
     add_defines("PURPL_DISCORD")
-    add_includedirs("deps/discord-rpc/include", "deps/rapidjson/include")
+    add_includedirs(path.join("deps", "discord-rpc", "include"), path.join("deps", "rapidjson", "include"))
 
     set_group("Engine")
 end
@@ -57,20 +58,27 @@ end
 target("flecs")
     set_kind("static")
     add_defines("FLECS_STATIC")
-    add_headerfiles("deps/flecs/flecs.h")
-    add_files("deps/flecs/flecs.c")
+    add_headerfiles(path.join("deps", "flecs", "flecs.h"))
+    add_files(path.join("deps", "flecs", "flecs.c"))
     set_warnings("none")
     set_group("External")
 
     on_load(fix_target)
 
-includes("mujoco.lua")
+includes(path.join("xmake", "mujoco.lua"))
 
 if vulkan then
     target("render-vk")
         set_kind("static")
-        add_headerfiles("deps/VulkanMemoryAllocator/include/vk_mem_alloc.h", "engine/render/vk/*.h")
-        add_files("deps/volk/volk.c", "engine/render/vk/*.c", "engine/render/vk/*.cpp")
+        add_headerfiles(
+            path.join("deps", "VulkanMemoryAllocator", "include", "vk_mem_alloc.h"),
+            path.join("engine", "render", "vk", "*.h")
+        )
+        add_files(
+            path.join("deps", "volk", "volk.c"),
+            path.join("engine", "render", "vk", "*.c"),
+            path.join("engine", "render", "vk", "*.cpp")
+        )
 
         add_deps("util")
 
@@ -86,13 +94,13 @@ end
 if directx then
     target("render-dx12")
         set_kind("static")
-        add_headerfiles("engine/render/dx12/*.h")
+        add_headerfiles("engine", "render", "dx12", "*.h")
         add_files(
-            "deps/DirectX-Headers/src/dxguids.cpp",
-            "deps/D3D12MemoryAllocator/src/Common.cpp",
-            "deps/D3D12MemoryAllocator/src/D3D12MemAlloc.cpp",
-            --"engine/render/dx12/*.c",
-            "engine/render/dx12/*.cpp"
+            path.join("deps", "DirectX-Headers", "src", "dxguids.cpp"),
+            path.join("deps", "D3D12MemoryAllocator", "src", "Common.cpp"),
+            path.join("deps", "D3D12MemoryAllocator", "src", "D3D12MemAlloc.cpp"),
+            --path.join("engine", "render", "dx12", "*.c"),
+            path.join("engine", "render", "dx12", "*.cpp")
         )
 
         if is_plat("gdk") then
@@ -112,8 +120,8 @@ end
 
 target("render-swrast")
     set_kind("static")
-    add_headerfiles("engine/render/swrast/*.h")
-    add_files("engine/render/swrast/*.c")
+    add_headerfiles(path.join("engine", "render", "swrast", "*.h"))
+    add_files(path.join("engine", "render", "swrast", "*.c"))
 
     set_group("Engine/Render System")
 
@@ -121,8 +129,8 @@ target("render-swrast")
 
 target("render")
     set_kind("static")
-    add_headerfiles("engine/render/*.h")
-    add_files("engine/render/*.c")
+    add_headerfiles(path.join("engine", "render", "*.h"))
+    add_files(path.join("engine", "render", "*.c"))
 
     add_deps("util")
 
@@ -140,12 +148,12 @@ target("render")
 
 target("engine")
     set_kind("static")
-    add_headerfiles("engine/*.h")
-    add_files("engine/*.c")
+    add_headerfiles(path.join("engine", "*.h"))
+    add_files(path.join("engine", "*.c"))
     add_deps("common", "cjson", "flecs", "mujoco", "platform", "render", "util")
     if discord then
-        add_headerfiles("engine/discord/*.h")
-        add_files("engine/discord/*.c")
+        add_headerfiles(path.join("engine", "discord", "*.h"))
+        add_files(path.join("engine", "discord", "*.c"))
         add_deps("discord")
     end
 
@@ -157,33 +165,27 @@ target("purpl")
     set_kind("binary")
     -- header files in this case are just anything that doesn't participate in the build
     add_headerfiles(
-        "assets/*",
-        "assets/shaders/*",
-        "purpl/*.h"
+        path.join("assets", "*"),
+        path.join("assets", "shaders", "*"),
+        path.join("purpl", "*.h")
     )
-    add_files("purpl/*.c")
+    add_files(path.join("purpl", "*.c"))
     add_deps("common", "engine", "platform", "util")
     set_default(true)
 
+    support_executable("support")
+
     if is_plat("gdk", "gdkx", "windows") then
-        add_files("platform/win32/launcher.c", "platform/win32/purpl.rc")
         if not is_plat("windows") then
-            add_headerfiles("platform/gdk/MicrosoftGameConfig.mgc")
+            add_headerfiles(path.join("platform", "gdk", "MicrosoftGameConfig.mgc"))
             add_links("xgameruntime.lib")
             after_build(function (target)
-                os.cp(path.absolute("platform/gdk/MicrosoftGameConfig.mgc"), path.join(target:targetdir(), "MicrosoftGame.Config"))
+                os.cp(path.absolute(path.join("gdk", "MicrosoftGameConfig.mgc")), path.join(target:targetdir(), "MicrosoftGame.Config"))
             end)
         end
-        if is_mode("debug") then
-            add_ldflags("-subsystem:console")
-        else
-            add_ldflags("-subsystem:windows")
-        end
-    elseif is_plat("linux", "freebsd") then
-        add_files("platform/unix/launcher.c")
     elseif is_plat("switch") then
-        add_headerfiles("../platform/switch/switch.lua")
-        add_files("../platform/switch/launcher.cpp")
+        add_headerfiles(path.join("..", "platform", "switch", "switch.lua"))
+        add_files(path.join("..", "platform", "switch", "launcher.cpp"))
         after_build(switch_postbuild)
     end
 
@@ -192,10 +194,10 @@ target("purpl")
     on_load(fix_target)
     before_build(function (target)
         if not os.exists(path.join(target:targetdir(), "assets")) then
-            os.ln(path.absolute("assets/out"), path.join(target:targetdir(), "assets"))
+            os.ln(path.absolute(path.join("assets", "out")), path.join(target:targetdir(), "assets"))
         end
 
         if is_plat("gdk", "gdkx") and not os.exists(path.join(target:targetdir(), "GdkAssets")) then
-            os.ln(path.absolute("platform/gdk/GdkAssets"), path.join(target:targetdir(), "GdkAssets"))
+            os.ln(path.absolute(path.join("gdk", "GdkAssets")), path.join(target:targetdir(), "GdkAssets"))
         end
     end)

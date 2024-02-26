@@ -14,17 +14,25 @@ else
 end
 
 set_project("purpl-engine")
+set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
 set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch")
 set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64")
 
-directx = is_plat("gdk", "gdkx")
-discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
-vulkan = is_plat("gdk", "linux", "freebsd", "switch")
+local directx = is_plat("gdk", "gdkx", "windows")
+local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
+
+local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
+local use_mimalloc = not is_plat("switch")
+
+add_defines("PURPL_ENGINE")
+
+includes(path.join("xmake", "shared.lua"))
+setup_shared("$(scriptdir)", directx, vulkan)
 
 includes(path.join("support", "support.lua"))
-includes(path.join("xmake", "shared.lua"))
-setup_shared(".", directx, vulkan)
+setup_support("support", path.join("support", "deps"), use_mimalloc, vulkan, true)
+
 if is_plat("switch") then
     add_switch_settings()
 end
@@ -45,14 +53,14 @@ if discord then
             add_files(path.join("deps", "discord-rpc", "src", "*_linux.cpp"), path.join("deps", "discord-rpc", "src", "*_unix.cpp"))
         end
 
+        set_group("Engine")
+
         set_warnings("none")
         on_load(fix_target)
     target_end()
 
     add_defines("PURPL_DISCORD")
     add_includedirs(path.join("deps", "discord-rpc", "include"), path.join("deps", "rapidjson", "include"))
-
-    set_group("Engine")
 end
 
 target("flecs")
@@ -64,6 +72,7 @@ target("flecs")
     set_group("External")
 
     on_load(fix_target)
+target_end()
 
 includes(path.join("xmake", "mujoco.lua"))
 
@@ -89,6 +98,7 @@ if vulkan then
         set_group("Engine/Render System")
 
         on_load(fix_target)
+    target_end()
 end
 
 if directx then
@@ -112,6 +122,7 @@ if directx then
         set_group("Engine/Render System")
 
         on_load(fix_target)
+    target_end()
 end
 
 if is_plat("switch") then
@@ -126,6 +137,7 @@ target("render-swrast")
     set_group("Engine/Render System")
 
     on_load(fix_target)
+target_end()
 
 target("render")
     set_kind("static")
@@ -145,6 +157,7 @@ target("render")
     set_group("Engine/Render System")
 
     on_load(fix_target)
+target_end()
 
 target("engine")
     set_kind("static")
@@ -160,6 +173,7 @@ target("engine")
     set_group("Engine")
 
     on_load(fix_target)
+target_end()
 
 target("purpl")
     set_kind("binary")
@@ -189,8 +203,6 @@ target("purpl")
         after_build(switch_postbuild)
     end
 
-    set_group("")
-
     on_load(fix_target)
     before_build(function (target)
         if not os.exists(path.join(target:targetdir(), "assets")) then
@@ -201,3 +213,4 @@ target("purpl")
             os.ln(path.absolute(path.join("gdk", "GdkAssets")), path.join(target:targetdir(), "GdkAssets"))
         end
     end)
+target_end()

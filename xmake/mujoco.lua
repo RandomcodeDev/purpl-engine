@@ -10,6 +10,7 @@ target("ccd")
     set_group("External")
 
     on_load(fix_target)
+target_end()
 
 target("qhull")
     set_kind("static")
@@ -20,6 +21,7 @@ target("qhull")
     set_group("External")
 
     on_load(fix_target)
+target_end()
 
 target("sdflib")
     set_kind("static")
@@ -32,6 +34,7 @@ target("sdflib")
     set_group("External")
 
     on_load(fix_target)
+target_end()
 
 target("mujoco")
     set_kind("static")
@@ -45,3 +48,4 @@ target("mujoco")
     set_group("External")
 
     on_load(fix_target)
+target_end()

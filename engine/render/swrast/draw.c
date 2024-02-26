@@ -72,7 +72,7 @@ VOID SwrsDrawModel(_In_ PMODEL Model, _In_ mat4 Object, _In_ mat4 World, _In_ ma
     for (UINT64 i = 0; i < Mesh->IndexCount; i++)
     {
         ivec3 Face;
-        glm_vec3_copy(Mesh->Indices[i], Face);
+        glm_ivec3_copy(Mesh->Indices[i], Face);
         for (UINT8 j = 0; j < 3; j++)
         {
             PVERTEX V0 = &Mesh->Vertices[Face[j]];

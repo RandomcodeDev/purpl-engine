@@ -19,9 +19,6 @@
 [submodule "deps/D3D12MemoryAllocator"]
 	path = deps/D3D12MemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator
-[submodule "deps/Vulkan-Headers"]
-	path = deps/Vulkan-Headers
-	url = https://github.com/KhronosGroup/Vulkan-Headers
 [submodule "deps/doxygen-awesome-css"]
 	path = deps/doxygen-awesome-css
 	url = https://github.com/jothepro/doxygen-awesome-css.git

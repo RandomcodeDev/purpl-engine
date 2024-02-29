@@ -86,7 +86,7 @@ VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
 {
     PMODEL Model = ecs_field(Iterator, MODEL, 1);
     PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 2);
-    PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
+    CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
     CalculateCameraMatrices(Camera);
 
     if (Backend.DrawModel)

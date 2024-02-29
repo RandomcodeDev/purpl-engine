@@ -83,7 +83,7 @@ Return Value:
 
     LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
 
-    VidInitialize();
+    VidInitialize(FALSE);
     EcsInitialize();
 
     LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);

@@ -235,7 +235,7 @@ extern VOID VlkCreateInstance(VOID);
 /// @brief Get allocation callbacks
 ///
 /// @return The allocation callbacks
-extern VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID);
+extern CONST VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID);
 
 /// @brief Get the name of a result
 ///

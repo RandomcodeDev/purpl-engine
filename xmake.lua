@@ -19,6 +19,8 @@ set_version("0.0.0", {build = "%Y%m%d%H%M"})
 set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch")
 set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64")
 
+local switch_title_id = "0100694203488000"
+
 local directx = is_plat("gdk", "gdkx", "windows")
 local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
 
@@ -31,11 +33,7 @@ includes(path.join("xmake", "shared.lua"))
 setup_shared("$(scriptdir)", directx, vulkan)
 
 includes(path.join("support", "support.lua"))
-setup_support("support", path.join("support", "deps"), use_mimalloc, vulkan, true)
-
-if is_plat("switch") then
-    add_switch_settings()
-end
+setup_support("support", path.join("support", "deps"), use_mimalloc, vulkan, false, true, "purpl/config.h.in", switch_title_id)
 
 if discord then
     target("discord")
@@ -189,7 +187,7 @@ target("purpl")
 
     support_executable("support")
 
-    if is_plat("gdk", "gdkx", "windows") then
+    if is_plat("gdk", "gdkx") then
         if not is_plat("windows") then
             add_headerfiles(path.join("platform", "gdk", "MicrosoftGameConfig.mgc"))
             add_links("xgameruntime.lib")
@@ -197,14 +195,15 @@ target("purpl")
                 os.cp(path.absolute(path.join("gdk", "MicrosoftGameConfig.mgc")), path.join(target:targetdir(), "MicrosoftGame.Config"))
             end)
         end
-    elseif is_plat("switch") then
-        add_headerfiles(path.join("..", "platform", "switch", "switch.lua"))
-        add_files(path.join("..", "platform", "switch", "launcher.cpp"))
-        after_build(switch_postbuild)
     end
 
-    on_load(fix_target)
-    before_build(function (target)
+    on_load(fix_target)before_build(function (target)
+        target:set("support_data", {
+            "Purpl",
+            "Randomcode Developers",
+            switch_title_id
+        })
+
         if not os.exists(path.join(target:targetdir(), "assets")) then
             os.ln(path.absolute(path.join("assets", "out")), path.join(target:targetdir(), "assets"))
         end

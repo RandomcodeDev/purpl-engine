@@ -64,7 +64,7 @@ static CONST VkAllocationCallbacks AllocationCallbacks = {
     .pfnInternalFree = LogInternalFree,
 };
 
-VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID)
+CONST VkAllocationCallbacks *VlkGetAllocationCallbacks(VOID)
 {
     return &AllocationCallbacks;
 }
@@ -157,7 +157,7 @@ VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_ _Pr
     return;
 #endif
 #endif
-    
+
     UNREFERENCED_PARAMETER(Object);
     UNREFERENCED_PARAMETER(ObjectType);
     UNREFERENCED_PARAMETER(Name);

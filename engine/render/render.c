@@ -4,7 +4,7 @@
 
 ecs_entity_t ecs_id(MODEL);
 
-RENDER_API RenderApi;
+CONFIGVAR RenderApi;
 
 static RENDER_BACKEND Backend;
 static FLOAT Scale;
@@ -39,14 +39,15 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     LogInfo("Initializing renderer");
     RdrSetScale(1.0f);
 
-    // TODO: make a setting for this
-    RenderApi = RenderApiSoftwareRasterizer;
-// #ifdef PURPL_DIRECTX
-//     RenderApi = RenderApiDirect3D12;
-#if defined(PURPL_VULKAN)
-    // RenderApi = RenderApiVulkan;
+#ifdef PURPL_GDKX
+    static CONST RENDER_API DefaultApi = RenderApiDirect3D12;
+#else
+    static CONST RENDER_API DefaultApi = RenderApiVulkan;
 #endif
-    switch (RenderApi)
+    CfgInitializeVariable(&RenderApi, "render_api", &DefaultApi, ConfigVarTypeInt, TRUE, ConfigVarSideClientOnly,
+                          FALSE);
+
+    switch (RenderApi.Current.Int)
     {
     default:
     case RenderApiNone:

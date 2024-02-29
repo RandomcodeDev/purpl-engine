@@ -9,6 +9,7 @@
 #include "purpl/purpl.h"
 
 #include "common/common.h"
+#include "common/configvar.h"
 #include "common/log.h"
 
 #include "engine/mathutil.h"
@@ -27,7 +28,7 @@ typedef enum RENDER_API
     RenderApiSoftwareRasterizer,
     RenderApiCount
 } RENDER_API, *PRENDER_API;
-extern RENDER_API RenderApi;
+extern CONFIGVAR RenderApi;
 
 /// @brief Material
 typedef struct MATERIAL

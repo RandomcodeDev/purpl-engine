@@ -7,7 +7,8 @@ static VOID Initialize(VOID)
     LogDebug("Initializing software rasterizer");
 
     LogDebug("Creating framebuffer");
-    PURPL_ASSERT(SwrsData.Framebuffer = VidCreateFramebuffer());
+    SwrsData.Framebuffer = VidCreateFramebuffer();
+    PURPL_ASSERT(SwrsData.Framebuffer != NULL);
 
     LogDebug("Software rasterizer initialization succeeded");
 }

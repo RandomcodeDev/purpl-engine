@@ -4,8 +4,6 @@
 
 ecs_entity_t ecs_id(MODEL);
 
-CONFIGVAR RenderApi;
-
 static RENDER_BACKEND Backend;
 static FLOAT Scale;
 static UINT32 LastWidth;
@@ -44,10 +42,10 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 #else
     static CONST RENDER_API DefaultApi = RenderApiVulkan;
 #endif
-    CfgInitializeVariable(&RenderApi, "render_api", &DefaultApi, ConfigVarTypeInt, TRUE, ConfigVarSideClientOnly,
+    CfgDefineVariable("rdr_api", &DefaultApi, ConfigVarTypeInt, TRUE, ConfigVarSideClientOnly,
                           FALSE);
 
-    switch (RenderApi.Current.Int)
+    switch (CONFIGVAR_GET_INT("rdr_api"))
     {
     default:
     case RenderApiNone:

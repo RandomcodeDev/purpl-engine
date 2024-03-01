@@ -28,7 +28,6 @@ typedef enum RENDER_API
     RenderApiSoftwareRasterizer,
     RenderApiCount
 } RENDER_API, *PRENDER_API;
-extern CONFIGVAR RenderApi;
 
 /// @brief Material
 typedef struct MATERIAL

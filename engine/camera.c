@@ -69,7 +69,7 @@ VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
 
     if (Camera->Perspective)
     {
-        if (RenderApi.Current.Int == RenderApiDirect3D12)
+        if (CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12)
         {
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
             glm_perspective_lh_no((FLOAT)Camera->FieldOfView, (FLOAT)Camera->Aspect, (FLOAT)Camera->NearClip,
@@ -86,7 +86,7 @@ VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
     {
         VidGetSize(&Width, &Height);
 
-        if (RenderApi.Current.Int == RenderApiDirect3D12)
+        if (CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12)
         {
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
             glm_ortho_lh_no(0.0, (FLOAT)Width, (FLOAT)Height, 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,

@@ -98,10 +98,9 @@ static UINT FramesPerSecond;
 static DOUBLE Delta;
 static BOOLEAN Resized;
 
-DOUBLE
-EngGetDelta(VOID)
+DOUBLE EngGetDelta(VOID)
 {
-    return Delta / 1000;
+    return Delta / 1000.0;
 }
 
 UINT32

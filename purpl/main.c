@@ -12,7 +12,7 @@
 
 VOID ChangeClearColour(_In_ ecs_entity_t *Iterator)
 {
-    UINT32 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
+    UINT64 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
     UINT8 Red = ((ClearColour >> 24) & 0xFF);
     UINT8 Green = ((ClearColour >> 16) & 0xFF);
     DOUBLE Delta = 100 * EngGetDelta();

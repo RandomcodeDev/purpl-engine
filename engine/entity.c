@@ -12,6 +12,7 @@ Abstract:
 
 --*/
 
+#include "common/configvar.h"
 #include "flecs.h"
 
 #include "entity.h"
@@ -72,14 +73,17 @@ VOID EcsInitialize(VOID)
     EcsSetWorld(ecs_init());
     ecs_progress(EngineEcsWorld, 0.0f);
 
-    CONFIGVAR_DEFINE_FLOAT("ecs_main_frame_target", 60.0f, FALSE, ConfigVarSideBoth, FALSE);
+    CONFIGVAR_DEFINE_FLOAT("ecs_main_fps_target", 60.0f, FALSE, ConfigVarSideBoth, FALSE);
+    ecs_set_target_fps(EngineEcsWorld, CONFIGVAR_GET_FLOAT("ecs_main_fps_target"));
 }
 
 VOID EcsBeginFrame(_In_ UINT64 Delta)
 {
-    // Because this is just setting a float and a boolean, it's fine
-    ecs_set_target_fps(EngineEcsWorld, CONFIGVAR_GET_FLOAT("ecs_main_frame_target"));
-
+    if (CONFIGVAR_HAS_CHANGED("ecs_main_fps_target"))
+    {
+        ecs_set_target_fps(EngineEcsWorld, CONFIGVAR_GET_FLOAT("ecs_main_fps_target"));
+        CONFIGVAR_CLEAR_CHANGED("ecs_main_fps_target");
+    }
     ecs_frame_begin(EngineEcsWorld, (FLOAT)Delta / 1000);
 }
 

@@ -25,7 +25,6 @@ typedef enum RENDER_API
     RenderApiNone,
     RenderApiVulkan,
     RenderApiDirect3D12,
-    RenderApiSoftwareRasterizer,
     RenderApiCount
 } RENDER_API, *PRENDER_API;
 

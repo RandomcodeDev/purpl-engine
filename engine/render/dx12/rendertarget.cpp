@@ -16,7 +16,11 @@ VOID Dx12CreateRtvHeap(VOID)
 EXTERN_C
 VOID Dx12CreateRenderTargetViews(VOID)
 {
-    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart());
+    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(*Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart(
+#ifdef __GNUC__
+        NULL
+#endif
+    ));
     UINT32 i;
 
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)

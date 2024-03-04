@@ -15,9 +15,9 @@ EXTERN_C
 VOID Dx12CreatePipelineStateObject(VOID)
 {
     PBYTE VertexShader;
-    SIZE_T VertexShaderSize;
+    UINT64 VertexShaderSize;
     PBYTE PixelShader;
-    SIZE_T PixelShaderSize;
+    UINT64 PixelShaderSize;
 
     LogDebug("Creating pipeline state object");
 

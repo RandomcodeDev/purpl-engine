@@ -27,8 +27,6 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 }
 #endif
 
-extern VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend);
-
 VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
     UNREFERENCED_PARAMETER(Iterator);
@@ -57,9 +55,6 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
         break;
     case RenderApiVulkan:
         VlkInitializeBackend(&Backend);
-        break;
-    case RenderApiSoftwareRasterizer:
-        SwrsInitializeBackend(&Backend);
         break;
     }
 

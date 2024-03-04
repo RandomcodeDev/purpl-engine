@@ -45,7 +45,7 @@ if discord then
             path.join("deps", "discord-rpc", "src", "serialization.cpp")
         )
 
-        if is_plat("gdk", "gdkx") then
+        if is_plat("gdk", "gdkx", "windows") then
             add_files(path.join("deps", "discord-rpc", "src", "*_win.cpp"))
         elseif is_plat("linux", "freebsd") then
             add_files(path.join("deps", "discord-rpc", "src", "*_linux.cpp"), path.join("deps", "discord-rpc", "src", "*_unix.cpp"))
@@ -68,6 +68,10 @@ target("flecs")
     add_files(path.join("deps", "flecs", "flecs.c"))
     set_warnings("none")
     set_group("External")
+
+    if get_config("toolchain") == "mingw" then
+        add_links("ws2_32")
+    end
 
     on_load(fix_target)
 target_end()
@@ -111,6 +115,15 @@ if directx then
             path.join("engine", "render", "dx12", "*.cpp")
         )
 
+        if get_config("toolchain") == "mingw" then
+            add_defines("__REQUIRED_RPCNDR_H_VERSION__=475")
+            add_forceincludes("math.h")
+        end
+    
+        if get_config("toolchain") == "mingw" then
+            add_links("d3d12", "dxgi")
+        end
+
         if is_plat("gdk") then
             add_links("d3d12.lib", "dxgi.lib")
         elseif is_plat("gdkx") then
@@ -127,16 +140,6 @@ if is_plat("switch") then
     add_switch_renderapi()
 end
 
-target("render-swrast")
-    set_kind("static")
-    add_headerfiles(path.join("engine", "render", "swrast", "*.h"))
-    add_files(path.join("engine", "render", "swrast", "*.c"))
-
-    set_group("Engine/Render System")
-
-    on_load(fix_target)
-target_end()
-
 target("render")
     set_kind("static")
     add_headerfiles(path.join("engine", "render", "*.h"))
@@ -150,7 +153,6 @@ target("render")
     if vulkan then
         add_deps("render-vk")
     end
-    add_deps("render-swrast")
 
     set_group("Engine/Render System")
 

@@ -10,6 +10,17 @@
 
 #include "engine/engine.h"
 
+VOID ChangeClearColour(_In_ ecs_entity_t *Iterator)
+{
+    UINT32 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
+    UINT8 Red = ((ClearColour >> 24) & 0xFF);
+    UINT8 Green = ((ClearColour >> 16) & 0xFF);
+    DOUBLE Delta = 100 * EngGetDelta();
+    UINT8 Blue = (UINT8)(((ClearColour >> 8) & 0xFF) + Delta) % 255;
+    UINT8 Alpha = ((ClearColour >> 0) & 0xFF);
+    CONFIGVAR_SET_INT("rdr_clear_colour", Red << 24 | Green << 16 | Blue << 8 | Alpha);
+}
+
 INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 {
     CmnInitialize(Arguments, ArgumentCount);
@@ -19,8 +30,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_add(EcsGetWorld(), CameraEntity, CAMERA);
     CAMERA Camera;
     DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    InitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0,
-                                Aspect, 0.1, 1000.0, &Camera);
+    InitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0, Aspect, 0.1, 1000.0, &Camera);
     ecs_set_ptr(EcsGetWorld(), CameraEntity, CAMERA, &Camera);
     EngSetMainCamera(CameraEntity);
 
@@ -33,6 +43,9 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     ecs_add(EcsGetWorld(), TestEntity, TRANSFORM);
     ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}});
+
+    CONFIGVAR_SET_INT("rdr_clear_colour", 0x800002FF);
+    ECS_SYSTEM(EcsGetWorld(), ChangeClearColour, EcsOnUpdate);
 
     EngMainLoop();
 

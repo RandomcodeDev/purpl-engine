@@ -5,7 +5,6 @@
 ecs_entity_t ecs_id(MODEL);
 
 static RENDER_BACKEND Backend;
-static FLOAT Scale;
 static UINT32 LastWidth;
 static UINT32 LastHeight;
 
@@ -35,15 +34,18 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     UNREFERENCED_PARAMETER(Iterator);
 
     LogInfo("Initializing renderer");
-    RdrSetScale(1.0f);
+
+    CONFIGVAR_DEFINE_FLOAT("rdr_scale", 1.0f, FALSE, ConfigVarSideClientOnly, FALSE);
 
 #ifdef PURPL_GDKX
     static CONST RENDER_API DefaultApi = RenderApiDirect3D12;
 #else
     static CONST RENDER_API DefaultApi = RenderApiVulkan;
 #endif
-    CfgDefineVariable("rdr_api", &DefaultApi, ConfigVarTypeInt, TRUE, ConfigVarSideClientOnly,
-                          FALSE);
+
+    CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE);
+
+    CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE);
 
     switch (CONFIGVAR_GET_INT("rdr_api"))
     {
@@ -210,25 +212,13 @@ VOID RdrDestroyModel(_In_ PMODEL Model)
     }
 }
 
-FLOAT RdrGetScale(VOID)
-{
-    return Scale;
-}
-
-FLOAT RdrSetScale(FLOAT NewScale)
-{
-    FLOAT OldScale = Scale;
-    Scale = NewScale;
-    return OldScale;
-}
-
 UINT32 RdrGetWidth(VOID)
 {
     UINT32 Width;
 
     VidGetSize(&Width, NULL);
 
-    return (UINT32)(Width * Scale);
+    return (UINT32)(Width * CONFIGVAR_GET_FLOAT("rdr_scale"));
 }
 
 UINT32 RdrGetHeight(VOID)
@@ -237,5 +227,5 @@ UINT32 RdrGetHeight(VOID)
 
     VidGetSize(NULL, &Height);
 
-    return (UINT32)(Height * Scale);
+    return (UINT32)(Height * CONFIGVAR_GET_FLOAT("rdr_scale"));
 }

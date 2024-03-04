@@ -61,8 +61,6 @@ VOID EcsInitialize(VOID)
     ecs_os_api_t OsApi = ecs_os_api;
     OsApi.log_ = EcsLog;
 #if PURPL_USE_MIMALLOC
-    // Technically parameters differ, but every architecture where size_t isn't 32-bit uses registers, which means it
-    // should be OK (and it should be easy enough to figure out whether this is causing problems if not)
     OsApi.malloc_ = mi_malloc;
     OsApi.calloc_ = mi_calloc;
     OsApi.realloc_ = mi_realloc;
@@ -73,10 +71,15 @@ VOID EcsInitialize(VOID)
     LogTrace("Creating ECS world");
     EcsSetWorld(ecs_init());
     ecs_progress(EngineEcsWorld, 0.0f);
+
+    CONFIGVAR_DEFINE_FLOAT("ecs_main_frame_target", 60.0f, FALSE, ConfigVarSideBoth, FALSE);
 }
 
 VOID EcsBeginFrame(_In_ UINT64 Delta)
 {
+    // Because this is just setting a float and a boolean, it's fine
+    ecs_set_target_fps(EngineEcsWorld, CONFIGVAR_GET_FLOAT("ecs_main_frame_target"));
+
     ecs_frame_begin(EngineEcsWorld, (FLOAT)Delta / 1000);
 }
 

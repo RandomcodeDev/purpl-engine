@@ -1,5 +1,4 @@
 * text eol=lf
-*[Aa]ssets/* binary
+**/*[Aa]ssets/* binary
 *.py text eol=lf mode=0755
-tools/*
-tools/linux/*/* binary eol=lf mode=0755
+tools/** binary eol=lf mode=0755

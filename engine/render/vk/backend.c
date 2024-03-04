@@ -156,8 +156,9 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
         vkWaitForFences(VlkData.Device, 1, &VlkData.CommandBufferFences[VlkData.FrameIndex], TRUE, UINT64_MAX));
 
     VlkData.SwapChainIndex = 0;
-    Result = vkAcquireNextImageKHR(VlkData.Device, VlkData.SwapChain, UINT64_MAX,
-                                   VlkData.AcquireSemaphores[VlkData.FrameIndex], VK_NULL_HANDLE, &VlkData.SwapChainIndex);
+    Result =
+        vkAcquireNextImageKHR(VlkData.Device, VlkData.SwapChain, UINT64_MAX,
+                              VlkData.AcquireSemaphores[VlkData.FrameIndex], VK_NULL_HANDLE, &VlkData.SwapChainIndex);
     if (Result == VK_ERROR_OUT_OF_DATE_KHR || Result == VK_SUBOPTIMAL_KHR || WindowResized)
     {
         if (!WindowResized)
@@ -189,15 +190,17 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 
     VkClearValue ClearValues[3] = {0};
 
+    UINT32 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
+
     ClearValues[0].color.float32[0] = 0.4f;
     ClearValues[0].color.float32[1] = 0.0f;
     ClearValues[0].color.float32[2] = 1.0f;
     ClearValues[0].color.float32[3] = 1.0f;
 
-    ClearValues[1].color.float32[0] = 1.0f;
-    ClearValues[1].color.float32[1] = 0.0f;
-    ClearValues[1].color.float32[2] = 0.0f;
-    ClearValues[1].color.float32[3] = 1.0f;
+    ClearValues[1].color.float32[0] = ((ClearColour >> 24) & 0xFF) / 255.0f;
+    ClearValues[1].color.float32[1] = ((ClearColour >> 16) & 0xFF) / 255.0f;
+    ClearValues[1].color.float32[2] = ((ClearColour >> 8) & 0xFF) / 255.0f;
+    ClearValues[1].color.float32[3] = ((ClearColour >> 0) & 0xFF) / 255.0f;
 
     ClearValues[2].depthStencil.depth = 1.0f;
     ClearValues[2].depthStencil.stencil = 1.0f;

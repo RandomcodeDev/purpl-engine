@@ -442,3 +442,6 @@ extern VOID VlkCreateScreenFramebuffers(VOID);
 
 /// @brief Destroy screen framebuffers
 extern VOID VlkDestroyScreenFramebuffers(VOID);
+
+/// @brief Load shaders
+extern VOID VlkLoadShaders(VOID);

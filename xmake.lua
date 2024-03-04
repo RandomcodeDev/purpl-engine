@@ -188,13 +188,11 @@ target("purpl")
     support_executable("support")
 
     if is_plat("gdk", "gdkx") then
-        if not is_plat("windows") then
-            add_headerfiles(path.join("platform", "gdk", "MicrosoftGameConfig.mgc"))
-            add_links("xgameruntime.lib")
-            after_build(function (target)
-                os.cp(path.absolute(path.join("gdk", "MicrosoftGameConfig.mgc")), path.join(target:targetdir(), "MicrosoftGame.Config"))
-            end)
-        end
+        add_headerfiles(path.join("gdk", "MicrosoftGameConfig.mgc"))
+        add_links("xgameruntime.lib")
+        after_build(function (target)
+            os.cp(path.absolute(path.join("gdk", "MicrosoftGameConfig.mgc")), path.join(target:targetdir(), "MicrosoftGame.Config"))
+        end)
     end
 
     on_load(fix_target)before_build(function (target)

@@ -8,6 +8,8 @@
 
 #include "purpl/purpl.h"
 
+#include "common/configvar.h"
+
 #include "util/mesh.h"
 #include "util/texture.h"
 

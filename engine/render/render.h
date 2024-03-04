@@ -119,18 +119,6 @@ extern VOID RdrDestroyModel(_In_ PMODEL Model);
 /// @brief Shut down the render system
 extern VOID RdrShutdown(VOID);
 
-/// @brief Get the scale of the render output
-///
-/// @return The scale
-extern FLOAT RdrGetScale(VOID);
-
-/// @brief Set the scale of the render output
-///
-/// @param[in] NewScale The new scale of the render output
-///
-/// @return The old scale of the render output
-extern FLOAT RdrSetScale(FLOAT NewScale);
-
 /// @brief Get the width of the render output
 ///
 /// @return The scaled width of the render output

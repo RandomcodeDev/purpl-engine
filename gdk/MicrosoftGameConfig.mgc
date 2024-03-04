@@ -8,14 +8,14 @@
   <ShellVisuals
     DefaultDisplayName="Purpl Engine"
     PublisherDisplayName="MobSlicer152"
-    StoreLogo="GdkAssets\StoreLogo.png"
-    Square150x150Logo="GdkAssets\Square150x150Logo.png"
-    Square44x44Logo="GdkAssets\Square44x44Logo.png"
-    Square480x480Logo="GdkAssets\LargeLogo.png"
+    StoreLogo="StoreLogo.png"
+    Square150x150Logo="Square150x150Logo.png"
+    Square44x44Logo="Square44x44Logo.png"
+    Square480x480Logo="Square480x480Logo.png"
     Description="Purpl game engine"
     ForegroundText="dark"
     BackgroundColor="#000000"
-    SplashScreenImage="GdkAssets\SplashScreenImage.png" />
+    SplashScreenImage="SplashScreenImage.png" />
   <ExecutableList>
     <Executable
       Name="purpl.exe"

@@ -9,6 +9,7 @@
 #include "purpl/purpl.h"
 
 #include "common/alloc.h"
+#include "common/configvar.h"
 #include "common/common.h"
 #include "common/filesystem.h"
 #include "common/log.h"

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Game
   configVersion="0">
   <Identity
@@ -6,7 +6,7 @@
     Publisher="CN=226F0228-2A14-49C0-8CB9-FDB4B16D6A76"
     Version="1.0.0.0" />
   <ShellVisuals
-    DefaultDisplayName="Purpl Engine"
+    DefaultDisplayName="Purpl Engine Test"
     PublisherDisplayName="MobSlicer152"
     StoreLogo="GdkAssets\StoreLogo.png"
     Square150x150Logo="GdkAssets\Square150x150Logo.png"
@@ -19,7 +19,9 @@
   <ExecutableList>
     <Executable
       Name="purpl.exe"
+      TargetDeviceFamily="PC"
       Id="Game" />
   </ExecutableList>
+  <StoreId>9MWVXLSV7RX1</StoreId>
   <AdvancedUserModel>true</AdvancedUserModel>
 </Game>

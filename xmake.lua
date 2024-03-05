@@ -119,7 +119,7 @@ if directx then
             add_defines("__REQUIRED_RPCNDR_H_VERSION__=475")
             add_forceincludes("math.h")
         end
-    
+
         if get_config("toolchain") == "mingw" then
             add_links("d3d12", "dxgi")
         end
@@ -190,14 +190,12 @@ target("purpl")
     support_executable("support")
 
     if is_plat("gdk", "gdkx") then
-        add_headerfiles(path.join("gdk", "MicrosoftGameConfig.mgc"))
+        add_headerfiles(path.join("gdk", "*.mgc"))
         add_links("xgameruntime.lib")
-        after_build(function (target)
-            os.cp(path.absolute(path.join("gdk", "MicrosoftGameConfig.mgc")), path.join(target:targetdir(), "MicrosoftGame.Config"))
-        end)
     end
 
-    on_load(fix_target)before_build(function (target)
+    on_load(fix_target)
+    before_build(function (target)
         target:set("support_data", {
             "Purpl",
             "Randomcode Developers",
@@ -208,8 +206,11 @@ target("purpl")
             os.ln(path.absolute(path.join("assets", "out")), path.join(target:targetdir(), "assets"))
         end
 
-        if is_plat("gdk", "gdkx") and not os.exists(path.join(target:targetdir(), "GdkAssets")) then
-            os.ln(path.absolute(path.join("gdk", "GdkAssets")), path.join(target:targetdir(), "GdkAssets"))
+        if is_plat("gdk", "gdkx") then
+            os.cp(path.absolute(path.join("gdk", "MicrosoftGameConfig.$(plat).mgc")), path.join(target:targetdir(), "MicrosoftGame.Config"))
+            if not os.exists(path.join(target:targetdir(), "GdkAssets")) then
+                os.ln(path.absolute(path.join("gdk", "GdkAssets")), path.join(target:targetdir(), "GdkAssets"))
+            end
         end
     end)
 target_end()

@@ -190,7 +190,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 
     VkClearValue ClearValues[3] = {0};
 
-    UINT32 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
+    INT64 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
 
     ClearValues[0].color.float32[0] = 0.4f;
     ClearValues[0].color.float32[1] = 0.0f;

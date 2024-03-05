@@ -14,12 +14,53 @@ Abstract:
 
 #include "engine.h"
 
-PCHAR EngineDataDirectory;
+#define X(Kind)                                                                                                        \
+    {                                                                                                                  \
+        static CHAR Buffer[1024];                                                                                      \
+                                                                                                                       \
+        if (Directory >= EngDataDirectoryCount)                                                                        \
+        {                                                                                                              \
+            memset(Buffer, 0, PURPL_ARRAYSIZE(Buffer));                                                                \
+            return NULL;                                                                                               \
+        }                                                                                                              \
+                                                                                                                       \
+        PSTR FormattedName = "";                                                                                       \
+        if (Name && strlen(Name))                                                                                      \
+        {                                                                                                              \
+            va_list Arguments;                                                                                         \
+            va_start(Arguments, Name);                                                                                 \
+            FormattedName = CmnFormatStringVarArgs(Name, Arguments);                                                   \
+            va_end(Arguments);                                                                                         \
+        }                                                                                                              \
+                                                                                                                       \
+        stbsp_snprintf(Buffer, PURPL_ARRAYSIZE(Buffer), "%s/%s", Eng##Kind##Directories[Directory], FormattedName);    \
+                                                                                                                       \
+        if (Name && strlen(Name))                                                                                      \
+        {                                                                                                              \
+            CmnFree(FormattedName);                                                                                    \
+        }                                                                                                              \
+                                                                                                                       \
+        return Buffer;                                                                                                 \
+    }
 
-CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount] = {
-    "saves/", // EngineDataDirectorySaves
-    "logs/",  // EngineDataDirectoryLogs
+PCHAR EngDataDirectory;
+
+CONST PCSTR EngDataDirectories[EngDataDirectoryCount] = {
+    "saves/", // EngDataDirectorySaves
+    "logs/",  // EngDataDirectoryLogs
 };
+
+PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_ PCSTR Name, ...) X(Data);
+
+CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount] = {
+    PURPL_SWITCH_ROMFS_MOUNTPOINT "assets/models",   // EngAssetDirectoryModels
+    PURPL_SWITCH_ROMFS_MOUNTPOINT "assets/shaders",  // EngAssetDirectoryShaders
+    PURPL_SWITCH_ROMFS_MOUNTPOINT "assets/textures", // EngAssetDirectoryTextures
+};
+
+PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name, ...) X(Asset);
+
+#undef X
 
 ecs_entity_t EngineMainCamera;
 
@@ -45,17 +86,17 @@ Return Value:
 
     LogInfo("Initializing engine");
 
-    EngineDataDirectory = CmnFormatString("%s" PURPL_EXECUTABLE_NAME "/", PlatGetUserDataDirectory());
+    EngDataDirectory = CmnFormatString("%s" PURPL_EXECUTABLE_NAME "/", PlatGetUserDataDirectory());
 
-    LogInfo("Ensuring engine data directory %s exists", EngineDataDirectory);
-    if (!FsCreateDirectory(EngineDataDirectory))
+    LogInfo("Ensuring engine data directory %s exists", EngDataDirectory);
+    if (!FsCreateDirectory(EngDataDirectory))
     {
-        CmnError("Failed to create engine directory %s", EngineDataDirectory);
+        CmnError("Failed to create engine directory %s", EngDataDirectory);
     }
-    for (i = 0; i < EngineDataDirectoryCount; i++)
+    for (i = 0; i < EngDataDirectoryCount; i++)
     {
-        LogDebug("Creating directory %s%s", EngineDataDirectory, EngineDataDirectories[i]);
-        Path = CmnFormatTempString("%s%s", EngineDataDirectory, EngineDataDirectories[i]);
+        LogDebug("Creating directory %s%s", EngDataDirectory, EngDataDirectories[i]);
+        Path = CmnFormatTempString("%s%s", EngDataDirectory, EngDataDirectories[i]);
         if (!FsCreateDirectory(Path))
         {
             CmnError("Failed to create engine directory %s", Path);
@@ -86,7 +127,7 @@ Return Value:
     VidInitialize(FALSE);
     EcsInitialize();
 
-    LogInfo("Successfully initialized engine, data directory is %s", EngineDataDirectory);
+    LogInfo("Successfully initialized engine, data directory is %s", EngDataDirectory);
 }
 
 static UINT64 Start;
@@ -181,7 +222,7 @@ VOID EngShutdown(VOID)
     RdrShutdown();
     VidShutdown();
 
-    CmnFree(EngineDataDirectory);
+    CmnFree(EngDataDirectory);
 
     LogInfo("Successfully shut down engine");
 }

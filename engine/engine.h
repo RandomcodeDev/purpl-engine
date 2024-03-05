@@ -27,16 +27,32 @@
 #endif
 
 /// @brief The engine's data directory
-extern PCHAR EngineDataDirectory;
+extern PCHAR EngDataDirectory;
 
 /// @brief The subdirectories of the data directory
 typedef enum ENGINE_DATA_DIRECTORY
 {
-    EngineDataDirectorySaves,
-    EngineDataDirectoryLogs,
-    EngineDataDirectoryCount
+    EngDataDirectorySaves,
+    EngDataDirectoryLogs,
+    EngDataDirectoryCount
 } ENGINE_DATA_DIRECTORY, *PENGINE_DATA_DIRECTORY;
-extern CONST PCSTR EngineDataDirectories[EngineDataDirectoryCount];
+extern CONST PCSTR EngDataDirectories[EngDataDirectoryCount];
+
+/// @brief Get a data path in a static buffer
+extern PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_ PCSTR Name, ...);
+
+/// @brief The subdirectories of the engine's asset directory
+typedef enum ENGINE_ASSET_DIRECTORY
+{
+    EngAssetDirectoryModels,
+    EngAssetDirectoryShaders,
+    EngAssetDirectoryTextures,
+    EngAssetDirectoryCount
+} ENGINE_ASSET_DIRECTORY, *PENGINE_ASSET_DIRECTORY;
+extern CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount];
+
+/// @brief Get an asset path in a static buffer
+extern PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name, ...);
 
 /// @brief Initialize the engine
 extern VOID EngInitialize(VOID);

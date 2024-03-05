@@ -35,7 +35,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     EngSetMainCamera(CameraEntity);
 
     ecs_entity_t TestEntity = EcsCreateEntity("test");
-    PMESH TestMesh = LoadMesh("assets/models/chief.pmdl");
+    PMESH TestMesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, "chief.pmdl"));
     MODEL TestModel = {0};
     RdrCreateModel(&TestModel, TestMesh, (PMATERIAL)1);
     ecs_add(EcsGetWorld(), TestEntity, MODEL);

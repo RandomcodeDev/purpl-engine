@@ -108,8 +108,8 @@ Return Value:
     struct tm Time;
     RawTime = time(NULL);
     Time = *localtime(&RawTime);
-    Path = CmnFormatTempString("%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log", EngineDataDirectory,
-                               EngineDataDirectories[EngineDataDirectoryLogs], Time.tm_year + 1900, Time.tm_mon + 1,
+    Path = CmnFormatTempString("%s%spurpl_%04d-%02d-%02d_%02d-%02d-%02d.log", EngDataDirectory,
+                               EngDataDirectories[EngDataDirectoryLogs], Time.tm_year + 1900, Time.tm_mon + 1,
                                Time.tm_mday, Time.tm_hour, Time.tm_min, Time.tm_sec);
 
     LogInfo("Opening log file %s", Path);

@@ -3,16 +3,16 @@ PROJECT_NUMBER = 0.0.0
 PROJECT_BRIEF = The Purpl game engine is a custom 3D game engine supporting several platforms, currently in development by Randomcode Developers.
 OUTPUT_DIRECTORY = docs
 ENABLE_PREPROCESSING = YES
-INPUT = common \
+INPUT = support/common \
         engine \
         engine/render \
         engine/render/dx12 \
         engine/render/vk \
-        platform/win32 \
-        platform/unix \
+        support/platform/win32 \
+        support/platform/unix \
         ../platform/switch \
         purpl \
-        util
+        support/util
 GENERATE_TREEVIEW      = YES # optional. Also works without treeview
 DISABLE_INDEX = NO
 FULL_SIDEBAR = NO

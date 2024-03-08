@@ -53,9 +53,9 @@ CONST PCSTR EngDataDirectories[EngDataDirectoryCount] = {
 PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_ PCSTR Name, ...) X(Data);
 
 CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount] = {
-    PURPL_SWITCH_ROMFS_MOUNTPOINT "assets/models",   // EngAssetDirectoryModels
-    PURPL_SWITCH_ROMFS_MOUNTPOINT "assets/shaders",  // EngAssetDirectoryShaders
-    PURPL_SWITCH_ROMFS_MOUNTPOINT "assets/textures", // EngAssetDirectoryTextures
+    "models",   // EngAssetDirectoryModels
+    "shaders",  // EngAssetDirectoryShaders
+    "textures", // EngAssetDirectoryTextures
 };
 
 PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name, ...) X(Asset);
@@ -102,6 +102,11 @@ Return Value:
             CmnError("Failed to create engine directory %s", Path);
         }
     }
+
+    FsAddDirectorySource("assets", TRUE);
+#if defined PURPL_DEBUG && !defined PURPL_SWITCH
+    FsAddDirectorySource("assets/out", TRUE);
+#endif
 
 #ifndef PURPL_SWITCH
     time_t RawTime;

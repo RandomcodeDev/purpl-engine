@@ -94,7 +94,7 @@ extern VOID RdrReleaseTexture(_In_ PVOID TextureHandle);
 /// @param[in] ShaderName The name of the shader program to use
 ///
 /// @return A material. Must not outlive the texture handle.
-extern BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_ PCSTR ShaderName);
+extern BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_z_ PCSTR ShaderName);
 
 /// @brief Destroy a material
 ///

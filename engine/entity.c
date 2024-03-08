@@ -19,7 +19,7 @@ Abstract:
 
 static ecs_world_t *EngineEcsWorld;
 
-static VOID EcsLog(_In_ INT Level, _In_ PCSTR File, _In_ INT Line, _In_ PCSTR Message)
+static VOID EcsLog(_In_ INT Level, _In_z_ PCSTR File, _In_ INT Line, _In_z_ PCSTR Message)
 {
     LOG_LEVEL RealLevel;
 

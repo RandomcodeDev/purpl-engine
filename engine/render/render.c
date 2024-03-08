@@ -153,7 +153,7 @@ VOID RdrReleaseTexture(_In_ PVOID TextureHandle)
     }
 }
 
-BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_ PCSTR ShaderName)
+BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_z_ PCSTR ShaderName)
 {
     if (!Material || !TextureHandle || !ShaderName)
     {

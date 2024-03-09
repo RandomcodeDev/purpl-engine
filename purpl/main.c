@@ -22,12 +22,14 @@ VOID ChangeClearColour(_In_ ecs_entity_t *Iterator)
     CONFIGVAR_SET_INT("rdr_clear_colour", Red << 24 | Green << 16 | Blue << 8 | Alpha);
 }
 
-#define PURPL_TESTING_IN_MAIN
+//#define PURPL_TESTING_IN_MAIN
 
 INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 {
 #ifdef PURPL_TESTING_IN_MAIN
     PPACKFILE Pack = PackLoad("test");
+    UINT64 Size = 0;
+    PVOID Data = PackReadFile(Pack, "test.bin", 0, 0, &Size, 0);
 
     return 0;
 #else

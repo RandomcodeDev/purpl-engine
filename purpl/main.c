@@ -7,6 +7,7 @@
 #include "purpl/purpl.h"
 
 #include "common/common.h"
+#include "common/packfile.h"
 
 #include "engine/engine.h"
 
@@ -21,8 +22,16 @@ VOID ChangeClearColour(_In_ ecs_entity_t *Iterator)
     CONFIGVAR_SET_INT("rdr_clear_colour", Red << 24 | Green << 16 | Blue << 8 | Alpha);
 }
 
+#define PURPL_TESTING_IN_MAIN
+
 INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 {
+#ifdef PURPL_TESTING_IN_MAIN
+    PPACKFILE Pack = PackLoad("test");
+
+    return 0;
+#else
+
     CmnInitialize(Arguments, ArgumentCount);
     EngInitialize();
 
@@ -56,4 +65,5 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     CmnShutdown();
 
     return 0;
+#endif
 }

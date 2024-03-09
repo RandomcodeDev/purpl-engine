@@ -248,7 +248,7 @@ extern PCSTR VlkGetResultString(VkResult Result);
 /// @param[in] ObjectType The type of the object
 /// @param[in] Name The name to set (supports printf-style formatting)
 /// @param[in] ... Formatting arguments
-extern VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_ _Printf_format_string_ PCSTR Name,
+extern VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_z_ _Printf_format_string_ PCSTR Name,
                              ...);
 
 /// @brief Debug callback to log things

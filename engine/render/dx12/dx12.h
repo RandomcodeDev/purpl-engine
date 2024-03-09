@@ -19,6 +19,8 @@ BEGIN_EXTERN_C
 #include "common/common.h"
 #include "common/log.h"
 
+#include "engine/engine.h"
+
 #include "engine/render/render.h"
 
 #include "platform/video.h"

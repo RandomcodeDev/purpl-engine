@@ -103,9 +103,9 @@ Return Value:
         }
     }
 
-    FsAddDirectorySource("assets", TRUE);
+    FsAddDirectorySource("assets");
 #if defined PURPL_DEBUG && !defined PURPL_SWITCH
-    FsAddDirectorySource("assets/out", TRUE);
+    FsAddDirectorySource("assets/out");
 #endif
 
 #ifndef PURPL_SWITCH

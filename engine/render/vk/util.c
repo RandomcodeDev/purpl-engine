@@ -130,7 +130,7 @@ PCSTR VlkGetResultString(VkResult Result)
 #undef X
 }
 
-VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_ _Printf_format_string_ PCSTR Name, ...)
+VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_z_ _Printf_format_string_ PCSTR Name, ...)
 {
     //  Seems to crash a lot
 #ifndef PURPL_SWITCH

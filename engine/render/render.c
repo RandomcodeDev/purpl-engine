@@ -27,12 +27,8 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 }
 #endif
 
-VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
+VOID RdrDefineVariables(VOID)
 {
-    UNREFERENCED_PARAMETER(Iterator);
-
-    LogInfo("Initializing renderer");
-
     CONFIGVAR_DEFINE_FLOAT("rdr_scale", 1.0f, FALSE, ConfigVarSideClientOnly, FALSE);
 
 #ifdef PURPL_GDKX
@@ -44,6 +40,13 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE);
 
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE);
+}
+
+VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
+{
+    UNREFERENCED_PARAMETER(Iterator);
+
+    LogInfo("Initializing renderer");
 
     switch (CONFIGVAR_GET_INT("rdr_api"))
     {

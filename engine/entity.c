@@ -54,6 +54,11 @@ static VOID EcsLog(_In_ INT Level, _In_z_ PCSTR File, _In_ INT Line, _In_z_ PCST
     }
 }
 
+VOID EcsDefineVariables(VOID)
+{
+    CONFIGVAR_DEFINE_FLOAT("ecs_main_fps_target", 60.0f, FALSE, ConfigVarSideBoth, FALSE);
+}
+
 VOID EcsInitialize(VOID)
 {
     LogInfo("Initializing ECS");
@@ -73,7 +78,6 @@ VOID EcsInitialize(VOID)
     EcsSetWorld(ecs_init());
     ecs_progress(EngineEcsWorld, 0.0f);
 
-    CONFIGVAR_DEFINE_FLOAT("ecs_main_fps_target", 60.0f, FALSE, ConfigVarSideBoth, FALSE);
     ecs_set_target_fps(EngineEcsWorld, CONFIGVAR_GET_FLOAT("ecs_main_fps_target"));
 }
 

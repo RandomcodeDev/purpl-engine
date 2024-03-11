@@ -32,10 +32,15 @@ VOID Dx12CreatePipelineStateObject(VOID)
          D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
     VertexShaderSize = 0;
-    VertexShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/shaders.vs.cso"), 0, 0, &VertexShaderSize, 0);
+    VertexShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/main.vs.cso"), 0, 0, &VertexShaderSize, 0);
     PixelShaderSize = 0;
-    PixelShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/shaders.ps.cso"), 0, 0,
+    PixelShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/main.ps.cso"), 0, 0,
                                     &PixelShaderSize, 0);
+
+    if (!VertexShaderSize || !PixelShaderSize)
+    {
+        CmnError("DirectX 12 shaders could not be loaded");
+    }
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDescription = {};
     PsoDescription.InputLayout.pInputElementDescs = InputElementDescriptions;

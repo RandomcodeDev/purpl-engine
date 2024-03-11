@@ -34,6 +34,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     return 0;
 #else
 
+    EngDefineVariables();
     CmnInitialize(Arguments, ArgumentCount);
     EngInitialize();
 

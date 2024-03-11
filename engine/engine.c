@@ -64,6 +64,12 @@ PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name
 
 ecs_entity_t EngineMainCamera;
 
+VOID EngDefineVariables(VOID)
+{
+    EcsDefineVariables();
+    RdrDefineVariables();
+}
+
 VOID EngInitialize(VOID)
 /*++
 

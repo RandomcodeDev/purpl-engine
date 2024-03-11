@@ -63,6 +63,9 @@ typedef struct RENDER_BACKEND
     VOID (*DestroyModel)(_In_ PMODEL Model);
 } RENDER_BACKEND, *PRENDER_BACKEND;
 
+/// @brief Define configuration variables
+extern VOID RdrDefineVariables(VOID);
+
 /// @brief Initialize the render system
 extern ECS_SYSTEM_DECLARE(RdrInitialize);
 

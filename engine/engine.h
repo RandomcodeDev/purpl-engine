@@ -54,6 +54,9 @@ extern CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount];
 /// @brief Get an asset path in a static buffer
 extern PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name, ...);
 
+/// @brief Define configuration variables (must be called before CmnInitialize)
+extern VOID EngDefineVariables(VOID);
+
 /// @brief Initialize the engine
 extern VOID EngInitialize(VOID);
 

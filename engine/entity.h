@@ -13,6 +13,9 @@
 #include "util/mesh.h"
 #include "util/texture.h"
 
+/// @brief Define configuration variables
+extern VOID EcsDefineVariables(VOID);
+
 /// @brief Initialize the ECS
 extern VOID EcsInitialize(VOID);
 

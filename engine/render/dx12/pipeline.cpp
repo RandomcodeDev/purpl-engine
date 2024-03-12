@@ -1,25 +1,14 @@
 #include "dx12.h"
 
 EXTERN_C
-BOOLEAN Dx12HavePipelineStateCache(VOID)
-{
-    return FALSE;
-}
-
-EXTERN_C
-VOID Dx12LoadPipelineStateCache(VOID)
-{
-}
-
-EXTERN_C
-VOID Dx12CreatePipelineStateObject(VOID)
+PVOID Dx12LoadShader(_In_ PCSTR Name)
 {
     PBYTE VertexShader;
     UINT64 VertexShaderSize;
     PBYTE PixelShader;
     UINT64 PixelShaderSize;
 
-    LogDebug("Creating pipeline state object");
+    LogDebug("Creating pipeline state object for shader %s", Name);
 
     D3D12_INPUT_ELEMENT_DESC InputElementDescriptions[] = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT,
@@ -32,14 +21,15 @@ VOID Dx12CreatePipelineStateObject(VOID)
          D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
     VertexShaderSize = 0;
-    VertexShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/main.vs.cso"), 0, 0, &VertexShaderSize, 0);
+    VertexShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/%s.vs.cso", Name), 0, 0, &VertexShaderSize, 0);
     PixelShaderSize = 0;
-    PixelShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/main.ps.cso"), 0, 0,
+    PixelShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/%s.ps.cso", Name), 0, 0,
                                     &PixelShaderSize, 0);
 
     if (!VertexShaderSize || !PixelShaderSize)
     {
-        CmnError("DirectX 12 shaders could not be loaded");
+        LogError("DirectX 12 shader %s could not be loaded", Name);
+        return NULL;
     }
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDescription = {};
@@ -61,10 +51,13 @@ VOID Dx12CreatePipelineStateObject(VOID)
     PsoDescription.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     PsoDescription.SampleDesc.Count = 1;
 
-    HRESULT_CHECK(Dx12Data.Device->CreateGraphicsPipelineState(&PsoDescription, IID_PPV_ARGS(&Dx12Data.PipelineState)));
-}
+    ID3D12PipelineState *PipelineState;
+    HRESULT Result = Dx12Data.Device->CreateGraphicsPipelineState(&PsoDescription, IID_PPV_ARGS(&PipelineState));
+    if (!SUCCEEDED(Result))
+    {
+        LogError("Failed to create pipeline state object for shader %s: HRESULT 0x%08X", Name, Result);
+        return NULL;
+    }
 
-EXTERN_C
-VOID Dx12CachePipelineState(VOID)
-{
+    return PipelineState;
 }

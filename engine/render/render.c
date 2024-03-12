@@ -42,6 +42,16 @@ VOID RdrDefineVariables(VOID)
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE);
 }
 
+static VOID LoadShaders(VOID)
+{
+    LogInfo("Loading shaders");
+
+    if (Backend.LoadShader)
+    {
+        Backend.LoadShader("main");
+    }
+}
+
 VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
     UNREFERENCED_PARAMETER(Iterator);
@@ -65,6 +75,8 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     {
         Backend.Initialize();
     }
+
+    LoadShaders();
 
     LogInfo("Renderer initialization succeeded");
 }
@@ -113,6 +125,16 @@ VOID RdrEndFrame(_In_ ecs_iter_t *Iterator)
     LastHeight = RdrGetHeight();
 }
 ecs_entity_t ecs_id(RdrEndFrame);
+
+static VOID DestroyShaders(VOID)
+{
+    LogInfo("Destroying shaders");
+
+    if (Backend.DestroyShader)
+    {
+
+    }
+}
 
 VOID RdrShutdown(VOID)
 {

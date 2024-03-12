@@ -38,16 +38,7 @@ static VOID Initialize(VOID)
     Dx12CreateRenderTargetViews();
     Dx12CreateCommandAllocators();
     Dx12CreateRootSignature();
-    if (Dx12HavePipelineStateCache())
-    {
-        Dx12LoadPipelineStateCache();
-    }
-    else
-    {
-        Dx12CreatePipelineStateObject();
-        Dx12CachePipelineState();
-    }
-    Dx12CreateCommandList();
+    Dx12CreateCommandLists();
     Dx12CreateMainFence();
 
     LogDebug("Successfully initialized DirectX 12 backend");
@@ -68,25 +59,28 @@ static VOID Shutdown(VOID)
 
     LogDebug("Shutting down DirectX 12");
 
-//    if (Dx12Data.Fences[i])
-//    {
-//        LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.Fences));
-//        Dx12Data.Fences[i]->Release();
-//    }
-
-//    for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.CommandLists); i++)
-//    {
-//        if (Dx12Data.CommandLists[i])
-//        {
-//            LogDebug("Releasing command list %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.CommandLists));
-//            Dx12Data.CommandLists[i]->Release();
-//        }
-//    }
-
-    if (Dx12Data.PipelineState)
+    if (Dx12Data.FenceEvent)
     {
-        LogDebug("Releasing pipeline state object");
-        Dx12Data.PipelineState->Release();
+        LogDebug("Closing fence event");
+        CloseHandle(Dx12Data.FenceEvent);
+    }
+
+    if (Dx12Data.Fence)
+    {
+        LogDebug("Releasing fence");
+        Dx12Data.Fence->Release();
+    }
+
+    if (Dx12Data.TransferCommandList)
+    {
+        LogDebug("Releasing transfer command list");
+        Dx12Data.TransferCommandList->Release();
+    }
+
+    if (Dx12Data.CommandList)
+    {
+        LogDebug("Releasing command list");
+        Dx12Data.CommandList->Release();
     }
 
     if (Dx12Data.RootSignature)
@@ -95,11 +89,11 @@ static VOID Shutdown(VOID)
         Dx12Data.RootSignature->Release();
     }
 
-//    if (Dx12Data.CommandAllocator)
-//    {
-//        LogDebug("Releasing command allocator");
-//        Dx12Data.CommandAllocator->Release();
-//    }
+    if (Dx12Data.CommandAllocator)
+    {
+        LogDebug("Releasing command allocator");
+        Dx12Data.CommandAllocator->Release();
+    }
 
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
     {
@@ -160,6 +154,9 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
     Backend->Shutdown = Shutdown;
+
+    Backend->LoadShader = Dx12LoadShader;
+
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));
 }

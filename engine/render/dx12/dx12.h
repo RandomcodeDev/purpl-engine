@@ -92,13 +92,13 @@ typedef struct DIRECTX12_DATA
     DXGI_ADAPTER_DESC AdapterDescription;
     ID3D12Device7 *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
-    ID3D12CommandAllocator *CommandAllocators[DIRECTX12_FRAME_COUNT];
+    ID3D12CommandAllocator *CommandAllocator;
+    ID3D12CommandAllocator *TransferCommandAllocator;
     ID3D12CommandQueue *CommandQueue;
     ID3D12RootSignature *RootSignature;
     ID3D12DescriptorHeap *RtvHeap;
     UINT32 RtvDescriptorSize;
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
-    ID3D12PipelineState *PipelineState;
     ID3D12GraphicsCommandList7 *CommandList;
     ID3D12GraphicsCommandList7 *TransferCommandList;
 
@@ -134,7 +134,7 @@ extern VOID Dx12CreateCommandQueue(VOID);
 extern VOID Dx12CreateCommandAllocators(VOID);
 
 /// @brief Create the command lists
-extern VOID Dx12CreateCommandList(VOID);
+extern VOID Dx12CreateCommandLists(VOID);
 
 /// @brief Create the swap chain
 extern VOID Dx12CreateSwapChain(VOID);
@@ -148,17 +148,12 @@ extern VOID Dx12CreateRenderTargetViews(VOID);
 /// @brief Create the root signature (defines what shaders receive as parameters)
 extern VOID Dx12CreateRootSignature(VOID);
 
-/// @brief Determine if the pipeline state has been cached before
-extern BOOLEAN Dx12HavePipelineStateCache(VOID);
-
-/// @brief Load the cached pipeline state
-extern VOID Dx12LoadPipelineStateCache(VOID);
-
-/// @brief Create the pipeline state object
-extern VOID Dx12CreatePipelineStateObject(VOID);
-
-/// @brief Cache the pipeline state
-extern VOID Dx12CachePipelineState(VOID);
+/// @brief Create the pipeline state object for a shader
+///
+/// @param[in] The name of the shader
+///
+/// @return The pipeline state object, or NULL on failure
+extern PVOID Dx12LoadShader(_In_ PCSTR Name);
 
 /// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);

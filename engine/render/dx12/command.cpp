@@ -14,27 +14,25 @@ VOID Dx12CreateCommandQueue(VOID)
 EXTERN_C
 VOID Dx12CreateCommandAllocators(VOID)
 {
-    LogDebug("Creating command allocator");
+    LogDebug("Creating command allocators");
 
-    for (UINT32 i = 0; i < PURPL_ARRAYSIZE(Dx12Data.CommandAllocators); i++)
-    {
-        HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-                                                              IID_PPV_ARGS(&Dx12Data.CommandAllocators[i])));
-    }
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                                          IID_PPV_ARGS(&Dx12Data.CommandAllocator)));
+
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COPY,
+                                                          IID_PPV_ARGS(&Dx12Data.TransferCommandAllocator)));
 }
 
 EXTERN_C
-VOID Dx12CreateCommandList(VOID)
+VOID Dx12CreateCommandLists(VOID)
 {
     LogDebug("Creating command lists");
 
-    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, Dx12Data.CommandAllocators[0],
-                                                     Dx12Data.PipelineState,
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, Dx12Data.CommandAllocator, NULL,
                                                      IID_PPV_ARGS(&Dx12Data.CommandList)));
     HRESULT_CHECK(Dx12Data.CommandList->Close());
 
-    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, Dx12Data.CommandAllocators[0],
-                                                     Dx12Data.PipelineState,
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COPY, Dx12Data.TransferCommandAllocator, NULL,
                                                      IID_PPV_ARGS(&Dx12Data.TransferCommandList)));
     HRESULT_CHECK(Dx12Data.TransferCommandList->Close());
 }

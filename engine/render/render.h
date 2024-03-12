@@ -52,6 +52,9 @@ typedef struct RENDER_BACKEND
     VOID (*EndFrame)(VOID);
     VOID (*Shutdown)(VOID);
 
+    PVOID (*LoadShader)(_In_ PCSTR Name);
+    VOID (*DestroyShader)(_In_ PVOID Handle);
+
     PVOID (*UseTexture)(_In_ PTEXTURE Texture);
     VOID (*ReleaseTexture)(_In_ PVOID TextureHandle);
 

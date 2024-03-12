@@ -3,6 +3,9 @@
 @brief This file manages the DirectX 12 backend
 */
 
+// Define GUIDs used
+#define INITGUID
+
 #include "dx12.h"
 
 DIRECTX12_DATA Dx12Data;
@@ -139,6 +142,24 @@ static VOID Shutdown(VOID)
         LogDebug("Releasing adapter");
         Dx12Data.Adapter->Release();
     }
+
+#ifdef PURPL_DEBUG
+    IDXGIDebug1 *Debug;
+    HRESULT Result = DXGIGetDebugInterface1(0, IID_PPV_ARGS(&Debug));
+    if (SUCCEEDED(Result))
+    {
+        DXGI_DEBUG_RLO_FLAGS Verbosity;
+        if (CONFIGVAR_GET_BOOLEAN("verbose"))
+        {
+            Verbosity = DXGI_DEBUG_RLO_ALL;
+        }
+        else
+        {
+            Verbosity = DXGI_DEBUG_RLO_DETAIL;
+        }
+        Debug->ReportLiveObjects(DXGI_DEBUG_ALL, Verbosity);
+    }
+#endif
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));
 

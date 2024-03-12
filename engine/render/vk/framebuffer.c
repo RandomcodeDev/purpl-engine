@@ -2,10 +2,10 @@
 
 VOID VlkCreateScreenFramebuffers(VOID)
 {
-    VkImageView Attachments[3] = {0};
+    VkImageView Attachments[2] = {0};
     UINT32 i;
 
-    Attachments[2] = VlkData.DepthTarget.View;
+    Attachments[1] = VlkData.DepthTarget.View;
 
     stbds_arrsetlen(VlkData.ScreenFramebuffers, stbds_arrlenu(VlkData.SwapChainImages));
 
@@ -22,8 +22,7 @@ VOID VlkCreateScreenFramebuffers(VOID)
 
     for (i = 0; i < stbds_arrlenu(VlkData.ScreenFramebuffers); i++)
     {
-        Attachments[0] = VlkData.ColorTarget.View;
-        Attachments[1] = VlkData.SwapChainImageViews[i];
+        Attachments[0] = VlkData.SwapChainImageViews[i];
         VULKAN_CHECK(vkCreateFramebuffer(VlkData.Device, &FramebufferCreateInformation, VlkGetAllocationCallbacks(),
                                          &VlkData.ScreenFramebuffers[i]));
     }

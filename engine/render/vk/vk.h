@@ -21,7 +21,7 @@ BEGIN_EXTERN_C
 #include "util/texture.h"
 END_EXTERN_C
 
-#if defined PURPL_DEBUG || defined PURPL_RELWITHDEBINFO
+#if defined PURPL_DEBUG
 #define PURPL_VULKAN_DEBUG 1
 #endif
 
@@ -120,6 +120,9 @@ typedef struct VULKAN_DATA
 {
     /// @brief Instance
     VkInstance Instance;
+
+    /// @brief Debug messenger
+    VkDebugUtilsMessengerEXT DebugMessenger;
 
     /// @brief Surface
     VkSurfaceKHR Surface;

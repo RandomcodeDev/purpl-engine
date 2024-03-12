@@ -192,18 +192,13 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 
     INT64 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
 
-    ClearValues[0].color.float32[0] = 0.4f;
-    ClearValues[0].color.float32[1] = 0.0f;
-    ClearValues[0].color.float32[2] = 1.0f;
-    ClearValues[0].color.float32[3] = 1.0f;
+    ClearValues[0].color.float32[0] = ((ClearColour >> 24) & 0xFF) / 255.0f;
+    ClearValues[0].color.float32[1] = ((ClearColour >> 16) & 0xFF) / 255.0f;
+    ClearValues[0].color.float32[2] = ((ClearColour >> 8) & 0xFF) / 255.0f;
+    ClearValues[0].color.float32[3] = ((ClearColour >> 0) & 0xFF) / 255.0f;
 
-    ClearValues[1].color.float32[0] = ((ClearColour >> 24) & 0xFF) / 255.0f;
-    ClearValues[1].color.float32[1] = ((ClearColour >> 16) & 0xFF) / 255.0f;
-    ClearValues[1].color.float32[2] = ((ClearColour >> 8) & 0xFF) / 255.0f;
-    ClearValues[1].color.float32[3] = ((ClearColour >> 0) & 0xFF) / 255.0f;
-
-    ClearValues[2].depthStencil.depth = 1.0f;
-    ClearValues[2].depthStencil.stencil = 1.0f;
+    ClearValues[1].depthStencil.depth = 1.0f;
+    ClearValues[1].depthStencil.stencil = 1.0f;
 
     VkRect2D Scissor = {0};
     Scissor.extent.width = RdrGetWidth();
@@ -243,13 +238,9 @@ static VOID EndFrame(VOID)
     if (VlkData.Resized)
     {
         VlkData.Resized = FALSE;
-        VlkTransitionImageLayout(VlkData.SwapChainImages[VlkData.SwapChainIndex], VK_IMAGE_LAYOUT_UNDEFINED,
-                                 VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
     }
 
     CurrentCommandBuffer = VlkData.CommandBuffers[VlkData.FrameIndex];
-
-    vkCmdNextSubpass(CurrentCommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdEndRenderPass(CurrentCommandBuffer);
     VULKAN_CHECK(vkEndCommandBuffer(CurrentCommandBuffer));
@@ -416,6 +407,14 @@ static VOID Shutdown(VOID)
         stbds_arrfree(VlkData.Gpus);
         VlkData.Gpus = NULL;
     }
+
+#ifdef PURPL_VULKAN_DEBUG
+    if (VlkData.DebugMessenger)
+    {
+        LogDebug("Destroying VkDebugUtilsMessengerEXT 0x%llX", (UINT64)VlkData.DebugMessenger);
+        vkDestroyDebugUtilsMessengerEXT(VlkData.Instance, VlkData.DebugMessenger, VlkGetAllocationCallbacks());
+    }
+#endif
 
     if (VlkData.Instance)
     {

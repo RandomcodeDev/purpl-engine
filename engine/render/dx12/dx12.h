@@ -33,6 +33,9 @@ END_EXTERN_C
 #include "directx/d3dx12.h"
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
+#ifdef PURPL_DEBUG
+#include <dxgidebug.h>
+#endif
 
 #define D3D12MA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
 #define D3D12MA_SYSTEM_ALIGNED_FREE CmnAlignedFree

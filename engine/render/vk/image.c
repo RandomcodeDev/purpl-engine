@@ -82,7 +82,7 @@ VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayou
     Barrier.subresourceRange.levelCount = 1;
     Barrier.subresourceRange.baseArrayLayer = 0;
     Barrier.subresourceRange.layerCount = 1;
-    
+
     SourceStage = 0;
     DestinationStage = 0;
 

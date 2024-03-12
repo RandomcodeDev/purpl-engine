@@ -108,7 +108,6 @@ if directx then
         set_kind("static")
         add_headerfiles("engine", "render", "dx12", "*.h")
         add_files(
-            path.join("deps", "DirectX-Headers", "src", "dxguids.cpp"),
             path.join("deps", "D3D12MemoryAllocator", "src", "Common.cpp"),
             path.join("deps", "D3D12MemoryAllocator", "src", "D3D12MemAlloc.cpp"),
             --path.join("engine", "render", "dx12", "*.c"),

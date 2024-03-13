@@ -47,6 +47,16 @@ static VOID Initialize(VOID)
     LogDebug("Successfully initialized DirectX 12 backend");
 }
 
+static VOID WaitForGpu(VOID)
+{
+    HRESULT_CHECK(Dx12Data.CommandQueue->Signal(Dx12Data.Fence, Dx12Data.FenceValues[Dx12Data.FrameIndex]));
+
+    HRESULT_CHECK(Dx12Data.Fence->SetEventOnCompletion(Dx12Data.FenceValues[Dx12Data.FrameIndex], Dx12Data.FenceEvent));
+    WaitForSingleObjectEx(Dx12Data.FenceEvent, INFINITE, FALSE);
+
+    Dx12Data.FenceValues[Dx12Data.FrameIndex]++;
+}
+
 static VOID BeginFrame(_In_ BOOLEAN WindowResized)
 {
     UNREFERENCED_PARAMETER(WindowResized);
@@ -92,10 +102,19 @@ static VOID Shutdown(VOID)
         Dx12Data.RootSignature->Release();
     }
 
-    if (Dx12Data.CommandAllocator)
+    if (Dx12Data.TransferCommandAllocator)
     {
-        LogDebug("Releasing command allocator");
-        Dx12Data.CommandAllocator->Release();
+        LogDebug("Releasing transfer command allocator");
+        Dx12Data.TransferCommandAllocator->Release();
+    }
+
+    if (Dx12Data.CommandAllocators)
+    {
+        for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.CommandAllocators); i++)
+        {
+            LogDebug("Releasing command allocator %u/%u", i + 1, PURPL_ARRAYSIZE(Dx12Data.CommandAllocators));
+            Dx12Data.CommandAllocators[i]->Release();
+        }
     }
 
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
@@ -177,7 +196,7 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->Shutdown = Shutdown;
 
     Backend->LoadShader = Dx12LoadShader;
-
+    Backend->DestroyShader = Dx12DestroyShader;
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));
 }

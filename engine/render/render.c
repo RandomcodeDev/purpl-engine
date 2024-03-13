@@ -42,13 +42,16 @@ VOID RdrDefineVariables(VOID)
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE);
 }
 
+PURPL_MAKE_STRING_HASHMAP_ENTRY(SHADERMAP, PVOID);
+PSHADERMAP Shaders;
+
 static VOID LoadShaders(VOID)
 {
     LogInfo("Loading shaders");
 
     if (Backend.LoadShader)
     {
-        Backend.LoadShader("main");
+        stbds_shput(Shaders, "main", Backend.LoadShader("main"));
     }
 }
 
@@ -132,12 +135,19 @@ static VOID DestroyShaders(VOID)
 
     if (Backend.DestroyShader)
     {
-
+        for (SIZE_T i = 0; i < stbds_shlenu(Shaders); i++)
+        {
+            PSHADERMAP Pair = &Shaders[i];
+            LogDebug("Destroying shader %s", Pair->key);
+            Backend.DestroyShader(Pair->value);
+        }
     }
 }
 
 VOID RdrShutdown(VOID)
 {
+    DestroyShaders();
+
     if (Backend.Shutdown)
     {
         Backend.Shutdown();

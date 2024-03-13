@@ -20,7 +20,7 @@ VOID Dx12CreateRootSignature(VOID)
     DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
     DescriptorRanges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
     DescriptorRanges[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
-    
+
     CD3DX12_ROOT_PARAMETER1 RootParameters[2];
     RootParameters[0].InitAsDescriptorTable(2, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_VERTEX);
     RootParameters[1].InitAsDescriptorTable(1, &DescriptorRanges[2], D3D12_SHADER_VISIBILITY_PIXEL);
@@ -111,4 +111,13 @@ PVOID Dx12LoadShader(_In_ PCSTR Name)
     }
 
     return PipelineState;
+}
+
+VOID Dx12DestroyShader(_In_ PVOID Shader)
+{
+    if (Shader)
+    {
+        ID3D12PipelineState *PipelineState = (ID3D12PipelineState *)Shader;
+        PipelineState->Release();
+    }
 }

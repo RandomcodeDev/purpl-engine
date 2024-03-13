@@ -95,7 +95,7 @@ typedef struct DIRECTX12_DATA
     DXGI_ADAPTER_DESC AdapterDescription;
     ID3D12Device7 *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
-    ID3D12CommandAllocator *CommandAllocator;
+    ID3D12CommandAllocator *CommandAllocators[DIRECTX12_FRAME_COUNT];
     ID3D12CommandAllocator *TransferCommandAllocator;
     ID3D12CommandQueue *CommandQueue;
     ID3D12RootSignature *RootSignature;
@@ -105,7 +105,7 @@ typedef struct DIRECTX12_DATA
     ID3D12GraphicsCommandList7 *CommandList;
     ID3D12GraphicsCommandList7 *TransferCommandList;
 
-    UINT32 FrameIndex;
+    UINT8 FrameIndex;
     PVOID FenceEvent;
     ID3D12Fence *Fence;
     UINT64 FenceValues[DIRECTX12_FRAME_COUNT];
@@ -153,10 +153,15 @@ extern VOID Dx12CreateRootSignature(VOID);
 
 /// @brief Create the pipeline state object for a shader
 ///
-/// @param[in] The name of the shader
+/// @param[in] Name The name of the shader
 ///
 /// @return The pipeline state object, or NULL on failure
 extern PVOID Dx12LoadShader(_In_ PCSTR Name);
+
+/// @brief Destroy a shader
+///
+/// @param[in,out] Shader The shader to destroy
+extern VOID Dx12DestroyShader(_In_ PVOID Shader);
 
 /// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);

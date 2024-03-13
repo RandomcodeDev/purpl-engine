@@ -6,6 +6,10 @@ VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ UINT64 Size,
 {
     if (!Dx12Data.Initialized || !Buffer)
     {
+        if (Buffer)
+        {
+            memset(Buffer, 0, sizeof(DIRECTX12_BUFFER));
+        }
         return;
     }
 

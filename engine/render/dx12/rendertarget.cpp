@@ -12,10 +12,14 @@ VOID Dx12CreateRenderTargetViews(VOID)
     );
     UINT32 i;
 
+    D3D12_RENDER_TARGET_VIEW_DESC RtvDescription = {};
+    RtvDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    RtvDescription.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
     {
         HRESULT_CHECK(Dx12Data.SwapChain->GetBuffer(i, IID_PPV_ARGS(&Dx12Data.RenderTargets[i])));
-        Dx12Data.Device->CreateRenderTargetView(Dx12Data.RenderTargets[i], nullptr, RtvHandle);
+        Dx12Data.Device->CreateRenderTargetView(Dx12Data.RenderTargets[i], &RtvDescription, RtvHandle);
         RtvHandle.Offset(1, Dx12Data.RtvDescriptorSize);
         Dx12NameObject(Dx12Data.RenderTargets[i], "Render target %u", i);
     }

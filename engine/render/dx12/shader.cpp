@@ -98,7 +98,7 @@ PVOID Dx12LoadShader(_In_ PCSTR Name)
     PsoDescription.SampleMask = UINT32_MAX;
     PsoDescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     PsoDescription.NumRenderTargets = 1;
-    PsoDescription.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    PsoDescription.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     PsoDescription.SampleDesc.Count = 1;
 
     ID3D12PipelineState *PipelineState;

@@ -91,7 +91,12 @@ VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 
     if (Backend.BeginFrame)
     {
-        Backend.BeginFrame(EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight);
+        //CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
+        //CalculateCameraMatrices(Camera);
+        RENDER_SCENE_UNIFORM Uniform = {0};
+        //glm_mat4_copy(Camera->View, Uniform.View);
+        //glm_mat4_copy(Camera->Projection, Uniform.Projection);
+        Backend.BeginFrame(EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight, &Uniform);
     }
 }
 ecs_entity_t ecs_id(RdrBeginFrame);
@@ -100,16 +105,14 @@ VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
 {
     PMODEL Model = ecs_field(Iterator, MODEL, 1);
     PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 2);
-    CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
-    CalculateCameraMatrices(Camera);
 
     if (Backend.DrawModel)
     {
         for (INT32 i = 0; i < Iterator->count; i++)
         {
-            mat4 ModelTransform;
-            MthCreateTransformMatrix(&Transform[i], ModelTransform);
-            Backend.DrawModel(&Model[i], ModelTransform, Camera->View, Camera->Projection);
+            RENDER_OBJECT_UNIFORM Uniform = {0};
+            MthCreateTransformMatrix(&Transform[i], Uniform.Model);
+            Backend.DrawModel(&Model[i], &Uniform);
         }
     }
 }

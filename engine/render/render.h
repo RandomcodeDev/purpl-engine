@@ -44,26 +44,44 @@ typedef struct MODEL
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
+/// @brief Uniform data for the whole scene
+typedef struct RENDER_SCENE_UNIFORM
+{
+    mat4 View;
+    mat4 Projection;
+} RENDER_SCENE_UNIFORM, *PRENDER_SCENE_UNIFORM;
+
+/// @brief Uniform data for individual objects
+typedef struct RENDER_OBJECT_UNIFORM
+{
+    mat4 Model;
+} RENDER_OBJECT_UNIFORM, *PRENDER_OBJECT_UNIFORM;
+
 /// @brief Renderer backend
 typedef struct RENDER_BACKEND
 {
+    PCSTR Name;
+
     VOID (*Initialize)(VOID);
-    VOID (*BeginFrame)(_In_ BOOLEAN WindowResized);
+    VOID (*BeginFrame)(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Uniform);
     VOID (*EndFrame)(VOID);
     VOID (*Shutdown)(VOID);
 
-    PVOID (*LoadShader)(_In_ PCSTR Name);
+    PVOID (*LoadShader)(_In_z_ PCSTR Name);
     VOID (*DestroyShader)(_In_ PVOID Handle);
 
     PVOID (*UseTexture)(_In_ PTEXTURE Texture);
-    VOID (*ReleaseTexture)(_In_ PVOID TextureHandle);
+    VOID (*ReleaseTexture)(_In_ PVOID Handle);
 
     VOID (*CreateMaterial)(_Inout_ PMATERIAL Material);
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
 
     VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh);
-    VOID (*DrawModel)(_In_ PMODEL Model, _In_ mat4 Object, _In_ mat4 World, _In_ mat4 Projection);
+    VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
     VOID (*DestroyModel)(_In_ PMODEL Model);
+
+    PCSTR (*GetGpuName)(VOID);
+    UINT32 (*GetGpuIndex)(VOID);
 } RENDER_BACKEND, *PRENDER_BACKEND;
 
 /// @brief Define configuration variables

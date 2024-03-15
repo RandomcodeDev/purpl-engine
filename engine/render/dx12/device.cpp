@@ -14,4 +14,5 @@ VOID Dx12CreateDevice(VOID)
              Dx12Data.AdapterDescription.VendorId, Dx12Data.AdapterDescription.DeviceId);
 
     HRESULT_CHECK(D3D12CreateDevice(Dx12Data.Adapter, DIRECTX12_TARGET_FEATURE_LEVEL, IID_PPV_ARGS(&Dx12Data.Device)));
+    Dx12NameObject(Dx12Data.Device, "Device");
 }

@@ -78,7 +78,7 @@ END_EXTERN_C
 // Swap chains are different in vkd3d
 
 #ifdef PURPL_WIN32
-typedef IDXGISwapChain1 DIRECTX12_SWAPCHAIN;
+typedef IDXGISwapChain3 DIRECTX12_SWAPCHAIN;
 #else
 #include "vkd3d.h"
 #include "vkd3d_sonames.h"
@@ -86,6 +86,13 @@ typedef IDXGISwapChain1 DIRECTX12_SWAPCHAIN;
 
 typedef IDXGIVkSwapChain DIRECTX12_SWAPCHAIN;
 #endif
+
+/// @brief A buffer
+typedef struct DIRECTX12_BUFFER
+{
+    ID3D12Resource *Resource;
+    UINT64 Size;
+} DIRECTX12_BUFFER, *PDIRECTX12_BUFFER;
 
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
@@ -101,6 +108,8 @@ typedef struct DIRECTX12_DATA
     ID3D12RootSignature *RootSignature;
     ID3D12DescriptorHeap *RtvHeap;
     UINT32 RtvDescriptorSize;
+    ID3D12DescriptorHeap *ShaderHeap;
+    UINT32 ShaderDescriptorSize;
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
     ID3D12GraphicsCommandList7 *CommandList;
     ID3D12GraphicsCommandList7 *TransferCommandList;
@@ -110,22 +119,24 @@ typedef struct DIRECTX12_DATA
     ID3D12Fence *Fence;
     UINT64 FenceValues[DIRECTX12_FRAME_COUNT];
 
+    DIRECTX12_BUFFER UniformBuffer;
+    PBYTE UniformBufferAddress;
+
     BOOLEAN Initialized;
 } DIRECTX12_DATA, *PDIRECTX12_DATA;
 
 extern DIRECTX12_DATA Dx12Data;
 
-/// @brief A buffer
-typedef struct DIRECTX12_BUFFER
-{
-    ID3D12Resource *Resource;
-    UINT64 Size;
-} DIRECTX12_BUFFER, *PDIRECTX12_BUFFER;
-
 BEGIN_EXTERN_C
 
 /// @brief Enable the debug layer
 extern VOID Dx12EnableDebugLayer(VOID);
+
+/// @brief Name an object
+///
+/// @param[in,out] Object The object to name
+/// @param[in] Name The name to give the object
+extern VOID Dx12NameObject(_Inout_ ID3D12Object *Object, _In_z_ PCSTR Name, ...);
 
 /// @brief Create the device
 extern VOID Dx12CreateDevice(VOID);
@@ -143,7 +154,7 @@ extern VOID Dx12CreateCommandLists(VOID);
 extern VOID Dx12CreateSwapChain(VOID);
 
 /// @brief Create the render target view heap
-extern VOID Dx12CreateRtvHeap(VOID);
+extern VOID Dx12CreateHeaps(VOID);
 
 /// @brief Create the render target views
 extern VOID Dx12CreateRenderTargetViews(VOID);
@@ -156,7 +167,7 @@ extern VOID Dx12CreateRootSignature(VOID);
 /// @param[in] Name The name of the shader
 ///
 /// @return The pipeline state object, or NULL on failure
-extern PVOID Dx12LoadShader(_In_ PCSTR Name);
+extern PVOID Dx12LoadShader(_In_z_ PCSTR Name);
 
 /// @brief Destroy a shader
 ///
@@ -166,17 +177,18 @@ extern VOID Dx12DestroyShader(_In_ PVOID Shader);
 /// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);
 
+/// @brief Create the uniform buffer
+extern VOID Dx12CreateUniformBuffer(VOID);
+
 /// @brief Create a buffer
 ///
 /// @param[out] Buffer The buffer to initialize
-/// @param[in] Size The size of the buffer
 /// @param[in] HeapProperties The heap properties to use
 /// @param[in] HeapFlags The heap flags to use
 /// @param[in] ResourceDescription The resource description to use
 /// @param[in] ResourceState The state to put the buffer resource in
-extern VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ UINT64 Size,
-                             _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties, _In_ D3D12_HEAP_FLAGS HeapFlags,
-                             _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
+extern VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties,
+                             _In_ D3D12_HEAP_FLAGS HeapFlags, _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
                              _In_ D3D12_RESOURCE_STATES ResourceState);
 
 /// @brief Copy data to a CPU-visible buffer
@@ -197,14 +209,13 @@ extern VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID 
 ///
 /// @param[out] Buffer The buffer to initialize
 /// @param[in] Data The data to copy to the buffer
-/// @param[in] Size The size of the buffer
 /// @param[in] HeapProperties The heap properties to use
 /// @param[in] HeapFlags The heap flags to use
 /// @param[in] ResourceDescription The resource description to use
 /// @param[in] ResourceState The state to put the buffer resource in
-extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data, _In_ SIZE_T Size,
-                              _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties, _In_ D3D12_HEAP_FLAGS HeapFlags,
-                              _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
-                              _In_ D3D12_RESOURCE_STATES ResourceState);
+extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
+                                     _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties, _In_ D3D12_HEAP_FLAGS HeapFlags,
+                                     _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
+                                     _In_ D3D12_RESOURCE_STATES ResourceState);
 
 END_EXTERN_C

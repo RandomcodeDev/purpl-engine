@@ -7,6 +7,7 @@ VOID Dx12CreateMainFence(VOID)
 
     HRESULT_CHECK(Dx12Data.Device->CreateFence(Dx12Data.FenceValues[Dx12Data.FrameIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&Dx12Data.Fence)));
     Dx12Data.FenceValues[Dx12Data.FrameIndex] = 1;
+    Dx12NameObject(Dx12Data.Fence, "Render completion fence");
 
     Dx12Data.FenceEvent = CreateEventA(nullptr, FALSE, FALSE, "Fence event");
     if (!Dx12Data.FenceEvent)

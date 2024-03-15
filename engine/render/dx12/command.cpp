@@ -9,6 +9,7 @@ VOID Dx12CreateCommandQueue(VOID)
     CommandQueueDescription.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     CommandQueueDescription.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
     HRESULT_CHECK(Dx12Data.Device->CreateCommandQueue(&CommandQueueDescription, IID_PPV_ARGS(&Dx12Data.CommandQueue)));
+    Dx12NameObject(Dx12Data.CommandQueue, "Command queue");
 }
 
 EXTERN_C
@@ -20,10 +21,12 @@ VOID Dx12CreateCommandAllocators(VOID)
     {
         HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
                                                               IID_PPV_ARGS(&Dx12Data.CommandAllocators[i])));
+        Dx12NameObject(Dx12Data.CommandAllocators[i], "Main command allocator %u", i);
     }
 
     HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COPY,
                                                           IID_PPV_ARGS(&Dx12Data.TransferCommandAllocator)));
+    Dx12NameObject(Dx12Data.TransferCommandAllocator, "Transfer command allocator");
 }
 
 EXTERN_C
@@ -32,12 +35,13 @@ VOID Dx12CreateCommandLists(VOID)
     LogDebug("Creating command lists");
 
     HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-                                                     Dx12Data.CommandAllocators[Dx12Data.FrameIndex],
-                                                     NULL,
+                                                     Dx12Data.CommandAllocators[Dx12Data.FrameIndex], NULL,
                                                      IID_PPV_ARGS(&Dx12Data.CommandList)));
+    Dx12NameObject(Dx12Data.CommandList, "Main command list");
     HRESULT_CHECK(Dx12Data.CommandList->Close());
 
-    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COPY, Dx12Data.TransferCommandAllocator, NULL,
-                                                     IID_PPV_ARGS(&Dx12Data.TransferCommandList)));
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COPY, Dx12Data.TransferCommandAllocator,
+                                                     NULL, IID_PPV_ARGS(&Dx12Data.TransferCommandList)));
+    Dx12NameObject(Dx12Data.TransferCommandList, "Transfer command list");
     HRESULT_CHECK(Dx12Data.TransferCommandList->Close());
 }

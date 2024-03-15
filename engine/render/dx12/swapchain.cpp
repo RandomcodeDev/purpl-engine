@@ -19,6 +19,11 @@ VOID Dx12CreateSwapChain(VOID)
     SwapChainDescription.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
     SwapChainDescription.SampleDesc.Count = 1;
 
+    IDXGISwapChain1 *SwapChain;
     HRESULT_CHECK(Dx12Data.Factory->CreateSwapChainForHwnd(
-        Dx12Data.CommandQueue, (HWND)VidGetObject(), &SwapChainDescription, nullptr, nullptr, &Dx12Data.SwapChain));
+        Dx12Data.CommandQueue, (HWND)VidGetObject(), &SwapChainDescription, nullptr, nullptr, &SwapChain));
+
+    Dx12Data.SwapChain = static_cast<decltype(Dx12Data.SwapChain)>(SwapChain);
+
+    Dx12Data.FrameIndex = (UINT8)Dx12Data.SwapChain->GetCurrentBackBufferIndex();
 }

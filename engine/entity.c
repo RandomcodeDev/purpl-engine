@@ -46,7 +46,7 @@ static VOID EcsLog(_In_ INT Level, _In_z_ PCSTR File, _In_ INT Line, _In_z_ PCST
 
     if (RealLevel == LogLevelFatal)
     {
-        CmnError("%s", Message);
+        CmnError("ECS error at %s:%d: %s", File, Line, Message);
     }
     else
     {

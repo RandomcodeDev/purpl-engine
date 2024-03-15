@@ -16,14 +16,13 @@ VOID Dx12CreateRootSignature(VOID)
         FeatureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
     }
 
-    CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[3];
+    CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[2];
     DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
-    DescriptorRanges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
-    DescriptorRanges[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
+    DescriptorRanges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
 
     CD3DX12_ROOT_PARAMETER1 RootParameters[2];
-    RootParameters[0].InitAsDescriptorTable(2, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_VERTEX);
-    RootParameters[1].InitAsDescriptorTable(1, &DescriptorRanges[2], D3D12_SHADER_VISIBILITY_PIXEL);
+    RootParameters[0].InitAsDescriptorTable(1, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_VERTEX);
+    RootParameters[1].InitAsDescriptorTable(1, &DescriptorRanges[1], D3D12_SHADER_VISIBILITY_PIXEL);
 
     D3D12_STATIC_SAMPLER_DESC Sampler = {};
     Sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -109,10 +108,12 @@ PVOID Dx12LoadShader(_In_ PCSTR Name)
         LogError("Failed to create pipeline state object for shader %s: HRESULT 0x%08X", Name, Result);
         return NULL;
     }
+    Dx12NameObject(PipelineState, "Pipeline state object for shader %s", Name);
 
     return PipelineState;
 }
 
+EXTERN_C
 VOID Dx12DestroyShader(_In_ PVOID Shader)
 {
     if (Shader)
@@ -120,4 +121,34 @@ VOID Dx12DestroyShader(_In_ PVOID Shader)
         ID3D12PipelineState *PipelineState = (ID3D12PipelineState *)Shader;
         PipelineState->Release();
     }
+}
+
+EXTERN_C
+VOID Dx12CreateUniformBuffer(VOID)
+{
+    static CONST SIZE_T Size = PURPL_ALIGN(D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT,
+                                           sizeof(RENDER_SCENE_UNIFORM) + sizeof(RENDER_OBJECT_UNIFORM));
+    CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC BufferDescription = CD3DX12_RESOURCE_DESC::Buffer(Size * DIRECTX12_FRAME_COUNT);
+    Dx12CreateBuffer(&Dx12Data.UniformBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
+                     D3D12_RESOURCE_STATE_GENERIC_READ);
+    Dx12NameObject(Dx12Data.UniformBuffer.Resource, "Uniform buffer");
+
+    D3D12_CONSTANT_BUFFER_VIEW_DESC UniformViewDescription = {};
+    UniformViewDescription.BufferLocation = Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress();
+    UniformViewDescription.SizeInBytes = Size;
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE CpuHandle(Dx12Data.ShaderHeap->GetCPUDescriptorHandleForHeapStart(), 1,
+                                            Dx12Data.ShaderDescriptorSize);
+
+    for (UINT32 i = 0; i < DIRECTX12_FRAME_COUNT; i++)
+    {
+        Dx12Data.Device->CreateConstantBufferView(&UniformViewDescription, CpuHandle);
+
+        UniformViewDescription.BufferLocation += Size;
+        CpuHandle.Offset(Dx12Data.ShaderDescriptorSize);
+    }
+
+    CD3DX12_RANGE Range(0, 0);
+    Dx12Data.UniformBuffer.Resource->Map(0, &Range, (PVOID *)&Dx12Data.UniformBufferAddress);
 }

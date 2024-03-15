@@ -37,12 +37,13 @@ static VOID Initialize(VOID)
     Dx12CreateDevice();
     Dx12CreateCommandQueue();
     Dx12CreateSwapChain();
-    Dx12CreateRtvHeap();
+    Dx12CreateHeaps();
     Dx12CreateRenderTargetViews();
     Dx12CreateCommandAllocators();
     Dx12CreateRootSignature();
     Dx12CreateCommandLists();
     Dx12CreateMainFence();
+    Dx12CreateUniformBuffer();
 
     LogDebug("Successfully initialized DirectX 12 backend");
 }
@@ -57,13 +58,104 @@ static VOID WaitForGpu(VOID)
     Dx12Data.FenceValues[Dx12Data.FrameIndex]++;
 }
 
-static VOID BeginFrame(_In_ BOOLEAN WindowResized)
+static VOID HandleResize(VOID)
 {
-    UNREFERENCED_PARAMETER(WindowResized);
+    WaitForGpu();
+
+    for (UINT32 i = 0; i < DIRECTX12_FRAME_COUNT; i++)
+    {
+        Dx12Data.RenderTargets[i]->Release();
+        Dx12Data.FenceValues[i] = Dx12Data.FenceValues[Dx12Data.FrameIndex];
+    }
+
+    DXGI_SWAP_CHAIN_DESC1 SwapChainDescription = {};
+    Dx12Data.SwapChain->GetDesc1(&SwapChainDescription);
+    HRESULT_CHECK(Dx12Data.SwapChain->ResizeBuffers(DIRECTX12_FRAME_COUNT, RdrGetWidth(), RdrGetHeight(),
+                                                    SwapChainDescription.Format, SwapChainDescription.Flags));
+    Dx12Data.FrameIndex = (UINT8)Dx12Data.SwapChain->GetCurrentBackBufferIndex();
+
+    Dx12CreateRenderTargetViews();
+}
+
+static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Uniform)
+{
+    if (WindowResized)
+    {
+        HandleResize();
+    }
+
+    CONST UINT8 FrameIndex = Dx12Data.FrameIndex;
+
+    HRESULT_CHECK(Dx12Data.CommandAllocators[FrameIndex]->Reset());
+
+    ID3D12GraphicsCommandList7 *CommandList = Dx12Data.CommandList;
+    HRESULT_CHECK(CommandList->Reset(Dx12Data.CommandAllocators[FrameIndex], nullptr));
+
+    CommandList->SetGraphicsRootSignature(Dx12Data.RootSignature);
+
+    ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
+    CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
+
+    CD3DX12_GPU_DESCRIPTOR_HANDLE UniformHandle(Dx12Data.ShaderHeap->GetGPUDescriptorHandleForHeapStart(),
+                                                Dx12Data.FrameIndex + 1, Dx12Data.ShaderDescriptorSize);
+    CommandList->SetGraphicsRootDescriptorTable(0, UniformHandle);
+    CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    CD3DX12_VIEWPORT Viewport(0.0, 0.0, RdrGetWidth(), RdrGetHeight());
+    CommandList->RSSetViewports(1, &Viewport);
+    CD3DX12_RECT Scissor(0, 0, RdrGetWidth(), RdrGetHeight());
+    CommandList->RSSetScissorRects(1, &Scissor);
+
+    CD3DX12_RESOURCE_BARRIER RenderTargetBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        Dx12Data.RenderTargets[FrameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    CommandList->ResourceBarrier(1, &RenderTargetBarrier);
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart(), FrameIndex,
+                                            Dx12Data.RtvDescriptorSize);
+    CommandList->OMSetRenderTargets(1, &RtvHandle, FALSE, nullptr);
+
+    UINT64 ClearColourRaw = CONFIGVAR_GET_INT("rdr_clear_colour");
+    vec4 ClearColour;
+    ClearColour[0] = (UINT8)((ClearColourRaw >> 24) & 0xFF) / 255.0f;
+    ClearColour[1] = (UINT8)((ClearColourRaw >> 16) & 0xFF) / 255.0f;
+    ClearColour[2] = (UINT8)((ClearColourRaw >> 8) & 0xFF) / 255.0f;
+    ClearColour[3] = (UINT8)((ClearColourRaw >> 0) & 0xFF) / 255.0f;
+    CommandList->ClearRenderTargetView(RtvHandle, ClearColour, 0, nullptr);
+}
+
+static VOID Shutdown(VOID);
+
+static VOID NextFrame(VOID)
+{
+    CONST UINT8 FrameIndex = Dx12Data.FrameIndex;
+    CONST UINT64 CurrentFenceValue = Dx12Data.FenceValues[FrameIndex];
+    HRESULT_CHECK(Dx12Data.CommandQueue->Signal(Dx12Data.Fence, CurrentFenceValue));
+
+    Dx12Data.FrameIndex = (UINT8)Dx12Data.SwapChain->GetCurrentBackBufferIndex();
+
+    if (Dx12Data.Fence->GetCompletedValue() < Dx12Data.FenceValues[FrameIndex])
+    {
+        HRESULT_CHECK(Dx12Data.Fence->SetEventOnCompletion(Dx12Data.FenceValues[FrameIndex], Dx12Data.FenceEvent));
+        WaitForSingleObjectEx(Dx12Data.FenceEvent, INFINITE, FALSE);
+    }
+
+    Dx12Data.FenceValues[FrameIndex] = CurrentFenceValue + 1;
 }
 
 static VOID EndFrame(VOID)
 {
+    CD3DX12_RESOURCE_BARRIER RenderTargetBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        Dx12Data.RenderTargets[Dx12Data.FrameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    Dx12Data.CommandList->ResourceBarrier(1, &RenderTargetBarrier);
+
+    HRESULT_CHECK(Dx12Data.CommandList->Close());
+
+    LogDebug("frame index is %hhu", Dx12Data.FrameIndex);
+    ID3D12CommandList *CommandLists[] = {Dx12Data.CommandList};
+    Dx12Data.CommandQueue->ExecuteCommandLists(PURPL_ARRAYSIZE(CommandLists), CommandLists);
+
+    HRESULT_CHECK(Dx12Data.SwapChain->Present(1, 0));
+
+    NextFrame();
 }
 
 static VOID Shutdown(VOID)

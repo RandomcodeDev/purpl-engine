@@ -149,11 +149,10 @@ static VOID EndFrame(VOID)
 
     HRESULT_CHECK(Dx12Data.CommandList->Close());
 
-    LogDebug("frame index is %hhu", Dx12Data.FrameIndex);
     ID3D12CommandList *CommandLists[] = {Dx12Data.CommandList};
     Dx12Data.CommandQueue->ExecuteCommandLists(PURPL_ARRAYSIZE(CommandLists), CommandLists);
 
-    HRESULT_CHECK(Dx12Data.SwapChain->Present(1, 0));
+    HRESULT_CHECK(Dx12Data.SwapChain->Present(0, 0));
 
     NextFrame();
 }
@@ -163,6 +162,14 @@ static VOID Shutdown(VOID)
     UINT32 i;
 
     LogDebug("Shutting down DirectX 12");
+
+    if (Dx12Data.UniformBuffer.Resource)
+    {
+        LogDebug("Releasing uniform buffer");
+        CD3DX12_RANGE Range(0, 0);
+        Dx12Data.UniformBuffer.Resource->Unmap(0, &Range);
+        Dx12Data.UniformBuffer.Resource->Release();
+    }
 
     if (Dx12Data.FenceEvent)
     {
@@ -218,9 +225,15 @@ static VOID Shutdown(VOID)
         }
     }
 
+    if (Dx12Data.ShaderHeap)
+    {
+        LogDebug("Releasing shader descriptor heap");
+        Dx12Data.ShaderHeap->Release();
+    }
+
     if (Dx12Data.RtvHeap)
     {
-        LogDebug("Releasing render target view heap");
+        LogDebug("Releasing render target view descriptor heap");
         Dx12Data.RtvHeap->Release();
     }
 

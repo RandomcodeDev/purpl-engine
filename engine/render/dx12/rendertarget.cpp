@@ -14,7 +14,7 @@ VOID Dx12CreateRenderTargetViews(VOID)
 
     for (i = 0; i < PURPL_ARRAYSIZE(Dx12Data.RenderTargets); i++)
     {
-        HRESULT_CHECK(Dx12Data.SwapChain->GetBuffer(0, IID_PPV_ARGS(&Dx12Data.RenderTargets[i])));
+        HRESULT_CHECK(Dx12Data.SwapChain->GetBuffer(i, IID_PPV_ARGS(&Dx12Data.RenderTargets[i])));
         Dx12Data.Device->CreateRenderTargetView(Dx12Data.RenderTargets[i], nullptr, RtvHandle);
         RtvHandle.Offset(1, Dx12Data.RtvDescriptorSize);
         Dx12NameObject(Dx12Data.RenderTargets[i], "Render target %u", i);

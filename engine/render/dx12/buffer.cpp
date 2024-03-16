@@ -35,10 +35,24 @@ VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ CONST D3D12_HEAP_PROP
     }
 
     memset(Buffer, 0, sizeof(DIRECTX12_BUFFER));
-    Buffer->Size = ResourceDescription->DepthOrArraySize;
+    Buffer->Size = ResourceDescription->Width;
 
     HRESULT_CHECK(Dx12Data.Device->CreateCommittedResource(HeapProperties, HeapFlags, ResourceDescription,
-                                                           ResourceState, nullptr, IID_PPV_ARGS(&Buffer->Resource)));
+                                                           D3D12_RESOURCE_STATE_COMMON, nullptr,
+                                                           IID_PPV_ARGS(&Buffer->Resource)));
+
+    if (ResourceState != D3D12_RESOURCE_STATE_COMMON)
+    {
+        D3D12_RESOURCE_BARRIER Barrier =
+            CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_COMMON, ResourceState);
+        Dx12Data.TransferCommandList->ResourceBarrier(1, &Barrier);
+        Dx12Data.TransferCommandList->Close();
+        Dx12Data.CommandQueue->ExecuteCommandLists(1, (ID3D12CommandList **)&Dx12Data.TransferCommandList);
+
+        Dx12WaitForGpu();
+        Dx12Data.TransferCommandAllocator->Reset();
+        Dx12Data.TransferCommandList->Reset(Dx12Data.TransferCommandAllocator, nullptr);
+    }
 }
 
 EXTERN_C
@@ -50,7 +64,8 @@ VOID Dx12CopyDataToCpuBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, 
     }
 
     PVOID BufferMapping = nullptr;
-    Buffer->Resource->Map(0, nullptr, &BufferMapping);
+    CD3DX12_RANGE ReadRange(0, 0);
+    Buffer->Resource->Map(0, &ReadRange, &BufferMapping);
     memcpy(BufferMapping, Data, PURPL_MIN(Size, Buffer->Size));
     Buffer->Resource->Unmap(0, nullptr);
 }
@@ -67,17 +82,23 @@ VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _
 
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC BufferDescription = CD3DX12_RESOURCE_DESC::Buffer(Size);
-    Dx12CreateBuffer(&UploadBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE,
-                     &BufferDescription, D3D12_RESOURCE_STATE_GENERIC_READ);
+    Dx12CreateBuffer(&UploadBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
+                     D3D12_RESOURCE_STATE_COPY_SOURCE);
 
     Dx12CopyDataToCpuBuffer(&UploadBuffer, Data, Size);
 
-    D3D12_RESOURCE_BARRIER Barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        Buffer->Resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_DEST);
+    D3D12_RESOURCE_BARRIER Barrier = CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_COMMON,
+                                                                          D3D12_RESOURCE_STATE_COPY_DEST);
     Dx12Data.TransferCommandList->ResourceBarrier(1, &Barrier);
     Dx12Data.TransferCommandList->CopyResource(Buffer->Resource, UploadBuffer.Resource);
     Dx12Data.TransferCommandList->Close();
     Dx12Data.CommandQueue->ExecuteCommandLists(1, (ID3D12CommandList **)&Dx12Data.TransferCommandList);
+
+    Dx12WaitForGpu();
+    Dx12Data.TransferCommandAllocator->Reset();
+    Dx12Data.TransferCommandList->Reset(Dx12Data.TransferCommandAllocator, nullptr);
+
+    UploadBuffer.Resource->Release();
 }
 
 EXTERN_C
@@ -91,5 +112,10 @@ VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
     D3D12_RESOURCE_BARRIER Barrier =
         CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_COPY_DEST, ResourceState);
     Dx12Data.TransferCommandList->ResourceBarrier(1, &Barrier);
+    Dx12Data.TransferCommandList->Close();
     Dx12Data.CommandQueue->ExecuteCommandLists(1, (ID3D12CommandList **)&Dx12Data.TransferCommandList);
+
+    Dx12WaitForGpu();
+    Dx12Data.TransferCommandAllocator->Reset();
+    Dx12Data.TransferCommandList->Reset(Dx12Data.TransferCommandAllocator, nullptr);
 }

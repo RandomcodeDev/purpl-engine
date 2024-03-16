@@ -24,7 +24,7 @@ VOID Dx12CreateCommandAllocators(VOID)
         Dx12NameObject(Dx12Data.CommandAllocators[i], "Main command allocator %u", i);
     }
 
-    HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COPY,
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
                                                           IID_PPV_ARGS(&Dx12Data.TransferCommandAllocator)));
     Dx12NameObject(Dx12Data.TransferCommandAllocator, "Transfer command allocator");
 }
@@ -40,8 +40,10 @@ VOID Dx12CreateCommandLists(VOID)
     Dx12NameObject(Dx12Data.CommandList, "Main command list");
     HRESULT_CHECK(Dx12Data.CommandList->Close());
 
-    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COPY, Dx12Data.TransferCommandAllocator,
+    HRESULT_CHECK(Dx12Data.Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                                     Dx12Data.TransferCommandAllocator,
                                                      NULL, IID_PPV_ARGS(&Dx12Data.TransferCommandList)));
     Dx12NameObject(Dx12Data.TransferCommandList, "Transfer command list");
     HRESULT_CHECK(Dx12Data.TransferCommandList->Close());
+    Dx12Data.TransferCommandList->Reset(Dx12Data.TransferCommandAllocator, nullptr);
 }

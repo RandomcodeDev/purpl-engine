@@ -33,7 +33,7 @@ typedef struct MATERIAL
 {
     PVOID Handle;
     PVOID TextureHandle;
-    PCSTR ShaderName;
+    PVOID ShaderHandle;
 } MATERIAL, *PMATERIAL;
 
 /// @brief Model component, stores backend handles
@@ -78,7 +78,7 @@ typedef struct RENDER_BACKEND
 
     VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh);
     VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
-    VOID (*DestroyModel)(_In_ PMODEL Model);
+    VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
     PCSTR (*GetGpuName)(VOID);
     UINT32 (*GetGpuIndex)(VOID);

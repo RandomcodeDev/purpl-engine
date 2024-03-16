@@ -193,13 +193,18 @@ VOID RdrReleaseTexture(_In_ PVOID TextureHandle)
 
 BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_z_ PCSTR ShaderName)
 {
-    if (!Material || !TextureHandle || !ShaderName)
+    PVOID ShaderHandle = ShaderName ? stbds_shget(Shaders, ShaderName) : NULL;
+    if (!Material || !TextureHandle || !ShaderName || !ShaderHandle)
     {
+        if (Material)
+        {
+            memset(Material, 0, sizeof(MATERIAL));
+        }
         return FALSE;
     }
 
     Material->TextureHandle = TextureHandle;
-    Material->ShaderName = ShaderName;
+    Material->ShaderHandle = ShaderHandle;
 
     if (Backend.CreateMaterial)
     {

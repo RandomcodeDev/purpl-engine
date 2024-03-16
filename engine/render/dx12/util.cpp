@@ -60,3 +60,14 @@ VOID Dx12NameObject(_Inout_ ID3D12Object *Object, _In_z_ PCSTR Name, ...)
 
     CmnFree(NameWide);
 }
+
+EXTERN_C
+VOID Dx12WaitForGpu(VOID)
+{
+    HRESULT_CHECK(Dx12Data.CommandQueue->Signal(Dx12Data.Fence, Dx12Data.FenceValues[Dx12Data.FrameIndex]));
+
+    HRESULT_CHECK(Dx12Data.Fence->SetEventOnCompletion(Dx12Data.FenceValues[Dx12Data.FrameIndex], Dx12Data.FenceEvent));
+    WaitForSingleObjectEx(Dx12Data.FenceEvent, INFINITE, FALSE);
+
+    Dx12Data.FenceValues[Dx12Data.FrameIndex]++;
+}

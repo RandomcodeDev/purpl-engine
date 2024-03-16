@@ -48,19 +48,11 @@ static VOID Initialize(VOID)
     LogDebug("Successfully initialized DirectX 12 backend");
 }
 
-static VOID WaitForGpu(VOID)
-{
-    HRESULT_CHECK(Dx12Data.CommandQueue->Signal(Dx12Data.Fence, Dx12Data.FenceValues[Dx12Data.FrameIndex]));
-
-    HRESULT_CHECK(Dx12Data.Fence->SetEventOnCompletion(Dx12Data.FenceValues[Dx12Data.FrameIndex], Dx12Data.FenceEvent));
-    WaitForSingleObjectEx(Dx12Data.FenceEvent, INFINITE, FALSE);
-
-    Dx12Data.FenceValues[Dx12Data.FrameIndex]++;
-}
-
 static VOID HandleResize(VOID)
 {
-    WaitForGpu();
+    Dx12WaitForGpu();
+
+    LogDebug("Handling resize");
 
     for (UINT32 i = 0; i < DIRECTX12_FRAME_COUNT; i++)
     {
@@ -120,12 +112,16 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     ClearColour[2] = (UINT8)((ClearColourRaw >> 8) & 0xFF) / 255.0f;
     ClearColour[3] = (UINT8)((ClearColourRaw >> 0) & 0xFF) / 255.0f;
     CommandList->ClearRenderTargetView(RtvHandle, ClearColour, 0, nullptr);
+
+    Dx12Data.InFrame = TRUE;
 }
 
 static VOID Shutdown(VOID);
 
 static VOID NextFrame(VOID)
 {
+    Dx12Data.InFrame = FALSE;
+
     CONST UINT8 FrameIndex = Dx12Data.FrameIndex;
     CONST UINT64 CurrentFenceValue = Dx12Data.FenceValues[FrameIndex];
     HRESULT_CHECK(Dx12Data.CommandQueue->Signal(Dx12Data.Fence, CurrentFenceValue));
@@ -162,6 +158,8 @@ static VOID Shutdown(VOID)
     UINT32 i;
 
     LogDebug("Shutting down DirectX 12");
+
+    Dx12WaitForGpu();
 
     if (Dx12Data.UniformBuffer.Resource)
     {
@@ -302,6 +300,10 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
 
     Backend->LoadShader = Dx12LoadShader;
     Backend->DestroyShader = Dx12DestroyShader;
+
+    Backend->CreateModel = Dx12CreateModel;
+    Backend->DrawModel = Dx12DrawModel;
+    Backend->DestroyModel = Dx12DestroyModel;
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));
 }

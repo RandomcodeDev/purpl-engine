@@ -12,6 +12,8 @@ VOID Dx12CreateRenderTargetViews(VOID)
     );
     UINT32 i;
 
+    LogDebug("Creating %u render target views", DIRECTX12_FRAME_COUNT);
+
     D3D12_RENDER_TARGET_VIEW_DESC RtvDescription = {};
     RtvDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     RtvDescription.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;

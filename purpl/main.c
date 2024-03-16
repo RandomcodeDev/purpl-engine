@@ -48,20 +48,23 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     ecs_entity_t TestEntity = EcsCreateEntity("test");
     PMESH TestMesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, "chief.pmdl"));
+    MATERIAL TestMaterial = {0};
+    RdrCreateMaterial(&TestMaterial, (PVOID)1, "main");
     MODEL TestModel = {0};
-    RdrCreateModel(&TestModel, TestMesh, (PMATERIAL)1);
+    RdrCreateModel(&TestModel, TestMesh, &TestMaterial);
     ecs_add(EcsGetWorld(), TestEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
 
     ecs_add(EcsGetWorld(), TestEntity, TRANSFORM);
-    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}});
+    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, -1.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}});
 
-    CONFIGVAR_SET_INT("rdr_clear_colour", 0x800002FF);
-    ECS_SYSTEM(EcsGetWorld(), ChangeClearColour, EcsOnUpdate);
+    //CONFIGVAR_SET_INT("rdr_clear_colour", 0x800002FF);
+    //ECS_SYSTEM(EcsGetWorld(), ChangeClearColour, EcsOnUpdate);
 
     EngMainLoop();
 
     RdrDestroyModel(&TestModel);
+    RdrDestroyMaterial(&TestMaterial);
     CmnFree(TestMesh);
 
     EngShutdown();

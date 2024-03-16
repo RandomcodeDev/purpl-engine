@@ -50,7 +50,7 @@ VOID Dx12CreateRootSignature(VOID)
 }
 
 EXTERN_C
-PVOID Dx12LoadShader(_In_ PCSTR Name)
+PVOID Dx12LoadShader(_In_z_ PCSTR Name)
 {
     PBYTE VertexShader;
     UINT64 VertexShaderSize;
@@ -131,7 +131,7 @@ VOID Dx12CreateUniformBuffer(VOID)
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC BufferDescription = CD3DX12_RESOURCE_DESC::Buffer(Size * DIRECTX12_FRAME_COUNT);
     Dx12CreateBuffer(&Dx12Data.UniformBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
-                     D3D12_RESOURCE_STATE_GENERIC_READ);
+                     D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
     Dx12NameObject(Dx12Data.UniformBuffer.Resource, "Uniform buffer");
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC UniformViewDescription = {};

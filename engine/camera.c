@@ -59,9 +59,6 @@ VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ 
 
 VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
 {
-    UINT32 Width;
-    UINT32 Height;
-
     if (!Camera || !Camera->Changed)
     {
         return;
@@ -84,18 +81,16 @@ VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
     }
     else
     {
-        VidGetSize(&Width, &Height);
-
         if (CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12)
         {
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
-            glm_ortho_lh_no(0.0, (FLOAT)Width, (FLOAT)Height, 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
+            glm_ortho_lh_no(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
                             Camera->Projection);
         }
         else
         {
             glm_lookat_rh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, -1.0, 0.0}, Camera->View);
-            glm_ortho_rh_no(0.0, (FLOAT)Width, (FLOAT)Height, 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
+            glm_ortho_rh_no(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
                             Camera->Projection);
         }
     }

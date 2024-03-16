@@ -41,7 +41,7 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
     IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
     Dx12Data.CommandList->IASetIndexBuffer(&IndexBufferView);
 
-    memcpy(Dx12Data.UniformBufferAddress + sizeof(RENDER_SCENE_UNIFORM), Uniform, sizeof(RENDER_OBJECT_UNIFORM));
+    DIRECTX12_SET_UNIFORM(Object, Uniform);
 
     Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState*)Model->Material->ShaderHandle);
 

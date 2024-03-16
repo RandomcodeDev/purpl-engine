@@ -29,7 +29,7 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 
 VOID RdrDefineVariables(VOID)
 {
-    CONFIGVAR_DEFINE_FLOAT("rdr_scale", 1.0f, FALSE, ConfigVarSideClientOnly, FALSE);
+    CONFIGVAR_DEFINE_FLOAT("rdr_scale", 1.0f, FALSE, ConfigVarSideClientOnly, FALSE, FALSE);
 
 #ifdef PURPL_GDKX
     static CONST RENDER_API DefaultApi = RenderApiDirect3D12;
@@ -37,9 +37,9 @@ VOID RdrDefineVariables(VOID)
     static CONST RENDER_API DefaultApi = RenderApiVulkan;
 #endif
 
-    CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE);
+    CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE, FALSE);
 
-    CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE);
+    CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
 }
 
 PURPL_MAKE_STRING_HASHMAP_ENTRY(SHADERMAP, PVOID);
@@ -87,15 +87,20 @@ ecs_entity_t ecs_id(RdrInitialize);
 
 VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 {
+    if (CONFIGVAR_GET_BOOLEAN("ecs_in_init"))
+    {
+        return;
+    }
+
     UNREFERENCED_PARAMETER(Iterator);
 
     if (Backend.BeginFrame)
     {
-        //CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
-        //CalculateCameraMatrices(Camera);
+        CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
+        EngUpdateCamera(Camera);
         RENDER_SCENE_UNIFORM Uniform = {0};
-        //glm_mat4_copy(Camera->View, Uniform.View);
-        //glm_mat4_copy(Camera->Projection, Uniform.Projection);
+        glm_mat4_copy(Camera->View, Uniform.View);
+        glm_mat4_copy(Camera->Projection, Uniform.Projection);
         Backend.BeginFrame(EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight, &Uniform);
     }
 }
@@ -103,6 +108,11 @@ ecs_entity_t ecs_id(RdrBeginFrame);
 
 VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
 {
+    if (CONFIGVAR_GET_BOOLEAN("ecs_in_init"))
+    {
+        return;
+    }
+
     PMODEL Model = ecs_field(Iterator, MODEL, 1);
     PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 2);
 
@@ -120,6 +130,11 @@ ecs_entity_t ecs_id(RdrDrawModel);
 
 VOID RdrEndFrame(_In_ ecs_iter_t *Iterator)
 {
+    if (CONFIGVAR_GET_BOOLEAN("ecs_in_init"))
+    {
+        return;
+    }
+
     UNREFERENCED_PARAMETER(Iterator);
 
     if (Backend.EndFrame)

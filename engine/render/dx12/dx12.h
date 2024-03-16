@@ -101,6 +101,15 @@ typedef struct DIRECTX12_MODEL_DATA
     DIRECTX12_BUFFER IndexBuffer;
 } DIRECTX12_MODEL_DATA, *PDIRECTX12_MODEL_DATA;
 
+typedef struct DIRECTX12_UNIFORM
+{
+    RENDER_FULL_UNIFORM Uniform;
+    BYTE Padding[256 - sizeof(RENDER_FULL_UNIFORM)];
+} DIRECTX12_UNIFORM, *PDIRECTX12_UNIFORM;
+
+#define DIRECTX12_SET_UNIFORM(Type, Value)                                                                             \
+    memcpy(&(&Dx12Data.UniformBufferAddress[Dx12Data.FrameIndex])->Uniform.Type, (Value), sizeof(*Value))
+
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
 {
@@ -124,7 +133,7 @@ typedef struct DIRECTX12_DATA
     ID3D12Fence *Fence;
     UINT64 FenceValues[DIRECTX12_FRAME_COUNT];
     DIRECTX12_BUFFER UniformBuffer;
-    PBYTE UniformBufferAddress;
+    PDIRECTX12_UNIFORM UniformBufferAddress;
 
     UINT8 FrameIndex;
 

@@ -18,7 +18,7 @@ Abstract:
     {                                                                                                                  \
         static CHAR Buffer[1024];                                                                                      \
                                                                                                                        \
-        if (Directory >= EngDataDirectoryCount)                                                                        \
+        if (Directory < 0 || Directory >= EngDataDirectoryCount)                                                       \
         {                                                                                                              \
             memset(Buffer, 0, PURPL_ARRAYSIZE(Buffer));                                                                \
             return NULL;                                                                                               \
@@ -250,7 +250,7 @@ VOID EngSetMainCamera(_In_ ecs_entity_t Camera)
     if (CameraComponent)
     {
         EngineMainCamera = Camera;
-        CalculateCameraMatrices(CameraComponent);
+        EngUpdateCamera(CameraComponent);
     }
 }
 

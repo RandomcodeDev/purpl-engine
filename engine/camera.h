@@ -40,7 +40,7 @@ extern ECS_COMPONENT_DECLARE(CAMERA);
 /// @param[in] NearClip    The near clipping distance.
 /// @param[in] FarClip     The far clipping distance.
 /// @param[out] Camera      The camera to initialize.
-extern VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, _In_ DOUBLE FieldOfView,
+extern VOID EngInitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, _In_ DOUBLE FieldOfView,
                                         _In_ DOUBLE Aspect, _In_ DOUBLE NearClip, _In_ DOUBLE FarClip,
                                         _Out_ PCAMERA Camera);
 
@@ -49,9 +49,9 @@ extern VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, 
 /// @param[in] Position The position of the camera.
 /// @param[in] Rotation The rotation of the camera.
 /// @param[out] Camera   The camera to initialize.
-extern VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ PCAMERA Camera);
+extern VOID EngInitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ PCAMERA Camera);
 
 /// @brief Updates a camera's matrices if necessary.
 ///
 /// @param[in,out] Camera The camera to update.
-extern VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera);
+extern VOID EngUpdateCamera(_Inout_ PCAMERA Camera);

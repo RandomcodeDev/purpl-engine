@@ -42,7 +42,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_add(EcsGetWorld(), CameraEntity, CAMERA);
     CAMERA Camera;
     DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    InitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0, Aspect, 0.1, 1000.0, &Camera);
+    EngInitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0, Aspect, 0.1, 1000.0, &Camera);
     ecs_set_ptr(EcsGetWorld(), CameraEntity, CAMERA, &Camera);
     EngSetMainCamera(CameraEntity);
 

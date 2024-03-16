@@ -105,6 +105,8 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
                                             Dx12Data.RtvDescriptorSize);
     CommandList->OMSetRenderTargets(1, &RtvHandle, FALSE, nullptr);
 
+    DIRECTX12_SET_UNIFORM(Scene, Uniform);
+
     UINT64 ClearColourRaw = CONFIGVAR_GET_INT("rdr_clear_colour");
     vec4 ClearColour;
     ClearColour[0] = (UINT8)((ClearColourRaw >> 24) & 0xFF) / 255.0f;

@@ -19,7 +19,7 @@ VOID CameraImport(_In_ ecs_world_t *World)
     ECS_COMPONENT_DEFINE(World, CAMERA);
 }
 
-VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, _In_ DOUBLE FieldOfView, _In_ DOUBLE Aspect,
+VOID EngInitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, _In_ DOUBLE FieldOfView, _In_ DOUBLE Aspect,
                                  _In_ DOUBLE NearClip, _In_ DOUBLE FarClip, _Out_ PCAMERA Camera)
 {
     LogTrace("Initializing perspective camera");
@@ -38,10 +38,10 @@ VOID InitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, _In_ DO
     Camera->NearClip = NearClip;
     Camera->FarClip = FarClip;
     Camera->Changed = TRUE;
-    CalculateCameraMatrices(Camera);
+    EngUpdateCamera(Camera);
 }
 
-VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ PCAMERA Camera)
+VOID EngInitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ PCAMERA Camera)
 {
     LogTrace("Initializing orthographic camera");
 
@@ -54,10 +54,11 @@ VOID InitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ 
     glm_vec3_copy(Position, Camera->Position);
     glm_vec3_copy(Rotation, Camera->Rotation);
     Camera->Perspective = FALSE;
-    CalculateCameraMatrices(Camera);
+    Camera->Changed = TRUE;
+    EngUpdateCamera(Camera);
 }
 
-VOID CalculateCameraMatrices(_Inout_ PCAMERA Camera)
+VOID EngUpdateCamera(_Inout_ PCAMERA Camera)
 {
     if (!Camera || !Camera->Changed)
     {

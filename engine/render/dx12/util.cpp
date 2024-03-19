@@ -3,6 +3,7 @@
 EXTERN_C
 VOID Dx12EnableDebugLayer(VOID)
 {
+#ifdef PURPL_DEBUG
     ID3D12Debug6 *Debug;
     IDXGIDebug1 *DxgiDebug;
 
@@ -35,6 +36,7 @@ VOID Dx12EnableDebugLayer(VOID)
         _com_error Error(Result);
         LogError("Failed to enable debug features: %s (HRESULT 0x%08X)", Error.ErrorMessage(), Result);
     }
+#endif
 }
 
 EXTERN_C

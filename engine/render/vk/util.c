@@ -15,20 +15,20 @@ Abstract:
 
 #include "vk.h"
 
-static PVOID Allocate(PVOID pUserData, SIZE_T size, SIZE_T alignment, VkSystemAllocationScope allocationScope)
+static PVOID VKAPI_PTR Allocate(PVOID pUserData, SIZE_T size, SIZE_T alignment, VkSystemAllocationScope allocationScope)
 {
     UNREFERENCED_PARAMETER(pUserData);
     UNREFERENCED_PARAMETER(allocationScope);
     return CmnAlignedAlloc(alignment, size);
 }
 
-static void Free(PVOID pUserData, PVOID pMemory)
+static void VKAPI_PTR Free(PVOID pUserData, PVOID pMemory)
 {
     UNREFERENCED_PARAMETER(pUserData);
     CmnAlignedFree(pMemory);
 }
 
-static void LogInternalAllocation(PVOID pUserData, SIZE_T size, VkInternalAllocationType allocationType,
+static void VKAPI_PTR LogInternalAllocation(PVOID pUserData, SIZE_T size, VkInternalAllocationType allocationType,
                                   VkSystemAllocationScope allocationScope)
 {
     UNREFERENCED_PARAMETER(pUserData);
@@ -38,7 +38,7 @@ static void LogInternalAllocation(PVOID pUserData, SIZE_T size, VkInternalAlloca
     LogTrace("\tScope: %d", allocationScope);
 }
 
-static void LogInternalFree(PVOID pUserData, SIZE_T size, VkInternalAllocationType allocationType,
+static void VKAPI_PTR LogInternalFree(PVOID pUserData, SIZE_T size, VkInternalAllocationType allocationType,
                             VkSystemAllocationScope allocationScope)
 {
     UNREFERENCED_PARAMETER(pUserData);
@@ -48,7 +48,7 @@ static void LogInternalFree(PVOID pUserData, SIZE_T size, VkInternalAllocationTy
     LogTrace("\tScope: %d", allocationScope);
 }
 
-static void *Reallocate(PVOID pUserData, PVOID pOriginal, SIZE_T size, SIZE_T alignment,
+static PVOID VKAPI_PTR Reallocate(PVOID pUserData, PVOID pOriginal, SIZE_T size, SIZE_T alignment,
                         VkSystemAllocationScope allocationScope)
 {
     UNREFERENCED_PARAMETER(pUserData);
@@ -163,7 +163,7 @@ VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_z_ _
     UNREFERENCED_PARAMETER(Name);
 }
 
-VkBool32 VKAPI_CALL VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
+VkBool32 VKAPI_PTR VlkDebugCallback(_In_ VkDebugUtilsMessageSeverityFlagBitsEXT MessageSeverity,
                                      _In_ VkDebugUtilsMessageTypeFlagsEXT MessageTypes,
                                      _In_ CONST VkDebugUtilsMessengerCallbackDataEXT *CallbackData,
                                      _In_opt_ PVOID UserData)

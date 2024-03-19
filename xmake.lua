@@ -123,7 +123,7 @@ if directx then
             add_links("d3d12", "dxgi")
         end
 
-        if is_plat("gdk") then
+        if is_plat("gdk", "windows") then
             add_links("d3d12.lib", "dxgi.lib")
         elseif is_plat("gdkx") then
             add_links("d3d12_xs.lib", "dxgi_xs.lib")

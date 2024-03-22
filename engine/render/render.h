@@ -158,3 +158,8 @@ extern UINT32 RdrGetWidth(VOID);
 ///
 /// @return The scaled height of the render output
 extern UINT32 RdrGetHeight(VOID);
+
+/// @brief Get the name of a render API
+///
+/// @return A string representing the render API
+extern PCSTR RdrGetApiName(_In_ RENDER_API Api);

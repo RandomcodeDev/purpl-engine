@@ -80,7 +80,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
 
     HRESULT_CHECK(Dx12Data.CommandAllocators[FrameIndex]->Reset());
 
-    ID3D12GraphicsCommandList7 *CommandList = Dx12Data.CommandList;
+    auto CommandList = Dx12Data.CommandList;
     HRESULT_CHECK(CommandList->Reset(Dx12Data.CommandAllocators[FrameIndex], nullptr));
 
     CommandList->SetGraphicsRootSignature(Dx12Data.RootSignature);

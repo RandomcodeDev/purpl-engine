@@ -38,13 +38,13 @@ VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ CONST D3D12_HEAP_PROP
     Buffer->Size = ResourceDescription->Width;
 
     HRESULT_CHECK(Dx12Data.Device->CreateCommittedResource(HeapProperties, HeapFlags, ResourceDescription,
-                                                           D3D12_RESOURCE_STATE_COMMON, nullptr,
+                                                           D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
                                                            IID_PPV_ARGS(&Buffer->Resource)));
 
-    if (ResourceState != D3D12_RESOURCE_STATE_COMMON)
+    if (ResourceState != D3D12_RESOURCE_STATE_GENERIC_READ)
     {
         D3D12_RESOURCE_BARRIER Barrier =
-            CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_COMMON, ResourceState);
+            CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_GENERIC_READ, ResourceState);
         Dx12Data.TransferCommandList->ResourceBarrier(1, &Barrier);
         Dx12Data.TransferCommandList->Close();
         Dx12Data.CommandQueue->ExecuteCommandLists(1, (ID3D12CommandList **)&Dx12Data.TransferCommandList);

@@ -1,4 +1,5 @@
 #include "engine/engine.h"
+#include "engine/render/render.h"
 
 #include "discord.h"
 
@@ -93,8 +94,8 @@ VOID DiscordUpdate(_In_ ecs_iter_t *Iterator)
 #else
     Presence.state = CmnFormatString("Playing %s on %s", GetGameString(), PlatGetDescription());
 #endif
-    Presence.details = CmnFormatString("v%s commit %s-%s, " PURPL_BUILD_TYPE " build", PURPL_VERSION_STRING,
-                                       PURPL_COMMIT, PURPL_BRANCH);
+    Presence.details = CmnFormatString("v%s commit %s-%s, " PURPL_BUILD_TYPE " build, %s renderer", PURPL_VERSION_STRING,
+                                       PURPL_COMMIT, PURPL_BRANCH, RdrGetApiName(CONFIGVAR_GET_INT("rdr_api")));
     Discord_UpdatePresence(&Presence);
 
     CmnFree(Presence.state);

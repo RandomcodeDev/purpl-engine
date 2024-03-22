@@ -113,7 +113,7 @@ typedef struct DIRECTX12_UNIFORM
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
 {
-    IDXGIFactory7 *Factory;
+    IDXGIFactory6 *Factory;
     IDXGIAdapter1 *Adapter;
     DXGI_ADAPTER_DESC AdapterDescription;
     ID3D12Device7 *Device;
@@ -127,8 +127,8 @@ typedef struct DIRECTX12_DATA
     ID3D12DescriptorHeap *ShaderHeap;
     UINT32 ShaderDescriptorSize;
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
-    ID3D12GraphicsCommandList7 *CommandList;
-    ID3D12GraphicsCommandList7 *TransferCommandList;
+    ID3D12GraphicsCommandList1 *CommandList;
+    ID3D12GraphicsCommandList1 *TransferCommandList;
     PVOID FenceEvent;
     ID3D12Fence *Fence;
     UINT64 FenceValues[DIRECTX12_FRAME_COUNT];

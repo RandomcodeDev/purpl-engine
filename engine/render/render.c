@@ -282,3 +282,17 @@ UINT32 RdrGetHeight(VOID)
 
     return (UINT32)(Height * CONFIGVAR_GET_FLOAT("rdr_scale"));
 }
+
+PCSTR RdrGetApiName(_In_ RENDER_API Api)
+{
+    static CONST PCSTR Names[] = {"Unknown", "Vulkan", "DirectX 12"};
+
+    if ((UINT32)Api < PURPL_ARRAYSIZE(Names))
+    {
+        return Names[Api];
+    }
+    else
+    {
+        return Names[RenderApiNone];
+    }
+}

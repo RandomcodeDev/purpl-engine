@@ -8,6 +8,7 @@ vsxmake*/
 compile_commands.json
 CMakeLists.txt
 neovim.json
+package/
 
 .idea
 

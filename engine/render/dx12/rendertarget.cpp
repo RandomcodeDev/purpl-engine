@@ -3,13 +3,7 @@
 EXTERN_C
 VOID Dx12CreateRenderTargetViews(VOID)
 {
-    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(
-#ifdef __GNUC__
-        *Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart(NULL)
-#else
-        Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart()
-#endif
-    );
+    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.RtvHeap, CPU));
     UINT32 i;
 
     LogDebug("Creating %u render target views", DIRECTX12_FRAME_COUNT);

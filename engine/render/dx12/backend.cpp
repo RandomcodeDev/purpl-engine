@@ -88,7 +88,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
     CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
 
-    CD3DX12_GPU_DESCRIPTOR_HANDLE UniformHandle(Dx12Data.ShaderHeap->GetGPUDescriptorHandleForHeapStart(),
+    CD3DX12_GPU_DESCRIPTOR_HANDLE UniformHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.ShaderHeap, GPU),
                                                 Dx12Data.FrameIndex + 1, Dx12Data.ShaderDescriptorSize);
     CommandList->SetGraphicsRootDescriptorTable(0, UniformHandle);
     CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -101,7 +101,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
         Dx12Data.RenderTargets[FrameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     CommandList->ResourceBarrier(1, &RenderTargetBarrier);
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(Dx12Data.RtvHeap->GetCPUDescriptorHandleForHeapStart(), FrameIndex,
+    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.RtvHeap, CPU), FrameIndex,
                                             Dx12Data.RtvDescriptorSize);
     CommandList->OMSetRenderTargets(1, &RtvHandle, FALSE, nullptr);
 

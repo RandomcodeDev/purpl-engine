@@ -121,7 +121,7 @@ extern VOID RdrReleaseTexture(_In_ PVOID TextureHandle);
 /// @brief Create a material
 ///
 /// @param[out] Material The material to create
-/// @param[in] Texture The texture to use
+/// @param[in] TextureHandle The texture to use
 /// @param[in] ShaderName The name of the shader program to use
 ///
 /// @return A material. Must not outlive the texture handle.

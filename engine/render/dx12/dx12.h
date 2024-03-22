@@ -75,6 +75,12 @@ END_EXTERN_C
         }                                                                                                              \
     } while (0)
 
+#ifdef PURPL_MINGW
+#define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) *(Object)->Get##Type##DescriptorHandleForHeapStart(NULL)
+#else
+#define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) (Object)->Get##Type##DescriptorHandleForHeapStart()
+#endif
+
 // Swap chains are different in vkd3d
 
 #ifdef PURPL_WIN32

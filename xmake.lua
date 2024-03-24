@@ -194,7 +194,11 @@ target("purpl")
 
     if is_plat("gdk", "gdkx") then
         add_headerfiles(path.join("gdk", "*.mgc"))
-        add_links("xgameruntime.lib")
+        if get_config("toolchain") == "mingw" then
+            add_links("xgameruntime")
+        else
+            add_links("xgameruntime.lib")
+        end
     end
 
     on_load(fix_target)

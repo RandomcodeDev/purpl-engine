@@ -13,6 +13,12 @@ VOID Dx12CreateDevice(VOID)
              PURPL_STRINGIZE_EXPAND(DIRECTX12_TARGET_FEATURE_LEVEL), Dx12Data.AdapterDescription.Description,
              Dx12Data.AdapterDescription.VendorId, Dx12Data.AdapterDescription.DeviceId);
 
-    HRESULT_CHECK(D3D12CreateDevice(Dx12Data.Adapter, DIRECTX12_TARGET_FEATURE_LEVEL, IID_PPV_ARGS(&Dx12Data.Device)));
+    HRESULT Result = D3D12CreateDevice(Dx12Data.Adapter, DIRECTX12_TARGET_FEATURE_LEVEL, IID_PPV_ARGS(&Dx12Data.Device));
+    if (!SUCCEEDED(Result))
+    {
+        LogError("Failed to create hardware device, retrying with WARP (software): HRESULT 0x%08X", Result);
+        HRESULT_CHECK(Dx12Data.Factory->EnumWarpAdapter(IID_PPV_ARGS(&Dx12Data.Adapter)));
+        HRESULT_CHECK(D3D12CreateDevice(Dx12Data.Adapter, DIRECTX12_TARGET_FEATURE_LEVEL, IID_PPV_ARGS(&Dx12Data.Device)));
+    }
     Dx12NameObject(Dx12Data.Device, "Device");
 }

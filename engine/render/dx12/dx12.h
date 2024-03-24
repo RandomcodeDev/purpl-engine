@@ -122,7 +122,7 @@ typedef struct DIRECTX12_DATA
     IDXGIFactory6 *Factory;
     IDXGIAdapter1 *Adapter;
     DXGI_ADAPTER_DESC AdapterDescription;
-    ID3D12Device7 *Device;
+    ID3D12Device4 *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
     ID3D12CommandAllocator *CommandAllocators[DIRECTX12_FRAME_COUNT];
     ID3D12CommandAllocator *TransferCommandAllocator;

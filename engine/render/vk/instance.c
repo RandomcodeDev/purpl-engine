@@ -1,6 +1,7 @@
 #include "vk.h"
 
 PCSTR RequiredExtensions[] = {
+    VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
     VK_KHR_SURFACE_EXTENSION_NAME,
 #ifdef PURPL_WIN32
     VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
@@ -31,6 +32,7 @@ VOID VlkCreateInstance(VOID)
 
     LogDebug("Creating Vulkan instance");
 
+#ifndef PURPL_SWITCH
     const char *LayerName = "VK_LAYER_KHRONOS_validation";
 
     const VkBool32 SettingValidateCore = VK_TRUE;
@@ -43,7 +45,7 @@ VOID VlkCreateInstance(VOID)
     const char *SettingEnables[] = {"VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT",
                                     "VALIDATION_CHECK_ENABLE_VENDOR_SPECIFIC_ALL"};
     const VkBool32 SettingPrintfToStdout = VK_FALSE;
-
+    
     const VkLayerSettingEXT LayerSettings[] = {
         {LayerName, "validate_core", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &SettingValidateCore},
         // TODO: fix the WRITE_AFTER_WRITE hazard that shows up when this is enabled
@@ -56,6 +58,7 @@ VOID VlkCreateInstance(VOID)
         {LayerName, "duplicate_message_limit", VK_LAYER_SETTING_TYPE_INT32_EXT, 1, &SettingDuplicateMessageLimit},
         //{LayerName, "enables", VK_LAYER_SETTING_TYPE_STRING_EXT, PURPL_ARRAYSIZE(SettingEnables), SettingEnables},
         {LayerName, "printf_to_stdout", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &SettingPrintfToStdout}};
+#endif
 
     VkInstanceCreateInfo CreateInformation = {0};
     CreateInformation.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -95,6 +98,7 @@ VOID VlkCreateInstance(VOID)
                                                   VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
     DebugMessengerCreateInformation.pfnUserCallback = VlkDebugCallback;
 
+#ifndef PURPL_SWITCH
     VkLayerSettingsCreateInfoEXT LayerSettingsCreateInformation = {0};
     LayerSettingsCreateInformation.sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT;
     LayerSettingsCreateInformation.pSettings = LayerSettings;
@@ -102,6 +106,7 @@ VOID VlkCreateInstance(VOID)
     LayerSettingsCreateInformation.pNext = &DebugMessengerCreateInformation;
 
     CreateInformation.pNext = &LayerSettingsCreateInformation;
+#endif
 #endif
 
     LogTrace("Calling vkCreateInstance");
@@ -120,7 +125,7 @@ VOID VlkCreateInstance(VOID)
     LogDebug("Loading Vulkan functions");
     volkLoadInstance(VlkData.Instance);
 
-#ifdef PURPL_VULKAN_DEBUG
+#if defined PURPL_VULKAN_DEBUG && !defined PURPL_SWITCH
     LogDebug("Creating real debug messenger");
     vkCreateDebugUtilsMessengerEXT(VlkData.Instance, &DebugMessengerCreateInformation, VlkGetAllocationCallbacks(),
                                    &VlkData.DebugMessenger);

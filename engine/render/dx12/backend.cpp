@@ -66,6 +66,7 @@ static VOID HandleResize(VOID)
                                                     SwapChainDescription.Format, SwapChainDescription.Flags));
     Dx12Data.FrameIndex = (UINT8)Dx12Data.SwapChain->GetCurrentBackBufferIndex();
 
+    Dx12CreateDepthTarget();
     Dx12CreateRenderTargetViews();
 }
 
@@ -88,8 +89,9 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
     CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
 
-    CD3DX12_GPU_DESCRIPTOR_HANDLE UniformHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.ShaderHeap, GPU),
-                                                Dx12Data.FrameIndex + 1, Dx12Data.ShaderDescriptorSize);
+    CD3DX12_GPU_DESCRIPTOR_HANDLE UniformHandle(
+        DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.ShaderHeap, GPU), Dx12Data.FrameIndex + 1,
+        Dx12Data.ShaderDescriptorSize);
     CommandList->SetGraphicsRootDescriptorTable(0, UniformHandle);
     CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     CD3DX12_VIEWPORT Viewport(0.0, 0.0, RdrGetWidth(), RdrGetHeight());
@@ -101,9 +103,10 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
         Dx12Data.RenderTargets[FrameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     CommandList->ResourceBarrier(1, &RenderTargetBarrier);
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.RtvHeap, CPU), FrameIndex,
-                                            Dx12Data.RtvDescriptorSize);
-    CommandList->OMSetRenderTargets(1, &RtvHandle, FALSE, nullptr);
+    CD3DX12_CPU_DESCRIPTOR_HANDLE RtvHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.RtvHeap, CPU),
+                                            FrameIndex, Dx12Data.RtvDescriptorSize);
+    CD3DX12_CPU_DESCRIPTOR_HANDLE DsvHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.DsvHeap, CPU));
+    CommandList->OMSetRenderTargets(1, &RtvHandle, FALSE, &DsvHandle);
 
     DIRECTX12_SET_UNIFORM(Scene, Uniform);
 
@@ -114,6 +117,8 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     ClearColour[2] = (UINT8)((ClearColourRaw >> 8) & 0xFF) / 255.0f;
     ClearColour[3] = (UINT8)((ClearColourRaw >> 0) & 0xFF) / 255.0f;
     CommandList->ClearRenderTargetView(RtvHandle, ClearColour, 0, nullptr);
+
+    CommandList->ClearDepthStencilView(DsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
     Dx12Data.InFrame = TRUE;
 }
@@ -225,6 +230,12 @@ static VOID Shutdown(VOID)
         }
     }
 
+    if (Dx12Data.DepthStencil)
+    {
+        LogDebug("Releasing depth target");
+        Dx12Data.DepthStencil->Release();
+    }
+
     if (Dx12Data.ShaderHeap)
     {
         LogDebug("Releasing shader descriptor heap");
@@ -260,6 +271,8 @@ static VOID Shutdown(VOID)
         LogDebug("Releasing factory");
         Dx12Data.Factory->Release();
     }
+
+    CmnFree(Dx12Data.AdapterName);
 
     if (Dx12Data.Adapter)
     {
@@ -306,6 +319,8 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->CreateModel = Dx12CreateModel;
     Backend->DrawModel = Dx12DrawModel;
     Backend->DestroyModel = Dx12DestroyModel;
+
+    Backend->GetGpuName = []() { return (PCSTR)Dx12Data.AdapterName; };
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));
 }

@@ -121,6 +121,7 @@ typedef struct DIRECTX12_DATA
 {
     IDXGIFactory6 *Factory;
     IDXGIAdapter1 *Adapter;
+    PCHAR AdapterName;
     DXGI_ADAPTER_DESC AdapterDescription;
     ID3D12Device4 *Device;
     DIRECTX12_SWAPCHAIN *SwapChain;
@@ -130,9 +131,12 @@ typedef struct DIRECTX12_DATA
     ID3D12RootSignature *RootSignature;
     ID3D12DescriptorHeap *RtvHeap;
     UINT32 RtvDescriptorSize;
+    ID3D12DescriptorHeap *DsvHeap;
+    UINT32 DsvDescriptorSize;
     ID3D12DescriptorHeap *ShaderHeap;
     UINT32 ShaderDescriptorSize;
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
+    ID3D12Resource *DepthStencil;
     ID3D12GraphicsCommandList1 *CommandList;
     ID3D12GraphicsCommandList1 *TransferCommandList;
     PVOID FenceEvent;
@@ -178,8 +182,11 @@ extern VOID Dx12CreateCommandLists(VOID);
 /// @brief Create the swap chain
 extern VOID Dx12CreateSwapChain(VOID);
 
-/// @brief Create the render target view heap
+/// @brief Create the descriptor heaps
 extern VOID Dx12CreateHeaps(VOID);
+
+/// @brief Create the render targets
+extern VOID Dx12CreateDepthTarget(VOID);
 
 /// @brief Create the render target views
 extern VOID Dx12CreateRenderTargetViews(VOID);
@@ -192,12 +199,12 @@ extern VOID Dx12CreateRootSignature(VOID);
 /// @param[in] Name The name of the shader
 ///
 /// @return The pipeline state object, or NULL on failure
-extern PVOID Dx12LoadShader(_In_z_ PCSTR Name);
+extern RENDER_HANDLE Dx12LoadShader(_In_z_ PCSTR Name);
 
 /// @brief Destroy a shader
 ///
 /// @param[in,out] Shader The shader to destroy
-extern VOID Dx12DestroyShader(_In_ PVOID Shader);
+extern VOID Dx12DestroyShader(_In_ RENDER_HANDLE Shader);
 
 /// @brief Create the fence
 extern VOID Dx12CreateMainFence(VOID);

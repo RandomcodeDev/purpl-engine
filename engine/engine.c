@@ -109,9 +109,13 @@ Return Value:
         }
     }
 
+#ifdef PURPL_SWITCH
+    FsAddDirectorySource(PURPL_SWITCH_ROMFS_MOUNTPOINT "assets");
+#else
     FsAddDirectorySource("assets");
-#if defined PURPL_DEBUG && !defined PURPL_SWITCH
+#ifdef PURPL_DEBUG
     FsAddDirectorySource("assets/out");
+#endif
 #endif
 
 #ifndef PURPL_SWITCH

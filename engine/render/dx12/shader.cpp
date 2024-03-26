@@ -49,8 +49,18 @@ VOID Dx12CreateRootSignature(VOID)
                                                        IID_PPV_ARGS(&Dx12Data.RootSignature)));
 }
 
+static CONST D3D12_INPUT_ELEMENT_DESC MeshInputElementDescriptions[] = {
+    {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(VERTEX, Position),
+     D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(VERTEX, Colour),
+     D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(VERTEX, TextureCoordinate),
+     D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(VERTEX, Normal), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+     0}};
+
 EXTERN_C
-PVOID Dx12LoadShader(_In_z_ PCSTR Name)
+RENDER_HANDLE Dx12LoadShader(_In_z_ PCSTR Name)
 {
     PBYTE VertexShader;
     UINT64 VertexShaderSize;
@@ -58,16 +68,6 @@ PVOID Dx12LoadShader(_In_z_ PCSTR Name)
     UINT64 PixelShaderSize;
 
     LogDebug("Creating pipeline state object for shader %s", Name);
-
-    D3D12_INPUT_ELEMENT_DESC InputElementDescriptions[] = {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT,
-         D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT,
-         D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT,
-         D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT,
-         D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
     VertexShaderSize = 0;
     VertexShader = (PBYTE)FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "directx12/%s.vs.cso", Name), 0,
@@ -78,13 +78,12 @@ PVOID Dx12LoadShader(_In_z_ PCSTR Name)
 
     if (!VertexShaderSize || !PixelShaderSize)
     {
-        LogError("DirectX 12 shader for %s not found", Name);
-        return NULL;
+        CmnError("DirectX 12 shader for %s not found", Name);
     }
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDescription = {};
-    PsoDescription.InputLayout.pInputElementDescs = InputElementDescriptions;
-    PsoDescription.InputLayout.NumElements = PURPL_ARRAYSIZE(InputElementDescriptions);
+    PsoDescription.InputLayout.pInputElementDescs = MeshInputElementDescriptions;
+    PsoDescription.InputLayout.NumElements = PURPL_ARRAYSIZE(MeshInputElementDescriptions);
     PsoDescription.pRootSignature = Dx12Data.RootSignature;
     PsoDescription.VS.pShaderBytecode = VertexShader;
     PsoDescription.VS.BytecodeLength = VertexShaderSize;
@@ -99,22 +98,26 @@ PVOID Dx12LoadShader(_In_z_ PCSTR Name)
     PsoDescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     PsoDescription.NumRenderTargets = 1;
     PsoDescription.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    PsoDescription.DSVFormat = DXGI_FORMAT_D32_FLOAT;
     PsoDescription.SampleDesc.Count = 1;
 
+    D3D12_DEPTH_STENCIL_DESC DepthStencilDescription = {};
+    DepthStencilDescription.DepthEnable = TRUE;
+    DepthStencilDescription.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+    DepthStencilDescription.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+    DepthStencilDescription.StencilEnable = FALSE;
+
+    PsoDescription.DepthStencilState = DepthStencilDescription;
+
     ID3D12PipelineState *PipelineState;
-    HRESULT Result = Dx12Data.Device->CreateGraphicsPipelineState(&PsoDescription, IID_PPV_ARGS(&PipelineState));
-    if (!SUCCEEDED(Result))
-    {
-        LogError("Failed to create pipeline state object for shader %s: HRESULT 0x%08X", Name, Result);
-        return NULL;
-    }
+    HRESULT_CHECK(Dx12Data.Device->CreateGraphicsPipelineState(&PsoDescription, IID_PPV_ARGS(&PipelineState)));
     Dx12NameObject(PipelineState, "Pipeline state object for shader %s", Name);
 
-    return PipelineState;
+    return (RENDER_HANDLE)PipelineState;
 }
 
 EXTERN_C
-VOID Dx12DestroyShader(_In_ PVOID Shader)
+VOID Dx12DestroyShader(_In_ RENDER_HANDLE Shader)
 {
     if (Shader)
     {
@@ -127,7 +130,8 @@ EXTERN_C
 VOID Dx12CreateUniformBuffer(VOID)
 {
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC BufferDescription = CD3DX12_RESOURCE_DESC::Buffer(sizeof(DIRECTX12_UNIFORM) * DIRECTX12_FRAME_COUNT);
+    CD3DX12_RESOURCE_DESC BufferDescription =
+        CD3DX12_RESOURCE_DESC::Buffer(sizeof(DIRECTX12_UNIFORM) * DIRECTX12_FRAME_COUNT);
     Dx12CreateBuffer(&Dx12Data.UniformBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
                      D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
     Dx12NameObject(Dx12Data.UniformBuffer.Resource, "Uniform buffer");

@@ -9,7 +9,7 @@ VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
         CmnError("Failed to allocate backend data for model: %s", strerror(errno));
     }
 
-    Model->MeshHandle = Data;
+    Model->MeshHandle = (RENDER_HANDLE)Data;
 
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_DEFAULT);
     CD3DX12_RESOURCE_DESC ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Mesh->VertexCount * sizeof(VERTEX));
@@ -50,6 +50,7 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
 
 VOID Dx12DestroyModel(_Inout_ PMODEL Model)
 {
+    // TODO: if I'm waiting for the GPU to finish what it's doing, why the fuck are these still in use
     Dx12WaitForGpu();
     PDIRECTX12_MODEL_DATA ModelData = (PDIRECTX12_MODEL_DATA)Model->MeshHandle;
     ModelData->VertexBuffer.Resource->Release();

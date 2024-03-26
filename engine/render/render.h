@@ -28,18 +28,21 @@ typedef enum RENDER_API
     RenderApiCount
 } RENDER_API, *PRENDER_API;
 
+/// @brief A handle to a renderer backend thing (Vulkan always uses 64-bit handles)
+typedef UINT64 RENDER_HANDLE;
+
 /// @brief Material
 typedef struct MATERIAL
 {
-    PVOID Handle;
-    PVOID TextureHandle;
-    PVOID ShaderHandle;
+    RENDER_HANDLE Handle;
+    RENDER_HANDLE TextureHandle;
+    RENDER_HANDLE ShaderHandle;
 } MATERIAL, *PMATERIAL;
 
 /// @brief Model component, stores backend handles
 typedef struct MODEL
 {
-    PVOID MeshHandle;
+    RENDER_HANDLE MeshHandle;
     PMATERIAL Material;
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
@@ -74,11 +77,11 @@ typedef struct RENDER_BACKEND
     VOID (*EndFrame)(VOID);
     VOID (*Shutdown)(VOID);
 
-    PVOID (*LoadShader)(_In_z_ PCSTR Name);
-    VOID (*DestroyShader)(_In_ PVOID Handle);
+    RENDER_HANDLE (*LoadShader)(_In_z_ PCSTR Name);
+    VOID (*DestroyShader)(_In_ RENDER_HANDLE Handle);
 
-    PVOID (*UseTexture)(_In_ PTEXTURE Texture);
-    VOID (*ReleaseTexture)(_In_ PVOID Handle);
+    RENDER_HANDLE (*UseTexture)(_In_ PTEXTURE Texture);
+    VOID (*ReleaseTexture)(_In_ RENDER_HANDLE Handle);
 
     VOID (*CreateMaterial)(_Inout_ PMATERIAL Material);
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
@@ -88,7 +91,6 @@ typedef struct RENDER_BACKEND
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
     PCSTR (*GetGpuName)(VOID);
-    UINT32 (*GetGpuIndex)(VOID);
 } RENDER_BACKEND, *PRENDER_BACKEND;
 
 /// @brief Define configuration variables
@@ -111,12 +113,12 @@ extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 /// @param[in] Texture The texture to use
 ///
 /// @return A texture handle. Must not outlive the source texture.
-extern PVOID RdrUseTexture(_In_ PTEXTURE Texture);
+extern RENDER_HANDLE RdrUseTexture(_In_ PTEXTURE Texture);
 
 /// @brief Release a texture
 ///
 /// @param[in] TextureHandle The texture handle to release
-extern VOID RdrReleaseTexture(_In_ PVOID TextureHandle);
+extern VOID RdrReleaseTexture(_In_ RENDER_HANDLE TextureHandle);
 
 /// @brief Create a material
 ///
@@ -125,7 +127,7 @@ extern VOID RdrReleaseTexture(_In_ PVOID TextureHandle);
 /// @param[in] ShaderName The name of the shader program to use
 ///
 /// @return A material. Must not outlive the texture handle.
-extern BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_z_ PCSTR ShaderName);
+extern BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ RENDER_HANDLE TextureHandle, _In_z_ PCSTR ShaderName);
 
 /// @brief Destroy a material
 ///
@@ -163,3 +165,8 @@ extern UINT32 RdrGetHeight(VOID);
 ///
 /// @return A string representing the render API
 extern PCSTR RdrGetApiName(_In_ RENDER_API Api);
+
+/// @brief Get the name of the current GPU
+///
+/// @return The name of the current GPU that will remain valid until RdrShutdown
+extern PCSTR RdrGetGpuName(VOID);

@@ -11,19 +11,20 @@ static UINT32 LastHeight;
 #ifdef PURPL_DIRECTX
 extern VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend);
 #else
-VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
+VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
-    UNREFERENCED_PARAMETER(Backend);
-    LogError("Why are you intializing DX12 on this platform?");
+    UNREFERENCED_PARAMETER(Unused);
+    LogError("Why are you initialising DX12 on this platform?");
 }
 #endif
 
 #ifdef PURPL_VULKAN
 extern VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend);
 #else
-VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
+VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
-    LogError("Why are you intializing Vulkan on this platform?");
+    UNREFERENCED_PARAMETER(Unused);
+    LogError("Why are you initialising Vulkan on this platform?");
 }
 #endif
 
@@ -42,7 +43,7 @@ VOID RdrDefineVariables(VOID)
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
 }
 
-PURPL_MAKE_STRING_HASHMAP_ENTRY(SHADERMAP, PVOID);
+PURPL_MAKE_STRING_HASHMAP_ENTRY(SHADERMAP, RENDER_HANDLE);
 PSHADERMAP Shaders;
 
 static VOID LoadShaders(VOID)
@@ -186,7 +187,7 @@ VOID RenderImport(_In_ ecs_world_t *World)
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 
-PVOID RdrUseTexture(_In_ PTEXTURE Texture)
+RENDER_HANDLE RdrUseTexture(_In_ PTEXTURE Texture)
 {
     if (Backend.UseTexture)
     {
@@ -194,11 +195,11 @@ PVOID RdrUseTexture(_In_ PTEXTURE Texture)
     }
     else
     {
-        return Texture;
+        return (RENDER_HANDLE)Texture;
     }
 }
 
-VOID RdrReleaseTexture(_In_ PVOID TextureHandle)
+VOID RdrReleaseTexture(_In_ RENDER_HANDLE TextureHandle)
 {
     if (Backend.ReleaseTexture)
     {
@@ -206,9 +207,9 @@ VOID RdrReleaseTexture(_In_ PVOID TextureHandle)
     }
 }
 
-BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ PVOID TextureHandle, _In_z_ PCSTR ShaderName)
+BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ RENDER_HANDLE TextureHandle, _In_z_ PCSTR ShaderName)
 {
-    PVOID ShaderHandle = ShaderName ? stbds_shget(Shaders, ShaderName) : NULL;
+    RENDER_HANDLE ShaderHandle = ShaderName ? stbds_shget(Shaders, ShaderName) : 0;
     if (!Material || !TextureHandle || !ShaderName || !ShaderHandle)
     {
         if (Material)
@@ -251,7 +252,7 @@ BOOLEAN RdrCreateModel(_Out_ PMODEL Model, _In_ PMESH Mesh, _In_ PMATERIAL Mater
     }
     else
     {
-        Model->MeshHandle = Mesh;
+        Model->MeshHandle = (RENDER_HANDLE)Mesh;
     }
 
     return TRUE;
@@ -294,5 +295,17 @@ PCSTR RdrGetApiName(_In_ RENDER_API Api)
     else
     {
         return Names[RenderApiNone];
+    }
+}
+
+PCSTR RdrGetGpuName(VOID)
+{
+    if (Backend.GetGpuName)
+    {
+        return Backend.GetGpuName();
+    }
+    else
+    {
+        return "Unknown";
     }
 }

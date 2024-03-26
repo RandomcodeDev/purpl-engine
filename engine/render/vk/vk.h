@@ -13,6 +13,8 @@ BEGIN_EXTERN_C
 #include "common/common.h"
 #include "common/log.h"
 
+#include "engine/engine.h"
+
 #include "engine/render/render.h"
 
 #include "platform/video.h"
@@ -70,17 +72,7 @@ typedef struct VULKAN_MODEL_DATA
 {
     VULKAN_BUFFER VertexBuffer;
     VULKAN_BUFFER IndexBuffer;
-    VkDescriptorSet DescriptorSet;
-    UINT8 LastFrameUsed;
 } VULKAN_MODEL_DATA, *PVULKAN_MODEL_DATA;
-
-/// @brief Data for a texture
-typedef struct VULKAN_TEXTURE_DATA
-{
-    VkImage Image;
-    VmaAllocation Allocation;
-    VkImageView ImageView;
-} VULKAN_TEXTURE_DATA, *PVULKAN_TEXTURE_DATA;
 
 /// @brief Information about a GPU
 typedef struct VULKAN_GPU_INFO

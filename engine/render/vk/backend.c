@@ -407,7 +407,7 @@ static VOID Shutdown(VOID)
         VlkData.Gpus = NULL;
     }
 
-#ifdef PURPL_VULKAN_DEBUG
+#if defined PURPL_VULKAN_DEBUG && !defined PURPL_SWITCH
     if (VlkData.DebugMessenger)
     {
         LogDebug("Destroying VkDebugUtilsMessengerEXT 0x%llX", (UINT64)VlkData.DebugMessenger);

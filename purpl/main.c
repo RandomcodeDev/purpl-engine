@@ -11,7 +11,7 @@
 
 #include "engine/engine.h"
 
-VOID ChangeClearColour(_In_ ecs_entity_t *Iterator)
+VOID ChangeClearColour(_In_ ecs_iter_t *Iterator)
 {
     UINT64 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
     UINT8 Red = ((ClearColour >> 24) & 0xFF);
@@ -22,7 +22,21 @@ VOID ChangeClearColour(_In_ ecs_entity_t *Iterator)
     CONFIGVAR_SET_INT("rdr_clear_colour", Red << 24 | Green << 16 | Blue << 8 | Alpha);
 }
 
-//#define PURPL_TESTING_IN_MAIN
+VOID Spin(_In_ ecs_iter_t *Iterator)
+{
+    PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 1);
+
+    for (UINT32 i = 0; i < Iterator->count; i++)
+    {
+        Transform[i].Rotation[3] += EngGetDelta() * 20;
+        if (Transform[i].Rotation[3] > 360)
+        {
+            Transform[i].Rotation[3] = 0;
+        }
+    }
+}
+
+// #define PURPL_TESTING_IN_MAIN
 
 INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 {
@@ -42,7 +56,8 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_add(EcsGetWorld(), CameraEntity, CAMERA);
     CAMERA Camera;
     DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    EngInitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0, Aspect, 0.1, 1000.0, &Camera);
+    EngInitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0, Aspect, 0.1, 1000.0,
+                                   &Camera);
     ecs_set_ptr(EcsGetWorld(), CameraEntity, CAMERA, &Camera);
     EngSetMainCamera(CameraEntity);
 
@@ -60,6 +75,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     CONFIGVAR_SET_INT("rdr_clear_colour", 0x800002FF);
     ECS_SYSTEM(EcsGetWorld(), ChangeClearColour, EcsOnUpdate);
+    ECS_SYSTEM(EcsGetWorld(), Spin, EcsOnUpdate, TRANSFORM);
 
     EngMainLoop();
 

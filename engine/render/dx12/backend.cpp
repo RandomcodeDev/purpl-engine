@@ -38,6 +38,7 @@ static VOID Initialize(VOID)
     Dx12CreateCommandQueue();
     Dx12CreateSwapChain();
     Dx12CreateHeaps();
+    Dx12CreateDepthTarget();
     Dx12CreateRenderTargetViews();
     Dx12CreateCommandAllocators();
     Dx12CreateRootSignature();
@@ -66,7 +67,9 @@ static VOID HandleResize(VOID)
                                                     SwapChainDescription.Format, SwapChainDescription.Flags));
     Dx12Data.FrameIndex = (UINT8)Dx12Data.SwapChain->GetCurrentBackBufferIndex();
 
+    Dx12Data.DepthStencil->Release();
     Dx12CreateDepthTarget();
+
     Dx12CreateRenderTargetViews();
 }
 

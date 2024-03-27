@@ -11,31 +11,6 @@
 
 #include "engine/engine.h"
 
-VOID ChangeClearColour(_In_ ecs_iter_t *Iterator)
-{
-    UINT64 ClearColour = CONFIGVAR_GET_INT("rdr_clear_colour");
-    UINT8 Red = ((ClearColour >> 24) & 0xFF);
-    UINT8 Green = ((ClearColour >> 16) & 0xFF);
-    DOUBLE Delta = 100 * EngGetDelta();
-    UINT8 Blue = (UINT8)(((ClearColour >> 8) & 0xFF) + Delta) % 255;
-    UINT8 Alpha = ((ClearColour >> 0) & 0xFF);
-    CONFIGVAR_SET_INT("rdr_clear_colour", Red << 24 | Green << 16 | Blue << 8 | Alpha);
-}
-
-VOID Spin(_In_ ecs_iter_t *Iterator)
-{
-    PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 1);
-
-    for (UINT32 i = 0; i < Iterator->count; i++)
-    {
-        Transform[i].Rotation[3] += EngGetDelta() * 20;
-        if (Transform[i].Rotation[3] > 360)
-        {
-            Transform[i].Rotation[3] = 0;
-        }
-    }
-}
-
 // #define PURPL_TESTING_IN_MAIN
 
 INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
@@ -47,7 +22,6 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     return 0;
 #else
-
     EngDefineVariables();
     CmnInitialize(Arguments, ArgumentCount);
     EngInitialize();
@@ -56,7 +30,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_add(EcsGetWorld(), CameraEntity, CAMERA);
     CAMERA Camera;
     DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    EngInitializePerspectiveCamera((vec3){0.0, 0.0, 2.0}, (vec4){0.0, 0.0, 0.0, 0.0}, 78.0, Aspect, 0.1, 1000.0,
+    EngInitializePerspectiveCamera((vec3){0.0, 2.0, 2.0}, (vec4){1.0, 0.0, 0.0, 45.0}, 78.0, Aspect, 0.1, 1000.0,
                                    &Camera);
     ecs_set_ptr(EcsGetWorld(), CameraEntity, CAMERA, &Camera);
     EngSetMainCamera(CameraEntity);
@@ -71,17 +45,31 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
 
     ecs_add(EcsGetWorld(), TestEntity, TRANSFORM);
-    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, -1.0, 0.0}, {0.0, 1.0, 0.0, -180.0}, {1.0, 1.0, 1.0}});
+    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, -180.0}, {1.0, 1.0, 1.0}});
 
-    CONFIGVAR_SET_INT("rdr_clear_colour", 0x800002FF);
-    ECS_SYSTEM(EcsGetWorld(), ChangeClearColour, EcsOnUpdate);
-    ECS_SYSTEM(EcsGetWorld(), Spin, EcsOnUpdate, TRANSFORM);
+    ecs_entity_t GroundEntity = EcsCreateEntity("ground");
+    PMESH GroundMesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, "ground.pmdl"));
+    MATERIAL GroundMaterial = {0};
+    RdrCreateMaterial(&GroundMaterial, (RENDER_HANDLE)1, "main");
+    MODEL GroundModel = {0};
+    RdrCreateModel(&GroundModel, GroundMesh, &GroundMaterial);
+    ecs_add(EcsGetWorld(), GroundEntity, MODEL);
+    ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
+
+    ecs_add(EcsGetWorld(), GroundEntity, TRANSFORM);
+    ecs_set(EcsGetWorld(), GroundEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 90.0}, {1.0, 1.0, 1.0}});
+
+    CONFIGVAR_SET_INT("rdr_clear_colour", 0x000000FF);
 
     EngMainLoop();
 
     RdrDestroyModel(&TestModel);
     RdrDestroyMaterial(&TestMaterial);
     CmnFree(TestMesh);
+
+    RdrDestroyModel(&GroundModel);
+    RdrDestroyMaterial(&GroundMaterial);
+    CmnFree(GroundMesh);
 
     EngShutdown();
     CmnShutdown();

@@ -95,14 +95,19 @@ VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
 
     UNREFERENCED_PARAMETER(Iterator);
 
+    BOOLEAN Resized = EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight;
+    CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
+    Camera->Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
+    Camera->Changed = Camera->Changed || Resized;
+    EngUpdateCamera(Camera);
+    RENDER_SCENE_UNIFORM Uniform = {0};
+    glm_vec3_copy(Camera->Position, Uniform.CameraPosition);
+    glm_mat4_copy(Camera->View, Uniform.View);
+    glm_mat4_copy(Camera->Projection, Uniform.Projection);
+
     if (Backend.BeginFrame)
     {
-        CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
-        EngUpdateCamera(Camera);
-        RENDER_SCENE_UNIFORM Uniform = {0};
-        glm_mat4_copy(Camera->View, Uniform.View);
-        glm_mat4_copy(Camera->Projection, Uniform.Projection);
-        Backend.BeginFrame(EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight, &Uniform);
+        Backend.BeginFrame(Resized, &Uniform);
     }
 }
 ecs_entity_t ecs_id(RdrBeginFrame);

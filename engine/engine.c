@@ -50,7 +50,7 @@ CONST PCSTR EngDataDirectories[EngDataDirectoryCount] = {
     "logs/",  // EngDataDirectoryLogs
 };
 
-PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_ PCSTR Name, ...) X(Data);
+PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_z_ _Printf_format_string_ PCSTR Name, ...) X(Data);
 
 CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount] = {
     "models",   // EngAssetDirectoryModels
@@ -58,7 +58,7 @@ CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount] = {
     "textures", // EngAssetDirectoryTextures
 };
 
-PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name, ...) X(Asset);
+PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_z_ _Printf_format_string_ PCSTR Name, ...) X(Asset);
 
 #undef X
 

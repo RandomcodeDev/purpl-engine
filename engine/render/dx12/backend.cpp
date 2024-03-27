@@ -245,6 +245,12 @@ static VOID Shutdown(VOID)
         Dx12Data.ShaderHeap->Release();
     }
 
+    if (Dx12Data.DsvHeap)
+    {
+        LogDebug("Releasing depth stencil view descriptor heap");
+        Dx12Data.DsvHeap->Release();
+    }
+
     if (Dx12Data.RtvHeap)
     {
         LogDebug("Releasing render target view descriptor heap");

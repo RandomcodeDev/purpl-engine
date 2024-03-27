@@ -76,6 +76,17 @@ target("flecs")
     on_load(fix_target)
 target_end()
 
+target("imgui")
+    set_kind("static")
+    add_defines("CIMGUI_NO_EXPORT", "IMGUI_STATIC")
+    add_headerfiles(path.join("deps", "cimgui", "**", "*.h"))
+    add_files(path.join("deps", "cimgui", "*.cpp"), path.join("deps", "cimgui", "imgui", "*.cpp"))
+    set_warnings("none")
+    set_group("External")
+
+    on_load(fix_target)
+target_end()
+
 includes(path.join("xmake", "mujoco.lua"))
 
 if vulkan then
@@ -166,7 +177,7 @@ target("engine")
     set_kind("static")
     add_headerfiles(path.join("engine", "*.h"))
     add_files(path.join("engine", "*.c"))
-    add_deps("common", "cjson", "flecs", "mujoco", "platform", "render", "util")
+    add_deps("common", "cjson", "flecs", "imgui", "mujoco", "platform", "render", "util")
     if discord then
         add_headerfiles(path.join("engine", "discord", "*.h"))
         add_files(path.join("engine", "discord", "*.c"))

@@ -46,3 +46,6 @@
 [submodule "support"]
 	path = support
 	url = https://github.com/RandomcodeDev/purpl-support.git
+[submodule "deps/cimgui"]
+	path = deps/cimgui
+	url = https://github.com/cimgui/cimgui

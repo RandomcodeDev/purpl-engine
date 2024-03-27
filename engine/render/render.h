@@ -50,6 +50,7 @@ extern ECS_COMPONENT_DECLARE(MODEL);
 /// @brief Uniform data for the whole scene
 typedef struct RENDER_SCENE_UNIFORM
 {
+    vec3 CameraPosition;
     mat4 View;
     mat4 Projection;
 } RENDER_SCENE_UNIFORM, *PRENDER_SCENE_UNIFORM;

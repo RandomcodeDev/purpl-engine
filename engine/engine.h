@@ -39,7 +39,7 @@ typedef enum ENGINE_DATA_DIRECTORY
 extern CONST PCSTR EngDataDirectories[EngDataDirectoryCount];
 
 /// @brief Get a data path in a static buffer
-extern PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_ PCSTR Name, ...);
+extern PCHAR EngGetDataPath(_In_ ENGINE_DATA_DIRECTORY Directory, _In_opt_z_ _Printf_format_string_ PCSTR Name, ...);
 
 /// @brief The subdirectories of the engine's asset directory
 typedef enum ENGINE_ASSET_DIRECTORY
@@ -52,7 +52,7 @@ typedef enum ENGINE_ASSET_DIRECTORY
 extern CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount];
 
 /// @brief Get an asset path in a static buffer
-extern PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_ PCSTR Name, ...);
+extern PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_z_ _Printf_format_string_ PCSTR Name, ...);
 
 /// @brief Define configuration variables (must be called before CmnInitialize)
 extern VOID EngDefineVariables(VOID);

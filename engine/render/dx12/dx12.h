@@ -76,7 +76,8 @@ END_EXTERN_C
     } while (0)
 
 #ifdef PURPL_MINGW
-#define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) *(Object)->Get##Type##DescriptorHandleForHeapStart(NULL)
+#define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type)                                                   \
+    *(Object)->Get##Type##DescriptorHandleForHeapStart(NULL)
 #else
 #define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) (Object)->Get##Type##DescriptorHandleForHeapStart()
 #endif
@@ -114,7 +115,12 @@ typedef struct DIRECTX12_UNIFORM
 } DIRECTX12_UNIFORM, *PDIRECTX12_UNIFORM;
 
 #define DIRECTX12_SET_UNIFORM(Type, Value)                                                                             \
-    memcpy(&(&Dx12Data.UniformBufferAddress[Dx12Data.FrameIndex])->Uniform.Type, (Value), sizeof(*Value))
+    {                                                                                                                  \
+        CD3DX12_RANGE Range(0, 0);                                                                                     \
+        Dx12Data.UniformBuffer.Resource->Map(0, &Range, (PVOID *)&Dx12Data.UniformBufferAddress);                      \
+        memcpy(&(&Dx12Data.UniformBufferAddress[Dx12Data.FrameIndex])->Uniform.Type, (Value), sizeof(*Value));          \
+            Dx12Data.UniformBuffer.Resource->Unmap(0, &Range);                                                         \
+    }
 
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
@@ -254,17 +260,17 @@ extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
 ///
 /// @param[in,out] Model The model to create
 /// @param[in] Mesh The mesh to use
-VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh);
+extern VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh);
 
 /// @brief Draw a model
 ///
 /// @param[in] Model The model to render
 /// @param[in] Uniform The per-object uniform data for rendering the model
-VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
+extern VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
 
 /// @brief Destroy a model
 ///
 /// @param[in,out] Model The model to destroy
-VOID Dx12DestroyModel(_Inout_ PMODEL Model);
+extern VOID Dx12DestroyModel(_Inout_ PMODEL Model);
 
 END_EXTERN_C

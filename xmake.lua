@@ -79,7 +79,7 @@ target_end()
 target("imgui")
     set_kind("static")
     add_defines("CIMGUI_NO_EXPORT", "IMGUI_STATIC")
-    add_headerfiles(path.join("deps", "cimgui", "**", "*.h"))
+    add_headerfiles(path.join("deps", "cimgui", "*.h"), path.join("deps", "cimgui", "imgui", "*.h"))
     add_files(path.join("deps", "cimgui", "*.cpp"), path.join("deps", "cimgui", "imgui", "*.cpp"))
     set_warnings("none")
     set_group("External")
@@ -117,7 +117,7 @@ end
 if directx then
     target("render-dx12")
         set_kind("static")
-        add_headerfiles("engine", "render", "dx12", "*.h")
+        add_headerfiles(path.join("engine", "render", "dx12", "*.h"))
         add_files(
             path.join("deps", "D3D12MemoryAllocator", "src", "Common.cpp"),
             path.join("deps", "D3D12MemoryAllocator", "src", "D3D12MemAlloc.cpp"),

@@ -150,7 +150,4 @@ VOID Dx12CreateUniformBuffer(VOID)
         UniformViewDescription.BufferLocation += sizeof(DIRECTX12_UNIFORM);
         CpuHandle.Offset(Dx12Data.ShaderDescriptorSize);
     }
-
-    CD3DX12_RANGE Range(0, 0);
-    Dx12Data.UniformBuffer.Resource->Map(0, &Range, (PVOID *)&Dx12Data.UniformBufferAddress);
 }

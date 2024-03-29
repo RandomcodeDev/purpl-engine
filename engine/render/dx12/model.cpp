@@ -44,7 +44,7 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
     DIRECTX12_SET_UNIFORM(Object, Uniform);
 
     Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState*)Model->Material->ShaderHandle);
-
+    Dx12Data.CommandList->SetGraphicsRootConstantBufferView(0, Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress());
     Dx12Data.CommandList->DrawIndexedInstanced(IndexBufferView.SizeInBytes / sizeof(INT32), 1, 0, 0, 0);
 }
 

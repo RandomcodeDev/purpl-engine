@@ -27,7 +27,7 @@ local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
 local opengl = is_plat("gdk", "windows", "linux", "freebsd", "switchhb", "psp", "ps3")
 
 local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
-local use_mimalloc = not is_plat("switch")
+local use_mimalloc = not is_plat("switch", "psp", "ps3")
 
 add_defines("PURPL_ENGINE")
 

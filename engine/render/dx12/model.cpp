@@ -18,6 +18,9 @@ VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
     ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Mesh->IndexCount * sizeof(ivec3));
     Dx12CreateBufferWithData(&Data->IndexBuffer, Mesh->Indices, &HeapProperties, D3D12_HEAP_FLAG_NONE,
                              &ResourceDescription, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+
+    Dx12CreateUniformBuffer(&Data->UniformBuffer, (PVOID *)&Data->UniformBufferAddress,
+                            sizeof(DIRECTX12_OBJECT_UNIFORM));
 }
 
 VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
@@ -41,18 +44,25 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
     IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
     Dx12Data.CommandList->IASetIndexBuffer(&IndexBufferView);
 
-    DIRECTX12_SET_UNIFORM(Object, Uniform);
+    DIRECTX12_SET_UNIFORM(ModelData->UniformBufferAddress, Uniform);
 
-    Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState*)Model->Material->ShaderHandle);
+    Dx12Data.CommandList->SetGraphicsRootConstantBufferView(1,
+                                                            ModelData->UniformBuffer.Resource->GetGPUVirtualAddress() +
+                                                                Dx12Data.FrameIndex * sizeof(DIRECTX12_OBJECT_UNIFORM));
+
+    Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState *)Model->Material->ShaderHandle);
 
     Dx12Data.CommandList->DrawIndexedInstanced(IndexBufferView.SizeInBytes / sizeof(INT32), 1, 0, 0, 0);
 }
 
 VOID Dx12DestroyModel(_Inout_ PMODEL Model)
 {
-    // TODO: if I'm waiting for the GPU to finish what it's doing, why the fuck are these still in use
+    // TODO: if I'm waiting for the GPU to finish what it's doing beforehand, why the fuck are these still in use
     Dx12WaitForGpu();
     PDIRECTX12_MODEL_DATA ModelData = (PDIRECTX12_MODEL_DATA)Model->MeshHandle;
+    CD3DX12_RANGE Range(0, 0);
+    ModelData->UniformBuffer.Resource->Unmap(0, &Range);
+    ModelData->UniformBuffer.Resource->Release();
     ModelData->VertexBuffer.Resource->Release();
     ModelData->IndexBuffer.Resource->Release();
     CmnFree(Model->MeshHandle);

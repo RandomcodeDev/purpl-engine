@@ -3,7 +3,7 @@
 EXTERN_C
 VOID Dx12CreateHeaps(VOID)
 {
-    LogDebug("Creating render target view descriptor heap");
+    LogDebug("Creating descriptor heaps");
 
     D3D12_DESCRIPTOR_HEAP_DESC RtvHeapDescription = {};
     RtvHeapDescription.NumDescriptors = DIRECTX12_FRAME_COUNT;
@@ -21,10 +21,8 @@ VOID Dx12CreateHeaps(VOID)
     Dx12Data.DsvDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(DsvHeapDescription.Type);
     Dx12NameObject(Dx12Data.DsvHeap, "Depth stencil view descriptor heap");
 
-    LogDebug("Creating shader descriptor heap");
-
     D3D12_DESCRIPTOR_HEAP_DESC ShaderHeapDescription = {};
-    ShaderHeapDescription.NumDescriptors = DIRECTX12_FRAME_COUNT + 1;
+    ShaderHeapDescription.NumDescriptors = (RENDER_MAX_MODEL_COUNT + 1) * DIRECTX12_FRAME_COUNT;
     ShaderHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     ShaderHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(&ShaderHeapDescription, IID_PPV_ARGS(&Dx12Data.ShaderHeap)));

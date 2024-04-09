@@ -16,13 +16,16 @@ VOID Dx12CreateRootSignature(VOID)
         FeatureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
     }
 
-    CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[2];
-    DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
-    DescriptorRanges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
+    CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[1];
+    DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0,
+                             D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
 
-    CD3DX12_ROOT_PARAMETER1 RootParameters[2];
-    RootParameters[0].InitAsDescriptorTable(1, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_VERTEX);
-    RootParameters[1].InitAsDescriptorTable(1, &DescriptorRanges[1], D3D12_SHADER_VISIBILITY_PIXEL);
+    CD3DX12_ROOT_PARAMETER1 RootParameters[3];
+    RootParameters[0].InitAsConstantBufferView(0, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
+                                               D3D12_SHADER_VISIBILITY_VERTEX);
+    RootParameters[1].InitAsConstantBufferView(1, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
+                                               D3D12_SHADER_VISIBILITY_VERTEX);
+    RootParameters[2].InitAsDescriptorTable(1, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_PIXEL);
 
     D3D12_STATIC_SAMPLER_DESC Sampler = {};
     Sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -127,18 +130,18 @@ VOID Dx12DestroyShader(_In_ RENDER_HANDLE Shader)
 }
 
 EXTERN_C
-VOID Dx12CreateUniformBuffer(VOID)
+VOID Dx12CreateUniformBuffer(_Out_ PDIRECTX12_BUFFER UniformBuffer, _Out_ PVOID *Address, _In_ UINT64 Size)
 {
+    static UINT64 LastUniformBufferIndex = 0;
+
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC BufferDescription =
-        CD3DX12_RESOURCE_DESC::Buffer(sizeof(DIRECTX12_UNIFORM) * DIRECTX12_FRAME_COUNT);
-    Dx12CreateBuffer(&Dx12Data.UniformBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
+    CD3DX12_RESOURCE_DESC BufferDescription = CD3DX12_RESOURCE_DESC::Buffer(Size * DIRECTX12_FRAME_COUNT);
+    Dx12CreateBuffer(UniformBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
                      D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-    Dx12NameObject(Dx12Data.UniformBuffer.Resource, "Uniform buffer");
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC UniformViewDescription = {};
-    UniformViewDescription.BufferLocation = Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress();
-    UniformViewDescription.SizeInBytes = sizeof(DIRECTX12_UNIFORM);
+    UniformViewDescription.BufferLocation = UniformBuffer->Resource->GetGPUVirtualAddress();
+    UniformViewDescription.SizeInBytes = Size;
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE CpuHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.ShaderHeap, CPU), 1,
                                             Dx12Data.ShaderDescriptorSize);
@@ -147,10 +150,10 @@ VOID Dx12CreateUniformBuffer(VOID)
     {
         Dx12Data.Device->CreateConstantBufferView(&UniformViewDescription, CpuHandle);
 
-        UniformViewDescription.BufferLocation += sizeof(DIRECTX12_UNIFORM);
+        UniformViewDescription.BufferLocation += Size;
         CpuHandle.Offset(Dx12Data.ShaderDescriptorSize);
     }
 
     CD3DX12_RANGE Range(0, 0);
-    Dx12Data.UniformBuffer.Resource->Map(0, &Range, (PVOID *)&Dx12Data.UniformBufferAddress);
+    UniformBuffer->Resource->Map(0, &Range, Address);
 }

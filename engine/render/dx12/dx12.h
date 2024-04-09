@@ -76,7 +76,8 @@ END_EXTERN_C
     } while (0)
 
 #ifdef PURPL_MINGW
-#define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) *(Object)->Get##Type##DescriptorHandleForHeapStart(NULL)
+#define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type)                                                   \
+    *(Object)->Get##Type##DescriptorHandleForHeapStart(NULL)
 #else
 #define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) (Object)->Get##Type##DescriptorHandleForHeapStart()
 #endif
@@ -100,21 +101,29 @@ typedef struct DIRECTX12_BUFFER
     UINT64 Size;
 } DIRECTX12_BUFFER, *PDIRECTX12_BUFFER;
 
+typedef struct DIRECTX12_SCENE_UNIFORM
+{
+    RENDER_SCENE_UNIFORM Data;
+    BYTE Padding[D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - sizeof(RENDER_SCENE_UNIFORM)];
+} DIRECTX12_SCENE_UNIFORM, *PDIRECTX12_SCENE_UNIFORM;
+
+typedef struct DIRECTX12_OBJECT_UNIFORM
+{
+    RENDER_OBJECT_UNIFORM Data;
+    BYTE Padding[D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - sizeof(RENDER_OBJECT_UNIFORM)];
+} DIRECTX12_OBJECT_UNIFORM, *PDIRECTX12_OBJECT_UNIFORM;
+
+#define DIRECTX12_SET_UNIFORM(UniformBufferAddress, Value)                                                             \
+    memcpy(&(&(UniformBufferAddress)[Dx12Data.FrameIndex])->Data, (Value), sizeof(*Value))
+
 /// @brief Data for a model
 typedef struct DIRECTX12_MODEL_DATA
 {
     DIRECTX12_BUFFER VertexBuffer;
     DIRECTX12_BUFFER IndexBuffer;
+    DIRECTX12_BUFFER UniformBuffer;
+    PDIRECTX12_OBJECT_UNIFORM UniformBufferAddress;
 } DIRECTX12_MODEL_DATA, *PDIRECTX12_MODEL_DATA;
-
-typedef struct DIRECTX12_UNIFORM
-{
-    RENDER_FULL_UNIFORM Uniform;
-    BYTE Padding[256 - sizeof(RENDER_FULL_UNIFORM)];
-} DIRECTX12_UNIFORM, *PDIRECTX12_UNIFORM;
-
-#define DIRECTX12_SET_UNIFORM(Type, Value)                                                                             \
-    memcpy(&(&Dx12Data.UniformBufferAddress[Dx12Data.FrameIndex])->Uniform.Type, (Value), sizeof(*Value))
 
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
@@ -143,7 +152,7 @@ typedef struct DIRECTX12_DATA
     ID3D12Fence *Fence;
     UINT64 FenceValues[DIRECTX12_FRAME_COUNT];
     DIRECTX12_BUFFER UniformBuffer;
-    PDIRECTX12_UNIFORM UniformBufferAddress;
+    PDIRECTX12_SCENE_UNIFORM UniformBufferAddress;
 
     UINT8 FrameIndex;
 
@@ -210,7 +219,7 @@ extern VOID Dx12DestroyShader(_In_ RENDER_HANDLE Shader);
 extern VOID Dx12CreateMainFence(VOID);
 
 /// @brief Create the uniform buffer
-extern VOID Dx12CreateUniformBuffer(VOID);
+extern VOID Dx12CreateUniformBuffer(_Out_ PDIRECTX12_BUFFER UniformBuffer, _Out_ PVOID *Address, _In_ UINT64 Size);
 
 /// @brief Create a buffer
 ///

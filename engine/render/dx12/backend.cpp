@@ -44,7 +44,8 @@ static VOID Initialize(VOID)
     Dx12CreateRootSignature();
     Dx12CreateCommandLists();
     Dx12CreateMainFence();
-    Dx12CreateUniformBuffer();
+    Dx12CreateUniformBuffer(&Dx12Data.UniformBuffer, (PVOID *)&Dx12Data.UniformBufferAddress,
+                            sizeof(DIRECTX12_SCENE_UNIFORM));
 
     LogDebug("Successfully initialized DirectX 12 backend");
 }
@@ -92,10 +93,6 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
     CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
 
-    CD3DX12_GPU_DESCRIPTOR_HANDLE UniformHandle(
-        DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.ShaderHeap, GPU), Dx12Data.FrameIndex + 1,
-        Dx12Data.ShaderDescriptorSize);
-    CommandList->SetGraphicsRootDescriptorTable(0, UniformHandle);
     CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     CD3DX12_VIEWPORT Viewport(0.0, 0.0, RdrGetWidth(), RdrGetHeight());
     CommandList->RSSetViewports(1, &Viewport);
@@ -111,7 +108,10 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     CD3DX12_CPU_DESCRIPTOR_HANDLE DsvHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.DsvHeap, CPU));
     CommandList->OMSetRenderTargets(1, &RtvHandle, FALSE, &DsvHandle);
 
-    DIRECTX12_SET_UNIFORM(Scene, Uniform);
+    DIRECTX12_SET_UNIFORM(Dx12Data.UniformBufferAddress, Uniform);
+
+    CommandList->SetGraphicsRootConstantBufferView(0, Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress() +
+                                                          Dx12Data.FrameIndex * sizeof(DIRECTX12_SCENE_UNIFORM));
 
     UINT64 ClearColourRaw = CONFIGVAR_GET_INT("rdr_clear_colour");
     vec4 ClearColour;

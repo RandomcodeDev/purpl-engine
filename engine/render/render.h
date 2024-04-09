@@ -47,6 +47,9 @@ typedef struct MODEL
 } MODEL, *PMODEL;
 extern ECS_COMPONENT_DECLARE(MODEL);
 
+/// @brief Maximum number of models
+#define RENDER_MAX_MODEL_COUNT 1024
+
 /// @brief Uniform data for the whole scene
 typedef struct RENDER_SCENE_UNIFORM
 {
@@ -60,13 +63,6 @@ typedef struct RENDER_OBJECT_UNIFORM
 {
     mat4 Model;
 } RENDER_OBJECT_UNIFORM, *PRENDER_OBJECT_UNIFORM;
-
-/// @brief Not directly used, just for size and offsets
-typedef struct RENDER_FULL_UNIFORM
-{
-    RENDER_SCENE_UNIFORM Scene;
-    RENDER_OBJECT_UNIFORM Object;
-} RENDER_FULL_UNIFORM, *PRENDER_FULL_UNIFORM;
 
 /// @brief Renderer backend
 typedef struct RENDER_BACKEND

@@ -34,6 +34,12 @@ VOID RdrDefineVariables(VOID)
 
 #ifdef PURPL_GDKX
     static CONST RENDER_API DefaultApi = RenderApiDirect3D12;
+#elif defined PURPL_LEGACY_GRAPHICS
+#ifdef PURPL_WIN32
+    static CONST RENDER_API DefaultApi = RenderApiDirect3D9;
+#else
+    static CONST RENDER_API DefaultApi = RenderApiOpenGL;
+#endif
 #else
     static CONST RENDER_API DefaultApi = RenderApiVulkan;
 #endif
@@ -291,7 +297,7 @@ UINT32 RdrGetHeight(VOID)
 
 PCSTR RdrGetApiName(_In_ RENDER_API Api)
 {
-    static CONST PCSTR Names[] = {"Unknown", "Vulkan", "DirectX 12"};
+    static CONST PCSTR Names[] = {"Unknown", "Vulkan", "DirectX 12", "OpenGL"};
 
     if ((UINT32)Api < PURPL_ARRAYSIZE(Names))
     {

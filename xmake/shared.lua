@@ -33,4 +33,8 @@ function setup_shared(root, directx, vulkan)
             add_defines("VK_USE_PLATFORM_VI_NN")
         end
     end
+
+    if opengl then
+        add_defines("PURPL_OPENGL")
+    end
 end

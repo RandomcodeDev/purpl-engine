@@ -11,7 +11,7 @@ static UINT32 LastHeight;
 #ifdef PURPL_DIRECTX
 extern VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend);
 #else
-VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Unused)
+static VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
     UNREFERENCED_PARAMETER(Unused);
     LogError("Why are you initialising DX12 on this platform?");
@@ -21,10 +21,20 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Unused)
 #ifdef PURPL_VULKAN
 extern VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend);
 #else
-VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Unused)
+static VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
     UNREFERENCED_PARAMETER(Unused);
     LogError("Why are you initialising Vulkan on this platform?");
+}
+#endif
+
+#ifdef PURPL_OPENGL
+extern VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Backend);
+#else
+static VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Unused)
+{
+    UNREFERENCED_PARAMETER(Unused);
+    LogError("Why are you initialising OpenGL on this platform?");
 }
 #endif
 
@@ -66,7 +76,7 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
     UNREFERENCED_PARAMETER(Iterator);
 
-    LogInfo("Initializing renderer");
+    LogInfo("Initializing renderer using API %d", CONFIGVAR_GET_INT("rdr_api"));
 
     switch (CONFIGVAR_GET_INT("rdr_api"))
     {
@@ -78,6 +88,9 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
         break;
     case RenderApiVulkan:
         VlkInitializeBackend(&Backend);
+        break;
+    case RenderApiOpenGL:
+        GlInitializeBackend(&Backend);
         break;
     }
 

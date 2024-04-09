@@ -16,13 +16,15 @@ end
 set_project("purpl-engine")
 set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
-set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch")
-set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64")
+set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch", "psp", "ps3")
+set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc")
 
 local switch_title_id = "0100694203488000"
 
 local directx = is_plat("gdk", "gdkx", "windows")
+local directx9 = is_plat("gdk", "windows", "xbox360")
 local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
+local opengl = is_plat("gdk", "windows", "linux", "freebsd", "switchhb", "psp", "ps3")
 
 local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
 local use_mimalloc = not is_plat("switch")
@@ -30,7 +32,7 @@ local use_mimalloc = not is_plat("switch")
 add_defines("PURPL_ENGINE")
 
 includes(path.join("xmake", "shared.lua"))
-setup_shared("$(scriptdir)", directx, vulkan)
+setup_shared("$(scriptdir)", directx, vulkan, opengl)
 
 includes(path.join("support", "support.lua"))
 setup_support("support", path.join("support", "deps"), use_mimalloc, vulkan, false, true, "purpl/config.h.in", switch_title_id)
@@ -114,6 +116,24 @@ if vulkan then
     target_end()
 end
 
+if opengl then
+    target("render-gl")
+        set_kind("static")
+        add_headerfiles(
+            path.join("engine", "render", "opengl", "*.h")
+        )
+        add_files(
+            path.join("engine", "render", "opengl", "*.c")
+        )
+
+        add_deps("util")
+
+        set_group("Engine/Render System")
+
+        on_load(fix_target)
+    target_end()
+end
+
 if directx then
     target("render-dx12")
         set_kind("static")
@@ -166,6 +186,9 @@ target("render")
     end
     if vulkan then
         add_deps("render-vk")
+    end
+    if opengl then
+        add_deps("render-gl")
     end
 
     set_group("Engine/Render System")

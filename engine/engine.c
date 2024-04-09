@@ -139,7 +139,7 @@ Return Value:
 
     LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
 
-    VidInitialize(FALSE);
+    VidInitialize(CONFIGVAR_GET_INT("rdr_api") == RenderApiOpenGL);
     EcsInitialize();
 
     LogInfo("Successfully initialized engine, data directory is %s", EngDataDirectory);

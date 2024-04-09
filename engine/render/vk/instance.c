@@ -1,7 +1,7 @@
 #include "vk.h"
 
 PCSTR RequiredExtensions[] = {
-    VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
+//    VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
     VK_KHR_SURFACE_EXTENSION_NAME,
 #ifdef PURPL_WIN32
     VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
@@ -33,20 +33,20 @@ VOID VlkCreateInstance(VOID)
     LogDebug("Creating Vulkan instance");
 
 #ifndef PURPL_SWITCH
-    const char *LayerName = "VK_LAYER_KHRONOS_validation";
+    CONST char *LayerName = "VK_LAYER_KHRONOS_validation";
 
-    const VkBool32 SettingValidateCore = VK_TRUE;
-    const VkBool32 SettingValidateSync = VK_TRUE;
-    const VkBool32 SettingThreadSafety = VK_TRUE;
-    const char *SettingDebugAction[] = {"VK_DBG_LAYER_ACTION_BREAK"};
-    const char *SettingReportFlags[] = {"info", "warn", "perf", "error", "debug"};
-    const VkBool32 SettingEnableMessageLimit = VK_TRUE;
-    const int32_t SettingDuplicateMessageLimit = 3;
-    const char *SettingEnables[] = {"VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT",
+    CONST VkBool32 SettingValidateCore = VK_TRUE;
+    CONST VkBool32 SettingValidateSync = VK_TRUE;
+    CONST VkBool32 SettingThreadSafety = VK_TRUE;
+    CONST char *SettingDebugAction[] = {"VK_DBG_LAYER_ACTION_BREAK"};
+    CONST char *SettingReportFlags[] = {"info", "warn", "perf", "error", "debug"};
+    CONST VkBool32 SettingEnableMessageLimit = VK_TRUE;
+    CONST int32_t SettingDuplicateMessageLimit = 3;
+    CONST char *SettingEnables[] = {"VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT",
                                     "VALIDATION_CHECK_ENABLE_VENDOR_SPECIFIC_ALL"};
-    const VkBool32 SettingPrintfToStdout = VK_FALSE;
-    
-    const VkLayerSettingEXT LayerSettings[] = {
+    CONST VkBool32 SettingPrintfToStdout = VK_FALSE;
+
+    CONST VkLayerSettingEXT LayerSettings[] = {
         {LayerName, "validate_core", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &SettingValidateCore},
         // TODO: fix the WRITE_AFTER_WRITE hazard that shows up when this is enabled
         //{LayerName, "validate_sync", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &SettingValidateSync},

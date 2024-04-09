@@ -149,8 +149,8 @@ PVOID VlkCreateShader(_In_z_ PCSTR Name)
     PipelineCreateInformation.pRasterizationState = &RasterizationState;
     PipelineCreateInformation.pMultisampleState = &MultisampleState;
     PipelineCreateInformation.pColorBlendState = &ColourBlendState;
-    PipelineCreateInformation.pDynamicState = &PipelineDynamicState;
+    PipelineCreateInformation.pDynamicState = &DynamicState;
     PipelineCreateInformation.pDepthStencilState = &DepthStencilState;
-    PipelineCreateInformation.layout = PipelineLayout;
-    PipelineCreateInformation.renderPass = RenderPass;
+    PipelineCreateInformation.layout = VlkData.PipelineLayout;
+    PipelineCreateInformation.renderPass = VlkData.MainRenderPass;
 }

@@ -98,8 +98,7 @@ VOID VlkEnumeratePhysicalDevices(VOID)
 
         LogTrace("Getting extensions");
         UINT32 ExtensionCount = 0;
-        Result = vkEnumerateDeviceExtensionProperties(CurrentGpu->Device, NULL, &ExtensionCount,
-                                                      NULL);
+        Result = vkEnumerateDeviceExtensionProperties(CurrentGpu->Device, NULL, &ExtensionCount, NULL);
         if (Result != VK_SUCCESS)
         {
             CurrentGpu->Usable = FALSE;
@@ -214,8 +213,10 @@ VOID VlkEnumeratePhysicalDevices(VOID)
         {
             VlkData.Gpu = CurrentGpu;
             VlkData.GpuIndex = i;
-            LogDebug("Selected device %zu %s [%04x:%04x]", VlkData.GpuIndex, VlkData.Gpu->Properties.deviceName,
-                     VlkData.Gpu->Properties.vendorID, VlkData.Gpu->Properties.deviceID);
+            CmnFree(VlkData.GpuName);
+            VlkData.GpuName = CmnFormatString("%s [%04x:%04x]", VlkData.Gpu->Properties.deviceName,
+                                              VlkData.Gpu->Properties.vendorID, VlkData.Gpu->Properties.deviceID);
+            LogDebug("Selected device %zu %s", VlkData.GpuIndex, VlkData.GpuName);
             break;
         }
     }
@@ -267,7 +268,7 @@ VOID VlkCreateLogicalDevice(VOID)
     // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
     // DeviceRobustness2Features.nullDescriptor = TRUE;
     // DeviceRobustness2Features.pNext = &DescriptorIndexingFeatures;
-    
+
     VkPhysicalDeviceVulkan12Features Device12Features = {0};
     Device12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
     Device12Features.bufferDeviceAddress = TRUE;
@@ -278,7 +279,7 @@ VOID VlkCreateLogicalDevice(VOID)
     DeviceCreateInformation.pEnabledFeatures = &DeviceFeatures;
     DeviceCreateInformation.ppEnabledExtensionNames = RequiredDeviceExtensions;
     DeviceCreateInformation.enabledExtensionCount = PURPL_ARRAYSIZE(RequiredDeviceExtensions);
-//    DeviceCreateInformation.pNext = &Device12Features;
+    //    DeviceCreateInformation.pNext = &Device12Features;
 
     LogTrace("Calling vkCreateDevice");
     VULKAN_CHECK(

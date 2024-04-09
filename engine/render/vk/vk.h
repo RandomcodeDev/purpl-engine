@@ -125,6 +125,9 @@ typedef struct VULKAN_DATA
     /// @brief Current GPU
     PVULKAN_GPU_INFO Gpu;
 
+    /// @brief Name of current GPU
+    PCHAR GpuName;
+
     /// @brief Index of current GPU
     UINT32 GpuIndex;
 

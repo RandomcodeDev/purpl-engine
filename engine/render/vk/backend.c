@@ -427,6 +427,11 @@ static VOID Shutdown(VOID)
     LogDebug("Successfully shut down Vulkan");
 }
 
+PCSTR GetGpuName(VOID)
+{
+    return VlkData.GpuName;
+}
+
 VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 {
     LogDebug("Filling out render backend for Vulkan");
@@ -435,6 +440,8 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
     Backend->Shutdown = Shutdown;
+
+    Backend->GetGpuName = GetGpuName;
 
     memset(&VlkData, 0, sizeof(VULKAN_DATA));
 }

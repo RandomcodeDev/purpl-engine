@@ -155,5 +155,5 @@ VOID Dx12CreateUniformBuffer(_Out_ PDIRECTX12_BUFFER UniformBuffer, _Out_ PVOID 
     }
 
     CD3DX12_RANGE Range(0, 0);
-    UniformBuffer->Resource->Map(0, &Range, Address);
+    HRESULT_CHECK(UniformBuffer->Resource->Map(0, &Range, Address));
 }

@@ -90,9 +90,6 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
 
     CommandList->SetGraphicsRootSignature(Dx12Data.RootSignature);
 
-    ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
-    CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
-
     CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     CD3DX12_VIEWPORT Viewport(0.0, 0.0, RdrGetWidth(), RdrGetHeight());
     CommandList->RSSetViewports(1, &Viewport);
@@ -110,8 +107,12 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
 
     DIRECTX12_SET_UNIFORM(Dx12Data.UniformBufferAddress, Uniform);
 
+    ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
+    CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
+
     CommandList->SetGraphicsRootConstantBufferView(0, Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress() +
                                                           Dx12Data.FrameIndex * sizeof(DIRECTX12_SCENE_UNIFORM));
+
 
     UINT64 ClearColourRaw = CONFIGVAR_GET_INT("rdr_clear_colour");
     vec4 ClearColour;
@@ -174,8 +175,6 @@ static VOID Shutdown(VOID)
     if (Dx12Data.UniformBuffer.Resource)
     {
         LogDebug("Releasing uniform buffer");
-        CD3DX12_RANGE Range(0, 0);
-        Dx12Data.UniformBuffer.Resource->Unmap(0, &Range);
         Dx12Data.UniformBuffer.Resource->Release();
     }
 

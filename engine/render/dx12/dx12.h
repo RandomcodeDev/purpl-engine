@@ -77,7 +77,7 @@ END_EXTERN_C
 
 #ifdef PURPL_MINGW
 #define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type)                                                   \
-    *(Object)->Get##Type##DescriptorHandleForHeapStart(NULL)
+    *(Object)->Get##Type##DescriptorHandleForHeapStart(nullptr)
 #else
 #define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type) (Object)->Get##Type##DescriptorHandleForHeapStart()
 #endif
@@ -104,13 +104,15 @@ typedef struct DIRECTX12_BUFFER
 typedef struct DIRECTX12_SCENE_UNIFORM
 {
     RENDER_SCENE_UNIFORM Data;
-    BYTE Padding[D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - sizeof(RENDER_SCENE_UNIFORM)];
+    BYTE Padding[PURPL_ALIGN(D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT, sizeof(RENDER_SCENE_UNIFORM)) -
+                 sizeof(RENDER_SCENE_UNIFORM)];
 } DIRECTX12_SCENE_UNIFORM, *PDIRECTX12_SCENE_UNIFORM;
 
 typedef struct DIRECTX12_OBJECT_UNIFORM
 {
     RENDER_OBJECT_UNIFORM Data;
-    BYTE Padding[D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - sizeof(RENDER_OBJECT_UNIFORM)];
+    BYTE Padding[PURPL_ALIGN(D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT, sizeof(RENDER_OBJECT_UNIFORM)) -
+                 sizeof(RENDER_OBJECT_UNIFORM)];
 } DIRECTX12_OBJECT_UNIFORM, *PDIRECTX12_OBJECT_UNIFORM;
 
 #define DIRECTX12_SET_UNIFORM(UniformBufferAddress, Value)                                                             \
@@ -263,17 +265,17 @@ extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
 ///
 /// @param[in,out] Model The model to create
 /// @param[in] Mesh The mesh to use
-VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh);
+extern VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh);
 
 /// @brief Draw a model
 ///
 /// @param[in] Model The model to render
 /// @param[in] Uniform The per-object uniform data for rendering the model
-VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
+extern VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
 
 /// @brief Destroy a model
 ///
 /// @param[in,out] Model The model to destroy
-VOID Dx12DestroyModel(_Inout_ PMODEL Model);
+extern VOID Dx12DestroyModel(_Inout_ PMODEL Model);
 
 END_EXTERN_C

@@ -35,7 +35,7 @@ includes(path.join("xmake", "shared.lua"))
 setup_shared("$(scriptdir)", directx, vulkan, opengl)
 
 includes(path.join("support", "support.lua"))
-setup_support("support", path.join("support", "deps"), use_mimalloc, vulkan, false, true, "purpl/config.h.in", switch_title_id)
+setup_support("support", path.join("support", "deps"), use_mimalloc, directx, vulkan, opengl, true, "purpl/config.h.in", switch_title_id)
 
 if discord then
     target("discord")

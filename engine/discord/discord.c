@@ -10,7 +10,7 @@ static VOID Ready(CONST DiscordUser *NewUser)
 {
     User = *NewUser;
     Connected = TRUE;
-    LogDebug("Discord connected %s#%s (%s)", User.username, User.discriminator, User.userId);
+    LogDebug("Discord connected as %s (%s)", User.username, User.userId);
 }
 
 static VOID Disconnected(INT ErrorCode, PCSTR Message)
@@ -18,13 +18,13 @@ static VOID Disconnected(INT ErrorCode, PCSTR Message)
     Connected = FALSE;
     memset(&User, 0, sizeof(DiscordUser));
 
-    if (ErrorCode != 0)
+    if (Message && ErrorCode != 0)
     {
         LogError("Discord disconnected: %s (%d)", Message, ErrorCode);
     }
     else
     {
-        LogDebug("Discord disconnected%s%s", Message ? ": " : "", Message);
+        LogDebug("Discord disconnected%s%s", Message ? ": " : "", Message ? Message : "");
     }
 }
 
@@ -94,8 +94,9 @@ VOID DiscordUpdate(_In_ ecs_iter_t *Iterator)
 #else
     Presence.state = CmnFormatString("Playing %s on %s", GetGameString(), PlatGetDescription());
 #endif
-    Presence.details = CmnFormatString("v%s commit %s-%s, " PURPL_BUILD_TYPE " build, %s renderer using GPU %s", PURPL_VERSION_STRING,
-                                       PURPL_COMMIT, PURPL_BRANCH, RdrGetApiName(CONFIGVAR_GET_INT("rdr_api")), RdrGetGpuName());
+    Presence.details = CmnFormatString("v" GAME_VERSION_STRING " commit " GAME_COMMIT "-" GAME_BRANCH
+                                       ", " GAME_BUILD_TYPE " build, %s renderer using GPU %s",
+                                       RdrGetApiName(CONFIGVAR_GET_INT("rdr_api")), RdrGetGpuName());
     Discord_UpdatePresence(&Presence);
 
     CmnFree(Presence.state);

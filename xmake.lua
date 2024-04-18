@@ -13,11 +13,19 @@ else
     function add_switch_renderapi() end
 end
 
+if os.isfile(path.join("..", "platform", "ps5", "ps5.lua")) then
+    includes(path.join("..", "platform", "ps5", "ps5.lua"))
+else
+    function add_ps5_links() end
+    function ps5_postbuild(target) end
+    function add_ps5_renderapi() end
+end
+
 set_project("purpl-engine")
 set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
-set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch", "psp", "ps3")
-set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc")
+set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch", "psp", "ps3", "ps5")
+set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc", "ps5|x64")
 
 local switch_title_id = "0100694203488000"
 

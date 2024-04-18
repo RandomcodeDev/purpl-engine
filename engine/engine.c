@@ -58,7 +58,8 @@ CONST PCSTR EngAssetDirectories[EngAssetDirectoryCount] = {
     "textures", // EngAssetDirectoryTextures
 };
 
-PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_z_ _Printf_format_string_ PCSTR Name, ...) X(Asset);
+PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_z_ _Printf_format_string_ PCSTR Name, ...)
+    X(Asset);
 
 #undef X
 
@@ -110,12 +111,23 @@ Return Value:
     }
 
 #ifdef PURPL_SWITCH
-    FsAddDirectorySource(PURPL_SWITCH_ROMFS_MOUNTPOINT "assets");
+    if (!FsAddPackSource(PURPL_SWITCH_ROMFS_MOUNTPOINT "assets_dir.pak"))
+    {
+        FsAddDirectorySource(PURPL_SWITCH_ROMFS_MOUNTPOINT "assets");
+    }
 #else
-    FsAddDirectorySource("assets");
+    // In debug, also support running from the root of the repo
+    if (!FsAddPackSource("assets_dir.pak")
 #ifdef PURPL_DEBUG
-    FsAddDirectorySource("assets/out");
+        && !FsAddPackSource("assets/assets_dir.pak")
 #endif
+    )
+    {
+        FsAddDirectorySource("assets");
+#ifdef PURPL_DEBUG
+        FsAddDirectorySource("assets/out");
+#endif
+    }
 #endif
 
 #ifndef PURPL_SWITCH

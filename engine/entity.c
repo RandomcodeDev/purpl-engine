@@ -128,9 +128,9 @@ VOID EcsSetWorld(_In_ ecs_world_t *World)
     EngineEcsWorld = World;
 
 #if (defined(PURPL_DEBUG) || defined(PURPL_RELWITHDEBINFO)) && !defined(PURPL_SWITCH)
-    LogTrace("Initializing ECS REST");
-    ECS_IMPORT(EngineEcsWorld, FlecsMonitor);
-    ecs_singleton_set(EngineEcsWorld, EcsRest, {0});
+//    LogTrace("Initializing ECS REST");
+//    ECS_IMPORT(EngineEcsWorld, FlecsMonitor);
+//    ecs_singleton_set(EngineEcsWorld, EcsRest, {0});
 #endif
 
     LogTrace("Importing components and systems");

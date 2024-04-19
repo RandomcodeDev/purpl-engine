@@ -25,7 +25,7 @@ set_project("purpl-engine")
 set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
 set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch", "psp", "ps3", "ps5")
-set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc", "ps5|x64")
+set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc64", "ps5|x64")
 
 local switch_title_id = "0100694203488000"
 
@@ -73,7 +73,7 @@ end
 
 target("flecs")
     set_kind("static")
-    add_defines("FLECS_STATIC")
+    add_defines("FLECS_STATIC", "FLECS_CUSTOM_BUILD", "FLECS_SYSTEM", "FLECS_MODULE", "FLECS_PARSER", "FLECS_PIPELINE")
     add_headerfiles(path.join("deps", "flecs", "flecs.h"))
     add_files(path.join("deps", "flecs", "flecs.c"))
     set_warnings("none")
@@ -96,8 +96,6 @@ target("imgui")
 
     on_load(fix_target)
 target_end()
-
-includes(path.join("xmake", "mujoco.lua"))
 
 if vulkan then
     target("render-vk")
@@ -208,7 +206,7 @@ target("engine")
     set_kind("static")
     add_headerfiles(path.join("engine", "*.h"))
     add_files(path.join("engine", "*.c"))
-    add_deps("common", "cjson", "flecs", "imgui", "mujoco", "platform", "render", "util")
+    add_deps("common", "cjson", "flecs", "imgui", "platform", "render", "util")
     if discord then
         add_headerfiles(path.join("engine", "discord", "*.h"))
         add_files(path.join("engine", "discord", "*.c"))

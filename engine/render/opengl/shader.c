@@ -31,7 +31,7 @@ static UINT32 LoadShader(UINT32 Type, PCSTR EntryPoint, PCSTR Name)
 
     LogInfo("Compiling shader %s", Name);
     Shader = glCreateShader(Type);
-    glShaderSource(Shader, 1, &(PCSTR)ShaderSource, NULL);
+    glShaderSource(Shader, 1, (PCSTR *)&ShaderSource, NULL);
     glCompileShader(Shader);
     glGetShaderiv(Shader, GL_COMPILE_STATUS, &Success);
     if (!Success)

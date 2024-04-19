@@ -55,6 +55,8 @@ VOID RdrDefineVariables(VOID)
 #endif
 
     CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE, FALSE);
+    CONFIGVAR_DEFINE_BOOLEAN("rdr_lefthanded", DefaultApi == RenderApiDirect3D12 || DefaultApi == RenderApiDirect3D9,
+                             FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
 
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
 }
@@ -76,7 +78,10 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 {
     UNREFERENCED_PARAMETER(Iterator);
 
-    LogInfo("Initializing renderer using API %d", CONFIGVAR_GET_INT("rdr_api"));
+    LogInfo("Initializing renderer using API %s", RdrGetApiName(CONFIGVAR_GET_INT("rdr_api")));
+
+    CONFIGVAR_SET_BOOLEAN("rdr_lefthanded", CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12 ||
+                                                CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D9);
 
     switch (CONFIGVAR_GET_INT("rdr_api"))
     {

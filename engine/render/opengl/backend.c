@@ -1,5 +1,7 @@
 #include "opengl.h"
 
+OPENGL_DATA GlData;
+
 static VOID Initialize(VOID)
 {
     LogInfo("Initializing OpenGL");
@@ -8,6 +10,12 @@ static VOID Initialize(VOID)
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &GlData.UniformBufferAlignment);
+
+    GlData.UniformBuffer =
+        GlCreateUniformBuffer(PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)) +
+                              PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_OBJECT_UNIFORM)));
 
     LogInfo("Successfully initialized OpenGL");
 }
@@ -25,18 +33,12 @@ static VOID BeginFrame(_In_ BOOLEAN Resized, _In_ PRENDER_SCENE_UNIFORM Uniform)
     ClearColour[3] = (UINT8)((ClearColourRaw >> 0) & 0xFF) / 255.0f;
 
     glClearColor(ClearColour[0], ClearColour[1], ClearColour[2], ClearColour[3]);
-    glClearDepth(0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glViewport(0, 0, RdrGetWidth(), RdrGetHeight());
     glScissor(0, 0, RdrGetWidth(), RdrGetHeight());
 
-    for (SIZE_T i = 0; i < stbds_shlenu(RdrShaders); i++)
-    {
-        GlSetUniform(RdrShaders[i].value, "type_UBO.UBO.CameraPosition", &Uniform->CameraPosition, GL_FLOAT, 3);
-        GlSetMatrixUniform(RdrShaders[i].value, "type_UBO.UBO.View", Uniform->View);
-        GlSetMatrixUniform(RdrShaders[i].value, "type_UBO.UBO.Projection", Uniform->Projection);
-    }
+    GlWriteUniformBuffer(GlData.UniformBuffer, 0, Uniform, sizeof(RENDER_SCENE_UNIFORM));
 }
 
 static VOID EndFrame(VOID)

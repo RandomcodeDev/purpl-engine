@@ -63,7 +63,7 @@ PCHAR EngGetAssetPath(_In_ ENGINE_ASSET_DIRECTORY Directory, _In_opt_z_ _Printf_
 
 #undef X
 
-ecs_entity_t EngineMainCamera;
+ecs_entity_t EngMainCamera;
 
 VOID EngDefineVariables(VOID)
 {
@@ -183,23 +183,7 @@ EngGetRuntime(VOID)
     return time(NULL) - Start;
 }
 
-VOID EngMainLoop(VOID)
-{
-    BOOLEAN Running;
-
-    Running = TRUE;
-    while (Running)
-    {
-        Running = VidUpdate();
-
-        EngStartFrame();
-        ecs_progress(EcsGetWorld(), (FLOAT)Delta);
-        EngEndFrame();
-    }
-}
-
-// TODO: integrate into EngMainLoop?
-VOID EngStartFrame(VOID)
+static VOID StartFrame(VOID)
 {
     UINT64 Hours;
     UINT64 Minutes;
@@ -232,10 +216,24 @@ VOID EngStartFrame(VOID)
     Resized = VidResized();
 }
 
-// TODO: integrate into EngMainLoop?
-VOID EngEndFrame(VOID)
+static VOID EndFrame(VOID)
 {
     Last = Now;
+}
+
+VOID EngMainLoop(VOID)
+{
+    BOOLEAN Running;
+
+    Running = TRUE;
+    while (Running)
+    {
+        Running = VidUpdate();
+
+        StartFrame();
+        ecs_progress(EcsGetWorld(), (FLOAT)Delta);
+        EndFrame();
+    }
 }
 
 VOID EngShutdown(VOID)
@@ -256,7 +254,7 @@ VOID EngShutdown(VOID)
 
 ecs_entity_t EngGetMainCamera(VOID)
 {
-    return EngineMainCamera;
+    return EngMainCamera;
 }
 
 VOID EngSetMainCamera(_In_ ecs_entity_t Camera)
@@ -265,7 +263,7 @@ VOID EngSetMainCamera(_In_ ecs_entity_t Camera)
     PCAMERA CameraComponent = ecs_get_mut(EcsGetWorld(), Camera, CAMERA);
     if (CameraComponent)
     {
-        EngineMainCamera = Camera;
+        EngMainCamera = Camera;
         EngUpdateCamera(CameraComponent);
     }
 }

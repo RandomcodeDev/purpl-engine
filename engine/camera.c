@@ -67,33 +67,33 @@ VOID EngUpdateCamera(_Inout_ PCAMERA Camera)
 
     if (Camera->Perspective)
     {
-        if (CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12)
-        {
+        //if (CONFIGVAR_GET_BOOLEAN("rdr_lefthanded"))
+        //{
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
             glm_perspective_lh_no((FLOAT)Camera->FieldOfView, (FLOAT)Camera->Aspect, (FLOAT)Camera->NearClip,
                                   (FLOAT)Camera->FarClip, Camera->Projection);
-        }
-        else
-        {
-            glm_lookat_rh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, -1.0, 0.0}, Camera->View);
-            glm_perspective_rh_no((FLOAT)Camera->FieldOfView, (FLOAT)Camera->Aspect, (FLOAT)Camera->NearClip,
-                                  (FLOAT)Camera->FarClip, Camera->Projection);
-        }
+        //}
+        //else
+        //{
+        //    glm_lookat_rh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
+        //    glm_perspective_rh_no((FLOAT)Camera->FieldOfView, (FLOAT)Camera->Aspect, (FLOAT)Camera->NearClip,
+        //                          (FLOAT)Camera->FarClip, Camera->Projection);
+        //}
     }
     else
     {
-        if (CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12)
-        {
+        //if (CONFIGVAR_GET_BOOLEAN("rdr_lefthanded"))
+        //{
             glm_lookat_lh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
             glm_ortho_lh_no(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
                             Camera->Projection);
-        }
-        else
-        {
-            glm_lookat_rh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, -1.0, 0.0}, Camera->View);
-            glm_ortho_rh_no(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
-                            Camera->Projection);
-        }
+        //}
+        //else
+        //{
+        //    glm_lookat_rh(Camera->Position, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, 1.0, 0.0}, Camera->View);
+        //    glm_ortho_rh_no(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera->NearClip, (FLOAT)Camera->FarClip,
+        //                    Camera->Projection);
+        //}
     }
 
     Camera->Changed = FALSE;

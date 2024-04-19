@@ -30,10 +30,19 @@ typedef struct OPENGL_MODEL_DATA
     UINT32 ElementCount;
 } OPENGL_MODEL_DATA, *POPENGL_MODEL_DATA;
 
+/// @brief Global OpenGL stuff
+typedef struct OPENGL_DATA
+{
+    UINT32 UniformBufferAlignment;
+    UINT32 UniformBuffer;
+} OPENGL_DATA, *POPENGL_DATA;
+
+extern OPENGL_DATA GlData;
+
 /// @brief Load a shader
 ///
 /// @param[in] Name The name of the shader to load
-/// 
+///
 /// @return The handle to the shader
 extern UINT64 GlLoadShader(_In_ PCSTR Name);
 
@@ -42,11 +51,11 @@ extern UINT64 GlLoadShader(_In_ PCSTR Name);
 /// @param[in] Shader The handle to the shader to destroy
 extern VOID GlDestroyShader(_In_ UINT64 Shader);
 
-/// @brief Set a uniform in a shader
-extern VOID GlSetUniform(RENDER_HANDLE Shader, PCSTR Name, PVOID Value, UINT32 Type, UINT32 Count);
+/// @brief Create a uniform buffer
+extern UINT32 GlCreateUniformBuffer(UINT32 Size);
 
-/// @brief Set a matrix uniform in a shader
-extern VOID GlSetMatrixUniform(RENDER_HANDLE Shader, PCSTR Name, mat4 Value);
+/// @brief Write data to a uniform buffer
+extern VOID GlWriteUniformBuffer(UINT32 UniformBuffer, UINT32 Offset, PVOID Data, UINT32 Size);
 
 /// @brief Create a model from a mesh
 ///

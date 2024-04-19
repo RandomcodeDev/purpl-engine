@@ -41,7 +41,13 @@ VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
 {
     POPENGL_MODEL_DATA ModelData = (POPENGL_MODEL_DATA)Model->MeshHandle;
 
-    GlSetMatrixUniform((UINT32)Model->Material->ShaderHandle, "type_OBJECT_UBO.OBJECT_UBO.Model", Uniform->Model);
+    GlWriteUniformBuffer(GlData.UniformBuffer, PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)),
+                         Uniform, sizeof(RENDER_OBJECT_UNIFORM));
+
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, GlData.UniformBuffer, 0, sizeof(RENDER_SCENE_UNIFORM));
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, GlData.UniformBuffer,
+                      PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)),
+                      sizeof(RENDER_OBJECT_UNIFORM));
 
     glUseProgram((UINT32)Model->Material->ShaderHandle);
 

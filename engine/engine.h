@@ -63,12 +63,6 @@ extern VOID EngInitialize(VOID);
 /// @brief The main loop of the engine
 extern VOID EngMainLoop(VOID);
 
-/// @brief Start a frame
-VOID EngStartFrame(VOID);
-
-/// @brief End a frame
-extern VOID EngEndFrame(VOID);
-
 /// @brief Shut down the engine
 extern VOID EngShutdown(VOID);
 

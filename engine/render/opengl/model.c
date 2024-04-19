@@ -2,12 +2,59 @@
 
 VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
 {
+    POPENGL_MODEL_DATA ModelData = CmnAlloc(1, sizeof(OPENGL_MODEL_DATA));
+    if (!ModelData)
+    {
+        CmnError("Failed to allocate memory for model data: %s", strerror(errno));
+    }
+
+    glGenVertexArrays(1, &ModelData->VertexArray);
+    glBindVertexArray(ModelData->VertexArray);
+
+    glGenBuffers(1, &ModelData->VertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, ModelData->VertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, Mesh->VertexCount * sizeof(VERTEX), Mesh->Vertices, GL_STATIC_DRAW);
+    glObjectLabel(GL_BUFFER, ModelData->VertexBuffer, 13, "Vertex buffer");
+
+    ModelData->ElementCount = (UINT32)Mesh->IndexCount;
+
+    glGenBuffers(1, &ModelData->IndexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ModelData->IndexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ModelData->ElementCount * sizeof(ivec3), Mesh->Indices, GL_STATIC_DRAW);
+    glObjectLabel(GL_BUFFER, ModelData->IndexBuffer, 12, "Index buffer");
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Position));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Colour));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, TextureCoordinate));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Normal));
+    glEnableVertexAttribArray(3);
+
+    glBindVertexArray(0);
+
+    Model->MeshHandle = (RENDER_HANDLE)ModelData;
 }
 
 VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
 {
+    POPENGL_MODEL_DATA ModelData = (POPENGL_MODEL_DATA)Model->MeshHandle;
+
+    GlSetMatrixUniform((UINT32)Model->Material->ShaderHandle, "type_OBJECT_UBO.OBJECT_UBO.Model", Uniform->Model);
+
+    glUseProgram((UINT32)Model->Material->ShaderHandle);
+
+    glBindVertexArray(ModelData->VertexArray);
+    glDrawElements(GL_TRIANGLES, ModelData->ElementCount * 3, GL_UNSIGNED_INT, NULL);
+    glBindVertexArray(0);
 }
 
-VOID GlDestroyModel(_In_ PMODEL Model)
+VOID GlDestroyModel(_Inout_ PMODEL Model)
 {
+    POPENGL_MODEL_DATA ModelData = (POPENGL_MODEL_DATA)Model->MeshHandle;
+    glDeleteVertexArrays(1, &ModelData->VertexArray);
+    glDeleteBuffers(1, &ModelData->IndexBuffer);
+    glDeleteBuffers(1, &ModelData->VertexBuffer);
+    CmnFree(Model->MeshHandle);
 }

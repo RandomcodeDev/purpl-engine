@@ -60,7 +60,7 @@ VOID RdrDefineVariables(VOID)
 }
 
 PURPL_MAKE_STRING_HASHMAP_ENTRY(SHADERMAP, RENDER_HANDLE);
-PSHADERMAP Shaders;
+PSHADERMAP RdrShaders;
 
 static VOID LoadShaders(VOID)
 {
@@ -68,7 +68,7 @@ static VOID LoadShaders(VOID)
 
     if (Backend.LoadShader)
     {
-        stbds_shput(Shaders, "main", Backend.LoadShader("main"));
+        stbds_shput(RdrShaders, "main", Backend.LoadShader("main"));
     }
 }
 
@@ -80,9 +80,6 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 
     switch (CONFIGVAR_GET_INT("rdr_api"))
     {
-    default:
-    case RenderApiNone:
-        break;
     case RenderApiDirect3D12:
         Dx12InitializeBackend(&Backend);
         break;
@@ -92,6 +89,8 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     case RenderApiOpenGL:
         GlInitializeBackend(&Backend);
         break;
+    default:
+        CmnError("Unknown renderer");
     }
 
     if (Backend.Initialize)
@@ -178,9 +177,9 @@ static VOID DestroyShaders(VOID)
 
     if (Backend.DestroyShader)
     {
-        for (SIZE_T i = 0; i < stbds_shlenu(Shaders); i++)
+        for (SIZE_T i = 0; i < stbds_shlenu(RdrShaders); i++)
         {
-            PSHADERMAP Pair = &Shaders[i];
+            PSHADERMAP Pair = &RdrShaders[i];
             LogDebug("Destroying shader %s", Pair->key);
             Backend.DestroyShader(Pair->value);
         }
@@ -233,7 +232,7 @@ VOID RdrReleaseTexture(_In_ RENDER_HANDLE TextureHandle)
 
 BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ RENDER_HANDLE TextureHandle, _In_z_ PCSTR ShaderName)
 {
-    RENDER_HANDLE ShaderHandle = ShaderName ? stbds_shget(Shaders, ShaderName) : 0;
+    RENDER_HANDLE ShaderHandle = ShaderName ? stbds_shget(RdrShaders, ShaderName) : 0;
     if (!Material || !TextureHandle || !ShaderName || !ShaderHandle)
     {
         if (Material)
@@ -318,7 +317,7 @@ PCSTR RdrGetApiName(_In_ RENDER_API Api)
     }
     else
     {
-        return Names[RenderApiNone];
+        return Names[0];
     }
 }
 

@@ -22,7 +22,6 @@
 /// @brief Graphics API
 typedef enum RENDER_API
 {
-    RenderApiNone,
     RenderApiVulkan,
     RenderApiDirect3D12,
     RenderApiDirect3D9,

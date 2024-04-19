@@ -74,7 +74,7 @@ PVOID VlkCreateShader(_In_z_ PCSTR Name)
 
     // TODO: when multiple types of "renderable" are added, make dynamic
     VkVertexInputAttributeDescription *VertexAttributeDescriptions = MeshVertexAttributeDescriptions;
-    SIZE_T VertexAttributeCount = PURPL_ARRAYSIZE(MeshVertexAttributeDescriptions);
+    UINT32 VertexAttributeCount = (UINT32)PURPL_ARRAYSIZE(MeshVertexAttributeDescriptions);
 
     VkPipelineInputAssemblyStateCreateInfo InputAssemblyState = {0};
     InputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

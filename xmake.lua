@@ -24,8 +24,8 @@ end
 set_project("purpl-engine")
 set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
-set_allowedplats("gdk", "gdkx", "windows", "linux", "freebsd", "switch", "psp", "ps3", "ps5")
-set_allowedarchs("gdk|x64", "gdkx|x64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc64", "ps5|x64")
+set_allowedplats("gdk", "gdkx", "xbox360", "windows", "linux", "freebsd", "switch", "psp", "ps3", "ps5")
+set_allowedarchs("gdk|x64", "gdkx|x64", "xbox360|powerpc64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc64", "ps5|x64")
 
 local switch_title_id = "0100694203488000"
 
@@ -35,7 +35,7 @@ local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
 local opengl = is_plat("gdk", "windows", "linux", "freebsd", "switchhb", "psp", "ps3")
 
 local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
-local use_mimalloc = not is_plat("switch", "psp", "ps3")
+local use_mimalloc = not is_plat("switch", "psp", "ps3", "xbox360")
 
 add_defines("PURPL_ENGINE")
 
@@ -71,11 +71,25 @@ if discord then
     add_includedirs(path.join("deps", "discord-rpc", "include"), path.join("deps", "rapidjson", "include"))
 end
 
+add_defines("flecs_STATIC", "FLECS_CUSTOM_BUILD", "FLECS_SYSTEM", "FLECS_MODULE", "FLECS_PIPELINE", "FLECS_PARSER", "FLECS_TIMER")
+add_includedirs(path.join("deps", "flecs", "include"))
+
 target("flecs")
     set_kind("static")
-    add_defines("FLECS_STATIC", "FLECS_CUSTOM_BUILD", "FLECS_SYSTEM", "FLECS_MODULE", "FLECS_PARSER", "FLECS_PIPELINE")
-    add_headerfiles(path.join("deps", "flecs", "flecs.h"))
-    add_files(path.join("deps", "flecs", "flecs.c"))
+    add_headerfiles(
+        path.join("deps", "flecs", "include", "**.h")
+    )
+    add_files(
+        path.join("deps", "flecs", "src", "*.c"),
+        path.join("deps", "flecs", "src", "datastructures", "**.c"),
+        path.join("deps", "flecs", "src", "storage", "**.c"),
+        path.join("deps", "flecs", "src", "addons", "log.c"),
+        path.join("deps", "flecs", "src", "addons", "module.c"),
+        path.join("deps", "flecs", "src", "addons", "parser.c"),
+        path.join("deps", "flecs", "src", "addons", "pipeline", "**.c"),
+        path.join("deps", "flecs", "src", "addons", "system", "**.c"),
+        path.join("deps", "flecs", "src", "addons", "timer.c")
+    )
     set_warnings("none")
     set_group("External")
 
@@ -86,16 +100,16 @@ target("flecs")
     on_load(fix_target)
 target_end()
 
-target("imgui")
-    set_kind("static")
-    add_defines("CIMGUI_NO_EXPORT", "IMGUI_STATIC")
-    add_headerfiles(path.join("deps", "cimgui", "*.h"), path.join("deps", "cimgui", "imgui", "*.h"))
-    add_files(path.join("deps", "cimgui", "*.cpp"), path.join("deps", "cimgui", "imgui", "*.cpp"))
-    set_warnings("none")
-    set_group("External")
-
-    on_load(fix_target)
-target_end()
+--target("imgui")
+--    set_kind("static")
+--    add_defines("CIMGUI_NO_EXPORT", "IMGUI_STATIC")
+--    add_headerfiles(path.join("deps", "cimgui", "*.h"), path.join("deps", "cimgui", "imgui", "*.h"))
+--    add_files(path.join("deps", "cimgui", "*.cpp"), path.join("deps", "cimgui", "imgui", "*.cpp"))
+--    set_warnings("none")
+--    set_group("External")
+--
+--    on_load(fix_target)
+--target_end()
 
 if vulkan then
     target("render-vk")
@@ -206,7 +220,15 @@ target("engine")
     set_kind("static")
     add_headerfiles(path.join("engine", "*.h"))
     add_files(path.join("engine", "*.c"))
-    add_deps("common", "cjson", "flecs", "imgui", "platform", "render", "util")
+    add_deps(
+        "common",
+        "cjson",
+        "flecs",
+  --      "imgui",
+        "platform",
+        "render",
+        "util"
+    )
     if discord then
         add_headerfiles(path.join("engine", "discord", "*.h"))
         add_files(path.join("engine", "discord", "*.c"))

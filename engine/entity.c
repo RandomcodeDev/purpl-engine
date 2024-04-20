@@ -19,41 +19,6 @@ Abstract:
 
 static ecs_world_t *EngineEcsWorld;
 
-static VOID EcsLog(_In_ INT Level, _In_z_ PCSTR File, _In_ INT Line, _In_z_ PCSTR Message)
-{
-    LOG_LEVEL RealLevel;
-
-    switch (Level)
-    {
-    case 0:
-        RealLevel = LogLevelTrace;
-        break;
-    case -2:
-        RealLevel = LogLevelWarning;
-        break;
-    case -3:
-        RealLevel = LogLevelError;
-        break;
-    case -4:
-        RealLevel = LogLevelFatal;
-        break;
-    default:
-        RealLevel = LogLevelDebug;
-        break;
-    }
-
-    RealLevel = LogLevelTrace;
-
-    if (RealLevel == LogLevelFatal)
-    {
-        CmnError("ECS error at %s:%d: %s", File, Line, Message);
-    }
-    else
-    {
-        LogMessage(RealLevel, File, Line, FALSE, "%s", Message);
-    }
-}
-
 VOID EcsDefineVariables(VOID)
 {
     CONFIGVAR_DEFINE_BOOLEAN("ecs_in_init", TRUE, FALSE, ConfigVarSideBoth, FALSE, TRUE);
@@ -63,17 +28,6 @@ VOID EcsDefineVariables(VOID)
 VOID EcsInitialize(VOID)
 {
     LogInfo("Initializing ECS");
-
-    ecs_os_set_api_defaults();
-    ecs_os_api_t OsApi = ecs_os_api;
-    OsApi.log_ = EcsLog;
-#if PURPL_USE_MIMALLOC
-    OsApi.malloc_ = mi_malloc;
-    OsApi.calloc_ = mi_calloc;
-    OsApi.realloc_ = mi_realloc;
-    OsApi.free_ = mi_free;
-#endif
-    ecs_os_set_api(&OsApi);
 
     LogTrace("Creating ECS world");
     EcsSetWorld(ecs_init());

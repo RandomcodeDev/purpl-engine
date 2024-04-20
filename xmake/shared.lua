@@ -1,10 +1,7 @@
 function setup_shared(root, directx, vulkan)
     add_includedirs(
         root,
-        path.join(root, "deps"),
-        path.join(root, "deps", "cimgui"),
-        path.join(root, "deps", "flecs"),
-        path.join(root, "deps", "mujoco", "include")
+        path.join(root, "deps")
     )
 
     if directx then

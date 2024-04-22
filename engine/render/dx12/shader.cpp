@@ -94,9 +94,6 @@ RENDER_HANDLE Dx12LoadShader(_In_z_ PCSTR Name)
     PsoDescription.PS.BytecodeLength = PixelShaderSize;
     PsoDescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     PsoDescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-    // TODO: figure out how to do depth
-    PsoDescription.DepthStencilState.DepthEnable = FALSE;
-    PsoDescription.DepthStencilState.StencilEnable = FALSE;
     PsoDescription.SampleMask = UINT32_MAX;
     PsoDescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     PsoDescription.NumRenderTargets = 1;

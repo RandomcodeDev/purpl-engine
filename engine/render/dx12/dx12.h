@@ -106,6 +106,7 @@ typedef struct DIRECTX12_TEXTURE
     DIRECTX12_BUFFER Buffer;
     UINT32 Width;
     UINT32 Height;
+    UINT16 Index;
 } DIRECTX12_TEXTURE, *PDIRECTX12_TEXTURE;
 
 typedef struct DIRECTX12_SCENE_UNIFORM
@@ -176,6 +177,8 @@ typedef struct DIRECTX12_DATA
 
     BOOLEAN Initialized;
     BOOLEAN InFrame;
+
+    UINT16 TextureCount;
 } DIRECTX12_DATA, *PDIRECTX12_DATA;
 
 extern DIRECTX12_DATA Dx12Data;
@@ -191,8 +194,15 @@ extern VOID Dx12EnableDebugLayer(VOID);
 /// @param[in] Name The name to give the object
 extern VOID Dx12NameObject(_Inout_ ID3D12Object *Object, _In_z_ PCSTR Name, ...);
 
+/// @brief Get the number of bytes per pixel for (some) image formats
+///
+/// @param[in] Format The format to get the BPP of
+///
+/// @return The BPP of the format, or 4 (because most common formats are that size)
+extern UINT8 Dx12GetBytesPerPixel(_In_ DXGI_FORMAT Format);
+
 /// @brief Wait for the GPU to be done
-VOID Dx12WaitForGpu(VOID);
+extern VOID Dx12WaitForGpu(VOID);
 
 /// @brief Create the device
 extern VOID Dx12CreateDevice(VOID);
@@ -262,7 +272,8 @@ extern VOID Dx12CopyDataToCpuBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID
 /// @param Buffer The buffer to upload to
 /// @param Data The data to upload
 /// @param Size The size of the data
-extern VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _In_ UINT64 Size);
+extern VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _In_ UINT64 Size,
+                                   _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription);
 
 /// @brief Create a buffer with data in it
 ///

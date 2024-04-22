@@ -73,3 +73,21 @@ VOID Dx12WaitForGpu(VOID)
 
     Dx12Data.FenceValues[Dx12Data.FrameIndex]++;
 }
+
+EXTERN_C
+UINT8 Dx12GetBytesPerPixel(_In_ DXGI_FORMAT Format)
+{
+    switch (Format)
+    {
+    case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+    case DXGI_FORMAT_R8G8B8A8_UNORM:
+    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+    case DXGI_FORMAT_R8G8B8A8_UINT:
+    case DXGI_FORMAT_R8G8B8A8_SNORM:
+    case DXGI_FORMAT_R8G8B8A8_SINT:
+    case DXGI_FORMAT_D32_FLOAT:
+    case DXGI_FORMAT_D24_UNORM_S8_UINT:
+    default:
+        return 4;
+    }
+}

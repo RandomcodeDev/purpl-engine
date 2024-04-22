@@ -43,7 +43,12 @@ VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ CONST D3D12_HEAP_PROP
     memset(Buffer, 0, sizeof(DIRECTX12_BUFFER));
     if (ResourceDescription->Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)
     {
-        Buffer->Size = ResourceDescription->Width * ResourceDescription->Height * Dx12GetPitch(ResourceDescription->Format);
+        Buffer->Size = ResourceDescription->Width * ResourceDescription->Height *
+                       Dx12GetBytesPerPixel(ResourceDescription->Format);
+    }
+    else
+    {
+        Buffer->Size = ResourceDescription->Width;
     }
 
     HRESULT_CHECK(Dx12Data.Device->CreateCommittedResource(HeapProperties, HeapFlags, ResourceDescription,
@@ -80,7 +85,8 @@ VOID Dx12CopyDataToCpuBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, 
 }
 
 EXTERN_C
-VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _In_ UINT64 Size)
+VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _In_ UINT64 Size,
+                            _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription)
 {
     if (!Buffer)
     {
@@ -90,16 +96,25 @@ VOID Dx12UploadDataToBuffer(_Inout_ PDIRECTX12_BUFFER Buffer, _In_ PVOID Data, _
     DIRECTX12_BUFFER UploadBuffer = {};
 
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC BufferDescription = CD3DX12_RESOURCE_DESC::Buffer(Size);
-    Dx12CreateBuffer(&UploadBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &BufferDescription,
+    CD3DX12_RESOURCE_DESC UploadResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Size);
+    Dx12CreateBuffer(&UploadBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &UploadResourceDescription,
                      D3D12_RESOURCE_STATE_COPY_SOURCE);
 
     Dx12CopyDataToCpuBuffer(&UploadBuffer, Data, Size);
 
-    D3D12_RESOURCE_BARRIER Barrier = CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_COMMON,
-                                                                          D3D12_RESOURCE_STATE_COPY_DEST);
-    Dx12Data.TransferCommandList->ResourceBarrier(1, &Barrier);
-    Dx12Data.TransferCommandList->CopyResource(Buffer->Resource, UploadBuffer.Resource);
+    if (ResourceDescription->Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+    {
+        D3D12_SUBRESOURCE_DATA SubresourceData = {};
+        SubresourceData.pData = Data;
+        SubresourceData.RowPitch = ResourceDescription->Width * Dx12GetBytesPerPixel(ResourceDescription->Format);
+        SubresourceData.SlicePitch = ResourceDescription->Height * Dx12GetBytesPerPixel(ResourceDescription->Format);
+        UpdateSubresources(Dx12Data.TransferCommandList, Buffer->Resource, UploadBuffer.Resource, 0, 0, 1,
+                           &SubresourceData);
+    }
+    else
+    {
+        Dx12Data.TransferCommandList->CopyResource(Buffer->Resource, UploadBuffer.Resource);
+    }
     Dx12Data.TransferCommandList->Close();
     Dx12Data.CommandQueue->ExecuteCommandLists(1, (ID3D12CommandList **)&Dx12Data.TransferCommandList);
 
@@ -117,7 +132,7 @@ VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
                               _In_ D3D12_RESOURCE_STATES ResourceState)
 {
     Dx12CreateBuffer(Buffer, HeapProperties, HeapFlags, ResourceDescription, D3D12_RESOURCE_STATE_COPY_DEST);
-    Dx12UploadDataToBuffer(Buffer, Data, Buffer->Size);
+    Dx12UploadDataToBuffer(Buffer, Data, Buffer->Size, ResourceDescription);
     D3D12_RESOURCE_BARRIER Barrier =
         CD3DX12_RESOURCE_BARRIER::Transition(Buffer->Resource, D3D12_RESOURCE_STATE_COPY_DEST, ResourceState);
     Dx12Data.TransferCommandList->ResourceBarrier(1, &Barrier);

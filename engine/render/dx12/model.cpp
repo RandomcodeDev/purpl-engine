@@ -51,11 +51,11 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
                                                                 Dx12Data.FrameIndex * sizeof(DIRECTX12_OBJECT_UNIFORM));
 
     PDIRECTX12_TEXTURE TextureData = (PDIRECTX12_TEXTURE)Model->Material->TextureHandle;
-    Dx12Data.CommandList->SetGraphicsRootShaderResourceView(Dx12RootParameterSampler,
-                                                            TextureData->Buffer.Resource->GetGPUVirtualAddress());
+    CD3DX12_GPU_DESCRIPTOR_HANDLE TextureDescriptor(
+        DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, GPU), TextureData->Index);
+    Dx12Data.CommandList->SetGraphicsRootDescriptorTable(Dx12RootParameterSampler, TextureDescriptor);
 
     Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState *)Model->Material->ShaderHandle);
-    Dx12Data.CommandList->SetGraphicsRootConstantBufferView(0, Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress());
     Dx12Data.CommandList->DrawIndexedInstanced(IndexBufferView.SizeInBytes / sizeof(INT32), 1, 0, 0, 0);
 }
 

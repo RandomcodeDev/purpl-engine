@@ -1,5 +1,6 @@
 #include "dx12.h"
 
+EXTERN_C
 RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture)
 {
     PDIRECTX12_TEXTURE TextureData = CmnAllocType(1, DIRECTX12_TEXTURE);
@@ -34,9 +35,13 @@ RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture)
     Dx12Data.Device->CreateShaderResourceView(TextureData->Buffer.Resource, &SrvDescription,
                                               DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, CPU));
 
+    // To know where this texture is in the heap for drawing
+    TextureData->Index = Dx12Data.TextureCount++;
+
     return (RENDER_HANDLE)TextureData;
 }
 
+EXTERN_C
 VOID Dx12ReleaseTexture(_In_ RENDER_HANDLE Handle)
 {
     PDIRECTX12_TEXTURE TextureData = (PDIRECTX12_TEXTURE)Handle;

@@ -18,7 +18,7 @@ Abstract:
     {                                                                                                                  \
         static CHAR Buffer[1024];                                                                                      \
                                                                                                                        \
-        if (Directory < 0 || Directory >= EngDataDirectoryCount)                                                       \
+        if (Directory < 0 || Directory >= Eng##Kind##DirectoryCount)                                                   \
         {                                                                                                              \
             memset(Buffer, 0, PURPL_ARRAYSIZE(Buffer));                                                                \
             return NULL;                                                                                               \

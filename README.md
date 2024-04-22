@@ -5,11 +5,11 @@ This is a game engine I'm making.
 ### Features
 
 - Written in portable, modular C11
-- xmake as the build system, it's like if CMake didn't suck and it's pretty clean
-- Diffuse lit textured 3D models using custom simple formats about as efficient (storage-wise, probably more efficient to parse) as OBJ and PNG
+- xmake as the build system, it's like if CMake didn't suck (except the docs are worse)
+- Diffuse lit ~~textured~~ 3D models using custom simple formats about as efficient (storage-wise, also probably more efficient to parse) as OBJ and PNG
 - Tools for converting to the engine's formats
-- Decent Vulkan backend (still being reorganized)
-- Beginning of a DirectX 12 backend (can't clear the screen yet, but close)
+- Decent Vulkan backend (still being reorganized, can't render yet)
+- DirectX 12 and OpenGL backends that can do untextured lit models
 - No DLL shenanigans (yet)
 
 ### Interesting stuff I guess
@@ -24,7 +24,7 @@ The engine is made of these components (some have prefixes, like NT, others don'
 The support libraries include the following:
 
 - [`common`](common) (Cmn) - Shared common functions. Existance and some functions inspired by Quake 2.
-- [`platform`](platform) (Plat/Vid) - Platform abstraction, handles the compiler(s) used for that platform but also OS functions,
+- [`platform`](platform) (As/Plat/Vid) - Platform abstraction, handles the compiler(s) used for that platform but also OS functions,
   also handles "video" (another Quake 2 idea sort of), through functions that hide most details about the underlying window and such.
 - [`texture`](util/texture) (no prefix) - Texture format library. ZSTD compression, basically a header and pixels in ~~RGB~~, RGBA, or ~~depth
 (32-bit float)~~ formats.

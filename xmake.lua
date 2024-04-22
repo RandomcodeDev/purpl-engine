@@ -71,7 +71,7 @@ if discord then
     add_includedirs(path.join("deps", "discord-rpc", "include"), path.join("deps", "rapidjson", "include"))
 end
 
-add_defines("flecs_STATIC", "FLECS_CUSTOM_BUILD", "FLECS_SYSTEM", "FLECS_MODULE", "FLECS_PIPELINE", "FLECS_PARSER", "FLECS_TIMER")
+add_defines("flecs_STATIC", "FLECS_CUSTOM_BUILD", "FLECS_SYSTEM", "FLECS_MODULE", "FLECS_PIPELINE", "FLECS_PARSER", "FLECS_TIMER", "FLECS_OS_API_IMPL")
 add_includedirs(path.join("deps", "flecs", "include"))
 
 target("flecs")

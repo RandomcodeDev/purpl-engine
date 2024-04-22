@@ -36,11 +36,11 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     EngSetMainCamera(CameraEntity);
 
     ecs_entity_t TestEntity = EcsCreateEntity("test");
-    PMESH TestMesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, "chief.pmdl"));
+    RENDER_HANDLE TestTexture = RdrLoadTexture("chief.ptex");
     MATERIAL TestMaterial = {0};
-    RdrCreateMaterial(&TestMaterial, (RENDER_HANDLE)1, "main");
+    RdrCreateMaterial(&TestMaterial, TestTexture, "main");
     MODEL TestModel = {0};
-    RdrCreateModel(&TestModel, TestMesh, &TestMaterial);
+    RdrLoadModel(&TestModel, "chief.pmdl", &TestMaterial);
     ecs_add(EcsGetWorld(), TestEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
 
@@ -48,11 +48,10 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, -180.0}, {1.0, 1.0, 1.0}});
 
     ecs_entity_t GroundEntity = EcsCreateEntity("ground");
-    PMESH GroundMesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, "ground.pmdl"));
     MATERIAL GroundMaterial = {0};
-    RdrCreateMaterial(&GroundMaterial, (RENDER_HANDLE)1, "main");
+    RdrCreateMaterial(&GroundMaterial, TestTexture, "main");
     MODEL GroundModel = {0};
-    RdrCreateModel(&GroundModel, GroundMesh, &GroundMaterial);
+    RdrLoadModel(&GroundModel, "ground.pmdl", &GroundMaterial);
     ecs_add(EcsGetWorld(), GroundEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
 
@@ -65,11 +64,10 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     RdrDestroyModel(&TestModel);
     RdrDestroyMaterial(&TestMaterial);
-    CmnFree(TestMesh);
+    RdrDestroyTexture(TestTexture);
 
     RdrDestroyModel(&GroundModel);
     RdrDestroyMaterial(&GroundMaterial);
-    CmnFree(GroundMesh);
 
     EngShutdown();
     CmnShutdown();

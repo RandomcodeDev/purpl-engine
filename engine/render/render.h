@@ -108,15 +108,15 @@ extern ECS_SYSTEM_DECLARE(RdrEndFrame);
 
 /// @brief Use a texture
 ///
-/// @param[in] Texture The texture to use
+/// @param[in] Name The name of the texture to load
 ///
-/// @return A texture handle. Must not outlive the source texture.
-extern RENDER_HANDLE RdrUseTexture(_In_ PTEXTURE Texture);
+/// @return A texture handle.
+extern RENDER_HANDLE RdrLoadTexture(_In_z_ PCSTR Name);
 
 /// @brief Release a texture
 ///
 /// @param[in] TextureHandle The texture handle to release
-extern VOID RdrReleaseTexture(_In_ RENDER_HANDLE TextureHandle);
+extern VOID RdrDestroyTexture(_In_ RENDER_HANDLE TextureHandle);
 
 /// @brief Create a material
 ///
@@ -139,7 +139,7 @@ extern VOID RdrDestroyMaterial(_In_ PMATERIAL Material);
 /// @param[in] Material The material to use
 ///
 /// @return A model. This must not outlive the source mesh.
-extern BOOLEAN RdrCreateModel(_Out_ PMODEL Model, _In_ PMESH Mesh, _In_ PMATERIAL Material);
+extern BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_ PMESH Mesh, _In_ PMATERIAL Material);
 
 /// @brief Destroy a model
 ///

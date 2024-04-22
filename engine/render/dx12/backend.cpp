@@ -107,12 +107,12 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
 
     DIRECTX12_SET_UNIFORM(Dx12Data.UniformBufferAddress, Uniform);
 
-    ID3D12DescriptorHeap *Heaps[] = {Dx12Data.ShaderHeap};
+    ID3D12DescriptorHeap *Heaps[] = {Dx12Data.SrvHeap};
     CommandList->SetDescriptorHeaps(PURPL_ARRAYSIZE(Heaps), Heaps);
 
-    CommandList->SetGraphicsRootConstantBufferView(0, Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress() +
-                                                          Dx12Data.FrameIndex * sizeof(DIRECTX12_SCENE_UNIFORM));
-
+    CommandList->SetGraphicsRootConstantBufferView(Dx12RootParameterSceneUniform,
+                                                   Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress() +
+                                                       Dx12Data.FrameIndex * sizeof(DIRECTX12_SCENE_UNIFORM));
 
     UINT64 ClearColourRaw = CONFIGVAR_GET_INT("rdr_clear_colour");
     vec4 ClearColour;
@@ -238,10 +238,10 @@ static VOID Shutdown(VOID)
         Dx12Data.DepthStencil->Release();
     }
 
-    if (Dx12Data.ShaderHeap)
+    if (Dx12Data.SrvHeap)
     {
         LogDebug("Releasing shader descriptor heap");
-        Dx12Data.ShaderHeap->Release();
+        Dx12Data.SrvHeap->Release();
     }
 
     if (Dx12Data.DsvHeap)
@@ -324,10 +324,14 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->LoadShader = Dx12LoadShader;
     Backend->DestroyShader = Dx12DestroyShader;
 
+    Backend->UseTexture = Dx12UseTexture;
+    Backend->ReleaseTexture = Dx12ReleaseTexture;
+
     Backend->CreateModel = Dx12CreateModel;
     Backend->DrawModel = Dx12DrawModel;
     Backend->DestroyModel = Dx12DestroyModel;
 
+    // sure would be nice if C had these
     Backend->GetGpuName = []() { return (PCSTR)Dx12Data.AdapterName; };
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));

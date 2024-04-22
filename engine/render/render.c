@@ -215,23 +215,36 @@ VOID RenderImport(_In_ ecs_world_t *World)
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 
-RENDER_HANDLE RdrUseTexture(_In_ PTEXTURE Texture)
+RENDER_HANDLE RdrLoadTexture(_In_z_ PCSTR Name)
 {
-    if (Backend.UseTexture)
+    PTEXTURE Texture = LoadTexture(EngGetAssetPath(EngAssetDirectoryTextures, Name));
+
+    if (Texture)
     {
-        return Backend.UseTexture(Texture);
+        if (Backend.UseTexture)
+        {
+            RENDER_HANDLE Handle = Backend.UseTexture(Texture);
+            CmnFree(Texture); // Not needed anymore, should be uploaded to the GPU
+            return Handle;
+        }
+        else
+        {
+            return (RENDER_HANDLE)Texture;
+        }
     }
-    else
-    {
-        return (RENDER_HANDLE)Texture;
-    }
+
+    return (RENDER_HANDLE)0;
 }
 
-VOID RdrReleaseTexture(_In_ RENDER_HANDLE TextureHandle)
+VOID RdrDestroyTexture(_In_ RENDER_HANDLE TextureHandle)
 {
     if (Backend.ReleaseTexture)
     {
         Backend.ReleaseTexture(TextureHandle);
+    }
+    else
+    {
+        CmnFree((PTEXTURE)TextureHandle);
     }
 }
 
@@ -266,12 +279,14 @@ VOID RdrDestroyMaterial(_In_ PMATERIAL Material)
     }
 }
 
-BOOLEAN RdrCreateModel(_Out_ PMODEL Model, _In_ PMESH Mesh, _In_ PMATERIAL Material)
+BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_ PCSTR Name, _In_ PMATERIAL Material)
 {
-    if (!Model || !Mesh || !Material)
+    if (!Model || !Name || !Material)
     {
         return FALSE;
     }
+
+    PMESH Mesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, Name));
 
     Model->Material = Material;
     if (Backend.CreateModel)
@@ -314,7 +329,7 @@ UINT32 RdrGetHeight(VOID)
 
 PCSTR RdrGetApiName(_In_ RENDER_API Api)
 {
-    static CONST PCSTR Names[] = {"Unknown", "Vulkan", "DirectX 12", "OpenGL"};
+    static CONST PCSTR Names[] = {"Vulkan", "DirectX 12", "OpenGL", "Unknown"};
 
     if ((UINT32)Api < PURPL_ARRAYSIZE(Names))
     {
@@ -322,7 +337,7 @@ PCSTR RdrGetApiName(_In_ RENDER_API Api)
     }
     else
     {
-        return Names[0];
+        return Names[PURPL_ARRAYSIZE(Names) - 1];
     }
 }
 

@@ -20,12 +20,12 @@ VOID Dx12CreateRootSignature(VOID)
     DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0,
                              D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
 
-    CD3DX12_ROOT_PARAMETER1 RootParameters[3];
-    RootParameters[0].InitAsConstantBufferView(0, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
+    CD3DX12_ROOT_PARAMETER1 RootParameters[Dx12RootParameterCount];
+    RootParameters[Dx12RootParameterSceneUniform].InitAsConstantBufferView(0, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
                                                D3D12_SHADER_VISIBILITY_VERTEX);
-    RootParameters[1].InitAsConstantBufferView(1, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
+    RootParameters[Dx12RootParameterObjectUniform].InitAsConstantBufferView(1, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
                                                D3D12_SHADER_VISIBILITY_VERTEX);
-    RootParameters[2].InitAsDescriptorTable(1, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_PIXEL);
+    RootParameters[Dx12RootParameterSampler].InitAsDescriptorTable(1, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_PIXEL);
 
     D3D12_STATIC_SAMPLER_DESC Sampler = {};
     Sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -143,15 +143,15 @@ VOID Dx12CreateUniformBuffer(_Out_ PDIRECTX12_BUFFER UniformBuffer, _Out_ PVOID 
     UniformViewDescription.BufferLocation = UniformBuffer->Resource->GetGPUVirtualAddress();
     UniformViewDescription.SizeInBytes = Size;
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE CpuHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.ShaderHeap, CPU), 1,
-                                            Dx12Data.ShaderDescriptorSize);
+    CD3DX12_CPU_DESCRIPTOR_HANDLE CpuHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, CPU), 1,
+                                            Dx12Data.SrvDescriptorSize);
 
     for (UINT32 i = 0; i < DIRECTX12_FRAME_COUNT; i++)
     {
         Dx12Data.Device->CreateConstantBufferView(&UniformViewDescription, CpuHandle);
 
         UniformViewDescription.BufferLocation += Size;
-        CpuHandle.Offset(Dx12Data.ShaderDescriptorSize);
+        CpuHandle.Offset(Dx12Data.SrvDescriptorSize);
     }
 
     CD3DX12_RANGE Range(0, 0);

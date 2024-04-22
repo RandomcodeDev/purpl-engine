@@ -101,6 +101,13 @@ typedef struct DIRECTX12_BUFFER
     UINT64 Size;
 } DIRECTX12_BUFFER, *PDIRECTX12_BUFFER;
 
+typedef struct DIRECTX12_TEXTURE
+{
+    DIRECTX12_BUFFER Buffer;
+    UINT32 Width;
+    UINT32 Height;
+} DIRECTX12_TEXTURE, *PDIRECTX12_TEXTURE;
+
 typedef struct DIRECTX12_SCENE_UNIFORM
 {
     RENDER_SCENE_UNIFORM Data;
@@ -127,6 +134,15 @@ typedef struct DIRECTX12_MODEL_DATA
     PDIRECTX12_OBJECT_UNIFORM UniformBufferAddress;
 } DIRECTX12_MODEL_DATA, *PDIRECTX12_MODEL_DATA;
 
+/// @brief Root parameter index
+typedef enum DIRECTX12_ROOT_PARAMETER
+{
+    Dx12RootParameterSceneUniform,
+    Dx12RootParameterObjectUniform,
+    Dx12RootParameterSampler,
+    Dx12RootParameterCount
+} DIRECTX12_ROOT_PARAMETER, *PDIRECTX12_ROOT_PARAMETER;
+
 /// @brief Data for the DirectX 12 backend
 typedef struct DIRECTX12_DATA
 {
@@ -144,8 +160,8 @@ typedef struct DIRECTX12_DATA
     UINT32 RtvDescriptorSize;
     ID3D12DescriptorHeap *DsvHeap;
     UINT32 DsvDescriptorSize;
-    ID3D12DescriptorHeap *ShaderHeap;
-    UINT32 ShaderDescriptorSize;
+    ID3D12DescriptorHeap *SrvHeap;
+    UINT32 SrvDescriptorSize;
     ID3D12Resource *RenderTargets[DIRECTX12_FRAME_COUNT];
     ID3D12Resource *DepthStencil;
     ID3D12GraphicsCommandList1 *CommandList;
@@ -260,6 +276,18 @@ extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
                                      _In_ CONST D3D12_HEAP_PROPERTIES *HeapProperties, _In_ D3D12_HEAP_FLAGS HeapFlags,
                                      _In_ CONST D3D12_RESOURCE_DESC *ResourceDescription,
                                      _In_ D3D12_RESOURCE_STATES ResourceState);
+
+/// @brief Use a texture
+///
+/// @param[in] Texture The texture to use
+///
+/// @return The handle to the texture
+extern RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture);
+
+/// @brief Destroy a texture
+///
+/// @param[in] Handle The handle to the texture to destroy
+extern VOID Dx12ReleaseTexture(_In_ RENDER_HANDLE Handle);
 
 /// @brief Create a model from a mesh
 ///

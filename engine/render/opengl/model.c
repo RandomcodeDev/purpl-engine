@@ -2,7 +2,7 @@
 
 VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
 {
-    POPENGL_MODEL_DATA ModelData = CmnAlloc(1, sizeof(OPENGL_MODEL_DATA));
+    POPENGL_MODEL_DATA ModelData = CmnAllocType(1, OPENGL_MODEL_DATA);
     if (!ModelData)
     {
         CmnError("Failed to allocate memory for model data: %s", strerror(errno));

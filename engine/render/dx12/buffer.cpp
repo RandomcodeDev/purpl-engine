@@ -25,9 +25,9 @@ VOID Dx12CreateHeaps(VOID)
     ShaderHeapDescription.NumDescriptors = (RENDER_MAX_MODEL_COUNT + 1) * DIRECTX12_FRAME_COUNT;
     ShaderHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     ShaderHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(&ShaderHeapDescription, IID_PPV_ARGS(&Dx12Data.ShaderHeap)));
-    Dx12Data.ShaderDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(ShaderHeapDescription.Type);
-    Dx12NameObject(Dx12Data.ShaderHeap, "Shader descriptor heap");
+    HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(&ShaderHeapDescription, IID_PPV_ARGS(&Dx12Data.SrvHeap)));
+    Dx12Data.SrvDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(ShaderHeapDescription.Type);
+    Dx12NameObject(Dx12Data.SrvHeap, "Shader descriptor heap");
 }
 
 EXTERN_C
@@ -41,7 +41,10 @@ VOID Dx12CreateBuffer(_Out_ PDIRECTX12_BUFFER Buffer, _In_ CONST D3D12_HEAP_PROP
     }
 
     memset(Buffer, 0, sizeof(DIRECTX12_BUFFER));
-    Buffer->Size = ResourceDescription->Width;
+    if (ResourceDescription->Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+    {
+        Buffer->Size = ResourceDescription->Width * ResourceDescription->Height * Dx12GetPitch(ResourceDescription->Format);
+    }
 
     HRESULT_CHECK(Dx12Data.Device->CreateCommittedResource(HeapProperties, HeapFlags, ResourceDescription,
                                                            D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,

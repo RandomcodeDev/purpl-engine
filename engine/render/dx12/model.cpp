@@ -3,7 +3,7 @@
 EXTERN_C
 VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
 {
-    PDIRECTX12_MODEL_DATA Data = (PDIRECTX12_MODEL_DATA)CmnAlloc(1, sizeof(DIRECTX12_MODEL_DATA));
+    PDIRECTX12_MODEL_DATA Data = CmnAllocType(1, DIRECTX12_MODEL_DATA);
     if (!Data)
     {
         CmnError("Failed to allocate backend data for model: %s", strerror(errno));
@@ -46,11 +46,15 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
 
     DIRECTX12_SET_UNIFORM(ModelData->UniformBufferAddress, Uniform);
 
-    Dx12Data.CommandList->SetGraphicsRootConstantBufferView(1,
+    Dx12Data.CommandList->SetGraphicsRootConstantBufferView(Dx12RootParameterObjectUniform,
                                                             ModelData->UniformBuffer.Resource->GetGPUVirtualAddress() +
                                                                 Dx12Data.FrameIndex * sizeof(DIRECTX12_OBJECT_UNIFORM));
 
-    Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState*)Model->Material->ShaderHandle);
+    PDIRECTX12_TEXTURE TextureData = (PDIRECTX12_TEXTURE)Model->Material->TextureHandle;
+    Dx12Data.CommandList->SetGraphicsRootShaderResourceView(Dx12RootParameterSampler,
+                                                            TextureData->Buffer.Resource->GetGPUVirtualAddress());
+
+    Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState *)Model->Material->ShaderHandle);
     Dx12Data.CommandList->SetGraphicsRootConstantBufferView(0, Dx12Data.UniformBuffer.Resource->GetGPUVirtualAddress());
     Dx12Data.CommandList->DrawIndexedInstanced(IndexBufferView.SizeInBytes / sizeof(INT32), 1, 0, 0, 0);
 }

@@ -56,7 +56,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
 
     ecs_add(EcsGetWorld(), GroundEntity, TRANSFORM);
-    ecs_set(EcsGetWorld(), GroundEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 90.0}, {1.0, 1.0, 1.0}});
+    ecs_set(EcsGetWorld(), GroundEntity, TRANSFORM, {{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0, 90.0}, {1.0, 1.0, 1.0}});
 
     CONFIGVAR_SET_INT("rdr_clear_colour", 0x000000FF);
 

@@ -23,7 +23,7 @@
 #include "mathutil.h"
 
 #ifdef PURPL_DISCORD
-#include "discord/discord.h"
+#include "discord.h"
 #endif
 
 /// @brief The engine's data directory

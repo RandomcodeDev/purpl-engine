@@ -229,9 +229,11 @@ target("engine")
         "render",
         "util"
     )
-    if discord then
-        add_headerfiles(path.join("engine", "discord", "*.h"))
-        add_files(path.join("engine", "discord", "*.c"))
+
+    if not discord then
+        remove_headerfiles(path.join("engine", "discord.h"))
+        remove_files(path.join("engine", "discord.c"))
+    else
         add_deps("discord")
     end
 
@@ -272,8 +274,7 @@ target("purpl")
         })
 
         for _, pair in ipairs({
-            {path.absolute(path.join("assets", "assets_dir.pak")), path.join(target:targetdir(), "assets_dir.pak")},
-            {path.absolute(path.join("assets", "assets_00.pak")), path.join(target:targetdir(), "assets_00.pak")}
+            {path.absolute(path.join("assets", "assets_*.pak")), target:targetdir()}
         }) do
             source = pair[1]
             dest = pair[2]

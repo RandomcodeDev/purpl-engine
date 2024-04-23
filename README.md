@@ -2,6 +2,11 @@
 
 This is a game engine I'm making.
 
+### Screenshots
+
+Master Chief model/texture for testing, this is the DirectX 12 backend:
+<img src="images/chief-textured-lit-dx12.png">
+
 ### Features
 
 - Written in portable, modular C11
@@ -16,7 +21,7 @@ This is a game engine I'm making.
 
 The engine is made of these components (some have prefixes, like NT, others don't, like Win32):
 
-- [`engine`](engine) (Eng) - Currently contains a camera structure and function, a transform structure, and some ECS stuff.
+- [`engine`](engine) (Eng) - Currently contains a camera structure and function, a transform structure, Discord rich presence, and some ECS stuff.
 - [`render`](engine/render) (Rdr) - Currently being reorganized, can clear the screen with Vulkan or draw a really scuffed wireframe
   version of models with a software renderer I'll probably not finish for a long time.
   (you can still see the old code at commit `8ef342c041c0af9ad6aa49f142ea6a0db9e05792`).

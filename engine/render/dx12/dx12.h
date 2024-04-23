@@ -293,7 +293,7 @@ extern VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
 /// @param[in] Texture The texture to use
 ///
 /// @return The handle to the texture
-extern RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture);
+extern RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture, _In_z_ PCSTR Name);
 
 /// @brief Destroy a texture
 ///
@@ -304,7 +304,7 @@ extern VOID Dx12ReleaseTexture(_In_ RENDER_HANDLE Handle);
 ///
 /// @param[in,out] Model The model to create
 /// @param[in] Mesh The mesh to use
-extern VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh);
+extern VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
 
 /// @brief Draw a model
 ///

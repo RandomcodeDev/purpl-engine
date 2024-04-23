@@ -11,7 +11,7 @@ static VOID Initialize(VOID)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &GlData.UniformBufferAlignment);
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, (INT32 *)&GlData.UniformBufferAlignment);
 
     GlData.UniformBuffer =
         GlCreateUniformBuffer(PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)) +

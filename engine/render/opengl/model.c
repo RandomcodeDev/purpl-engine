@@ -1,6 +1,6 @@
 #include "opengl.h"
 
-VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
+VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
 {
     POPENGL_MODEL_DATA ModelData = CmnAllocType(1, OPENGL_MODEL_DATA);
     if (!ModelData)

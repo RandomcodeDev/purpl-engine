@@ -223,7 +223,7 @@ RENDER_HANDLE RdrLoadTexture(_In_z_ PCSTR Name)
     {
         if (Backend.UseTexture)
         {
-            RENDER_HANDLE Handle = Backend.UseTexture(Texture);
+            RENDER_HANDLE Handle = Backend.UseTexture(Texture, Name);
             CmnFree(Texture); // Not needed anymore, should be uploaded to the GPU
             return Handle;
         }
@@ -244,7 +244,7 @@ VOID RdrDestroyTexture(_In_ RENDER_HANDLE TextureHandle)
     }
     else
     {
-        CmnFree((PTEXTURE)TextureHandle);
+        CmnFree(TextureHandle);
     }
 }
 
@@ -279,7 +279,7 @@ VOID RdrDestroyMaterial(_In_ PMATERIAL Material)
     }
 }
 
-BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_ PCSTR Name, _In_ PMATERIAL Material)
+BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIAL Material)
 {
     if (!Model || !Name || !Material)
     {
@@ -291,7 +291,7 @@ BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_ PCSTR Name, _In_ PMATERIAL Materia
     Model->Material = Material;
     if (Backend.CreateModel)
     {
-        Backend.CreateModel(Model, Mesh);
+        Backend.CreateModel(Model, Mesh, Name);
     }
     else
     {

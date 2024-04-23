@@ -1,7 +1,7 @@
 #include "dx12.h"
 
 EXTERN_C
-RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture)
+RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture, _In_z_ PCSTR Name)
 {
     PDIRECTX12_TEXTURE TextureData = CmnAllocType(1, DIRECTX12_TEXTURE);
     if (!TextureData)
@@ -19,13 +19,14 @@ RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture)
         break;
     case TextureFormatRgba8:
     default:
-        Format = DXGI_FORMAT_R8G8B8A8_UINT;
+        Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
         break;
     }
 
     CD3DX12_RESOURCE_DESC ResourceDescription = CD3DX12_RESOURCE_DESC::Tex2D(Format, Texture->Width, Texture->Height);
     Dx12CreateBufferWithData(&TextureData->Buffer, Texture->Pixels, &HeapProperties, D3D12_HEAP_FLAG_NONE,
                              &ResourceDescription, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    Dx12NameObject(TextureData->Buffer.Resource, "Texture %s", Name);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC SrvDescription = {};
     SrvDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;

@@ -1,7 +1,7 @@
 #include "dx12.h"
 
 EXTERN_C
-VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
+VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
 {
     PDIRECTX12_MODEL_DATA Data = CmnAllocType(1, DIRECTX12_MODEL_DATA);
     if (!Data)
@@ -15,12 +15,15 @@ VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh)
     CD3DX12_RESOURCE_DESC ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Mesh->VertexCount * sizeof(VERTEX));
     Dx12CreateBufferWithData(&Data->VertexBuffer, Mesh->Vertices, &HeapProperties, D3D12_HEAP_FLAG_NONE,
                              &ResourceDescription, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+    Dx12NameObject(Data->VertexBuffer.Resource, "Vertex buffer %s", Name);
     ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Mesh->IndexCount * sizeof(ivec3));
     Dx12CreateBufferWithData(&Data->IndexBuffer, Mesh->Indices, &HeapProperties, D3D12_HEAP_FLAG_NONE,
                              &ResourceDescription, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+    Dx12NameObject(Data->IndexBuffer.Resource, "Index buffer %s", Name);
 
     Dx12CreateUniformBuffer(&Data->UniformBuffer, (PVOID *)&Data->UniformBufferAddress,
                             sizeof(DIRECTX12_OBJECT_UNIFORM));
+    Dx12NameObject(Data->UniformBuffer.Resource, "Uniform buffer %s", Name);
 }
 
 VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)

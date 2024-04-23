@@ -61,7 +61,7 @@ extern VOID GlWriteUniformBuffer(UINT32 UniformBuffer, UINT32 Offset, PVOID Data
 ///
 /// @param[in,out] Model The model to create
 /// @param[in] Mesh The mesh to use
-extern VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh);
+extern VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
 
 /// @brief Draw a model
 ///

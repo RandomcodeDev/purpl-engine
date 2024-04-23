@@ -69,8 +69,8 @@ static UINT64 EcsNow(VOID)
 static VOID EcsGetTime(ecs_time_t* Time)
 {
     UINT64 Now = PlatGetMilliseconds();
-    Time->sec = Now / 1000;
-    Time->nanosec = (Now - Time->sec * 1000) * 1000000;
+    Time->sec = (UINT32)(Now / 1000);
+    Time->nanosec = (UINT32)((Now - Time->sec * 1000) * 1000000);
 }
 
 static VOID EcsLog(_In_ INT32 Level, _In_z_ PCSTR File, _In_ INT32 Line, _In_z_ PCSTR Message)

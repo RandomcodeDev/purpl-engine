@@ -78,13 +78,13 @@ typedef struct RENDER_BACKEND
     RENDER_HANDLE (*LoadShader)(_In_z_ PCSTR Name);
     VOID (*DestroyShader)(_In_ RENDER_HANDLE Handle);
 
-    RENDER_HANDLE (*UseTexture)(_In_ PTEXTURE Texture);
+    RENDER_HANDLE (*UseTexture)(_In_ PTEXTURE Texture, _In_z_ PCSTR Name);
     VOID (*ReleaseTexture)(_In_ RENDER_HANDLE Handle);
 
     VOID (*CreateMaterial)(_Inout_ PMATERIAL Material);
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
 
-    VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh);
+    VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
     VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
@@ -135,11 +135,11 @@ extern VOID RdrDestroyMaterial(_In_ PMATERIAL Material);
 /// @brief Create a model
 ///
 /// @param[out] Model The model to create
-/// @param[in] Mesh The mesh to use
+/// @param[in] Name The name of the mesh to use
 /// @param[in] Material The material to use
 ///
 /// @return A model. This must not outlive the source mesh.
-extern BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_ PMESH Mesh, _In_ PMATERIAL Material);
+extern BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIAL Material);
 
 /// @brief Destroy a model
 ///

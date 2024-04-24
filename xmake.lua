@@ -274,11 +274,14 @@ target("purpl")
         })
 
         for _, pair in ipairs({
-            {path.absolute(path.join("assets", "assets_*.pak")), target:targetdir()}
+            {path.absolute(path.join("assets", "assets_dir.pak")), path.join(target:targetdir(), "assets_dir.pak")},
+            {path.absolute(path.join("assets", "assets_00.pak")), path.join(target:targetdir(), "assets_00.pak")}
         }) do
             source = pair[1]
             dest = pair[2]
-            os.ln(source, dest)
+            if not os.exists(dest) then
+                os.ln(source, dest)
+            end
         end
 
         if is_plat("gdk", "gdkx") then

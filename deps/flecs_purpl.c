@@ -30,9 +30,9 @@ static PVOID EcsThreadJoin(ecs_os_thread_t Thread)
     return (PVOID)AsJoinThread((PAS_THREAD)Thread);
 }
 
-static ecs_os_thread_id_t EcsThreadSelf(ecs_os_thread_t Thread)
+static ecs_os_thread_id_t EcsThreadSelf(VOID)
 {
-    // Threads don't have IDs
+    // Purpl threads don't have IDs
     return 0;
 }
 
@@ -56,12 +56,12 @@ static VOID EcsMutexUnlock(ecs_os_mutex_t Mutex)
     AsUnlockMutex((PAS_MUTEX)Mutex);
 }
 
-static VOID EcsSleep(UINT32 Seconds, UINT32 Nanoseconds)
+static VOID EcsSleep(INT32 Seconds, INT32 Nanoseconds)
 {
     PlatSleep(Seconds * 1000 + Nanoseconds / 1000000);
 }
 
-static UINT64 EcsNow(VOID)
+static unsigned long EcsNow(VOID)
 {
     return PlatGetMilliseconds() / 1000;
 }

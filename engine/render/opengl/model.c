@@ -23,6 +23,8 @@ VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ModelData->ElementCount * sizeof(ivec3), Mesh->Indices, GL_STATIC_DRAW);
     glObjectLabel(GL_BUFFER, ModelData->IndexBuffer, 12, "Index buffer");
 
+    glBindTexture(GL_TEXTURE_2D, (UINT32)Model->Material->TextureHandle);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Position));
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Colour));

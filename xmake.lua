@@ -80,6 +80,7 @@ target("flecs")
         path.join("deps", "flecs", "include", "**.h")
     )
     add_files(
+        path.join("deps", "flecs_purpl.c"),
         path.join("deps", "flecs", "src", "*.c"),
         path.join("deps", "flecs", "src", "datastructures", "**.c"),
         path.join("deps", "flecs", "src", "storage", "**.c"),

@@ -329,7 +329,7 @@ UINT32 RdrGetHeight(VOID)
 
 PCSTR RdrGetApiName(_In_ RENDER_API Api)
 {
-    static CONST PCSTR Names[] = {"Vulkan", "DirectX 12", "OpenGL", "Unknown"};
+    static CONST PCSTR Names[] = {"Vulkan", "DirectX 12", "DirectX 9", "OpenGL", "Unknown"};
 
     if ((UINT32)Api < PURPL_ARRAYSIZE(Names))
     {

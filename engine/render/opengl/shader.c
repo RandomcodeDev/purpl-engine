@@ -107,7 +107,7 @@ UINT32 GlCreateUniformBuffer(UINT32 Size)
     }
 
     glBindBuffer(GL_UNIFORM_BUFFER, Buffer);
-    glBufferData(GL_UNIFORM_BUFFER, Size, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, Size, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     glObjectLabel(GL_BUFFER, Buffer, 14, "Uniform buffer");

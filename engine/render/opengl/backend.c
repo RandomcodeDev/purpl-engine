@@ -61,6 +61,9 @@ VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->LoadShader = GlLoadShader;
     Backend->DestroyShader = GlDestroyShader;
 
+    Backend->UseTexture = GlUseTexture;
+    Backend->ReleaseTexture = GlReleaseTexture;
+
     Backend->CreateModel = GlCreateModel;
     Backend->DrawModel = GlDrawModel;
     Backend->DestroyModel = GlDestroyModel;

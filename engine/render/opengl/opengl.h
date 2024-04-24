@@ -57,6 +57,12 @@ extern UINT32 GlCreateUniformBuffer(UINT32 Size);
 /// @brief Write data to a uniform buffer
 extern VOID GlWriteUniformBuffer(UINT32 UniformBuffer, UINT32 Offset, PVOID Data, UINT32 Size);
 
+/// @brief Use a texture
+extern RENDER_HANDLE GlUseTexture(_In_ PTEXTURE Texture, _In_z_ PCSTR Name);
+
+/// @brief Release a texture
+extern VOID GlReleaseTexture(_In_ RENDER_HANDLE Handle);
+
 /// @brief Create a model from a mesh
 ///
 /// @param[in,out] Model The model to create

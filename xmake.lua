@@ -278,6 +278,10 @@ target("purpl")
         }) do
             source = pair[1]
             dest = pair[2]
+            dir = os.directory(dest)
+            if not os.exists(dir) then
+                os.mkdir(dir)
+            end
             if not os.exists(dest) then
                 os.ln(source, dest)
             end

@@ -278,13 +278,10 @@ target("purpl")
         }) do
             source = pair[1]
             dest = pair[2]
-            dir = path.directory(dest)
-            if not os.exists(dir) then
-                os.mkdir(dir)
-            end
             if not os.exists(dest) then
-                os.ln(source, dest)
+                os.mkdir(dest)
             end
+            os.ln(source, dest)
         end
 
         if is_plat("gdk", "gdkx") then

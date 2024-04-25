@@ -14,6 +14,7 @@
 #include "common/filesystem.h"
 #include "common/log.h"
 
+#include "platform/input.h"
 #include "platform/video.h"
 
 #include "render/render.h"

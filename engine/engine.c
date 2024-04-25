@@ -152,6 +152,7 @@ Return Value:
     LogInfo(PURPL_BUILD_TYPE " engine running on %s", PlatGetDescription());
 
     VidInitialize(CONFIGVAR_GET_INT("rdr_api") == RenderApiOpenGL);
+    InInitialize();
     EcsInitialize();
 
     LogInfo("Successfully initialized engine, data directory is %s", EngDataDirectory);
@@ -230,6 +231,8 @@ VOID EngMainLoop(VOID)
     {
         Running = VidUpdate();
 
+        InUpdateState();
+
         StartFrame();
         ecs_progress(EcsGetWorld(), (FLOAT)Delta);
         EndFrame();
@@ -245,6 +248,7 @@ VOID EngShutdown(VOID)
 #endif
     EcsShutdown();
     RdrShutdown();
+    InShutdown();
     VidShutdown();
 
     CmnFree(EngDataDirectory);

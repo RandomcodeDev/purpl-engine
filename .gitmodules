@@ -22,9 +22,6 @@
 [submodule "deps/doxygen-awesome-css"]
 	path = deps/doxygen-awesome-css
 	url = https://github.com/jothepro/doxygen-awesome-css.git
-[submodule "deps/ufbx"]
-	path = deps/ufbx
-	url = https://github.com/ufbx/ufbx
 [submodule "deps/discord-rpc"]
 	path = deps/discord-rpc
 	url = https://github.com/RandomcodeDev/discord-rpc
@@ -34,15 +31,6 @@
 [submodule "deps/mujoco"]
 	path = deps/mujoco
 	url = https://github.com/google-deepmind/mujoco
-[submodule "deps/sdflib"]
-	path = deps/external/sdflib
-	url = https://github.com/UPC-ViRVIG/SdfLib
-[submodule "deps/ccd"]
-	path = deps/external/ccd
-	url = https://github.com/danfis/libccd
-[submodule "deps/qhull"]
-	path = deps/external/qhull
-	url = https://github.com/qhull/qhull
 [submodule "support"]
 	path = support
 	url = https://github.com/RandomcodeDev/purpl-support.git
@@ -52,3 +40,6 @@
 [submodule "deps/flecs"]
 	path = deps/flecs
 	url = https://github.com/RandomcodeDev/flecs
+[submodule "deps/physx"]
+	path = deps/physx
+	url = https://github.com/RandomcodeDev/PhysX

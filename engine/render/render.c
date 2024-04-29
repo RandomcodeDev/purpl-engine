@@ -143,14 +143,14 @@ VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
     }
 
     PMODEL Model = ecs_field(Iterator, MODEL, 1);
-    PTRANSFORM Transform = ecs_field(Iterator, TRANSFORM, 2);
+//    PPOSITION Transform = ecs_field(Iterator, TRANSFORM, 2);
 
     if (Backend.DrawModel)
     {
         for (INT32 i = 0; i < Iterator->count; i++)
         {
             RENDER_OBJECT_UNIFORM Uniform = {0};
-            MthCreateTransformMatrix(&Transform[i], Uniform.Model);
+//            MthCreateTransformMatrix(&Transform[i], Uniform.Model);
             Backend.DrawModel(&Model[i], &Uniform);
         }
     }
@@ -211,7 +211,7 @@ VOID RenderImport(_In_ ecs_world_t *World)
 
     ECS_SYSTEM_DEFINE(World, RdrInitialize, EcsOnStart);
     ECS_SYSTEM_DEFINE(World, RdrBeginFrame, EcsPreUpdate);
-    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, MODEL, TRANSFORM);
+//    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, MODEL, TRANSFORM);
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 

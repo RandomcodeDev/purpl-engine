@@ -125,8 +125,9 @@ and other things.
 
 ## Data Storage
 
-- Images are stored in a simple format defined in [`util/texture/texture.h`](https://github.com/RandomcodeDev/purpl-engine/blob/main/util/texture/texture.h).
+- Images are stored in a simple format defined in [`support/util/texture.h`](https://github.com/RandomcodeDev/purpl-support/blob/main/util/texture.h).
   Through the usage of Zstandard compression, similar sizes to PNG are achieved.
+- Meshes are stored in a simple format defined in [`support/util/mesh.h`](https://github.com/RandomcodeDev/purpl-support/blob/main/util/mesh.h).
 - TOML will be used for configuration files and metadata
 - Levels will likely consist of geometry and entities, no format has been designed yet
 - Non-changing game assets such as models, textures, shaders, levels, audio,
@@ -147,10 +148,9 @@ and other things.
   on platforms like macOS and Linux (Xcode and Neovim), using [xmake](https://github.com/xmake-io/xmake)
   as a build system
 - Various open source libraries with non-strict licenses are used
-- Main game code is stored on GitHub, but assets and precompiled dependencies
-  are stored on a personal Gitea server to get around file size limits. Any
-  closed platform (console) related material (binaries, abstraction code) is to
-  be kept in a private repository on GitHub.
+- Main game code is stored on GitHub, but assets are stored on a personal Gitea
+  server to get around file size limits. Any closed platform (console) related
+  material (binaries, abstraction code) is to be kept in a private repository on GitHub.
 - Due to very simple formats, assets can largely be developed with any image
   editor and text editor, as well as some form of audio editor, and 3D modelling
   software
@@ -163,7 +163,8 @@ xmake makes it quite straightforward to build for other platforms, including the
 ability to easily separate closed build system logic for consoles.
 
 - Windows 10/11 are supported using the Microsoft Game Development Kit, and rendering
-  will use Direct3D 12 or Vulkan, based on user preference
+  will use Direct3D 12, Direct3D 9, OpenGL, or Vulkan, based on user preference
+- Windows XP/7 might be somewhat supported with Direct3D 9 or OpenGL
 - Linux and other Unix-like systems are/can be supported. Alternate binaries supporting
   systems not using the most common `libc` for a given platform may eventually
   be provided (although all core and external code thus far is open source and

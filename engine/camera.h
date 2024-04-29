@@ -10,8 +10,6 @@
 
 #include "platform/video.h"
 
-#include "mathutil.h"
-
 /// @brief A camera
 typedef struct CAMERA
 {

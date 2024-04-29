@@ -39,7 +39,7 @@ local use_mimalloc = not is_plat("switch", "psp", "ps3", "xbox360")
 
 add_defines("PURPL_ENGINE")
 
-includes(path.join("xmake", "shared.lua"))
+includes(path.join("buildscripts", "shared.lua"))
 setup_shared("$(scriptdir)", directx, vulkan, opengl)
 
 includes(path.join("support", "support.lua"))
@@ -125,7 +125,7 @@ if vulkan then
             path.join("engine", "render", "vk", "*.cpp")
         )
 
-        add_deps("util")
+        add_deps("common", "platform", "util")
 
         if is_plat("switch") then
             add_switch_vulkan_links()
@@ -147,7 +147,7 @@ if opengl then
             path.join("engine", "render", "opengl", "*.c")
         )
 
-        add_deps("util")
+        add_deps("common", "platform", "util")
 
         set_group("Engine/Render System")
 
@@ -165,6 +165,8 @@ if directx then
             --path.join("engine", "render", "dx12", "*.c"),
             path.join("engine", "render", "dx12", "*.cpp")
         )
+
+        add_deps("common", "platform", "util")
 
         if get_config("toolchain") == "mingw" then
             add_defines("__REQUIRED_RPCNDR_H_VERSION__=475")
@@ -200,7 +202,7 @@ target("render")
     add_headerfiles(path.join("engine", "render", "*.h"))
     add_files(path.join("engine", "render", "*.c"))
 
-    add_deps("util")
+    add_deps("common", "platform", "util")
 
     if directx then
         add_deps("render-dx12")
@@ -217,15 +219,44 @@ target("render")
     on_load(fix_target)
 target_end()
 
+includes(path.join("deps", "physx", "physx", "compiler", "public", "physx.lua"))
+setup_physx(path.join("deps", "physx", "physx"), fix_target, "External", "none")
+
+target("physics-physx")
+    set_kind("static")
+    add_headerfiles(path.join("engine", "physics", "physx", "*.h"))
+    add_files(path.join("engine", "physics", "physx", "*.cpp"))
+
+    add_deps("common", "PhysX", "platform", "util")
+
+    set_group("Engine/Physics System")
+
+    on_load(fix_target)
+target_end()
+
+target("physics")
+    set_kind("static")
+    add_headerfiles(path.join("engine", "physics", "*.h"))
+    add_files(path.join("engine", "physics", "*.c"))
+
+    add_deps("common", "platform", "util")
+
+    set_group("Engine/Physics System")
+
+    on_load(fix_target)
+target_end()
+
 target("engine")
     set_kind("static")
     add_headerfiles(path.join("engine", "*.h"))
     add_files(path.join("engine", "*.c"))
+
     add_deps(
         "common",
         "cjson",
         "flecs",
   --      "imgui",
+        "physics",
         "platform",
         "render",
         "util"

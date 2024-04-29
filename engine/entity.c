@@ -68,7 +68,6 @@ extern VOID CameraImport(_In_ ecs_world_t *World);
 #ifdef PURPL_DISCORD
 extern VOID DiscordImport(_In_ ecs_world_t *World);
 #endif
-extern VOID MathImport(_In_ ecs_world_t *World);
 extern VOID RenderImport(_In_ ecs_world_t *World);
 
 VOID EcsSetWorld(_In_ ecs_world_t *World)
@@ -92,7 +91,6 @@ VOID EcsSetWorld(_In_ ecs_world_t *World)
 #ifdef PURPL_DISCORD
     ECS_IMPORT(EngineEcsWorld, Discord);
 #endif
-    ECS_IMPORT(EngineEcsWorld, Math);
     ECS_IMPORT(EngineEcsWorld, Render);
 }
 

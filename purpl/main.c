@@ -44,8 +44,8 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_add(EcsGetWorld(), TestEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
 
-    ecs_add(EcsGetWorld(), TestEntity, TRANSFORM);
-    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, -180.0}, {1.0, 1.0, 1.0}});
+//    ecs_add(EcsGetWorld(), TestEntity, TRANSFORM);
+//    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, -180.0}, {1.0, 1.0, 1.0}});
 
     ecs_entity_t GroundEntity = EcsCreateEntity("ground");
     MATERIAL GroundMaterial = {0};
@@ -55,8 +55,8 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_add(EcsGetWorld(), GroundEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
 
-    ecs_add(EcsGetWorld(), GroundEntity, TRANSFORM);
-    ecs_set(EcsGetWorld(), GroundEntity, TRANSFORM, {{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0, 90.0}, {1.0, 1.0, 1.0}});
+//    ecs_add(EcsGetWorld(), GroundEntity, TRANSFORM);
+//    ecs_set(EcsGetWorld(), GroundEntity, TRANSFORM, {{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0, 90.0}, {1.0, 1.0, 1.0}});
 
     CONFIGVAR_SET_INT("rdr_clear_colour", 0x000000FF);
 

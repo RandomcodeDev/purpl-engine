@@ -220,7 +220,7 @@ target("render")
 target_end()
 
 includes(path.join("deps", "physx", "physx", "compiler", "public", "physx.lua"))
-setup_physx(path.join("deps", "physx", "physx"), fix_target, "External", "none")
+setup_physx(path.join("deps", "physx", "physx"), fix_target, "External/PhysX SDK", "none")
 
 target("physics-physx")
     set_kind("static")

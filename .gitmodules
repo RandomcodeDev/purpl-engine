@@ -28,9 +28,6 @@
 [submodule "deps/rapidjson"]
 	path = deps/rapidjson
 	url = https://github.com/Tencent/rapidjson
-[submodule "deps/mujoco"]
-	path = deps/mujoco
-	url = https://github.com/google-deepmind/mujoco
 [submodule "support"]
 	path = support
 	url = https://github.com/RandomcodeDev/purpl-support.git

@@ -27,12 +27,10 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     EngInitialize();
 
     ecs_entity_t CameraEntity = EcsCreateEntity("camera");
-    ecs_add(EcsGetWorld(), CameraEntity, CAMERA);
-    CAMERA Camera;
     DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    EngInitializePerspectiveCamera((vec3){0.0, 2.0, 2.0}, (vec4){1.0, 0.0, 0.0, 45.0}, 78.0, Aspect, 0.1, 1000.0,
-                                   &Camera);
-    ecs_set_ptr(EcsGetWorld(), CameraEntity, CAMERA, &Camera);
+    CamAddPerspective(CameraEntity, 78.0, Aspect, 0.1, 1000.0);
+    ecs_set(EcsGetWorld(), CameraEntity, POSITION, {{0.0, 2.0, 2.0}});
+    ecs_set(EcsGetWorld(), CameraEntity, ROTATION, {{1.0, 0.0, 0.0, 45.0}});
     EngSetMainCamera(CameraEntity);
 
     ecs_entity_t TestEntity = EcsCreateEntity("test");
@@ -41,22 +39,22 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     RdrCreateMaterial(&TestMaterial, TestTexture, "main");
     MODEL TestModel = {0};
     RdrLoadModel(&TestModel, "chief.pmdl", &TestMaterial);
-    ecs_add(EcsGetWorld(), TestEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
 
-//    ecs_add(EcsGetWorld(), TestEntity, TRANSFORM);
-//    ecs_set(EcsGetWorld(), TestEntity, TRANSFORM, {{0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, -180.0}, {1.0, 1.0, 1.0}});
+    ecs_set(EcsGetWorld(), TestEntity, POSITION, {{0.0, 0.0, 0.0}});
+    ecs_set(EcsGetWorld(), TestEntity, ROTATION, {{0.0, 1.0, 0.0, -180.0}});
+    ecs_set(EcsGetWorld(), TestEntity, SCALE, {{1.0, 1.0, 1.0}});
 
-    ecs_entity_t GroundEntity = EcsCreateEntity("ground");
+        ecs_entity_t GroundEntity = EcsCreateEntity("ground");
     MATERIAL GroundMaterial = {0};
     RdrCreateMaterial(&GroundMaterial, TestTexture, "main");
     MODEL GroundModel = {0};
     RdrLoadModel(&GroundModel, "ground.pmdl", &GroundMaterial);
-    ecs_add(EcsGetWorld(), GroundEntity, MODEL);
     ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
 
-//    ecs_add(EcsGetWorld(), GroundEntity, TRANSFORM);
-//    ecs_set(EcsGetWorld(), GroundEntity, TRANSFORM, {{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0, 90.0}, {1.0, 1.0, 1.0}});
+    ecs_set(EcsGetWorld(), GroundEntity, POSITION, {{0.0, -0.5, 0.0}});
+    ecs_set(EcsGetWorld(), GroundEntity, ROTATION, {{1.0, 0.0, 0.0, 90.0}});
+    ecs_set(EcsGetWorld(), GroundEntity, SCALE, {{1.0, 1.0, 1.0}});
 
     CONFIGVAR_SET_INT("rdr_clear_colour", 0x000000FF);
 

@@ -79,7 +79,7 @@ static VOID EcsLog(_In_ INT32 Level, _In_z_ PCSTR File, _In_ INT32 Line, _In_z_ 
 
     switch (Level)
     {
-    case 0:
+    case 1:
         RealLevel = LogLevelDebug;
         break;
     case -2:
@@ -92,6 +92,7 @@ static VOID EcsLog(_In_ INT32 Level, _In_z_ PCSTR File, _In_ INT32 Line, _In_z_ 
         RealLevel = LogLevelFatal;
         break;
     default:
+    case 0:
         RealLevel = LogLevelTrace;
         break;
     }

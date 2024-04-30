@@ -11,11 +11,7 @@
 #include "platform/video.h"
 
 /// @brief A camera
-typedef struct CAMERA
-{
-    vec3 Position;
-    vec4 Rotation;
-
+PURPL_MAKE_COMPONENT(struct, CAMERA, {
     DOUBLE NearClip;
     DOUBLE FarClip;
     BOOLEAN Perspective;
@@ -25,31 +21,22 @@ typedef struct CAMERA
 
     mat4 View;
     mat4 Projection;
-    BOOLEAN Changed; // Set to TRUE to allow the above to be recalculated
-} CAMERA, *PCAMERA;
-extern ECS_COMPONENT_DECLARE(CAMERA);
+})
 
-/// @brief Initializes a perspective camera.
+/// @brief Add a perspective camera to the given entity
 ///
-/// @param[in] Position    The camera's position.
-/// @param[in] Rotation    The camera's rotation.
+/// @param[in] Entity      The entity to add the camera to.
 /// @param[in] FieldOfView The camera's FOV.
 /// @param[in] Aspect      The aspect ratio of the camera.
 /// @param[in] NearClip    The near clipping distance.
 /// @param[in] FarClip     The far clipping distance.
-/// @param[out] Camera      The camera to initialize.
-extern VOID EngInitializePerspectiveCamera(_In_ vec3 Position, _In_ vec4 Rotation, _In_ DOUBLE FieldOfView,
-                                        _In_ DOUBLE Aspect, _In_ DOUBLE NearClip, _In_ DOUBLE FarClip,
-                                        _Out_ PCAMERA Camera);
+extern VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ DOUBLE Aspect,
+                              _In_ DOUBLE NearClip, _In_ DOUBLE FarClip);
 
-/// @brief Initializes an orthographic camera.
+/// @brief Add a perspective camera to the given entity
 ///
-/// @param[in] Position The position of the camera.
-/// @param[in] Rotation The rotation of the camera.
+/// @param[in] Entity      The entity to add the camera to.
 /// @param[out] Camera   The camera to initialize.
-extern VOID EngInitializeOrthographicCamera(_In_ vec3 Position, _In_ vec4 Rotation, _Out_ PCAMERA Camera);
+extern VOID CamAddOrthographic(_In_ ecs_entity_t Entity);
 
-/// @brief Updates a camera's matrices if necessary.
-///
-/// @param[in,out] Camera The camera to update.
-extern VOID EngUpdateCamera(_Inout_ PCAMERA Camera);
+extern ECS_SYSTEM_DECLARE(CamUpdate);

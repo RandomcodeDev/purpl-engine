@@ -113,9 +113,7 @@ VOID DiscordImport(_In_ ecs_world_t *World)
     ECS_MODULE(World, Discord);
 
     ECS_SYSTEM_DEFINE(World, DiscordInitialize, EcsOnStart);
-    ecs_system(World, {.entity = ecs_entity(World, {.name = "DiscordUpdate", .add = {ecs_dependson(EcsOnUpdate)}}),
-                       .callback = DiscordUpdate,
-                       .interval = DISCORD_UPDATE_INTERVAL});
+    ECS_SYSTEM_EX(World, DiscordUpdate, EcsOnUpdate, false, DISCORD_UPDATE_INTERVAL);
 }
 
 VOID DiscordShutdown(VOID)

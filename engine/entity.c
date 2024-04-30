@@ -65,6 +65,7 @@ ecs_entity_t EcsCreateEntity(_In_opt_ PCSTR Name)
 }
 
 extern VOID CameraImport(_In_ ecs_world_t *World);
+extern VOID CoreImport(_In_ ecs_world_t *World);
 #ifdef PURPL_DISCORD
 extern VOID DiscordImport(_In_ ecs_world_t *World);
 #endif
@@ -87,6 +88,9 @@ VOID EcsSetWorld(_In_ ecs_world_t *World)
 #endif
 
     LogTrace("Importing components and systems");
+
+    ECS_IMPORT(EngineEcsWorld, Core);
+
     ECS_IMPORT(EngineEcsWorld, Camera);
 #ifdef PURPL_DISCORD
     ECS_IMPORT(EngineEcsWorld, Discord);

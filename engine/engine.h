@@ -20,7 +20,9 @@
 #include "render/render.h"
 
 #include "camera.h"
+#include "components.h"
 #include "entity.h"
+#include "mathutil.h"
 
 #ifdef PURPL_DISCORD
 #include "discord.h"

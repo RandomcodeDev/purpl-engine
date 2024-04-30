@@ -268,7 +268,6 @@ VOID EngSetMainCamera(_In_ ecs_entity_t Camera)
     if (CameraComponent)
     {
         EngMainCamera = Camera;
-        EngUpdateCamera(CameraComponent);
     }
 }
 

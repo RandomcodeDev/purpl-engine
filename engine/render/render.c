@@ -119,12 +119,10 @@ VOID RdrBeginFrame(_In_ ecs_iter_t *Iterator)
     UNREFERENCED_PARAMETER(Iterator);
 
     BOOLEAN Resized = EngHasVideoResized() || RdrGetWidth() != LastWidth || RdrGetHeight() != LastHeight;
-    CONST PCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
-    Camera->Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    Camera->Changed = Camera->Changed || Resized;
-    EngUpdateCamera(Camera);
+    PCCAMERA Camera = ecs_get(EcsGetWorld(), EngGetMainCamera(), CAMERA);
+    PCPOSITION Position = ecs_get(EcsGetWorld(), EngGetMainCamera(), POSITION);
     RENDER_SCENE_UNIFORM Uniform = {0};
-    glm_vec3_copy(Camera->Position, Uniform.CameraPosition);
+    glm_vec3_copy(Position, Uniform.CameraPosition);
     glm_mat4_copy(Camera->View, Uniform.View);
     glm_mat4_copy(Camera->Projection, Uniform.Projection);
 
@@ -143,14 +141,17 @@ VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
     }
 
     PMODEL Model = ecs_field(Iterator, MODEL, 1);
-//    PPOSITION Transform = ecs_field(Iterator, TRANSFORM, 2);
 
     if (Backend.DrawModel)
     {
         for (INT32 i = 0; i < Iterator->count; i++)
         {
             RENDER_OBJECT_UNIFORM Uniform = {0};
-//            MthCreateTransformMatrix(&Transform[i], Uniform.Model);
+            PCPOSITION Position = ecs_get(Iterator->world, Iterator->entities[i], POSITION);
+            PCROTATION Rotation = ecs_get(Iterator->world, Iterator->entities[i], ROTATION);
+            PCSCALE Scale = ecs_get(Iterator->world, Iterator->entities[i], SCALE);
+            MthCreateTransformMatrix(Position ? Position->Value : NULL, Rotation ? Rotation->Value : NULL,
+                                     Scale ? Scale->Value : NULL, Uniform.Model);
             Backend.DrawModel(&Model[i], &Uniform);
         }
     }
@@ -211,7 +212,7 @@ VOID RenderImport(_In_ ecs_world_t *World)
 
     ECS_SYSTEM_DEFINE(World, RdrInitialize, EcsOnStart);
     ECS_SYSTEM_DEFINE(World, RdrBeginFrame, EcsPreUpdate);
-//    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, MODEL, TRANSFORM);
+    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, MODEL);
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 

@@ -43,6 +43,7 @@ END_EXTERN_C
 #include "vk_mem_alloc.h"
 
 #define VULKAN_FRAME_COUNT 3
+#define VULKAN_MAX_DESCRIPTOR_SETS 1000
 
 /// @brief Hard error if a VkResult isn't VK_SUCCESS
 ///
@@ -92,8 +93,6 @@ typedef struct VULKAN_GPU_INFO
     UINT32 PresentFamilyIndex;
 
     VkExtensionProperties *ExtensionProperties;
-
-    VkPhysicalDeviceFeatures SupportedFeatures;
 
     BOOLEAN Usable;
 } VULKAN_GPU_INFO, *PVULKAN_GPU_INFO;
@@ -215,11 +214,11 @@ typedef struct VULKAN_DATA
     /// @brief Whether the swap chain was recreated
     BOOLEAN Resized;
 
-    /// @brief Uniform buffers
-    VULKAN_BUFFER UniformBuffers[VULKAN_FRAME_COUNT];
+    /// @brief Uniform buffer
+    VULKAN_BUFFER UniformBuffer;
 
-    /// @brief Addresses where uniform buffers are mapped
-    PVOID UniformBufferAddresses[VULKAN_FRAME_COUNT];
+    /// @brief Address where uniform buffer is mapped
+    PVOID UniformBufferAddress;
 
     /// @brief Sampler
     VkSampler Sampler;
@@ -441,5 +440,20 @@ extern VOID VlkCreateScreenFramebuffers(VOID);
 /// @brief Destroy screen framebuffers
 extern VOID VlkDestroyScreenFramebuffers(VOID);
 
-/// @brief Load shaders
-extern VOID VlkLoadShaders(VOID);
+/// @brief Create the descriptor pool
+extern VOID VlkCreateDescriptorPool(VOID);
+
+/// @brief Create the descriptor set layout
+extern VOID VlkCreateDescriptorSetLayout(VOID);
+
+/// @brief Create the pipeline layout
+extern VOID VlkCreatePipelineLayout(VOID);
+
+/// @brief Create the uniform buffer
+extern VOID VlkCreateUniformBuffer(VOID);
+
+/// @brief Load a shader
+extern RENDER_HANDLE VlkLoadShader(_In_z_ PCSTR Name);
+
+/// @brief Destroy a shader
+extern VOID VlkDestroyShader(_In_ RENDER_HANDLE Shader);

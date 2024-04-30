@@ -186,17 +186,6 @@ VOID VlkEnumeratePhysicalDevices(VOID)
             continue;
         }
 
-        LogTrace("Getting features");
-        vkGetPhysicalDeviceFeatures(CurrentGpu->Device, &CurrentGpu->SupportedFeatures);
-        if (!CurrentGpu->SupportedFeatures.samplerAnisotropy)
-        {
-            CurrentGpu->Usable = FALSE;
-            LogError("Ignoring device %u because it doesn't support sampler "
-                     "anisotropy",
-                     i + 1);
-            continue;
-        }
-
         LogTrace("Getting memory properties");
         vkGetPhysicalDeviceMemoryProperties(CurrentGpu->Device, &CurrentGpu->MemoryProperties);
         for (i = 0; i < CurrentGpu->MemoryProperties.memoryHeapCount; i++)
@@ -255,31 +244,17 @@ VOID VlkCreateLogicalDevice(VOID)
     VkPhysicalDeviceFeatures DeviceFeatures = {0};
     DeviceFeatures.samplerAnisotropy = TRUE;
 
-    // VkPhysicalDeviceDescriptorIndexingFeatures DescriptorIndexingFeatures =
-    // {0}; DescriptorIndexingFeatures.sType =
-    // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-    // DescriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind
-    // = TRUE;
-    // DescriptorIndexingFeatures.descriptorBindingSampledImageUpdateAfterBind =
-    // TRUE;
-
-    // VkPhysicalDeviceRobustness2FeaturesEXT DeviceRobustness2Features = {0};
-    // DeviceRobustness2Features.sType =
-    // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
-    // DeviceRobustness2Features.nullDescriptor = TRUE;
-    // DeviceRobustness2Features.pNext = &DescriptorIndexingFeatures;
-
-    VkPhysicalDeviceVulkan12Features Device12Features = {0};
-    Device12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-    Device12Features.bufferDeviceAddress = TRUE;
-    Device12Features.bufferDeviceAddressCaptureReplay = TRUE;
+    //VkPhysicalDeviceVulkan12Features Device12Features = {0};
+    //Device12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    //Device12Features.bufferDeviceAddress = TRUE;
+    //Device12Features.bufferDeviceAddressCaptureReplay = TRUE;
 
     DeviceCreateInformation.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     DeviceCreateInformation.pQueueCreateInfos = QueueCreateInfos;
     DeviceCreateInformation.pEnabledFeatures = &DeviceFeatures;
     DeviceCreateInformation.ppEnabledExtensionNames = RequiredDeviceExtensions;
     DeviceCreateInformation.enabledExtensionCount = PURPL_ARRAYSIZE(RequiredDeviceExtensions);
-    //    DeviceCreateInformation.pNext = &Device12Features;
+    //DeviceCreateInformation.pNext = &DevicePerStageDescriptorSetFeaturesNV;
 
     LogTrace("Calling vkCreateDevice");
     VULKAN_CHECK(

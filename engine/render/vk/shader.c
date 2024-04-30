@@ -2,12 +2,37 @@
 
 static CONST VkVertexInputAttributeDescription MeshVertexAttributeDescriptions[] = {
     {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VERTEX, Position)},
-    {0, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VERTEX, Colour)},
-    {0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(VERTEX, TextureCoordinate)},
-    {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VERTEX, Normal)},
+    {1, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VERTEX, Colour)},
+    {2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(VERTEX, TextureCoordinate)},
+    {3, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VERTEX, Normal)},
 };
 
-PVOID VlkCreateShader(_In_z_ PCSTR Name)
+VOID VlkCreatePipelineLayout(VOID)
+{
+    LogDebug("Creating pipeline layout");
+    VkPipelineLayoutCreateInfo PipelineLayoutInformation = {0};
+    PipelineLayoutInformation.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    PipelineLayoutInformation.setLayoutCount = 1;
+    PipelineLayoutInformation.pSetLayouts = &VlkData.DescriptorSetLayout;
+    VULKAN_CHECK(vkCreatePipelineLayout(VlkData.Device, &PipelineLayoutInformation, VlkGetAllocationCallbacks(),
+                                        &VlkData.PipelineLayout));
+    VlkSetObjectName((UINT64)VlkData.PipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, "Pipeline layout");
+}
+
+VOID VlkCreateUniformBuffer(VOID)
+{
+    LogDebug("Creating uniform buffer");
+
+    VlkAllocateBuffer((sizeof(RENDER_SCENE_UNIFORM) + sizeof(RENDER_OBJECT_UNIFORM)) * VULKAN_FRAME_COUNT,
+                      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                      &VlkData.UniformBuffer);
+    VlkSetObjectName((UINT64)VlkData.UniformBuffer.Buffer, VK_OBJECT_TYPE_BUFFER, "Uniform buffer");
+
+    VULKAN_CHECK(vmaMapMemory(VlkData.Allocator, VlkData.UniformBuffer.Allocation, &VlkData.UniformBufferAddress));
+}
+
+RENDER_HANDLE VlkLoadShader(_In_z_ PCSTR Name)
 {
     LogDebug("Creating pipeline for shader %s", Name);
 
@@ -30,9 +55,9 @@ PVOID VlkCreateShader(_In_z_ PCSTR Name)
     VertexCreateInformation.codeSize = VertexShaderSize;
 
     VkShaderModuleCreateInfo FragmentCreateInformation = {0};
-    VertexCreateInformation.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    VertexCreateInformation.pCode = FragmentShader;
-    VertexCreateInformation.codeSize = FragmentShaderSize;
+    FragmentCreateInformation.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    FragmentCreateInformation.pCode = FragmentShader;
+    FragmentCreateInformation.codeSize = FragmentShaderSize;
 
     VkShaderModule VertexModule = VK_NULL_HANDLE;
     VULKAN_CHECK(
@@ -63,7 +88,7 @@ PVOID VlkCreateShader(_In_z_ PCSTR Name)
     FragmentStageCreateInformation.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     FragmentStageCreateInformation.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     FragmentStageCreateInformation.module = FragmentModule;
-    FragmentStageCreateInformation.pName = "FragmentMain";
+    FragmentStageCreateInformation.pName = "PixelMain";
 
     VkPipelineShaderStageCreateInfo ShaderStages[] = {VertexStageCreateInformation, FragmentStageCreateInformation};
 
@@ -153,4 +178,19 @@ PVOID VlkCreateShader(_In_z_ PCSTR Name)
     PipelineCreateInformation.pDepthStencilState = &DepthStencilState;
     PipelineCreateInformation.layout = VlkData.PipelineLayout;
     PipelineCreateInformation.renderPass = VlkData.MainRenderPass;
+
+    VkPipeline Pipeline = VK_NULL_HANDLE;
+    VULKAN_CHECK(vkCreateGraphicsPipelines(VlkData.Device, VK_NULL_HANDLE, 1, &PipelineCreateInformation,
+                                           VlkGetAllocationCallbacks(), &Pipeline));
+    VlkSetObjectName((UINT64)Pipeline, VK_OBJECT_TYPE_PIPELINE, "%s pipeline", Name);
+
+    vkDestroyShaderModule(VlkData.Device, VertexModule, VlkGetAllocationCallbacks());
+    vkDestroyShaderModule(VlkData.Device, FragmentModule, VlkGetAllocationCallbacks());
+
+    return (RENDER_HANDLE)Pipeline;
+}
+
+VOID VlkDestroyShader(_In_ RENDER_HANDLE Shader)
+{
+    vkDestroyPipeline(VlkData.Device, (VkPipeline)Shader, VlkGetAllocationCallbacks());
 }

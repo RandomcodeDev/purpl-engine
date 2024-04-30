@@ -97,6 +97,10 @@ static VOID Initialize(VOID)
     VlkCreateMainRenderPass();
     VlkCreateRenderTargets();
     VlkCreateScreenFramebuffers();
+    VlkCreateDescriptorPool();
+    VlkCreateDescriptorSetLayout();
+    VlkCreatePipelineLayout();
+    VlkCreateUniformBuffer();
 
     VlkData.FrameIndex = 0;
     VlkData.Initialized = TRUE;
@@ -285,6 +289,20 @@ static VOID Shutdown(VOID)
     VlkData.Initialized = FALSE;
     vkDeviceWaitIdle(VlkData.Device);
 
+    if (VlkData.PipelineLayout)
+    {
+        LogDebug("Destroying pipeline layout 0x%llX", (UINT64)VlkData.PipelineLayout);
+        vkDestroyPipelineLayout(VlkData.Device, VlkData.PipelineLayout, VlkGetAllocationCallbacks());
+        VlkData.PipelineLayout = VK_NULL_HANDLE;
+    }
+
+    if (VlkData.DescriptorSetLayout)
+    {
+        LogDebug("Destroying descriptor set layout 0x%llX", (UINT64)VlkData.DescriptorSetLayout);
+        vkDestroyDescriptorSetLayout(VlkData.Device, VlkData.DescriptorSetLayout, VlkGetAllocationCallbacks());
+        VlkData.DescriptorSetLayout = VK_NULL_HANDLE;
+    }
+
     VlkDestroyScreenFramebuffers();
 
     VlkDestroyRenderTargets();
@@ -303,11 +321,8 @@ static VOID Shutdown(VOID)
         VlkData.Sampler = VK_NULL_HANDLE;
     }
 
-    for (i = 0; i < VULKAN_FRAME_COUNT; i++)
-    {
-        LogDebug("Freeing uniform buffer %u/%u", i + 1, VULKAN_FRAME_COUNT);
-        VlkFreeBuffer(&VlkData.UniformBuffers[i]);
-    }
+    LogDebug("Freeing uniform buffer");
+    VlkFreeBuffer(&VlkData.UniformBuffer);
 
     if (VlkData.DescriptorPool)
     {
@@ -440,6 +455,9 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
     Backend->Shutdown = Shutdown;
+
+    Backend->LoadShader = VlkLoadShader;
+    Backend->DestroyShader = VlkDestroyShader;
 
     Backend->GetGpuName = GetGpuName;
 

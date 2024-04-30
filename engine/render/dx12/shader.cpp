@@ -17,7 +17,7 @@ VOID Dx12CreateRootSignature(VOID)
     }
 
     CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[1];
-    DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0,
+    DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0,
                              D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
 
     CD3DX12_ROOT_PARAMETER1 RootParameters[Dx12RootParameterCount];
@@ -38,7 +38,7 @@ VOID Dx12CreateRootSignature(VOID)
     Sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK;
     Sampler.MinLOD = 0.0;
     Sampler.MaxLOD = D3D12_FLOAT32_MAX;
-    Sampler.ShaderRegister = 0;
+    Sampler.ShaderRegister = 2;
     Sampler.RegisterSpace = 0;
     Sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 

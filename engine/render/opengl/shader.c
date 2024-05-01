@@ -8,21 +8,21 @@ static UINT32 LoadShader(UINT32 Type, PCSTR EntryPoint, PCSTR Name)
 
     LogInfo("Loading shader %s with entry point %s", Name, EntryPoint);
 
-    CHAR Suffix = 'v';
+    CHAR Prefix = 'v';
     switch (Type)
     {
     case GL_VERTEX_SHADER:
-        Suffix = 'v';
+        Prefix = 'v';
         break;
     case GL_FRAGMENT_SHADER:
-        Suffix = 'p';
+        Prefix = 'p';
         break;
     }
 
     UINT64 ShaderSourceSize = 0;
     // Extra is used to NUL-terminate
     PBYTE ShaderSource =
-        FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "opengl/%s.%cs.glsl", Name, Suffix), 0, 0, &ShaderSourceSize, 1);
+        FsReadFile(FALSE, EngGetAssetPath(EngAssetDirectoryShaders, "opengl/%s.%cs.glsl", Name, Prefix), 0, 0, &ShaderSourceSize, 1);
     if (!ShaderSource || !ShaderSourceSize)
     {
         LogError("Failed to load shader %s", Name);

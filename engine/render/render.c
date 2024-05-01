@@ -3,6 +3,7 @@
 #include "render.h"
 
 ecs_entity_t ecs_id(MODEL);
+ecs_entity_t ecs_id(RENDER_OBJECT_DATA);
 
 static RENDER_BACKEND Backend;
 static UINT32 LastWidth;
@@ -140,7 +141,8 @@ VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
         return;
     }
 
-    PMODEL Model = ecs_field(Iterator, MODEL, 1);
+    PRENDER_OBJECT_DATA ObjectData = ecs_field(Iterator, RENDER_OBJECT_DATA, 1);
+    PMODEL Model = ecs_field(Iterator, MODEL, 2);
 
     if (Backend.DrawModel)
     {
@@ -152,7 +154,7 @@ VOID RdrDrawModel(_In_ ecs_iter_t *Iterator)
             PCSCALE Scale = ecs_get(Iterator->world, Iterator->entities[i], SCALE);
             MthCreateTransformMatrix(Position ? Position->Value : NULL, Rotation ? Rotation->Value : NULL,
                                      Scale ? Scale->Value : NULL, Uniform.Model);
-            Backend.DrawModel(&Model[i], &Uniform);
+            Backend.DrawModel(&Model[i], &Uniform, &ObjectData[i]);
         }
     }
 }
@@ -209,10 +211,11 @@ VOID RenderImport(_In_ ecs_world_t *World)
     ECS_MODULE(World, Render);
 
     ECS_COMPONENT_DEFINE(World, MODEL);
+    ECS_COMPONENT_DEFINE(World, RENDER_OBJECT_DATA);
 
     ECS_SYSTEM_DEFINE(World, RdrInitialize, EcsOnStart);
     ECS_SYSTEM_DEFINE(World, RdrBeginFrame, EcsPreUpdate);
-    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, MODEL);
+    ECS_SYSTEM_DEFINE(World, RdrDrawModel, EcsOnUpdate, RENDER_OBJECT_DATA, MODEL);
     ECS_SYSTEM_DEFINE(World, RdrEndFrame, EcsPostUpdate);
 }
 
@@ -307,6 +310,22 @@ VOID RdrDestroyModel(_In_ PMODEL Model)
     if (Backend.DestroyModel)
     {
         Backend.DestroyModel(Model);
+    }
+}
+
+VOID RdrInitializeObject(_Inout_ PRENDER_OBJECT_DATA Data)
+{
+    if (Backend.InitializeObject)
+    {
+        Backend.InitializeObject(Data);
+    }
+}
+
+VOID RdrDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data)
+{
+    if (Backend.DestroyObject)
+    {
+        Backend.DestroyObject(Data);
     }
 }
 

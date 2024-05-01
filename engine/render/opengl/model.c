@@ -39,8 +39,10 @@ VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
     Model->MeshHandle = (RENDER_HANDLE)ModelData;
 }
 
-VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
+VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data)
 {
+    UNREFERENCED_PARAMETER(Data);
+
     POPENGL_MODEL_DATA ModelData = (POPENGL_MODEL_DATA)Model->MeshHandle;
 
     GlWriteUniformBuffer(GlData.UniformBuffer, PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)),
@@ -61,6 +63,10 @@ VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform)
 VOID GlDestroyModel(_Inout_ PMODEL Model)
 {
     POPENGL_MODEL_DATA ModelData = (POPENGL_MODEL_DATA)Model->MeshHandle;
+    if (!ModelData)
+    {
+        return;
+    }
     glDeleteVertexArrays(1, &ModelData->VertexArray);
     glDeleteBuffers(1, &ModelData->IndexBuffer);
     glDeleteBuffers(1, &ModelData->VertexBuffer);

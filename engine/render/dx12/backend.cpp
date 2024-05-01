@@ -331,7 +331,10 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->DrawModel = Dx12DrawModel;
     Backend->DestroyModel = Dx12DestroyModel;
 
-    // sure would be nice if C had these
+    Backend->InitializeObject = Dx12InitializeObject;
+    Backend->DestroyObject = Dx12DestroyObject;
+
+    // sure would be nice if C had these (really, if MSVC would fucking implement current C standards)
     Backend->GetGpuName = []() { return (PCSTR)Dx12Data.AdapterName; };
 
     memset(&Dx12Data, 0, sizeof(DIRECTX12_DATA));

@@ -14,7 +14,7 @@ RENDER_HANDLE GlUseTexture(_In_ PTEXTURE Texture, _In_z_ PCSTR Name)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Texture->Width, Texture->Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Texture->Pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    glObjectLabel(GL_TEXTURE_2D, TextureHandle, (UINT32)strlen(Name), Name);
+    glObjectLabel(GL_TEXTURE, TextureHandle, (UINT32)strlen(Name), Name);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 

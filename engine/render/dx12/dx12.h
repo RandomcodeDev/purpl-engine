@@ -131,9 +131,14 @@ typedef struct DIRECTX12_MODEL_DATA
 {
     DIRECTX12_BUFFER VertexBuffer;
     DIRECTX12_BUFFER IndexBuffer;
+} DIRECTX12_MODEL_DATA, *PDIRECTX12_MODEL_DATA;
+
+/// @brief Data for an object
+typedef struct DIRECTX12_OBJECT_DATA
+{
     DIRECTX12_BUFFER UniformBuffer;
     PDIRECTX12_OBJECT_UNIFORM UniformBufferAddress;
-} DIRECTX12_MODEL_DATA, *PDIRECTX12_MODEL_DATA;
+} DIRECTX12_OBJECT_DATA, *PDIRECTX12_OBJECT_DATA;
 
 /// @brief Root parameter index
 typedef enum DIRECTX12_ROOT_PARAMETER
@@ -310,11 +315,18 @@ extern VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR 
 ///
 /// @param[in] Model The model to render
 /// @param[in] Uniform The per-object uniform data for rendering the model
-extern VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
+/// @param[in] Data Per-object data
+extern VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
 
 /// @brief Destroy a model
 ///
 /// @param[in,out] Model The model to destroy
 extern VOID Dx12DestroyModel(_Inout_ PMODEL Model);
+
+/// @brief Create object data
+extern VOID Dx12InitializeObject(_Inout_ PRENDER_OBJECT_DATA Data);
+
+/// @brief Destroy object data
+extern VOID Dx12DestroyObject(_Inout_ PRENDER_OBJECT_DATA Data);
 
 END_EXTERN_C

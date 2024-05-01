@@ -73,7 +73,8 @@ extern VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Na
 ///
 /// @param[in] Model The model to render
 /// @param[in] Uniform The per-object uniform data for rendering the object
-extern VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
+/// @param[in] Data Per-object data
+extern VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
 
 /// @brief Destroy a model
 ///

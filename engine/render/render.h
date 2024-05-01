@@ -18,53 +18,57 @@
 #include "util/texture.h"
 
 /// @brief Graphics API
-typedef enum RENDER_API
+PURPL_MAKE_TAG(enum, RENDER_API,
 {
     RenderApiVulkan,
     RenderApiDirect3D12,
     RenderApiDirect3D9,
     RenderApiOpenGL,
     RenderApiCount
-} RENDER_API, *PRENDER_API;
+})
 
 /// @brief A handle to a renderer backend thing (Vulkan always uses 64-bit handles)
 typedef UINT64 RENDER_HANDLE;
 
 /// @brief Material
-typedef struct MATERIAL
+PURPL_MAKE_TAG(struct, MATERIAL,
 {
     RENDER_HANDLE Handle;
     RENDER_HANDLE TextureHandle;
     RENDER_HANDLE ShaderHandle;
-} MATERIAL, *PMATERIAL;
+})
 
 /// @brief Model component, stores backend handles
-typedef struct MODEL
+PURPL_MAKE_COMPONENT(struct, MODEL,
 {
     RENDER_HANDLE MeshHandle;
     PMATERIAL Material;
-} MODEL, *PMODEL;
-extern ECS_COMPONENT_DECLARE(MODEL);
+})
 
 /// @brief Maximum number of models
 #define RENDER_MAX_MODEL_COUNT 1024
 
 /// @brief Uniform data for the whole scene
-typedef struct RENDER_SCENE_UNIFORM
+PURPL_MAKE_TAG(struct, RENDER_SCENE_UNIFORM,
 {
     vec3 CameraPosition;
     mat4 View;
     mat4 Projection;
-} RENDER_SCENE_UNIFORM, *PRENDER_SCENE_UNIFORM;
+})
 
 /// @brief Uniform data for individual objects
-typedef struct RENDER_OBJECT_UNIFORM
+PURPL_MAKE_TAG(struct, RENDER_OBJECT_UNIFORM,
 {
     mat4 Model;
-} RENDER_OBJECT_UNIFORM, *PRENDER_OBJECT_UNIFORM;
+})
+
+PURPL_MAKE_COMPONENT(struct, RENDER_OBJECT_DATA,
+{
+    RENDER_HANDLE Data;
+})
 
 /// @brief Renderer backend
-typedef struct RENDER_BACKEND
+PURPL_MAKE_TAG(struct, RENDER_BACKEND,
 {
     PCSTR Name;
 
@@ -83,11 +87,14 @@ typedef struct RENDER_BACKEND
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
 
     VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
-    VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform);
+    VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
+    VOID (*InitializeObject)(_Inout_ PRENDER_OBJECT_DATA Data);
+    VOID (*DestroyObject)(_Inout_ PRENDER_OBJECT_DATA Data);
+
     PCSTR (*GetGpuName)(VOID);
-} RENDER_BACKEND, *PRENDER_BACKEND;
+})
 
 /// @brief Define configuration variables
 extern VOID RdrDefineVariables(VOID);
@@ -143,6 +150,16 @@ extern BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIA
 ///
 /// @param Model The model to destroy
 extern VOID RdrDestroyModel(_In_ PMODEL Model);
+
+/// @brief Initialize per-object data
+///
+/// @param[in,out] Data The per-object data to initialize
+extern VOID RdrInitializeObject(_Inout_ PRENDER_OBJECT_DATA Data);
+
+/// @brief Destroy per-object data
+///
+/// @param[in,out] Data The per-object data to destroy
+extern VOID RdrDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data);
 
 /// @brief Shut down the render system
 extern VOID RdrShutdown(VOID);

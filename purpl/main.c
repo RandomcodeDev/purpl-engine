@@ -37,20 +37,22 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     RENDER_HANDLE TestTexture = RdrLoadTexture("chief.ptex");
     MATERIAL TestMaterial = {0};
     RdrCreateMaterial(&TestMaterial, TestTexture, "main");
-    MODEL TestModel = {0};
-    RdrLoadModel(&TestModel, "chief.pmdl", &TestMaterial);
-    ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
+    PMODEL TestModel = ecs_emplace(EcsGetWorld(), TestEntity, MODEL);
+    RdrLoadModel(TestModel, "chief.pmdl", &TestMaterial);
+    PRENDER_OBJECT_DATA TestObject = ecs_emplace(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA);
+    RdrInitializeObject(TestObject);
 
     ecs_set(EcsGetWorld(), TestEntity, POSITION, {{0.0, 0.0, 0.0}});
     ecs_set(EcsGetWorld(), TestEntity, ROTATION, {{0.0, 1.0, 0.0, -180.0}});
     ecs_set(EcsGetWorld(), TestEntity, SCALE, {{1.0, 1.0, 1.0}});
 
-        ecs_entity_t GroundEntity = EcsCreateEntity("ground");
+    ecs_entity_t GroundEntity = EcsCreateEntity("ground");
     MATERIAL GroundMaterial = {0};
     RdrCreateMaterial(&GroundMaterial, TestTexture, "main");
-    MODEL GroundModel = {0};
-    RdrLoadModel(&GroundModel, "ground.pmdl", &GroundMaterial);
-    ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
+    PMODEL GroundModel = ecs_emplace(EcsGetWorld(), GroundEntity, MODEL);
+    RdrLoadModel(GroundModel, "ground.pmdl", &GroundMaterial);
+    PRENDER_OBJECT_DATA GroundObject = ecs_emplace(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA);
+    RdrInitializeObject(GroundObject);
 
     ecs_set(EcsGetWorld(), GroundEntity, POSITION, {{0.0, -0.5, 0.0}});
     ecs_set(EcsGetWorld(), GroundEntity, ROTATION, {{1.0, 0.0, 0.0, 90.0}});
@@ -60,11 +62,13 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     EngMainLoop();
 
-    RdrDestroyModel(&TestModel);
+    RdrDestroyObject(TestObject);
+    RdrDestroyModel(TestModel);
     RdrDestroyMaterial(&TestMaterial);
     RdrDestroyTexture(TestTexture);
 
-    RdrDestroyModel(&GroundModel);
+    RdrDestroyObject(GroundObject);
+    RdrDestroyModel(GroundModel);
     RdrDestroyMaterial(&GroundMaterial);
 
     EngShutdown();

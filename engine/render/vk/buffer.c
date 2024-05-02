@@ -47,7 +47,7 @@ VOID VlkNameBuffer(_Inout_ PVULKAN_BUFFER Buffer, _In_z_ PCSTR Name, ...)
     PSTR FormattedName = CmnFormatStringVarArgs(Name, Arguments);
     va_end(Arguments);
 
-    VlkSetObjectName(Buffer->Buffer, 0x69420BFF, FormattedName);
+    VlkSetObjectName((UINT64)Buffer->Buffer, 0x69420BFF, FormattedName);
     vmaSetAllocationName(VlkData.Allocator, Buffer->Allocation, FormattedName);
 
     CmnFree(FormattedName);

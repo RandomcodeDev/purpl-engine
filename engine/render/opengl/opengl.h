@@ -67,7 +67,7 @@ extern VOID GlReleaseTexture(_In_ RENDER_HANDLE Handle);
 ///
 /// @param[in,out] Model The model to create
 /// @param[in] Mesh The mesh to use
-extern VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
+extern VOID GlCreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh);
 
 /// @brief Draw a model
 ///

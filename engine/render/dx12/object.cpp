@@ -11,7 +11,7 @@ VOID Dx12InitializeObject(_Inout_ PRENDER_OBJECT_DATA Data)
 
     Dx12CreateUniformBuffer(&ObjectData->UniformBuffer, (PVOID *)&ObjectData->UniformBufferAddress,
                             sizeof(DIRECTX12_OBJECT_UNIFORM));
-    Dx12NameObject(ObjectData->UniformBuffer.Resource, "Uniform buffer %s", Name);
+    Dx12NameObject(ObjectData->UniformBuffer.Resource, "Uniform buffer");
 
     Data->Data = (RENDER_HANDLE)ObjectData;
 }

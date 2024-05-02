@@ -8,6 +8,7 @@ static VOID Initialize(VOID)
 
     GlSetDebugCallback();
 
+    glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 

@@ -233,7 +233,6 @@ VOID EngMainLoop(VOID)
 
         InUpdateState();
 
-        // TODO: replace with proper menu
         if (INPUT_GET_KEY(Escape))
         {
             Running = FALSE;

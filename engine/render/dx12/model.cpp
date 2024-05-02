@@ -22,7 +22,7 @@ VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
     Dx12NameObject(Data->IndexBuffer.Resource, "Index buffer %s", Name);
 }
 
-VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA)
+VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data)
 {
     if (!Dx12Data.InFrame || !Model->MeshHandle)
     {

@@ -19,28 +19,20 @@
 
 /// @brief Graphics API
 PURPL_MAKE_TAG(enum, RENDER_API,
-{
-    RenderApiVulkan,
-    RenderApiDirect3D12,
-    RenderApiDirect3D9,
-    RenderApiOpenGL,
-    RenderApiCount
-})
+               {RenderApiVulkan, RenderApiDirect3D12, RenderApiDirect3D9, RenderApiOpenGL, RenderApiCount})
 
 /// @brief A handle to a renderer backend thing (Vulkan always uses 64-bit handles)
 typedef UINT64 RENDER_HANDLE;
 
 /// @brief Material
-PURPL_MAKE_TAG(struct, MATERIAL,
-{
+PURPL_MAKE_TAG(struct, MATERIAL, {
     RENDER_HANDLE Handle;
     RENDER_HANDLE TextureHandle;
     RENDER_HANDLE ShaderHandle;
 })
 
 /// @brief Model component, stores backend handles
-PURPL_MAKE_COMPONENT(struct, MODEL,
-{
+PURPL_MAKE_COMPONENT(struct, MODEL, {
     RENDER_HANDLE MeshHandle;
     PMATERIAL Material;
 })
@@ -48,33 +40,36 @@ PURPL_MAKE_COMPONENT(struct, MODEL,
 /// @brief Maximum number of models
 #define RENDER_MAX_MODEL_COUNT 1024
 
+/// @brief Shader spaces
+#define RENDER_SHADER_SPACE_SCENE 0
+#define RENDER_SHADER_SPACE_OBJECT 1
+
+/// @brief Shader registers
+
+#define RENDER_SHADER_SCENE_UBO_REGISTER 0
+#define RENDER_SHADER_OBJECT_UBO_REGISTER 1
+#define RENDER_SHADER_SAMPLER_REGISTER 2
+
 /// @brief Uniform data for the whole scene
-PURPL_MAKE_TAG(struct, RENDER_SCENE_UNIFORM,
-{
+PURPL_MAKE_TAG(struct, RENDER_SCENE_UNIFORM, {
     vec3 CameraPosition;
     mat4 View;
     mat4 Projection;
 })
 
 /// @brief Uniform data for individual objects
-PURPL_MAKE_TAG(struct, RENDER_OBJECT_UNIFORM,
-{
-    mat4 Model;
-})
+PURPL_MAKE_TAG(struct, RENDER_OBJECT_UNIFORM, { mat4 Model; })
 
-PURPL_MAKE_COMPONENT(struct, RENDER_OBJECT_DATA,
-{
-    RENDER_HANDLE Data;
-})
+PURPL_MAKE_COMPONENT(struct, RENDER_OBJECT_DATA, { RENDER_HANDLE Handle; })
 
 /// @brief Renderer backend
-PURPL_MAKE_TAG(struct, RENDER_BACKEND,
-{
+PURPL_MAKE_TAG(struct, RENDER_BACKEND, {
     PCSTR Name;
 
     VOID (*Initialize)(VOID);
     VOID (*BeginFrame)(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Uniform);
     VOID (*EndFrame)(VOID);
+    VOID (*FinishRendering)(VOID);
     VOID (*Shutdown)(VOID);
 
     RENDER_HANDLE (*LoadShader)(_In_z_ PCSTR Name);
@@ -86,11 +81,11 @@ PURPL_MAKE_TAG(struct, RENDER_BACKEND,
     VOID (*CreateMaterial)(_Inout_ PMATERIAL Material);
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
 
-    VOID (*CreateModel)(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
+    VOID (*CreateModel)(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh);
     VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
-    VOID (*InitializeObject)(_Inout_ PRENDER_OBJECT_DATA Data);
+    VOID (*InitializeObject)(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
     VOID (*DestroyObject)(_Inout_ PRENDER_OBJECT_DATA Data);
 
     PCSTR (*GetGpuName)(VOID);
@@ -153,13 +148,18 @@ extern VOID RdrDestroyModel(_In_ PMODEL Model);
 
 /// @brief Initialize per-object data
 ///
+/// @param[in] Name The name of the object
 /// @param[in,out] Data The per-object data to initialize
-extern VOID RdrInitializeObject(_Inout_ PRENDER_OBJECT_DATA Data);
+/// @param[in] Model The model used by this object
+extern VOID RdrInitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
 
 /// @brief Destroy per-object data
 ///
 /// @param[in,out] Data The per-object data to destroy
 extern VOID RdrDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data);
+
+/// @brief Tell the renderer that it's done
+extern VOID RdrFinishRendering(VOID);
 
 /// @brief Shut down the render system
 extern VOID RdrShutdown(VOID);

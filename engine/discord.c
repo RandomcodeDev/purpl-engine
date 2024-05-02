@@ -113,7 +113,7 @@ VOID DiscordImport(_In_ ecs_world_t *World)
     ECS_MODULE(World, Discord);
 
     ECS_SYSTEM_DEFINE(World, DiscordInitialize, EcsOnStart);
-    ECS_SYSTEM_EX(World, DiscordUpdate, EcsOnUpdate, false, DISCORD_UPDATE_INTERVAL);
+    ECS_SYSTEM_DEFINE_EX(World, DiscordUpdate, EcsOnUpdate, false, DISCORD_UPDATE_INTERVAL);
 }
 
 VOID DiscordShutdown(VOID)

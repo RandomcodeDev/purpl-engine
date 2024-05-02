@@ -242,6 +242,8 @@ VOID EngMainLoop(VOID)
         ecs_progress(EcsGetWorld(), (FLOAT)Delta);
         EndFrame();
     }
+
+    RdrFinishRendering();
 }
 
 VOID EngShutdown(VOID)

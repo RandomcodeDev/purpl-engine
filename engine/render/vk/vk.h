@@ -32,7 +32,7 @@ END_EXTERN_C
 #define VMA_SYSTEM_ALIGNED_MALLOC CmnAlignedAlloc
 #define VMA_SYSTEM_ALIGNED_FREE CmnAlignedFree
 #define VMA_DEBUG_LOG_FORMAT(format, ...) LogDebug((format), __VA_ARGS__)
-#define VMA_HEAVY_ASSERT(expr)                                                                                         \
+#define VMA_ASSERT(expr)                                                                                               \
     if (!(expr))                                                                                                       \
     {                                                                                                                  \
         CmnError("VMA assertion failed: " #expr);                                                                      \
@@ -61,23 +61,30 @@ END_EXTERN_C
     } while (0)
 
 /// @brief A buffer allocated with VlkAllocateBuffer
-typedef struct VULKAN_BUFFER
-{
+PURPL_MAKE_TAG(struct, VULKAN_BUFFER, {
     VkBuffer Buffer;
     VmaAllocation Allocation;
     VkDeviceSize Size;
-} VULKAN_BUFFER, *PVULKAN_BUFFER;
+})
 
 /// @brief Data for a model
-typedef struct VULKAN_MODEL_DATA
-{
+PURPL_MAKE_TAG(struct, VULKAN_MODEL_DATA, {
     VULKAN_BUFFER VertexBuffer;
     VULKAN_BUFFER IndexBuffer;
-} VULKAN_MODEL_DATA, *PVULKAN_MODEL_DATA;
+})
+
+/// @brief Data for an object
+PURPL_MAKE_TAG(struct, VULKAN_OBJECT_DATA, { VkDescriptorSet DescriptorSet; })
+
+PURPL_MAKE_TAG(struct, VULKAN_UNIFORM_DATA, {
+    RENDER_SCENE_UNIFORM Scene;
+    BYTE ScenePadding[PURPL_ALIGN(64, sizeof(RENDER_SCENE_UNIFORM)) - sizeof(RENDER_SCENE_UNIFORM)];
+    RENDER_OBJECT_UNIFORM Object;
+    BYTE ObjectPadding[PURPL_ALIGN(64, sizeof(RENDER_OBJECT_UNIFORM)) - sizeof(RENDER_OBJECT_UNIFORM)];
+})
 
 /// @brief Information about a GPU
-typedef struct VULKAN_GPU_INFO
-{
+PURPL_MAKE_TAG(struct, VULKAN_GPU_INFO, {
     VkPhysicalDevice Device;
 
     VkPhysicalDeviceProperties Properties;
@@ -95,20 +102,18 @@ typedef struct VULKAN_GPU_INFO
     VkExtensionProperties *ExtensionProperties;
 
     BOOLEAN Usable;
-} VULKAN_GPU_INFO, *PVULKAN_GPU_INFO;
+})
 
 /// @brief An image and related data/objects
-typedef struct VULKAN_IMAGE
-{
+PURPL_MAKE_TAG(struct, VULKAN_IMAGE, {
     VkImage Handle;
     VmaAllocation Allocation;
     VkImageView View;
     VkFormat Format;
-} VULKAN_IMAGE, *PVULKAN_IMAGE;
+})
 
 /// @brief Vulkan data
-typedef struct VULKAN_DATA
-{
+PURPL_MAKE_TAG(struct, VULKAN_DATA, {
     /// @brief Instance
     VkInstance Instance;
 
@@ -196,11 +201,17 @@ typedef struct VULKAN_DATA
     /// @brief Main descriptor pool
     VkDescriptorPool DescriptorPool;
 
-    /// @brief Descriptor set layout
-    VkDescriptorSetLayout DescriptorSetLayout;
+    /// @brief Scene descriptor set layout
+    VkDescriptorSetLayout SceneDescriptorLayout;
+
+    /// @brief Object descriptor set layout
+    VkDescriptorSetLayout ObjectDescriptorLayout;
 
     /// @brief Pipeline layout
     VkPipelineLayout PipelineLayout;
+
+    /// @brief Scene descriptor set, binds main uniform buffer
+    VkDescriptorSet SceneDescriptorSet;
 
     /// @brief Pipeline cache
     VkPipelineCache PipelineCache;
@@ -218,13 +229,16 @@ typedef struct VULKAN_DATA
     VULKAN_BUFFER UniformBuffer;
 
     /// @brief Address where uniform buffer is mapped
-    PVOID UniformBufferAddress;
+    PVULKAN_UNIFORM_DATA UniformBufferAddress;
 
     /// @brief Sampler
     VkSampler Sampler;
-} VULKAN_DATA, *PVULKAN_DATA;
+})
 
 extern VULKAN_DATA VlkData;
+
+#define VULKAN_SET_UNIFORM(Value, Type)                                                                                \
+    memcpy(&(VlkData.UniformBufferAddress)[VlkData.FrameIndex].Type, (Value), sizeof(*Value))
 
 /// @brief Create the instance
 extern VOID VlkCreateInstance(VOID);
@@ -294,6 +308,9 @@ extern VOID VlkAllocateBuffer(_In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Us
 /// @param[out] Buffer The buffer
 extern VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size, _In_ VkBufferUsageFlags Usage,
                                       _In_ VkMemoryPropertyFlags Flags, _Out_ PVULKAN_BUFFER Buffer);
+
+/// @brief Name a buffer
+extern VOID VlkNameBuffer(_Inout_ PVULKAN_BUFFER Buffer, _In_z_ PCSTR Name, ...);
 
 /// @brief Free a buffer
 ///
@@ -440,6 +457,9 @@ extern VOID VlkCreateScreenFramebuffers(VOID);
 /// @brief Destroy screen framebuffers
 extern VOID VlkDestroyScreenFramebuffers(VOID);
 
+/// @brief Create the sampler
+extern VOID VlkCreateSampler(VOID);
+
 /// @brief Create the descriptor pool
 extern VOID VlkCreateDescriptorPool(VOID);
 
@@ -452,8 +472,32 @@ extern VOID VlkCreatePipelineLayout(VOID);
 /// @brief Create the uniform buffer
 extern VOID VlkCreateUniformBuffer(VOID);
 
+/// @brief Create the scene's descriptor set
+extern VOID VlkCreateSceneDescriptorSet(VOID);
+
 /// @brief Load a shader
 extern RENDER_HANDLE VlkLoadShader(_In_z_ PCSTR Name);
 
 /// @brief Destroy a shader
 extern VOID VlkDestroyShader(_In_ RENDER_HANDLE Shader);
+
+/// @brief Use a texture
+extern RENDER_HANDLE VlkUseTexture(_In_ PTEXTURE Texture, _In_z_ PCSTR Name);
+
+/// @brief Destroy a texture
+extern VOID VlkDestroyTexture(_In_ RENDER_HANDLE Handle);
+
+/// @brief Create a model (load a mesh onto the GPU)
+extern VOID VlkCreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh);
+
+/// @brief Draw a model
+extern VOID VlkDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
+
+/// @brief Destroy a model
+extern VOID VlkDestroyModel(_Inout_ PMODEL Model);
+
+/// @brief Initialize an object
+extern VOID VlkInitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
+
+/// @brief Destroy an object
+extern VOID VlkDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data);

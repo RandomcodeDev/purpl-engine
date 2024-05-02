@@ -194,6 +194,14 @@ static VOID DestroyShaders(VOID)
     }
 }
 
+VOID RdrFinishRendering(VOID)
+{
+    if (Backend.FinishRendering)
+    {
+        Backend.FinishRendering();
+    }
+}
+
 VOID RdrShutdown(VOID)
 {
     DestroyShaders();
@@ -242,7 +250,7 @@ RENDER_HANDLE RdrLoadTexture(_In_z_ PCSTR Name)
 
 VOID RdrDestroyTexture(_In_ RENDER_HANDLE TextureHandle)
 {
-    if (Backend.ReleaseTexture)
+    if (TextureHandle && Backend.ReleaseTexture)
     {
         Backend.ReleaseTexture(TextureHandle);
     }
@@ -277,10 +285,11 @@ BOOLEAN RdrCreateMaterial(_Out_ PMATERIAL Material, _In_ RENDER_HANDLE TextureHa
 
 VOID RdrDestroyMaterial(_In_ PMATERIAL Material)
 {
-    if (Backend.DestroyMaterial)
+    if (Material->Handle && Backend.DestroyMaterial)
     {
         Backend.DestroyMaterial(Material);
     }
+    Material->Handle = 0;
 }
 
 BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIAL Material)
@@ -295,7 +304,7 @@ BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIAL Mater
     Model->Material = Material;
     if (Backend.CreateModel)
     {
-        Backend.CreateModel(Model, Mesh, Name);
+        Backend.CreateModel(Name, Model, Mesh);
     }
     else
     {
@@ -307,26 +316,28 @@ BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIAL Mater
 
 VOID RdrDestroyModel(_In_ PMODEL Model)
 {
-    if (Backend.DestroyModel)
+    if (Model->MeshHandle && Backend.DestroyModel)
     {
         Backend.DestroyModel(Model);
     }
+    Model->MeshHandle = 0;
 }
 
-VOID RdrInitializeObject(_Inout_ PRENDER_OBJECT_DATA Data)
+VOID RdrInitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model)
 {
     if (Backend.InitializeObject)
     {
-        Backend.InitializeObject(Data);
+        Backend.InitializeObject(Name, Data, Model);
     }
 }
 
 VOID RdrDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data)
 {
-    if (Backend.DestroyObject)
+    if (Data->Handle && Backend.DestroyObject)
     {
         Backend.DestroyObject(Data);
     }
+    Data->Handle = 0;
 }
 
 UINT32 RdrGetWidth(VOID)

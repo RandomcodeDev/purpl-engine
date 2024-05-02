@@ -47,7 +47,7 @@ VkFormat VlkChooseFormat(VkFormat *Formats, UINT32 FormatCount, VkImageTiling Im
 
     CmnError("Failed to find supported format");
 
-//    return VK_FORMAT_UNDEFINED;
+    //    return VK_FORMAT_UNDEFINED;
 }
 
 VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayout, _In_ VkImageLayout NewLayout)
@@ -99,7 +99,7 @@ VOID VlkTransitionImageLayout(_Inout_ VkImage Image, _In_ VkImageLayout OldLayou
         {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0, VK_ACCESS_TRANSFER_WRITE_BIT,
          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT},
         {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT,
-         VK_ACCESS_TRANSFER_READ_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+         VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
         {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 0,
          VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
@@ -223,7 +223,9 @@ VOID VlkCreateImageWithData(_In_ PVOID Data, _In_ VkDeviceSize Size, _In_ UINT32
     memcpy(ImageBuffer, Data, Size);
     vmaUnmapMemory(VlkData.Allocator, StagingBuffer.Allocation);
 
-    VlkCreateImage(Width, Height, Format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, Usage, MemoryUsage, Aspect, Image);
+    VlkCreateImage(Width, Height, Format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                   VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | Usage, MemoryUsage, Aspect,
+                   Image);
 
     VlkCopyBufferToImage(StagingBuffer.Buffer, Image->Handle, Width, Height);
     VlkTransitionImageLayout(Image->Handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, Layout);
@@ -235,4 +237,25 @@ VOID VlkDestroyImage(_Inout_ PVULKAN_IMAGE Image)
 {
     vkDestroyImageView(VlkData.Device, Image->View, VlkGetAllocationCallbacks());
     vmaDestroyImage(VlkData.Allocator, Image->Handle, Image->Allocation);
+}
+
+// This makes sense to have in this file
+VOID VlkCreateSampler(VOID)
+{
+    VkSamplerCreateInfo CreateInformation = {0};
+    CreateInformation.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    CreateInformation.magFilter = VK_FILTER_NEAREST;
+    CreateInformation.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+    CreateInformation.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+    CreateInformation.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+    CreateInformation.mipLodBias = 0;
+    CreateInformation.maxAnisotropy = 0;
+    CreateInformation.compareEnable = FALSE;
+    CreateInformation.compareOp = VK_COMPARE_OP_NEVER;
+    CreateInformation.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
+    CreateInformation.minLod = 0.0;
+    CreateInformation.maxLod = FLT_MAX;
+    CreateInformation.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+
+    VULKAN_CHECK(vkCreateSampler(VlkData.Device, &CreateInformation, VlkGetAllocationCallbacks(), &VlkData.Sampler));
 }

@@ -1,6 +1,6 @@
 #include "opengl.h"
 
-VOID GlCreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
+VOID GlCreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh)
 {
     POPENGL_MODEL_DATA ModelData = CmnAllocType(1, OPENGL_MODEL_DATA);
     if (!ModelData)
@@ -48,8 +48,8 @@ VOID GlDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PR
     GlWriteUniformBuffer(GlData.UniformBuffer, PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)),
                          Uniform, sizeof(RENDER_OBJECT_UNIFORM));
 
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, GlData.UniformBuffer, 0, sizeof(RENDER_SCENE_UNIFORM));
-    glBindBufferRange(GL_UNIFORM_BUFFER, 1, GlData.UniformBuffer,
+    glBindBufferRange(GL_UNIFORM_BUFFER, RENDER_SHADER_SCENE_UBO_REGISTER, GlData.UniformBuffer, 0, sizeof(RENDER_SCENE_UNIFORM));
+    glBindBufferRange(GL_UNIFORM_BUFFER, RENDER_SHADER_OBJECT_UBO_REGISTER, GlData.UniformBuffer,
                       PURPL_ALIGN(GlData.UniformBufferAlignment, sizeof(RENDER_SCENE_UNIFORM)),
                       sizeof(RENDER_OBJECT_UNIFORM));
 

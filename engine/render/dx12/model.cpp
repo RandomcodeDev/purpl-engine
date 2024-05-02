@@ -1,7 +1,7 @@
 #include "dx12.h"
 
 EXTERN_C
-VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name)
+VOID Dx12CreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh)
 {
     PDIRECTX12_MODEL_DATA Data = CmnAllocType(1, DIRECTX12_MODEL_DATA);
     if (!Data)
@@ -30,7 +30,7 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ 
     }
 
     PDIRECTX12_MODEL_DATA ModelData = (PDIRECTX12_MODEL_DATA)Model->MeshHandle;
-    PDIRECTX12_OBJECT_DATA ObjectData = (PDIRECTX12_OBJECT_DATA)Data->Data;
+    PDIRECTX12_OBJECT_DATA ObjectData = (PDIRECTX12_OBJECT_DATA)Data->Handle;
 
     D3D12_VERTEX_BUFFER_VIEW VertexBufferView = {};
     VertexBufferView.BufferLocation = ModelData->VertexBuffer.Resource->GetGPUVirtualAddress();
@@ -61,8 +61,6 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ 
 
 VOID Dx12DestroyModel(_Inout_ PMODEL Model)
 {
-    // TODO: if I'm waiting for the GPU to finish what it's doing beforehand, why the fuck are these still in use
-    Dx12WaitForGpu();
     PDIRECTX12_MODEL_DATA ModelData = (PDIRECTX12_MODEL_DATA)Model->MeshHandle;
     ModelData->VertexBuffer.Resource->Release();
     ModelData->IndexBuffer.Resource->Release();

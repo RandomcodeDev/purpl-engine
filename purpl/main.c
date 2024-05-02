@@ -40,7 +40,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     PMODEL TestModel = ecs_emplace(EcsGetWorld(), TestEntity, MODEL);
     RdrLoadModel(TestModel, "chief.pmdl", &TestMaterial);
     PRENDER_OBJECT_DATA TestObject = ecs_emplace(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA);
-    RdrInitializeObject(TestObject);
+    RdrInitializeObject("test", TestObject, TestModel);
 
     ecs_set(EcsGetWorld(), TestEntity, POSITION, {{0.0, 0.0, 0.0}});
     ecs_set(EcsGetWorld(), TestEntity, ROTATION, {{0.0, 1.0, 0.0, -180.0}});
@@ -52,7 +52,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     PMODEL GroundModel = ecs_emplace(EcsGetWorld(), GroundEntity, MODEL);
     RdrLoadModel(GroundModel, "ground.pmdl", &GroundMaterial);
     PRENDER_OBJECT_DATA GroundObject = ecs_emplace(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA);
-    RdrInitializeObject(GroundObject);
+    RdrInitializeObject("ground", GroundObject, GroundModel);
 
     ecs_set(EcsGetWorld(), GroundEntity, POSITION, {{0.0, -0.5, 0.0}});
     ecs_set(EcsGetWorld(), GroundEntity, ROTATION, {{1.0, 0.0, 0.0, 90.0}});

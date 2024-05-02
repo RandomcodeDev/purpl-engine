@@ -97,10 +97,12 @@ static VOID Initialize(VOID)
     VlkCreateMainRenderPass();
     VlkCreateRenderTargets();
     VlkCreateScreenFramebuffers();
+    VlkCreateSampler();
     VlkCreateDescriptorPool();
     VlkCreateDescriptorSetLayout();
     VlkCreatePipelineLayout();
     VlkCreateUniformBuffer();
+    VlkCreateSceneDescriptorSet();
 
     VlkData.FrameIndex = 0;
     VlkData.Initialized = TRUE;
@@ -112,6 +114,20 @@ static VOID Initialize(VOID)
 static VOID IncrementFrameIndex(VOID)
 {
     VlkData.FrameIndex = (VlkData.FrameIndex + 1) % VULKAN_FRAME_COUNT;
+}
+
+static VOID Wait(VOID)
+{
+    // https://stackoverflow.com/questions/70762372/how-to-recreate-swapchain-after-vkacquirenextimagekhr-is-vk-suboptimal-khr
+    CONST VkPipelineStageFlags WaitDestinationStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    VkSubmitInfo SubmitInformation = {0};
+    SubmitInformation.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    SubmitInformation.waitSemaphoreCount = 1;
+    SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
+    SubmitInformation.pWaitDstStageMask = &WaitDestinationStage;
+    vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, VK_NULL_HANDLE);
+
+    vkDeviceWaitIdle(VlkData.Device);
 }
 
 static VOID HandleResize(VOID)
@@ -134,19 +150,10 @@ static VOID HandleResize(VOID)
     VlkCreateMainRenderPass();
     VlkCreateScreenFramebuffers();
 
-    // https://stackoverflow.com/questions/70762372/how-to-recreate-swapchain-after-vkacquirenextimagekhr-is-vk-suboptimal-khr
-    CONST VkPipelineStageFlags WaitDestinationStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    VkSubmitInfo SubmitInformation = {0};
-    SubmitInformation.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    SubmitInformation.waitSemaphoreCount = 1;
-    SubmitInformation.pWaitSemaphores = &VlkData.AcquireSemaphores[VlkData.FrameIndex];
-    SubmitInformation.pWaitDstStageMask = &WaitDestinationStage;
-    vkQueueSubmit(VlkData.PresentQueue, 1, &SubmitInformation, VK_NULL_HANDLE);
-
-    vkDeviceWaitIdle(VlkData.Device);
+    Wait();
 }
 
-static VOID BeginFrame(_In_ BOOLEAN WindowResized)
+static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Uniform)
 {
     VkResult Result;
     VkCommandBuffer CurrentCommandBuffer;
@@ -226,6 +233,8 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized)
     vkCmdSetScissor(CurrentCommandBuffer, 0, 1, &Scissor);
     vkCmdSetViewport(CurrentCommandBuffer, 0, 1, &Viewport);
     vkCmdSetPrimitiveTopology(CurrentCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+
+    VULKAN_SET_UNIFORM(Uniform, Scene);
 }
 
 static VOID EndFrame(VOID)
@@ -281,6 +290,11 @@ static VOID EndFrame(VOID)
     IncrementFrameIndex();
 }
 
+static VOID FinishRendering(VOID)
+{
+    vkDeviceWaitIdle(VlkData.Device);
+}
+
 static VOID Shutdown(VOID)
 {
     UINT32 i;
@@ -296,11 +310,18 @@ static VOID Shutdown(VOID)
         VlkData.PipelineLayout = VK_NULL_HANDLE;
     }
 
-    if (VlkData.DescriptorSetLayout)
+    if (VlkData.ObjectDescriptorLayout)
     {
-        LogDebug("Destroying descriptor set layout 0x%llX", (UINT64)VlkData.DescriptorSetLayout);
-        vkDestroyDescriptorSetLayout(VlkData.Device, VlkData.DescriptorSetLayout, VlkGetAllocationCallbacks());
-        VlkData.DescriptorSetLayout = VK_NULL_HANDLE;
+        LogDebug("Destroying descriptor set layout 0x%llX", (UINT64)VlkData.ObjectDescriptorLayout);
+        vkDestroyDescriptorSetLayout(VlkData.Device, VlkData.ObjectDescriptorLayout, VlkGetAllocationCallbacks());
+        VlkData.ObjectDescriptorLayout = VK_NULL_HANDLE;
+    }
+
+    if (VlkData.SceneDescriptorLayout)
+    {
+        LogDebug("Destroying descriptor set layout 0x%llX", (UINT64)VlkData.SceneDescriptorLayout);
+        vkDestroyDescriptorSetLayout(VlkData.Device, VlkData.SceneDescriptorLayout, VlkGetAllocationCallbacks());
+        VlkData.SceneDescriptorLayout = VK_NULL_HANDLE;
     }
 
     VlkDestroyScreenFramebuffers();
@@ -322,6 +343,7 @@ static VOID Shutdown(VOID)
     }
 
     LogDebug("Freeing uniform buffer");
+    vmaUnmapMemory(VlkData.Allocator, VlkData.UniformBuffer.Allocation);
     VlkFreeBuffer(&VlkData.UniformBuffer);
 
     if (VlkData.DescriptorPool)
@@ -329,6 +351,12 @@ static VOID Shutdown(VOID)
         LogDebug("Destroying descriptor pool 0x%llX", (UINT64)VlkData.DescriptorPool);
         vkDestroyDescriptorPool(VlkData.Device, VlkData.DescriptorPool, VlkGetAllocationCallbacks());
         VlkData.DescriptorPool = VK_NULL_HANDLE;
+    }
+
+    if (VlkData.Sampler)
+    {
+        LogDebug("Destroying sampler 0x%llX", (UINT64)VlkData.Sampler);
+        vkDestroySampler(VlkData.Device, VlkData.Sampler, VlkGetAllocationCallbacks());
     }
 
     VlkDestroySwapChain();
@@ -454,10 +482,21 @@ VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->Initialize = Initialize;
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
+    Backend->FinishRendering = FinishRendering;
     Backend->Shutdown = Shutdown;
 
     Backend->LoadShader = VlkLoadShader;
     Backend->DestroyShader = VlkDestroyShader;
+
+    Backend->UseTexture = VlkUseTexture;
+    Backend->ReleaseTexture = VlkDestroyTexture;
+
+    Backend->CreateModel = VlkCreateModel;
+    Backend->DrawModel = VlkDrawModel;
+    Backend->DestroyModel = VlkDestroyModel;
+
+    Backend->InitializeObject = VlkInitializeObject;
+    Backend->DestroyObject = VlkDestroyObject;
 
     Backend->GetGpuName = GetGpuName;
 

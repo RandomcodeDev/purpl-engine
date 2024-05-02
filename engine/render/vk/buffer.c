@@ -39,12 +39,25 @@ VOID VlkAllocateBufferWithData(_In_ PVOID Data, _In_ VkDeviceSize Size, _In_ VkB
     VlkFreeBuffer(&StagingBuffer);
 }
 
+VOID VlkNameBuffer(_Inout_ PVULKAN_BUFFER Buffer, _In_z_ PCSTR Name, ...)
+{
+    va_list Arguments;
+
+    va_start(Arguments, Name);
+    PSTR FormattedName = CmnFormatStringVarArgs(Name, Arguments);
+    va_end(Arguments);
+
+    VlkSetObjectName(Buffer->Buffer, 0x69420BFF, FormattedName);
+    vmaSetAllocationName(VlkData.Allocator, Buffer->Allocation, FormattedName);
+
+    CmnFree(FormattedName);
+}
+
 VOID VlkFreeBuffer(_Inout_ PVULKAN_BUFFER Buffer)
 {
     // LogTrace("Freeing %zu-byte buffer 0x%llX", Buffer->Size, (UINT64)Buffer);
     if (Buffer->Allocation)
     {
-        vmaUnmapMemory(VlkData.Allocator, Buffer->Allocation);
         vmaDestroyBuffer(VlkData.Allocator, Buffer->Buffer, Buffer->Allocation);
     }
     memset(Buffer, 0, sizeof(VULKAN_BUFFER));

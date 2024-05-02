@@ -10,10 +10,13 @@ static CONST VkVertexInputAttributeDescription MeshVertexAttributeDescriptions[]
 VOID VlkCreatePipelineLayout(VOID)
 {
     LogDebug("Creating pipeline layout");
+
+    VkDescriptorSetLayout DescriptorLayouts[] = {VlkData.SceneDescriptorLayout, VlkData.ObjectDescriptorLayout};
+
     VkPipelineLayoutCreateInfo PipelineLayoutInformation = {0};
     PipelineLayoutInformation.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    PipelineLayoutInformation.setLayoutCount = 1;
-    PipelineLayoutInformation.pSetLayouts = &VlkData.DescriptorSetLayout;
+    PipelineLayoutInformation.setLayoutCount = PURPL_ARRAYSIZE(DescriptorLayouts);
+    PipelineLayoutInformation.pSetLayouts = DescriptorLayouts;
     VULKAN_CHECK(vkCreatePipelineLayout(VlkData.Device, &PipelineLayoutInformation, VlkGetAllocationCallbacks(),
                                         &VlkData.PipelineLayout));
     VlkSetObjectName((UINT64)VlkData.PipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, "Pipeline layout");
@@ -27,7 +30,7 @@ VOID VlkCreateUniformBuffer(VOID)
                       VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                       &VlkData.UniformBuffer);
-    VlkSetObjectName((UINT64)VlkData.UniformBuffer.Buffer, VK_OBJECT_TYPE_BUFFER, "Uniform buffer");
+    VlkNameBuffer(&VlkData.UniformBuffer, "Uniform buffer");
 
     VULKAN_CHECK(vmaMapMemory(VlkData.Allocator, VlkData.UniformBuffer.Allocation, &VlkData.UniformBufferAddress));
 }

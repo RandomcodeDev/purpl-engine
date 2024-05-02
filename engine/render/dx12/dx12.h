@@ -309,7 +309,7 @@ extern VOID Dx12ReleaseTexture(_In_ RENDER_HANDLE Handle);
 ///
 /// @param[in,out] Model The model to create
 /// @param[in] Mesh The mesh to use
-extern VOID Dx12CreateModel(_Inout_ PMODEL Model, _In_ PMESH Mesh, _In_z_ PCSTR Name);
+extern VOID Dx12CreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh);
 
 /// @brief Draw a model
 ///
@@ -324,7 +324,7 @@ extern VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform
 extern VOID Dx12DestroyModel(_Inout_ PMODEL Model);
 
 /// @brief Create object data
-extern VOID Dx12InitializeObject(_Inout_ PRENDER_OBJECT_DATA Data);
+extern VOID Dx12InitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
 
 /// @brief Destroy object data
 extern VOID Dx12DestroyObject(_Inout_ PRENDER_OBJECT_DATA Data);

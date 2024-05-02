@@ -135,6 +135,17 @@ VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_z_ _
     //  Seems to crash a lot
 #ifndef PURPL_SWITCH
 #ifdef PURPL_VULKAN_DEBUG
+    if (ObjectType == VK_OBJECT_TYPE_BUFFER)
+    {
+        LogWarning("You may want to use VlkNameBuffer");
+    }
+
+    // TODO: Make constant somewhere or do this in a better way?
+    if (ObjectType == 0x69420BFF)
+    {
+        ObjectType = VK_OBJECT_TYPE_BUFFER;
+    }
+
     if (vkSetDebugUtilsObjectNameEXT && VlkData.Device)
     {
         va_list Arguments;
@@ -145,13 +156,15 @@ VOID VlkSetObjectName(_In_ UINT64 Object, _In_ VkObjectType ObjectType, _In_z_ _
         NameInformation.objectHandle = (UINT64)Object;
 
         va_start(Arguments, Name);
-        NameInformation.pObjectName = CmnFormatTempStringVarArgs(Name, Arguments);
+        NameInformation.pObjectName = CmnFormatStringVarArgs(Name, Arguments);
         va_end(Arguments);
 
         LogTrace("Setting object name of type %u object 0x%llX to %s", ObjectType, (UINT64)Object,
                  NameInformation.pObjectName);
 
         vkSetDebugUtilsObjectNameEXT(VlkData.Device, &NameInformation);
+
+        CmnFree(NameInformation.pObjectName);
     }
 
     return;

@@ -17,15 +17,18 @@ VOID Dx12CreateRootSignature(VOID)
     }
 
     CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[1];
-    DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0,
-                             D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+    DescriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, RENDER_SHADER_SAMPLER_REGISTER,
+                             RENDER_SHADER_SPACE_OBJECT, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
 
     CD3DX12_ROOT_PARAMETER1 RootParameters[Dx12RootParameterCount];
-    RootParameters[Dx12RootParameterSceneUniform].InitAsConstantBufferView(0, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
-                                               D3D12_SHADER_VISIBILITY_VERTEX);
-    RootParameters[Dx12RootParameterObjectUniform].InitAsConstantBufferView(1, 0, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
-                                               D3D12_SHADER_VISIBILITY_VERTEX);
-    RootParameters[Dx12RootParameterSampler].InitAsDescriptorTable(1, &DescriptorRanges[0], D3D12_SHADER_VISIBILITY_PIXEL);
+    RootParameters[Dx12RootParameterSceneUniform].InitAsConstantBufferView(
+        RENDER_SHADER_SCENE_UBO_REGISTER, RENDER_SHADER_SPACE_SCENE, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
+        D3D12_SHADER_VISIBILITY_VERTEX);
+    RootParameters[Dx12RootParameterObjectUniform].InitAsConstantBufferView(
+        RENDER_SHADER_OBJECT_UBO_REGISTER, RENDER_SHADER_SPACE_OBJECT, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
+        D3D12_SHADER_VISIBILITY_VERTEX);
+    RootParameters[Dx12RootParameterSampler].InitAsDescriptorTable(1, &DescriptorRanges[0],
+                                                                   D3D12_SHADER_VISIBILITY_PIXEL);
 
     D3D12_STATIC_SAMPLER_DESC Sampler = {};
     Sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -38,8 +41,8 @@ VOID Dx12CreateRootSignature(VOID)
     Sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK;
     Sampler.MinLOD = 0.0;
     Sampler.MaxLOD = D3D12_FLOAT32_MAX;
-    Sampler.ShaderRegister = 2;
-    Sampler.RegisterSpace = 0;
+    Sampler.ShaderRegister = RENDER_SHADER_SAMPLER_REGISTER;
+    Sampler.RegisterSpace = RENDER_SHADER_SPACE_OBJECT;
     Sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
     CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC RootSignatureDescription;

@@ -319,6 +319,7 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->Initialize = Initialize;
     Backend->BeginFrame = BeginFrame;
     Backend->EndFrame = EndFrame;
+    Backend->FinishRendering = []() { Dx12WaitForGpu(); };
     Backend->Shutdown = Shutdown;
 
     Backend->LoadShader = Dx12LoadShader;

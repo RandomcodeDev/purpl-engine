@@ -161,7 +161,7 @@ RENDER_HANDLE VlkLoadShader(_In_z_ PCSTR Name)
     DepthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     // DepthStencilState.flags =
     // VK_PIPELINE_DEPTH_STENCIL_STATE_CREATE_RASTERIZATION_ORDER_ATTACHMENT_DEPTH_ACCESS_BIT_EXT;
-    DepthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
+    DepthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
     DepthStencilState.depthWriteEnable = TRUE;
     DepthStencilState.depthTestEnable = TRUE;
     DepthStencilState.depthBoundsTestEnable = FALSE;

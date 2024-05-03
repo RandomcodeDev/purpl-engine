@@ -12,7 +12,11 @@
 #include "common/configvar.h"
 #include "common/log.h"
 
-typedef struct PHYSICS_BODY
-{
+/// @brief Backend thing
+typedef UINT64 PHYSICS_HANDLE;
 
-} PHYSICS_BODY, *PPHYSICS_BODY;
+PURPL_MAKE_COMPONENT(struct, PHYSICS_BODY, {
+    PHYSICS_HANDLE Handle;
+    vec3 Velocity;
+
+})

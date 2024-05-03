@@ -37,10 +37,12 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     RENDER_HANDLE TestTexture = RdrLoadTexture("chief.ptex");
     MATERIAL TestMaterial = {0};
     RdrCreateMaterial(&TestMaterial, TestTexture, "main");
-    PMODEL TestModel = ecs_emplace(EcsGetWorld(), TestEntity, MODEL);
-    RdrLoadModel(TestModel, "chief.pmdl", &TestMaterial);
-    PRENDER_OBJECT_DATA TestObject = ecs_emplace(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA);
-    RdrInitializeObject("test", TestObject, TestModel);
+    MODEL TestModel = {0};
+    RdrLoadModel(&TestModel, "chief.pmdl", &TestMaterial);
+    ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
+    RENDER_OBJECT_DATA TestObject = {0};
+    RdrInitializeObject("test", &TestObject, &TestModel);
+    ecs_set_ptr(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA, &TestObject);
 
     ecs_set(EcsGetWorld(), TestEntity, POSITION, {{0.0, 0.0, 0.0}});
     ecs_set(EcsGetWorld(), TestEntity, ROTATION, {{0.0, 1.0, 0.0, -180.0}});
@@ -49,10 +51,12 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_entity_t GroundEntity = EcsCreateEntity("ground");
     MATERIAL GroundMaterial = {0};
     RdrCreateMaterial(&GroundMaterial, TestTexture, "main");
-    PMODEL GroundModel = ecs_emplace(EcsGetWorld(), GroundEntity, MODEL);
-    RdrLoadModel(GroundModel, "ground.pmdl", &GroundMaterial);
-    PRENDER_OBJECT_DATA GroundObject = ecs_emplace(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA);
-    RdrInitializeObject("ground", GroundObject, GroundModel);
+    MODEL GroundModel = {0};
+    RdrLoadModel(&GroundModel, "ground.pmdl", &GroundMaterial);
+    ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
+    RENDER_OBJECT_DATA GroundObject = {0};
+    RdrInitializeObject("ground", &GroundObject, &GroundModel);
+    ecs_set_ptr(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA, &GroundObject);
 
     ecs_set(EcsGetWorld(), GroundEntity, POSITION, {{0.0, -0.5, 0.0}});
     ecs_set(EcsGetWorld(), GroundEntity, ROTATION, {{1.0, 0.0, 0.0, 90.0}});
@@ -62,14 +66,15 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     EngMainLoop();
 
-    RdrDestroyObject(TestObject);
-    RdrDestroyModel(TestModel);
+    RdrDestroyObject(ecs_get(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA));
+    RdrDestroyModel(ecs_get(EcsGetWorld(), TestEntity, MODEL));
     RdrDestroyMaterial(&TestMaterial);
-    RdrDestroyTexture(TestTexture);
 
-    RdrDestroyObject(GroundObject);
-    RdrDestroyModel(GroundModel);
+    RdrDestroyObject(ecs_get(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA));
+    RdrDestroyModel(ecs_get(EcsGetWorld(), GroundEntity, MODEL));
     RdrDestroyMaterial(&GroundMaterial);
+
+    RdrDestroyTexture(TestTexture);
 
     EngShutdown();
     CmnShutdown();

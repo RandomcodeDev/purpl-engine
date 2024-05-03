@@ -231,21 +231,16 @@ RENDER_HANDLE RdrLoadTexture(_In_z_ PCSTR Name)
 {
     PTEXTURE Texture = LoadTexture(EngGetAssetPath(EngAssetDirectoryTextures, Name));
 
-    if (Texture)
+    if (Texture && Backend.UseTexture)
     {
-        if (Backend.UseTexture)
-        {
-            RENDER_HANDLE Handle = Backend.UseTexture(Texture, Name);
-            CmnFree(Texture); // Not needed anymore, should be uploaded to the GPU
-            return Handle;
-        }
-        else
-        {
-            return (RENDER_HANDLE)Texture;
-        }
+        RENDER_HANDLE Handle = Backend.UseTexture(Texture, Name);
+        CmnFree(Texture); // Not needed anymore, should be uploaded to the GPU
+        return Handle;
     }
-
-    return (RENDER_HANDLE)0;
+    else
+    {
+        return (RENDER_HANDLE)Texture;
+    }
 }
 
 VOID RdrDestroyTexture(_In_ RENDER_HANDLE TextureHandle)
@@ -302,7 +297,7 @@ BOOLEAN RdrLoadModel(_Out_ PMODEL Model, _In_z_ PCSTR Name, _In_ PMATERIAL Mater
     PMESH Mesh = LoadMesh(EngGetAssetPath(EngAssetDirectoryModels, Name));
 
     Model->Material = Material;
-    if (Backend.CreateModel)
+    if (Mesh && Backend.CreateModel)
     {
         Backend.CreateModel(Name, Model, Mesh);
     }

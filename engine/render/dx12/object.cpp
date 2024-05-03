@@ -4,7 +4,7 @@ EXTERN_C
 VOID Dx12InitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model)
 {
     PDIRECTX12_OBJECT_DATA ObjectData = CmnAllocType(1, DIRECTX12_OBJECT_DATA);
-    if (!Data->Handle)
+    if (!ObjectData)
     {
         CmnError("Failed to allocate per-object data for %s: %s", Name, strerror(errno));
     }

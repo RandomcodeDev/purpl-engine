@@ -64,10 +64,8 @@ The game will (should approval from the necessary parties be obtained) be
 available on Steam, as well as all major console platforms at the time of
 release (presently, Xbox Series X|S, Nintendo Switch, and PlayStation 5).
 Mobile devices (phones/tablets) might be supported at some point. The target
-price is around 20 Canadian dollars, though a free version for PC may exist,
-as player enjoyment is a higher priority than money (within reason). The game
-will be available in English, with French and other translations being
-possibilities.
+price is around 20 Canadian dollars. The game will be available in English,
+with French and other translations being possibilities.
 
 ## Gameplay
 
@@ -101,7 +99,7 @@ featuring traps.
 
 The game will use low-detail 3D models and textures, and the rendered frames will
 be downscaled to look pixelated, making the game seem more 2D. High performance
-(120 FPS or higher) is expected to be achievable on all platforms.
+(120 FPS or higher) is expected to be achievable on all modern platforms.
 
 ## Audio
 
@@ -139,8 +137,8 @@ and other things.
 - Static linking is used to reduce the number of files necessary to work with,
   making distribution somewhat simpler and possibly allow for link time
   optimization
-- Due to the fact that the game uses low-detail assets, it will very
-  likely be orders of magnitude smaller than a typical AAA game
+- Due to the fact that the game uses low-detail assets and modern compression,
+  it will very likely be orders of magnitude smaller than a typical AAA game
 
 ## Development
 
@@ -151,11 +149,10 @@ and other things.
 - Main game code is stored on GitHub, but assets are stored on a personal Gitea
   server to get around file size limits. Any closed platform (console) related
   material (binaries, abstraction code) is to be kept in a private repository on GitHub.
-- Due to very simple formats, assets can largely be developed with any image
-  editor and text editor, as well as some form of audio editor, and 3D modelling
-  software
+- Due to tools which convert conventional formats into the engine's, assets can largely
+  be developed with any image editor, text editor, audio editor, and 3D modelling software
 - Instead of having scripting, everything will simply be implemented in C.
-  Some form of extension system may be introduced.
+  Some form of extension system may be introduced using dynamic libraries.
 
 ## Target platforms
 
@@ -164,7 +161,8 @@ ability to easily separate closed build system logic for consoles.
 
 - Windows 10/11 are supported using the Microsoft Game Development Kit, and rendering
   will use Direct3D 12, Direct3D 9, OpenGL, or Vulkan, based on user preference
-- Windows XP/7 might be somewhat supported with Direct3D 9 or OpenGL
+- Legacy platforms such as Windows XP/7 and legacy consoles might be somewhat supported
+  with Direct3D 9 or OpenGL, where a recent enough compiler exists
 - Linux and other Unix-like systems are/can be supported. Alternate binaries supporting
   systems not using the most common `libc` for a given platform may eventually
   be provided (although all core and external code thus far is open source and

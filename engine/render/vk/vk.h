@@ -73,14 +73,26 @@ PURPL_MAKE_TAG(struct, VULKAN_MODEL_DATA, {
     VULKAN_BUFFER IndexBuffer;
 })
 
-/// @brief Data for an object
-PURPL_MAKE_TAG(struct, VULKAN_OBJECT_DATA, { VkDescriptorSet DescriptorSet; })
+#define VULKAN_UNIFORM_ALIGNMENT 64
 
-PURPL_MAKE_TAG(struct, VULKAN_UNIFORM_DATA, {
-    RENDER_SCENE_UNIFORM Scene;
-    BYTE ScenePadding[PURPL_ALIGN(64, sizeof(RENDER_SCENE_UNIFORM)) - sizeof(RENDER_SCENE_UNIFORM)];
-    RENDER_OBJECT_UNIFORM Object;
-    BYTE ObjectPadding[PURPL_ALIGN(64, sizeof(RENDER_OBJECT_UNIFORM)) - sizeof(RENDER_OBJECT_UNIFORM)];
+PURPL_MAKE_TAG(struct, VULKAN_SCENE_UNIFORM, {
+    RENDER_SCENE_UNIFORM Data;
+    BYTE Padding[PURPL_ALIGN(VULKAN_UNIFORM_ALIGNMENT, sizeof(RENDER_SCENE_UNIFORM)) - sizeof(RENDER_SCENE_UNIFORM)];
+})
+
+PURPL_MAKE_TAG(struct, VULKAN_OBJECT_UNIFORM, {
+    RENDER_OBJECT_UNIFORM Data;
+    BYTE Padding[PURPL_ALIGN(VULKAN_UNIFORM_ALIGNMENT, sizeof(RENDER_OBJECT_UNIFORM)) - sizeof(RENDER_OBJECT_UNIFORM)];
+})
+
+#define VULKAN_SET_UNIFORM(UniformBufferAddress, Value)                                                                \
+    memcpy(&(&(UniformBufferAddress)[VlkData.FrameIndex])->Data, (Value), sizeof(*Value))
+
+/// @brief Data for an object
+PURPL_MAKE_TAG(struct, VULKAN_OBJECT_DATA, {
+    VkDescriptorSet DescriptorSet;
+    VULKAN_BUFFER UniformBuffer;
+    PVULKAN_OBJECT_UNIFORM UniformBufferAddress;
 })
 
 /// @brief Information about a GPU
@@ -229,16 +241,13 @@ PURPL_MAKE_TAG(struct, VULKAN_DATA, {
     VULKAN_BUFFER UniformBuffer;
 
     /// @brief Address where uniform buffer is mapped
-    PVULKAN_UNIFORM_DATA UniformBufferAddress;
+    PVULKAN_SCENE_UNIFORM UniformBufferAddress;
 
     /// @brief Sampler
     VkSampler Sampler;
 })
 
 extern VULKAN_DATA VlkData;
-
-#define VULKAN_SET_UNIFORM(Value, Type)                                                                                \
-    memcpy(&(VlkData.UniformBufferAddress)[VlkData.FrameIndex].Type, (Value), sizeof(*Value))
 
 /// @brief Create the instance
 extern VOID VlkCreateInstance(VOID);
@@ -469,8 +478,9 @@ extern VOID VlkCreateDescriptorSetLayout(VOID);
 /// @brief Create the pipeline layout
 extern VOID VlkCreatePipelineLayout(VOID);
 
-/// @brief Create the uniform buffer
-extern VOID VlkCreateUniformBuffer(VOID);
+/// @brief Create a uniform buffer
+extern VOID VlkCreateUniformBuffer(_Out_ PVULKAN_BUFFER UniformBuffer, _Out_ PVOID *UniformBufferAddress,
+                                   _In_ SIZE_T Size);
 
 /// @brief Create the scene's descriptor set
 extern VOID VlkCreateSceneDescriptorSet(VOID);

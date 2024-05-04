@@ -8,6 +8,9 @@ VOID VlkInitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _I
         CmnError("Failed to allocate per-object data for %s: %s", Name, strerror(errno));
     }
 
+    VlkCreateUniformBuffer(&ObjectData->UniformBuffer, &ObjectData->UniformBufferAddress,
+                           sizeof(VULKAN_OBJECT_UNIFORM) * VULKAN_FRAME_COUNT);
+
     VkDescriptorSetAllocateInfo AllocateInformation = {0};
     AllocateInformation.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     AllocateInformation.descriptorPool = VlkData.DescriptorPool;
@@ -16,8 +19,8 @@ VOID VlkInitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _I
     VULKAN_CHECK(vkAllocateDescriptorSets(VlkData.Device, &AllocateInformation, &ObjectData->DescriptorSet));
 
     VkDescriptorBufferInfo UniformInformation = {0};
-    UniformInformation.buffer = VlkData.UniformBuffer.Buffer;
-    UniformInformation.offset = offsetof(VULKAN_UNIFORM_DATA, Object);
+    UniformInformation.buffer = ObjectData->UniformBuffer.Buffer;
+    UniformInformation.offset = 0;
     UniformInformation.range = sizeof(RENDER_OBJECT_UNIFORM);
 
     PVULKAN_IMAGE Texture = (PVULKAN_IMAGE)Model->Material->TextureHandle;
@@ -49,6 +52,8 @@ VOID VlkInitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _I
 VOID VlkDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data)
 {
     PVULKAN_OBJECT_DATA ObjectData = (PVULKAN_OBJECT_DATA)Data->Handle;
+    vmaUnmapMemory(VlkData.Allocator, ObjectData->UniformBuffer.Allocation);
+    VlkFreeBuffer(&ObjectData->UniformBuffer);
     vkFreeDescriptorSets(VlkData.Device, VlkData.DescriptorPool, 1, &ObjectData->DescriptorSet);
     CmnFree(Data->Handle);
 }

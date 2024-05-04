@@ -22,17 +22,16 @@ VOID VlkCreatePipelineLayout(VOID)
     VlkSetObjectName((UINT64)VlkData.PipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, "Pipeline layout");
 }
 
-VOID VlkCreateUniformBuffer(VOID)
+VOID VlkCreateUniformBuffer(_Out_ PVULKAN_BUFFER UniformBuffer, _Out_ PVOID *UniformBufferAddress, _In_ SIZE_T Size)
 {
     LogDebug("Creating uniform buffer");
 
-    VlkAllocateBuffer((sizeof(RENDER_SCENE_UNIFORM) + sizeof(RENDER_OBJECT_UNIFORM)) * VULKAN_FRAME_COUNT,
+    VlkAllocateBuffer(Size,
                       VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      &VlkData.UniformBuffer);
-    VlkNameBuffer(&VlkData.UniformBuffer, "Uniform buffer");
+                      UniformBuffer);
 
-    VULKAN_CHECK(vmaMapMemory(VlkData.Allocator, VlkData.UniformBuffer.Allocation, &VlkData.UniformBufferAddress));
+    VULKAN_CHECK(vmaMapMemory(VlkData.Allocator, UniformBuffer->Allocation, UniformBufferAddress));
 }
 
 RENDER_HANDLE VlkLoadShader(_In_z_ PCSTR Name)

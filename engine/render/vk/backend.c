@@ -101,7 +101,8 @@ static VOID Initialize(VOID)
     VlkCreateDescriptorPool();
     VlkCreateDescriptorSetLayout();
     VlkCreatePipelineLayout();
-    VlkCreateUniformBuffer();
+    VlkCreateUniformBuffer(&VlkData.UniformBuffer, &VlkData.UniformBufferAddress,
+                           sizeof(VULKAN_SCENE_UNIFORM) * VULKAN_FRAME_COUNT);
     VlkCreateSceneDescriptorSet();
 
     VlkData.FrameIndex = 0;
@@ -234,7 +235,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
     vkCmdSetViewport(CurrentCommandBuffer, 0, 1, &Viewport);
     vkCmdSetPrimitiveTopology(CurrentCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
-    VULKAN_SET_UNIFORM(Uniform, Scene);
+    VULKAN_SET_UNIFORM(VlkData.UniformBufferAddress, Uniform);
 }
 
 static VOID EndFrame(VOID)

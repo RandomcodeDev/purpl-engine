@@ -65,20 +65,10 @@ VOID CameraImport(_In_ ecs_world_t *World)
 {
     LogTrace("Importing Camera ECS module");
 
-    //if (CONFIGVAR_GET_INT("rdr_api") == RenderApiVulkan)
-    //{
-    //    LookAt = glm_lookat_rh;
-    //    Perspective = glm_perspective_rh_no;
-    //    Orthographic = glm_ortho_rh_no;
-    //    Up = -1.0;
-    //}
-    //else
-    //{
-        LookAt = glm_lookat_lh;
-        Perspective = glm_perspective_lh_no;
-        Orthographic = glm_ortho_lh_no;
-        Up = 1.0;
-    //}
+    LookAt = glm_lookat_lh;
+    Perspective = glm_perspective_lh_no;
+    Orthographic = glm_ortho_lh_no;
+    Up = 1.0;
 
     ECS_MODULE(World, Camera);
 

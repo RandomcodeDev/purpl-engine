@@ -72,7 +72,7 @@ VOID VlkCreateSceneDescriptorSet(VOID)
 
     VkDescriptorBufferInfo UniformInformation = {0};
     UniformInformation.buffer = VlkData.UniformBuffer.Buffer;
-    UniformInformation.offset = offsetof(VULKAN_UNIFORM_DATA, Scene);
+    UniformInformation.offset = 0;
     UniformInformation.range = sizeof(RENDER_SCENE_UNIFORM);
 
     VkWriteDescriptorSet Write = {0};

@@ -26,7 +26,7 @@ VOID VlkDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ P
 
     VkDescriptorSet DescriptorSets[] = {VlkData.SceneDescriptorSet, ObjectData->DescriptorSet};
 
-    VULKAN_SET_UNIFORM(Uniform, Object);
+    VULKAN_SET_UNIFORM(ObjectData->UniformBufferAddress, Uniform);
     VkDeviceSize Offset = 0;
     vkCmdBindVertexBuffers(CommandBuffer, 0, 1, &ModelData->VertexBuffer.Buffer, &Offset);
     vkCmdBindIndexBuffer(CommandBuffer, ModelData->IndexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT32);

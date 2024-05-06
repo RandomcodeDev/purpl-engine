@@ -15,7 +15,7 @@ extern VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend);
 static VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
     UNREFERENCED_PARAMETER(Unused);
-    LogError("Why are you initialising DX12 on this platform?");
+    CmnError("Why are you initialising DX12 on this platform?");
 }
 #endif
 
@@ -25,7 +25,7 @@ extern VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Backend);
 static VOID VlkInitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
     UNREFERENCED_PARAMETER(Unused);
-    LogError("Why are you initialising Vulkan on this platform?");
+    CmnError("Why are you initialising Vulkan on this platform?");
 }
 #endif
 
@@ -35,7 +35,7 @@ extern VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Backend);
 static VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Unused)
 {
     UNREFERENCED_PARAMETER(Unused);
-    LogError("Why are you initialising OpenGL on this platform?");
+    CmnError("Why are you initialising OpenGL on this platform?");
 }
 #endif
 

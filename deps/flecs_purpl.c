@@ -61,7 +61,7 @@ static VOID EcsSleep(INT32 Seconds, INT32 Nanoseconds)
     PlatSleep(Seconds * 1000 + Nanoseconds / 1000000);
 }
 
-static unsigned long EcsNow(VOID)
+static uint64_t EcsNow(VOID)
 {
     return PlatGetMilliseconds() / 1000;
 }

@@ -24,8 +24,17 @@ end
 set_project("purpl-engine")
 set_version("0.0.0", {build = "%Y%m%d%H%M"})
 
-set_allowedplats("gdk", "gdkx", "xbox360", "windows", "linux", "freebsd", "switch", "psp", "ps3", "ps5")
-set_allowedarchs("gdk|x64", "gdkx|x64", "xbox360|powerpc64", "windows|x86", "switch|arm64", "psp|mips", "ps3|powerpc64", "ps5|x64")
+set_allowedplats(
+    "gdk", "gdkx", "xbox360", "windows",
+    "linux", "freebsd",
+    "switch",
+    "psp", "ps3", "ps5"
+)
+set_allowedarchs(
+    "gdk|x64", "gdkx|x64", "xbox360|powerpc64", "windows|x86",
+    "switch|arm64", "switchhb|arm64",
+    "psp|mips", "ps3|powerpc64", "ps5|x64"
+)
 
 local switch_title_id = "0100694203488000"
 
@@ -35,7 +44,7 @@ local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
 local opengl = is_plat("gdk", "windows", "linux", "freebsd", "switchhb", "psp", "ps3")
 
 local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
-local use_mimalloc = not is_plat("switch", "psp", "ps3", "xbox360")
+local use_mimalloc = not is_plat("xbox360", "switch", "switchhb", "psp", "ps3")
 
 add_defines("PURPL_ENGINE")
 
@@ -280,6 +289,7 @@ target("purpl")
     add_headerfiles(
         path.join("assets", "*"),
         path.join("assets", "shaders", "*"),
+        path.join("buildscripts", "shared.lua"),
         path.join("purpl", "*.h")
     )
     add_files(path.join("purpl", "*.c"))

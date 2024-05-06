@@ -33,7 +33,7 @@ VOID VlkDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ P
     vkCmdBindDescriptorSets(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VlkData.PipelineLayout, 0,
                             PURPL_ARRAYSIZE(DescriptorSets), DescriptorSets, 0, NULL);
     vkCmdBindPipeline(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, (VkPipeline)Model->Material->ShaderHandle);
-    vkCmdDrawIndexed(CommandBuffer, ModelData->IndexBuffer.Size / sizeof(ivec3) * 3, 1, 0, 0, 0);
+    vkCmdDrawIndexed(CommandBuffer, (UINT32)(ModelData->IndexBuffer.Size / sizeof(ivec3) * 3), 1, 0, 0, 0);
 }
 
 VOID VlkDestroyModel(_Inout_ PMODEL Model)

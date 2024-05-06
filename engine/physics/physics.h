@@ -15,8 +15,13 @@
 /// @brief Backend thing
 typedef UINT64 PHYSICS_HANDLE;
 
-PURPL_MAKE_COMPONENT(struct, PHYSICS_BODY, {
-    PHYSICS_HANDLE Handle;
-    vec3 Velocity;
+PURPL_MAKE_COMPONENT(struct, PHYSICS_BODY, { PHYSICS_HANDLE Handle; })
+
+/// @brief Physics backend
+PURPL_MAKE_TAG(struct, PHYSICS_BACKEND, {
+    VOID (*Initialize)(VOID);
+    VOID (*Update)(_In_ FLOAT Delta);
+    VOID (*Shutdown)(VOID);
+
 
 })

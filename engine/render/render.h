@@ -19,7 +19,8 @@
 
 /// @brief Graphics API
 PURPL_MAKE_TAG(enum, RENDER_API,
-               {RenderApiVulkan, RenderApiDirect3D12, RenderApiDirect3D9, RenderApiOpenGL, RenderApiCount})
+               {RenderApiVulkan, RenderApiDirect3D12, RenderApiDirect3D9, RenderApiOpenGL, RenderApiSwRaster,
+                RenderApiCount})
 
 /// @brief A handle to a renderer backend thing (Vulkan always uses 64-bit handles)
 typedef UINT64 RENDER_HANDLE;
@@ -85,10 +86,11 @@ PURPL_MAKE_TAG(struct, RENDER_BACKEND, {
     VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
-    VOID (*DrawLine)(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_ BOOLEAN Project);
+    VOID (*DrawLine)(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform, _In_ BOOLEAN Project);
     VOID (*DrawGeometry)
     (_In_ PVERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices, _In_ SIZE_T IndexCount,
-     _In_opt_ PMATERIAL Material);
+     _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform, _In_ BOOLEAN Project);
+    VOID (*DrawTexture)(_In_ RENDER_HANDLE Texture, _In_ mat4 Transform);
 
     VOID (*InitializeObject)(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
     VOID (*DestroyObject)(_Inout_ PRENDER_OBJECT_DATA Data);

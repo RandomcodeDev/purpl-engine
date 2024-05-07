@@ -202,6 +202,16 @@ if directx then
     target_end()
 end
 
+target("render-swrast")
+    set_kind("static")
+    add_headerfiles(path.join("engine", "render", "swrast", "*.h"))
+    add_files(path.join("engine", "render", "swrast", "*.c"))
+
+    set_group("Engine/Render System")
+
+    on_load(fix_target)
+target_end()
+
 if is_plat("switch") then
     add_switch_renderapi()
 end
@@ -222,6 +232,8 @@ target("render")
     if opengl then
         add_deps("render-gl")
     end
+
+    add_deps("render-swrast")
 
     set_group("Engine/Render System")
 

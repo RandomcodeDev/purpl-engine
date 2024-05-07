@@ -116,10 +116,7 @@ static VOID BeginFrame(_In_ BOOLEAN WindowResized, _In_ PRENDER_SCENE_UNIFORM Un
 
     UINT64 ClearColourRaw = CONFIGVAR_GET_INT("rdr_clear_colour");
     vec4 ClearColour;
-    ClearColour[0] = (UINT8)((ClearColourRaw >> 24) & 0xFF) / 255.0f;
-    ClearColour[1] = (UINT8)((ClearColourRaw >> 16) & 0xFF) / 255.0f;
-    ClearColour[2] = (UINT8)((ClearColourRaw >> 8) & 0xFF) / 255.0f;
-    ClearColour[3] = (UINT8)((ClearColourRaw >> 0) & 0xFF) / 255.0f;
+    VIDEO_UNPACK_COLOUR(ClearColour, ClearColourRaw);
     CommandList->ClearRenderTargetView(RtvHandle, ClearColour, 0, nullptr);
 
     CommandList->ClearDepthStencilView(DsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);

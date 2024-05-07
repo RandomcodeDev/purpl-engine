@@ -228,21 +228,6 @@ target("render")
     on_load(fix_target)
 target_end()
 
-includes(path.join("deps", "physx", "physx", "compiler", "public", "physx.lua"))
-setup_physx(path.join("deps", "physx", "physx"), fix_target, "External/PhysX SDK", "none")
-
-target("physics-physx")
-    set_kind("static")
-    add_headerfiles(path.join("engine", "physics", "physx", "*.h"))
-    add_files(path.join("engine", "physics", "physx", "*.cpp"))
-
-    add_deps("common", "PhysX", "platform", "util")
-
-    set_group("Engine/Physics System")
-
-    on_load(fix_target)
-target_end()
-
 target("physics")
     set_kind("static")
     add_headerfiles(path.join("engine", "physics", "*.h"))

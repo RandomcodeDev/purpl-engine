@@ -37,6 +37,3 @@
 [submodule "deps/flecs"]
 	path = deps/flecs
 	url = https://github.com/RandomcodeDev/flecs
-[submodule "deps/physx"]
-	path = deps/physx
-	url = https://github.com/RandomcodeDev/PhysX

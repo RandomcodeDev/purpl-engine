@@ -14,7 +14,7 @@
 /// @param[in] Rotation The rotation to apply (default is 0, 0, 0, 0)
 /// @param[in] Scale The scaling to apply (default is 1, 1, 1)
 /// @param[out] Transform The transformation matrix to fill
-static inline VOID MthCreateTransformMatrix(_In_opt_ vec3 Position, _In_opt_ vec4 Rotation, _In_opt_ vec3 Scale,
+static inline VOID MthCreateTransformMatrix(_In_opt_ CONST vec3 Position, _In_opt_ CONST vec4 Rotation, _In_opt_ CONST vec3 Scale,
                                             _Out_ mat4 Transform)
 {
     vec3 DefaultPosition = {0.0f, 0.0f, 0.0f};

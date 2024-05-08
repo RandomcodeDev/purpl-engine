@@ -39,6 +39,8 @@ static VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Unused)
 }
 #endif
 
+extern VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend);
+
 VOID RdrDefineVariables(VOID)
 {
     CONFIGVAR_DEFINE_FLOAT("rdr_scale", 1.0f, FALSE, ConfigVarSideClientOnly, FALSE, FALSE);
@@ -81,9 +83,6 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
 
     LogInfo("Initializing renderer using API %s", RdrGetApiName(CONFIGVAR_GET_INT("rdr_api")));
 
-    CONFIGVAR_SET_BOOLEAN("rdr_lefthanded", CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D12 ||
-                                                CONFIGVAR_GET_INT("rdr_api") == RenderApiDirect3D9);
-
     switch (CONFIGVAR_GET_INT("rdr_api"))
     {
     case RenderApiDirect3D12:
@@ -95,8 +94,11 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
     case RenderApiOpenGL:
         GlInitializeBackend(&Backend);
         break;
+    case RenderApiSwRaster:
+        SwrsInitializeBackend(&Backend);
+        break;
     default:
-        CmnError("Unknown renderer");
+        CmnError("Unknown renderer %d", CONFIGVAR_GET_INT("rdr_api"));
     }
 
     if (Backend.Initialize)
@@ -355,7 +357,7 @@ UINT32 RdrGetHeight(VOID)
 
 PCSTR RdrGetApiName(_In_ RENDER_API Api)
 {
-    static CONST PCSTR Names[] = {"Vulkan", "DirectX 12", "DirectX 9", "OpenGL", "Unknown"};
+    static CONST PCSTR Names[] = {"Vulkan", "DirectX 12", "DirectX 9", "OpenGL", "Software rasteriser", "Unknown"};
 
     if ((UINT32)Api < PURPL_ARRAYSIZE(Names))
     {

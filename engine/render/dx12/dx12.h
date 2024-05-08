@@ -70,8 +70,7 @@ END_EXTERN_C
         if (!SUCCEEDED(Result_) __VA_ARGS__)                                                                           \
         {                                                                                                              \
             _com_error Error_(Result_);                                                                                \
-            CmnError("COM call " #Call " at %s:%d failed: %s (HRESULT 0x%08X)", __FILE__, __LINE__,                    \
-                     Error_.ErrorMessage(), Result_);                                                                  \
+            CmnError("COM call " #Call " failed: %s (HRESULT 0x%08X)", Error_.ErrorMessage(), Result_);                \
         }                                                                                                              \
     } while (0)
 

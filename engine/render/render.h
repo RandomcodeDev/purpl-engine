@@ -82,15 +82,15 @@ PURPL_MAKE_TAG(struct, RENDER_BACKEND, {
     VOID (*CreateMaterial)(_Inout_ PMATERIAL Material);
     VOID (*DestroyMaterial)(_In_ PMATERIAL Material);
 
-    VOID (*CreateModel)(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh);
-    VOID (*DrawModel)(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);
+    VOID (*CreateModel)(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ CONST PMESH Mesh);
+    VOID (*DrawModel)(_In_ PMODEL Model, _In_ CONST PRENDER_OBJECT_UNIFORM Uniform, _In_ CONST PRENDER_OBJECT_DATA Data);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
-    VOID (*DrawLine)(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform, _In_ BOOLEAN Project);
-    VOID (*DrawGeometry)
-    (_In_ PVERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices, _In_ SIZE_T IndexCount,
-     _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform, _In_ BOOLEAN Project);
-    VOID (*DrawTexture)(_In_ RENDER_HANDLE Texture, _In_ mat4 Transform);
+    VOID (*DrawLine)(_In_ CONST vec3 Start, _In_ CONST vec3 End, _In_ CONST vec4 Colour, _In_opt_ CONST mat4 Transform, _In_ BOOLEAN Project);
+    VOID(*DrawGeometry)
+    (_In_ PCVERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ CONST ivec3 *CONST Indices, _In_ SIZE_T IndexCount,
+     _In_opt_ PMATERIAL Material, _In_opt_ mat4 CONST Transform, _In_ BOOLEAN Project);
+    VOID (*DrawTexture)(_In_ RENDER_HANDLE Texture, _In_ CONST mat4 Transform);
 
     VOID (*InitializeObject)(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
     VOID (*DestroyObject)(_Inout_ PRENDER_OBJECT_DATA Data);
@@ -170,6 +170,18 @@ extern VOID RdrFinishRendering(VOID);
 
 /// @brief Shut down the render system
 extern VOID RdrShutdown(VOID);
+
+/// @brief Draw a line
+extern VOID RdrDrawLine(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform,
+                        _In_ BOOLEAN Project);
+
+/// @brief Draw geometry
+extern VOID RdrDrawGeometry(_In_ PVERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices,
+                            _In_ SIZE_T IndexCount, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform,
+                            _In_ BOOLEAN Project);
+
+/// @brief Draw a texture
+extern VOID RdrDrawTexture(_In_ RENDER_HANDLE Texture, _In_ mat4 Transform);
 
 /// @brief Get the width of the render output
 ///

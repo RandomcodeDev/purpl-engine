@@ -27,6 +27,7 @@ PURPL_MAKE_TAG(struct, SWRAST_DATA, {
 })
 extern SWRAST_DATA SwrsData;
 
-extern VOID SwrsPutPixel(_In_ vec2 Position, _In_ vec4 Colour);
+extern VOID SwrsPutPixel(_In_ CONST ivec2 Position, _In_ CONST vec4 Colour);
 
-extern VOID SwrsDrawLine(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_ BOOLEAN Project);
+extern VOID SwrsDrawLine(_In_ CONST vec3 Start, _In_ CONST vec3 End, _In_ CONST vec4 Colour,
+                         _In_opt_ CONST mat4 Transform, _In_ BOOLEAN Project);

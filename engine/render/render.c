@@ -58,7 +58,7 @@ VOID RdrDefineVariables(VOID)
 #endif
 
     CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE, FALSE);
-    CONFIGVAR_DEFINE_BOOLEAN("rdr_lefthanded", DefaultApi == RenderApiDirect3D12 || DefaultApi == RenderApiDirect3D9,
+    CONFIGVAR_DEFINE_BOOLEAN("rdr_software", DefaultApi == RenderApiSwRaster,
                              FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
 
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
@@ -95,6 +95,7 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
         GlInitializeBackend(&Backend);
         break;
     case RenderApiSwRaster:
+        CONFIGVAR_SET_BOOLEAN("rdr_software", TRUE);
         SwrsInitializeBackend(&Backend);
         break;
     default:

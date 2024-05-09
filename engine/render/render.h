@@ -86,7 +86,7 @@ PURPL_MAKE_TAG(struct, RENDER_BACKEND, {
     VOID (*DrawModel)(_In_ PMODEL Model, _In_ CONST PRENDER_OBJECT_UNIFORM Uniform, _In_ CONST PRENDER_OBJECT_DATA Data);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
-    VOID (*DrawLine)(_In_ CONST vec3 Start, _In_ CONST vec3 End, _In_ CONST vec4 Colour, _In_opt_ CONST mat4 Transform, _In_ BOOLEAN Project);
+    VOID (*DrawLine)(_In_ CONST VERTEX Start, _In_ CONST VERTEX End, _In_opt_ CONST mat4 Transform, _In_ BOOLEAN Project);
     VOID(*DrawGeometry)
     (_In_ PCVERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ CONST ivec3 *CONST Indices, _In_ SIZE_T IndexCount,
      _In_opt_ PMATERIAL Material, _In_opt_ mat4 CONST Transform, _In_ BOOLEAN Project);

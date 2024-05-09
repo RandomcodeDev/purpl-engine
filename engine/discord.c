@@ -95,7 +95,7 @@ VOID DiscordUpdate(_In_ ecs_iter_t *Iterator)
     Presence.state = CmnFormatString("Playing %s on %s", GetGameString(), PlatGetDescription());
 #endif
     Presence.details = CmnFormatString("v" PURPL_VERSION_STRING " commit " PURPL_COMMIT "-" PURPL_BRANCH
-                                       ", " PURPL_BUILD_TYPE " build, %s renderer using GPU %s",
+                                       ", " PURPL_BUILD_TYPE " build, %s on %s",
                                        RdrGetApiName(CONFIGVAR_GET_INT("rdr_api")), RdrGetGpuName());
     Discord_UpdatePresence(&Presence);
 

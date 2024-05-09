@@ -22,7 +22,7 @@ static inline VOID MthCreateTransformMatrix(_In_opt_ CONST vec3 Position, _In_op
     vec3 DefaultScale = {1.0f, 1.0f, 1.0f};
 
     glm_mat4_identity(Transform);
-    glm_translate(Transform, Position ? Position : DefaultPosition);
-    glm_rotate(Transform, glm_rad(Rotation ? Rotation[3] : DefaultRotation[3]), Rotation ? Rotation : DefaultRotation);
-    glm_scale(Transform, Scale ? Scale : DefaultScale);
+    glm_translate(Transform, (PFLOAT)(Position ? Position : DefaultPosition));
+    glm_rotate(Transform, glm_rad(Rotation ? Rotation[3] : DefaultRotation[3]), (PFLOAT)(Rotation ? Rotation : DefaultRotation));
+    glm_scale(Transform, (PFLOAT)(Scale ? Scale : DefaultScale));
 }

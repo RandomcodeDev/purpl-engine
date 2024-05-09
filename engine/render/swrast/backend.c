@@ -15,13 +15,24 @@ static VOID Initialize(VOID)
     LogDebug("Successfully initialized software rasteriser");
 }
 
-static VOID BeginFrame(_In_ BOOLEAN Resized)
+static VOID BeginFrame(_In_ BOOLEAN Resized, _In_ CONST PRENDER_SCENE_UNIFORM Uniform)
 {
-    // Clear all colours of all pixels to 0
-    memset(SwrsData.Framebuffer->Pixels, 0,
-           SwrsData.Framebuffer->Width * SwrsData.Framebuffer->Height * sizeof(UINT32));
+    vec4 ClearColour = {0};
+    VIDEO_UNPACK_COLOUR(ClearColour, CONFIGVAR_GET_INT("rdr_clear_colour"));
 
-    SwrsDrawLine((vec2){1.0, 0.0}, (vec2){0.0, 1.0}, (vec4){0.5, 0, 1.0, 1.0}, NULL, FALSE);
+    for (UINT32 Y = 0; Y < SwrsData.Framebuffer->Height; Y++)
+    {
+        for (UINT32 X = 0; X < SwrsData.Framebuffer->Width; X++)
+        {
+            SwrsPutPixel((ivec2){X, Y}, ClearColour);
+        }
+    }
+
+    glm_mat4_mul(Uniform->Projection, Uniform->View, SwrsData.ViewProjection);
+
+    SwrsDrawTriangle((VERTEX){{0.0, 1.0, 0.0}, {1.0, 0.0, 0.0, 1.0}, {0.0, 0.0}, {0.0, 0.0, 0.0}},
+                     (VERTEX){{0.5, 0.0, 0.0}, {0.0, 1.0, 0.0, 1.0}, {0.0, 0.0}, {0.0, 0.0, 0.0}},
+                     (VERTEX){{1.0, 1.0, 0.0}, {0.0, 0.0, 1.0, 1.0}, {0.0, 0.0}, {0.0, 0.0, 0.0}}, TRUE);
 }
 
 static VOID EndFrame(VOID)
@@ -38,6 +49,11 @@ static VOID Shutdown(VOID)
     LogDebug("Software rasterizer shutdown succeeded");
 }
 
+static PCSTR GetGpuName(VOID)
+{
+    return PlatGetCpuName();
+}
+
 VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend)
 {
     Backend->Initialize = Initialize;
@@ -46,4 +62,6 @@ VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->Shutdown = Shutdown;
 
     Backend->DrawLine = SwrsDrawLine;
+
+    Backend->GetGpuName = GetGpuName;
 }

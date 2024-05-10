@@ -29,10 +29,6 @@ static VOID BeginFrame(_In_ BOOLEAN Resized, _In_ CONST PRENDER_SCENE_UNIFORM Un
     }
 
     glm_mat4_mul(Uniform->Projection, Uniform->View, SwrsData.ViewProjection);
-
-    SwrsDrawTriangle((VERTEX){{0.0, 1.0, 0.0}, {1.0, 0.0, 0.0, 1.0}, {0.0, 0.0}, {0.0, 0.0, 0.0}},
-                     (VERTEX){{0.5, 0.0, 0.0}, {0.0, 1.0, 0.0, 1.0}, {0.0, 0.0}, {0.0, 0.0, 0.0}},
-                     (VERTEX){{1.0, 1.0, 0.0}, {0.0, 0.0, 1.0, 1.0}, {0.0, 0.0}, {0.0, 0.0, 0.0}}, TRUE);
 }
 
 static VOID EndFrame(VOID)
@@ -61,6 +57,7 @@ VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->EndFrame = EndFrame;
     Backend->Shutdown = Shutdown;
 
+    Backend->DrawModel = SwrsDrawModel;
     Backend->DrawLine = SwrsDrawLine;
 
     Backend->GetGpuName = GetGpuName;

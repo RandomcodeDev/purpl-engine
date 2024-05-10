@@ -192,7 +192,7 @@ static VOID StartFrame(VOID)
 
     Now = (DOUBLE)PlatGetMilliseconds();
     Delta = Now - Last;
-    if (Last != 0)
+    if (Last > 0)
     {
         Time += Delta;
         FramesThisSecond++;
@@ -239,7 +239,7 @@ VOID EngMainLoop(VOID)
         }
 
         StartFrame();
-        ecs_progress(EcsGetWorld(), (FLOAT)Delta);
+        ecs_progress(EcsGetWorld(), 0);
         EndFrame();
     }
 

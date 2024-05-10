@@ -1,4 +1,4 @@
-function setup_shared(root, directx, vulkan)
+function setup_shared(root, directx, vulkan, opengl, swrast)
     add_includedirs(
         root,
         path.join(root, "deps")
@@ -33,5 +33,9 @@ function setup_shared(root, directx, vulkan)
 
     if opengl then
         add_defines("PURPL_OPENGL")
+    end
+
+    if swrast then
+        add_defines("PURPL_SWRAST")
     end
 end

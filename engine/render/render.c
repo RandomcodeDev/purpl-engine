@@ -39,7 +39,15 @@ static VOID GlInitializeBackend(_Out_ PRENDER_BACKEND Unused)
 }
 #endif
 
+#ifdef PURPL_SWRAST
 extern VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend);
+#else
+static VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend)
+{
+    UNREFERENCED_PARAMETER(Backend);
+    CmnError("Why are you initializing the software rasteriser on this platform?");
+}
+#endif
 
 VOID RdrDefineVariables(VOID)
 {

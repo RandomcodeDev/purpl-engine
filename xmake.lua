@@ -42,6 +42,7 @@ local directx = is_plat("gdk", "gdkx", "windows")
 local directx9 = is_plat("gdk", "windows", "xbox360")
 local vulkan = is_plat("gdk", "windows", "linux", "freebsd", "switch")
 local opengl = is_plat("gdk", "windows", "linux", "freebsd", "switchhb", "psp", "ps3")
+local swrast = is_plat("gdk", "windows", "baremetal")
 
 local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
 local use_mimalloc = not is_plat("xbox360", "switch", "switchhb", "psp", "ps3")
@@ -49,7 +50,7 @@ local use_mimalloc = not is_plat("xbox360", "switch", "switchhb", "psp", "ps3")
 add_defines("PURPL_ENGINE")
 
 includes(path.join("buildscripts", "shared.lua"))
-setup_shared("$(scriptdir)", directx, vulkan, opengl)
+setup_shared("$(scriptdir)", directx, vulkan, opengl, swrast)
 
 includes(path.join("support", "support.lua"))
 setup_support("support", path.join("support", "deps"), use_mimalloc, directx, vulkan, opengl, true, "purpl/config.h.in", switch_title_id)
@@ -202,15 +203,17 @@ if directx then
     target_end()
 end
 
-target("render-swrast")
-    set_kind("static")
-    add_headerfiles(path.join("engine", "render", "swrast", "*.h"))
-    add_files(path.join("engine", "render", "swrast", "*.c"))
+if swrast then
+    target("render-swrast")
+        set_kind("static")
+        add_headerfiles(path.join("engine", "render", "swrast", "*.h"))
+        add_files(path.join("engine", "render", "swrast", "*.c"))
 
-    set_group("Engine/Render System")
+        set_group("Engine/Render System")
 
-    on_load(fix_target)
-target_end()
+        on_load(fix_target)
+    target_end()
+end
 
 if is_plat("switch") then
     add_switch_renderapi()
@@ -232,8 +235,9 @@ target("render")
     if opengl then
         add_deps("render-gl")
     end
-
-    add_deps("render-swrast")
+    if swrast then
+        add_deps("render-swrast")
+    end
 
     set_group("Engine/Render System")
 

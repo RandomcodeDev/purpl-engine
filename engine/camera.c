@@ -60,6 +60,7 @@ VOID CamUpdate(_In_ ecs_iter_t *Iterator)
 
         if (Camera[i].Perspective)
         {
+            Camera[i].Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
             Perspective((FLOAT)Camera[i].FieldOfView, (FLOAT)Camera[i].Aspect, (FLOAT)Camera[i].NearClip,
                         (FLOAT)Camera[i].FarClip, Camera[i].Projection);
         }
@@ -76,10 +77,20 @@ VOID CameraImport(_In_ ecs_world_t *World)
 {
     LogTrace("Importing Camera ECS module");
 
-    LookAt = glm_lookat_lh;
-    Perspective = glm_perspective_lh_no;
-    Orthographic = glm_ortho_lh_no;
-    Up = 1.0;
+    if (CONFIGVAR_GET_INT("rdr_api") == RenderApiOpenGL)
+    {
+        LookAt = glm_lookat_rh;
+        Perspective = glm_perspective_rh_no;
+        Orthographic = glm_ortho_rh_no;
+        Up = -1.0;
+    }
+    else
+    {
+        LookAt = glm_lookat_lh;
+        Perspective = glm_perspective_lh_no;
+        Orthographic = glm_ortho_lh_no;
+        Up = 1.0;
+    }
 
     ECS_MODULE(World, Camera);
 

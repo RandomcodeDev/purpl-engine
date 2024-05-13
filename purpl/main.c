@@ -20,7 +20,7 @@ VOID Spin(_In_ ecs_iter_t *Iterator)
         // Only on Y
         if (Rotation[i].Value[1] >= 1.0)
         {
-            Rotation[i].Value[3] += 20 * Iterator->delta_time;
+            Rotation[i].Value[3] += 30 * Iterator->delta_time;
         }
     }
 }
@@ -44,7 +44,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 
     ecs_entity_t CameraEntity = EcsCreateEntity("camera");
     DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    CamAddPerspective(CameraEntity, 78.0, Aspect, 0.1, 1000.0);
+    CamAddPerspective(CameraEntity, CONFIGVAR_GET_FLOAT("cam_fov"), FALSE, Aspect, 0.1, 1000.0);
     ecs_set(EcsGetWorld(), CameraEntity, POSITION, {{0.0, 2.0, 2.0}});
     ecs_set(EcsGetWorld(), CameraEntity, ROTATION, {{1.0, 0.0, 0.0, 45.0}});
     EngSetMainCamera(CameraEntity);

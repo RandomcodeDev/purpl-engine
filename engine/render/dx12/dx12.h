@@ -74,6 +74,7 @@ END_EXTERN_C
         }                                                                                                              \
     } while (0)
 
+// I hate MinGW so much
 #ifdef PURPL_MINGW
 #define DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Object, Type)                                                   \
     *(Object)->Get##Type##DescriptorHandleForHeapStart(nullptr)
@@ -183,6 +184,7 @@ typedef struct DIRECTX12_DATA
     BOOLEAN InFrame;
 
     UINT16 TextureCount;
+    UINT16 UniformBufferCount;
 } DIRECTX12_DATA, *PDIRECTX12_DATA;
 
 extern DIRECTX12_DATA Dx12Data;

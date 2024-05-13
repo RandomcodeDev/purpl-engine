@@ -52,7 +52,8 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ 
 
     PDIRECTX12_TEXTURE TextureData = (PDIRECTX12_TEXTURE)Model->Material->TextureHandle;
     CD3DX12_GPU_DESCRIPTOR_HANDLE TextureDescriptor(
-        DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, GPU), TextureData->Index);
+        DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, GPU), TextureData->Index,
+        Dx12Data.SrvDescriptorSize);
     Dx12Data.CommandList->SetGraphicsRootDescriptorTable(Dx12RootParameterSampler, TextureDescriptor);
 
     Dx12Data.CommandList->SetPipelineState((ID3D12PipelineState *)Model->Material->ShaderHandle);

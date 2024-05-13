@@ -41,6 +41,12 @@ PURPL_MAKE_COMPONENT(struct, MODEL, {
 /// @brief Maximum number of models
 #define RENDER_MAX_MODEL_COUNT 1024
 
+/// @brief Maximum number of textures
+#define RENDER_MAX_TEXTURE_COUNT 1024
+
+/// @brief Maximum number of objects
+#define RENDER_MAX_OBJECT_COUNT 1024
+
 /// @brief Shader spaces
 #define RENDER_SHADER_SPACE_SCENE 0
 #define RENDER_SHADER_SPACE_OBJECT 1

@@ -17,20 +17,25 @@ PURPL_MAKE_COMPONENT(struct, CAMERA, {
     BOOLEAN Perspective;
 
     DOUBLE FieldOfView;
+    BOOLEAN FixedFov;
     DOUBLE Aspect;
 
     mat4 View;
     mat4 Projection;
 })
 
+/// @brief Define configuration variables
+extern VOID CamDefineVariables(VOID);
+
 /// @brief Add a perspective camera to the given entity
 ///
 /// @param[in] Entity      The entity to add the camera to.
 /// @param[in] FieldOfView The camera's FOV.
+/// @param[in] FixedFov    Whether the camera's FOV is tied to cam_fov or not
 /// @param[in] Aspect      The aspect ratio of the camera.
 /// @param[in] NearClip    The near clipping distance.
 /// @param[in] FarClip     The far clipping distance.
-extern VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ DOUBLE Aspect,
+extern VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ BOOLEAN FixedFov, _In_ DOUBLE Aspect,
                               _In_ DOUBLE NearClip, _In_ DOUBLE FarClip);
 
 /// @brief Add a perspective camera to the given entity

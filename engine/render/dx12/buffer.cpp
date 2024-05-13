@@ -21,13 +21,14 @@ VOID Dx12CreateHeaps(VOID)
     Dx12Data.DsvDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(DsvHeapDescription.Type);
     Dx12NameObject(Dx12Data.DsvHeap, "Depth stencil view descriptor heap");
 
-    D3D12_DESCRIPTOR_HEAP_DESC ShaderHeapDescription = {};
-    ShaderHeapDescription.NumDescriptors = (RENDER_MAX_MODEL_COUNT + 1) * DIRECTX12_FRAME_COUNT;
-    ShaderHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    ShaderHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(&ShaderHeapDescription, IID_PPV_ARGS(&Dx12Data.SrvHeap)));
-    Dx12Data.SrvDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(ShaderHeapDescription.Type);
-    Dx12NameObject(Dx12Data.SrvHeap, "Shader descriptor heap");
+    D3D12_DESCRIPTOR_HEAP_DESC SrvHeapDescription = {};
+    SrvHeapDescription.NumDescriptors =
+        RENDER_MAX_TEXTURE_COUNT + (RENDER_MAX_OBJECT_COUNT + 1) * DIRECTX12_FRAME_COUNT;
+    SrvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    SrvHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    HRESULT_CHECK(Dx12Data.Device->CreateDescriptorHeap(&SrvHeapDescription, IID_PPV_ARGS(&Dx12Data.SrvHeap)));
+    Dx12Data.SrvDescriptorSize = Dx12Data.Device->GetDescriptorHandleIncrementSize(SrvHeapDescription.Type);
+    Dx12NameObject(Dx12Data.SrvHeap, "Shader resource view descriptor heap");
 }
 
 EXTERN_C

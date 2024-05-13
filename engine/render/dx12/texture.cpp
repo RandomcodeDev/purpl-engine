@@ -28,16 +28,20 @@ RENDER_HANDLE Dx12UseTexture(_In_ PTEXTURE Texture, _In_z_ PCSTR Name)
                              &ResourceDescription, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
     Dx12NameObject(TextureData->Buffer.Resource, "Texture %s", Name);
 
+    // To know where this texture is in the heap for drawing
+    TextureData->Index = Dx12Data.TextureCount++;
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE DescriptorHandle(
+        DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, CPU), TextureData->Index,
+        Dx12Data.SrvDescriptorSize);
+
     D3D12_SHADER_RESOURCE_VIEW_DESC SrvDescription = {};
     SrvDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     SrvDescription.Format = Format;
     SrvDescription.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     SrvDescription.Texture2D.MipLevels = 1;
     Dx12Data.Device->CreateShaderResourceView(TextureData->Buffer.Resource, &SrvDescription,
-                                              DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, CPU));
-
-    // To know where this texture is in the heap for drawing
-    TextureData->Index = Dx12Data.TextureCount++;
+                                              DescriptorHandle);
 
     return (RENDER_HANDLE)TextureData;
 }

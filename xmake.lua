@@ -28,12 +28,14 @@ set_allowedplats(
     "gdk", "gdkx", "xbox360", "windows",
     "linux", "freebsd",
     "switch",
-    "psp", "ps3", "ps5"
+    "psp", "ps3", "ps5",
+    "baremetal"
 )
 set_allowedarchs(
     "gdk|x64", "gdkx|x64", "xbox360|powerpc64", "windows|x86",
     "switch|arm64", "switchhb|arm64",
-    "psp|mips", "ps3|powerpc64", "ps5|x64"
+    "psp|mips", "ps3|powerpc64", "ps5|x64",
+    "baremetal|x64"
 )
 
 local switch_title_id = "0100694203488000"
@@ -45,7 +47,7 @@ local opengl = is_plat("gdk", "windows", "linux", "freebsd", "switchhb", "psp", 
 local swrast = is_plat("gdk", "windows", "baremetal")
 
 local discord = is_plat("gdk", "gdkx", "windows", "macos", "linux", "freebsd")
-local use_mimalloc = not is_plat("xbox360", "switch", "switchhb", "psp", "ps3")
+local use_mimalloc = not is_plat("xbox360", "switch", "switchhb", "psp", "ps3", "baremetal")
 
 add_defines("PURPL_ENGINE")
 

@@ -67,6 +67,7 @@ ecs_entity_t EngMainCamera;
 
 VOID EngDefineVariables(VOID)
 {
+    CamDefineVariables();
     EcsDefineVariables();
     RdrDefineVariables();
 }

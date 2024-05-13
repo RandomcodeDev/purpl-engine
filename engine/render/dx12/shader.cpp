@@ -143,11 +143,12 @@ VOID Dx12CreateUniformBuffer(_Out_ PDIRECTX12_BUFFER UniformBuffer, _Out_ PVOID 
     UniformViewDescription.BufferLocation = UniformBuffer->Resource->GetGPUVirtualAddress();
     UniformViewDescription.SizeInBytes = Size;
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE CpuHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, CPU), 1,
-                                            Dx12Data.SrvDescriptorSize);
-
     for (UINT32 i = 0; i < DIRECTX12_FRAME_COUNT; i++)
     {
+        CD3DX12_CPU_DESCRIPTOR_HANDLE CpuHandle(DIRECTX12_GET_DESCRIPTOR_HANDLE_FOR_HEAP_START(Dx12Data.SrvHeap, CPU),
+                                                Dx12Data.UniformBufferCount++ + RENDER_MAX_TEXTURE_COUNT,
+                                                Dx12Data.SrvDescriptorSize);
+
         Dx12Data.Device->CreateConstantBufferView(&UniformViewDescription, CpuHandle);
 
         UniformViewDescription.BufferLocation += Size;

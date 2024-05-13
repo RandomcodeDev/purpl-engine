@@ -12,13 +12,14 @@
 
 ecs_entity_t ecs_id(CAMERA);
 
-VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ DOUBLE Aspect, _In_ DOUBLE NearClip,
-                       _In_ DOUBLE FarClip)
+VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ BOOLEAN FixedFov, _In_ DOUBLE Aspect,
+                       _In_ DOUBLE NearClip, _In_ DOUBLE FarClip)
 {
     PCAMERA Camera = ecs_emplace(EcsGetWorld(), Entity, CAMERA);
 
     Camera->Perspective = TRUE;
     Camera->FieldOfView = glm_rad((FLOAT)FieldOfView);
+    Camera->FixedFov = FixedFov;
     Camera->Aspect = Aspect;
     Camera->NearClip = NearClip;
     Camera->FarClip = FarClip;
@@ -38,6 +39,11 @@ static void (*Perspective)(FLOAT, FLOAT, FLOAT, FLOAT, mat4);
 static void (*Orthographic)(FLOAT, FLOAT, FLOAT, FLOAT, FLOAT, FLOAT, mat4);
 static FLOAT Up;
 
+VOID CamDefineVariables(VOID)
+{
+    CONFIGVAR_DEFINE_FLOAT("cam_fov", 78.0, FALSE, ConfigVarSideClientOnly, FALSE, FALSE);
+}
+
 VOID CamUpdate(_In_ ecs_iter_t *Iterator)
 {
     PCAMERA Camera = ecs_field(Iterator, CAMERA, 1);
@@ -45,17 +51,22 @@ VOID CamUpdate(_In_ ecs_iter_t *Iterator)
 
     for (INT32 i = 0; i < Iterator->count; i++)
     {
+        if (!Camera[i].FixedFov)
+        {
+            Camera[i].FieldOfView = glm_rad(CONFIGVAR_GET_FLOAT("cam_fov"));
+        }
+
         LookAt(Position[i].Value, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, Up, 0.0}, Camera[i].View);
 
         if (Camera[i].Perspective)
         {
             Perspective((FLOAT)Camera[i].FieldOfView, (FLOAT)Camera[i].Aspect, (FLOAT)Camera[i].NearClip,
-                                  (FLOAT)Camera[i].FarClip, Camera[i].Projection);
+                        (FLOAT)Camera[i].FarClip, Camera[i].Projection);
         }
         else
         {
-            Orthographic(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera[i].NearClip,
-                            (FLOAT)Camera[i].FarClip, Camera[i].Projection);
+            Orthographic(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera[i].NearClip, (FLOAT)Camera[i].FarClip,
+                         Camera[i].Projection);
         }
     }
 }

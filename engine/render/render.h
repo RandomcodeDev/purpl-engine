@@ -12,6 +12,8 @@
 #include "common/configvar.h"
 #include "common/log.h"
 
+#include "engine/math/transform.h"
+
 #include "platform/video.h"
 
 #include "util/mesh.h"

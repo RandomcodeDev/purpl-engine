@@ -12,15 +12,14 @@
 
 ecs_entity_t ecs_id(CAMERA);
 
-VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ BOOLEAN FixedFov, _In_ DOUBLE Aspect,
-                       _In_ DOUBLE NearClip, _In_ DOUBLE FarClip)
+VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView, _In_ BOOLEAN FixedFov, _In_ DOUBLE NearClip,
+                       _In_ DOUBLE FarClip)
 {
     PCAMERA Camera = ecs_emplace(EcsGetWorld(), Entity, CAMERA);
 
     Camera->Perspective = TRUE;
     Camera->FieldOfView = glm_rad((FLOAT)FieldOfView);
     Camera->FixedFov = FixedFov;
-    Camera->Aspect = Aspect;
     Camera->NearClip = NearClip;
     Camera->FarClip = FarClip;
 }
@@ -60,9 +59,8 @@ VOID CamUpdate(_In_ ecs_iter_t *Iterator)
 
         if (Camera[i].Perspective)
         {
-            Camera[i].Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-            Perspective((FLOAT)Camera[i].FieldOfView, (FLOAT)Camera[i].Aspect, (FLOAT)Camera[i].NearClip,
-                        (FLOAT)Camera[i].FarClip, Camera[i].Projection);
+            Perspective((FLOAT)Camera[i].FieldOfView, (FLOAT)((DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight()),
+                        (FLOAT)Camera[i].NearClip, (FLOAT)Camera[i].FarClip, Camera[i].Projection);
         }
         else
         {

@@ -43,8 +43,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ECS_SYSTEM(EcsGetWorld(), Spin, EcsOnUpdate, MODEL, ROTATION);
 
     ecs_entity_t CameraEntity = EcsCreateEntity("camera");
-    DOUBLE Aspect = (DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight();
-    CamAddPerspective(CameraEntity, CONFIGVAR_GET_FLOAT("cam_fov"), FALSE, Aspect, 0.1, 1000.0);
+    CamAddPerspective(CameraEntity, CONFIGVAR_GET_FLOAT("cam_fov"), FALSE, 0.1, 1000.0);
     ecs_set(EcsGetWorld(), CameraEntity, POSITION, {{0.0, 2.0, 2.0}});
     ecs_set(EcsGetWorld(), CameraEntity, ROTATION, {{1.0, 0.0, 0.0, 45.0}});
     EngSetMainCamera(CameraEntity);

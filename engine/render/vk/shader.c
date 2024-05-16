@@ -1,10 +1,10 @@
 #include "vk.h"
 
 static CONST VkVertexInputAttributeDescription MeshVertexAttributeDescriptions[] = {
-    {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VERTEX, Position)},
-    {1, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VERTEX, Colour)},
-    {2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(VERTEX, TextureCoordinate)},
-    {3, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VERTEX, Normal)},
+    {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(MESH_VERTEX, Position)},
+    {1, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(MESH_VERTEX, Colour)},
+    {2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(MESH_VERTEX, TextureCoordinate)},
+    {3, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(MESH_VERTEX, Normal)},
 };
 
 VOID VlkCreatePipelineLayout(VOID)
@@ -96,7 +96,7 @@ RENDER_HANDLE VlkLoadShader(_In_z_ PCSTR Name)
 
     VkVertexInputBindingDescription VertexBindingDescription = {0};
     VertexBindingDescription.binding = 0;
-    VertexBindingDescription.stride = sizeof(VERTEX);
+    VertexBindingDescription.stride = sizeof(MESH_VERTEX);
     VertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
     // TODO: when multiple types of "renderable" are added, make dynamic

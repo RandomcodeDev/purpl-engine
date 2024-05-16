@@ -12,7 +12,7 @@ VOID Dx12CreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh)
     Model->MeshHandle = (RENDER_HANDLE)Data;
 
     CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_DEFAULT);
-    CD3DX12_RESOURCE_DESC ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Mesh->VertexCount * sizeof(VERTEX));
+    CD3DX12_RESOURCE_DESC ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(Mesh->VertexCount * sizeof(MESH_VERTEX));
     Dx12CreateBufferWithData(&Data->VertexBuffer, Mesh->Vertices, &HeapProperties, D3D12_HEAP_FLAG_NONE,
                              &ResourceDescription, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
     Dx12NameObject(Data->VertexBuffer.Resource, "Vertex buffer %s", Name);
@@ -35,7 +35,7 @@ VOID Dx12DrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ 
     D3D12_VERTEX_BUFFER_VIEW VertexBufferView = {};
     VertexBufferView.BufferLocation = ModelData->VertexBuffer.Resource->GetGPUVirtualAddress();
     VertexBufferView.SizeInBytes = ModelData->VertexBuffer.Size;
-    VertexBufferView.StrideInBytes = sizeof(VERTEX);
+    VertexBufferView.StrideInBytes = sizeof(MESH_VERTEX);
     Dx12Data.CommandList->IASetVertexBuffers(0, 1, &VertexBufferView);
 
     D3D12_INDEX_BUFFER_VIEW IndexBufferView = {};

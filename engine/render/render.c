@@ -66,8 +66,8 @@ VOID RdrDefineVariables(VOID)
 #endif
 
     CONFIGVAR_DEFINE_INT("rdr_api", DefaultApi, TRUE, ConfigVarSideClientOnly, FALSE, FALSE);
-    CONFIGVAR_DEFINE_BOOLEAN("rdr_software", DefaultApi == RenderApiSwRaster,
-                             FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
+    CONFIGVAR_DEFINE_BOOLEAN("rdr_software", DefaultApi == RenderApiSwRaster, FALSE, ConfigVarSideClientOnly, FALSE,
+                             TRUE);
 
     CONFIGVAR_DEFINE_INT("rdr_clear_colour", 0x000000FF, FALSE, ConfigVarSideClientOnly, FALSE, TRUE);
 }
@@ -344,6 +344,19 @@ VOID RdrDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data)
         Backend.DestroyObject(Data);
     }
     Data->Handle = 0;
+}
+
+VOID RdrDrawLine(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform, _In_ BOOLEAN Project)
+{
+}
+
+VOID RdrDrawGeometry(_In_ PCBASIC_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices,
+                     _In_ SIZE_T IndexCount, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform, _In_ BOOLEAN Project)
+{
+}
+
+VOID RdrDrawRectangle(_In_ PCBASIC_VERTEX Vertices, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform)
+{
 }
 
 UINT32 RdrGetWidth(VOID)

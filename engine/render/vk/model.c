@@ -8,7 +8,8 @@ VOID VlkCreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh)
         CmnError("Failed to allocate model data for %s: %s", Name, strerror(errno));
     }
 
-    VlkAllocateBufferWithData(Mesh->Vertices, Mesh->VertexCount * sizeof(VERTEX), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+    VlkAllocateBufferWithData(Mesh->Vertices, Mesh->VertexCount * sizeof(MESH_VERTEX),
+                              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &ModelData->VertexBuffer);
     VlkNameBuffer(&ModelData->VertexBuffer, "Vertex buffer for %s", Name);
     VlkAllocateBufferWithData(Mesh->Indices, Mesh->IndexCount * sizeof(ivec3), VK_BUFFER_USAGE_INDEX_BUFFER_BIT,

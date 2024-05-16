@@ -13,7 +13,7 @@ VOID GlCreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh)
 
     glGenBuffers(1, &ModelData->VertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, ModelData->VertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, Mesh->VertexCount * sizeof(VERTEX), Mesh->Vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, Mesh->VertexCount * sizeof(MESH_VERTEX), Mesh->Vertices, GL_STATIC_DRAW);
     glObjectLabel(GL_BUFFER, ModelData->VertexBuffer, 13, "Vertex buffer");
 
     ModelData->ElementCount = (UINT32)Mesh->IndexCount;
@@ -23,13 +23,13 @@ VOID GlCreateModel(_In_z_ PCSTR Name, _Inout_ PMODEL Model, _In_ PMESH Mesh)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ModelData->ElementCount * sizeof(ivec3), Mesh->Indices, GL_STATIC_DRAW);
     glObjectLabel(GL_BUFFER, ModelData->IndexBuffer, 12, "Index buffer");
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Position));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MESH_VERTEX), (PVOID)offsetof(MESH_VERTEX, Position));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Colour));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(MESH_VERTEX), (PVOID)offsetof(MESH_VERTEX, Colour));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, TextureCoordinate));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MESH_VERTEX), (PVOID)offsetof(MESH_VERTEX, TextureCoordinate));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (PVOID)offsetof(VERTEX, Normal));
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(MESH_VERTEX), (PVOID)offsetof(MESH_VERTEX, Normal));
     glEnableVertexAttribArray(3);
 
     glBindVertexArray(0);

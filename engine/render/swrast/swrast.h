@@ -29,12 +29,12 @@ extern SWRAST_DATA SwrsData;
 
 extern VOID SwrsPutPixel(_In_ CONST ivec2 Position, _In_ CONST vec4 Colour);
 
-extern VOID SwrsProjectVertex(_Inout_ PBASIC_VERTEX Vertex, _In_ mat4 Transform);
+extern VOID SwrsProjectVertex(_Inout_ PMESH_VERTEX Vertex, _In_ mat4 Transform);
 
-extern VOID SwrsDrawLine(_In_ CONST BASIC_VERTEX Start, _In_ CONST BASIC_VERTEX End, _In_opt_ CONST mat4 Transform,
+extern VOID SwrsDrawLine(_In_ CONST MESH_VERTEX Start, _In_ CONST MESH_VERTEX End, _In_opt_ CONST mat4 Transform,
                          _In_ BOOLEAN Project);
 
-extern VOID SwrsDrawTriangle(_In_ CONST BASIC_VERTEX First, _In_ CONST BASIC_VERTEX Second, _In_ CONST BASIC_VERTEX Third,
+extern VOID SwrsDrawTriangle(_In_ CONST MESH_VERTEX First, _In_ CONST MESH_VERTEX Second, _In_ CONST MESH_VERTEX Third,
                              _In_ BOOLEAN Filled);
 
 extern VOID SwrsDrawModel(_In_ PMODEL Model, _In_ PRENDER_OBJECT_UNIFORM Uniform, _In_ PRENDER_OBJECT_DATA Data);

@@ -260,7 +260,7 @@ target_end()
 
 target("engine")
     set_kind("static")
-    add_headerfiles(path.join("engine", "*.h"))
+    add_headerfiles(path.join("engine", "*.h"), path.join("engine", "math", "*.h"))
     add_files(path.join("engine", "*.c"))
 
     add_deps(
@@ -318,12 +318,15 @@ target("purpl")
             switch_title_id
         })
 
+        local python = import("lib.detect.find_tool")("python3").program
+        os.execv(python, {path.join("support", "tools", "build_assets.py")})
+
         for _, pair in ipairs({
             {path.absolute(path.join("assets", "assets_dir.pak")), path.join(target:targetdir(), "assets_dir.pak")},
             {path.absolute(path.join("assets", "assets_00.pak")), path.join(target:targetdir(), "assets_00.pak")}
         }) do
-            source = pair[1]
-            dest = pair[2]
+            local source = pair[1]
+            local dest = pair[2]
             if not os.exists(dest) then
                 os.ln(source, dest)
             end

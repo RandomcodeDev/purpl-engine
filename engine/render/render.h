@@ -52,7 +52,7 @@ PURPL_MAKE_COMPONENT(struct, MODEL, {
 /// @brief Maximum number of vertices when using RdrDrawGeometry
 ///
 /// If you have more vertices than this, there's probably no reason not to use a model.
-#define RENDER_MAX_GEOMETRY_SIZE 576 // 576 is a reasonable amount and a multiple of 3
+#define RENDER_MAX_GEOMETRY_SIZE 576
 
 /// @brief Shader spaces
 #define RENDER_SHADER_SPACE_SCENE 0
@@ -75,11 +75,6 @@ PURPL_MAKE_TAG(struct, RENDER_SCENE_UNIFORM, {
 PURPL_MAKE_TAG(struct, RENDER_OBJECT_UNIFORM, { mat4 Model; })
 
 PURPL_MAKE_COMPONENT(struct, RENDER_OBJECT_DATA, { RENDER_HANDLE Handle; })
-
-PURPL_MAKE_TAG(struct, BASIC_VERTEX, {
-    vec3 Position;
-    vec4 Colour;
-})
 
 /// @brief Renderer backend
 PURPL_MAKE_TAG(struct, RENDER_BACKEND, {
@@ -105,11 +100,9 @@ PURPL_MAKE_TAG(struct, RENDER_BACKEND, {
     (_In_ PMODEL Model, _In_ CONST PRENDER_OBJECT_UNIFORM Uniform, _In_ CONST PRENDER_OBJECT_DATA Data);
     VOID (*DestroyModel)(_Inout_ PMODEL Model);
 
-    VOID(*DrawLine)
-    (_In_ BASIC_VERTEX Start, _In_ BASIC_VERTEX End, _In_opt_ CONST mat4 Transform, _In_ BOOLEAN Project);
     VOID(*DrawGeometry)
-    (_In_ PCBASIC_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ CONST ivec3 * CONST Indices,
-     _In_ SIZE_T IndexCount, _In_opt_ PMATERIAL Material, _In_opt_ mat4 CONST Transform, _In_ BOOLEAN Project);
+    (_In_ PCMESH_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ CONST ivec3 * CONST Indices,
+     _In_ SIZE_T IndexCount, _In_ RENDER_HANDLE Shader, _In_opt_ mat4 CONST Transform, _In_ BOOLEAN Project);
 
     VOID (*InitializeObject)(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA Data, _In_ PMODEL Model);
     VOID (*DestroyObject)(_Inout_ PRENDER_OBJECT_DATA Data);
@@ -190,16 +183,16 @@ extern VOID RdrFinishRendering(VOID);
 /// @brief Shut down the render system
 extern VOID RdrShutdown(VOID);
 
+/// @brief Draw geometry
+extern VOID RdrDrawGeometry(_In_ PCMESH_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices,
+                            _In_ SIZE_T IndexCount, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform,
+                            _In_ BOOLEAN Project);
+
 /// @brief Draw a line
 extern VOID RdrDrawLine(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform,
                         _In_ BOOLEAN Project);
 
-/// @brief Draw geometry
-extern VOID RdrDrawGeometry(_In_ PCBASIC_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices,
-                            _In_ SIZE_T IndexCount, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform,
-                            _In_ BOOLEAN Project);
-
-extern VOID RdrDrawRectangle(_In_ PCBASIC_VERTEX Vertices, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform);
+extern VOID RdrDrawRectangle(_In_ PCMESH_VERTEX Vertices, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform);
 
 /// @brief Get the width of the render output
 ///

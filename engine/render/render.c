@@ -81,7 +81,11 @@ static VOID LoadShaders(VOID)
 
     if (Backend.LoadShader)
     {
-        stbds_shput(RdrShaders, "main", Backend.LoadShader("main"));
+#define LOAD(Name) stbds_shput(RdrShaders, Name, Backend.LoadShader(Name))
+        LOAD("main_lit");
+        LOAD("main_textured");
+        LOAD("main_lit_textured");
+#undef LOAD
     }
 }
 
@@ -115,7 +119,10 @@ VOID RdrInitialize(_In_ ecs_iter_t *Iterator)
         Backend.Initialize();
     }
 
-    LoadShaders();
+    if (!CONFIGVAR_GET_BOOLEAN("rdr_software"))
+    {
+        LoadShaders();
+    }
 
     LogInfo("Renderer initialization succeeded");
 }
@@ -346,17 +353,31 @@ VOID RdrDestroyObject(_Inout_ PRENDER_OBJECT_DATA Data)
     Data->Handle = 0;
 }
 
-VOID RdrDrawLine(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform, _In_ BOOLEAN Project)
-{
-}
-
-VOID RdrDrawGeometry(_In_ PCBASIC_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices,
+VOID RdrDrawGeometry(_In_ PCMESH_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ ivec3 *Indices,
                      _In_ SIZE_T IndexCount, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform, _In_ BOOLEAN Project)
 {
+    if (Backend.DrawGeometry)
+    {
+        Backend.DrawGeometry(Vertices, VertexCount, Indices, IndexCount,
+                             Material ? Material->ShaderHandle : stbds_shget(RdrShaders, "main"), Transform, Project);
+    }
 }
 
-VOID RdrDrawRectangle(_In_ PCBASIC_VERTEX Vertices, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform)
+VOID RdrDrawLine(_In_ vec3 Start, _In_ vec3 End, _In_ vec4 Colour, _In_opt_ mat4 Transform, _In_ BOOLEAN Project)
 {
+    MESH_VERTEX Vertices[2] = {0};
+    glm_vec3_copy(Start, Vertices[0].Position);
+    glm_vec4_copy(Colour, Vertices[0].Colour);
+    glm_vec3_copy(End, Vertices[1].Position);
+    glm_vec4_copy(Colour, Vertices[1].Colour);
+
+    RdrDrawGeometry(Vertices, PURPL_ARRAYSIZE(Vertices), NULL, 0, NULL, Transform, Project);
+}
+
+VOID RdrDrawRectangle(_In_ PCMESH_VERTEX Vertices, _In_opt_ PMATERIAL Material, _In_opt_ mat4 Transform)
+{
+    ivec3 Indices[2] = {{0, 1, 2}, {2, 3, 0}};
+    RdrDrawGeometry(Vertices, 4, Indices, PURPL_ARRAYSIZE(Indices), Material, Transform, FALSE);
 }
 
 UINT32 RdrGetWidth(VOID)

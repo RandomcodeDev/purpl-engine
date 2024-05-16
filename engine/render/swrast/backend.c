@@ -58,7 +58,6 @@ VOID SwrsInitializeBackend(_Out_ PRENDER_BACKEND Backend)
     Backend->Shutdown = Shutdown;
 
     Backend->DrawModel = SwrsDrawModel;
-    Backend->DrawLine = SwrsDrawLine;
 
     Backend->GetGpuName = GetGpuName;
 }

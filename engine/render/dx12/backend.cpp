@@ -46,6 +46,7 @@ static VOID Initialize(VOID)
     Dx12CreateMainFence();
     Dx12CreateUniformBuffer(&Dx12Data.UniformBuffer, (PVOID *)&Dx12Data.UniformBufferAddress,
                             sizeof(DIRECTX12_SCENE_UNIFORM));
+    Dx12CreateGeometryBuffers();
 
     LogDebug("Successfully initialized DirectX 12 backend");
 }
@@ -168,6 +169,20 @@ static VOID Shutdown(VOID)
     LogDebug("Shutting down DirectX 12");
 
     Dx12WaitForGpu();
+
+    if (Dx12Data.GeometryIndexBuffer.Resource)
+    {
+        LogDebug("Releasing geometry index buffer");
+        Dx12Data.GeometryIndexBuffer.Resource->Unmap(0, nullptr);
+        Dx12Data.GeometryIndexBuffer.Resource->Release();
+    }
+
+    if (Dx12Data.GeometryVertexBuffer.Resource)
+    {
+        LogDebug("Releasing geometry vertex buffer");
+        Dx12Data.GeometryVertexBuffer.Resource->Unmap(0, nullptr);
+        Dx12Data.GeometryVertexBuffer.Resource->Release();
+    }
 
     if (Dx12Data.UniformBuffer.Resource)
     {
@@ -331,6 +346,8 @@ VOID Dx12InitializeBackend(_Out_ PRENDER_BACKEND Backend)
 
     Backend->InitializeObject = Dx12InitializeObject;
     Backend->DestroyObject = Dx12DestroyObject;
+
+    Backend->DrawGeometry = Dx12DrawGeometry;
 
     // sure would be nice if C had these (really, if MSVC would fucking implement current C standards)
     Backend->GetGpuName = []() { return (PCSTR)Dx12Data.AdapterName; };

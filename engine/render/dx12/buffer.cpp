@@ -144,3 +144,20 @@ VOID Dx12CreateBufferWithData(_Out_ PDIRECTX12_BUFFER Buffer, PVOID Data,
     Dx12Data.TransferCommandAllocator->Reset();
     Dx12Data.TransferCommandList->Reset(Dx12Data.TransferCommandAllocator, nullptr);
 }
+
+VOID Dx12CreateGeometryBuffers(VOID)
+{
+    CD3DX12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC ResourceDescription =
+        CD3DX12_RESOURCE_DESC::Buffer(RENDER_MAX_GEOMETRY_SIZE * sizeof(MESH_VERTEX));
+    CD3DX12_RANGE ReadRange(0, 0);
+    Dx12CreateBuffer(&Dx12Data.GeometryVertexBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &ResourceDescription,
+                     D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+    Dx12NameObject(Dx12Data.GeometryVertexBuffer.Resource, "Geometry vertex buffer");
+    Dx12Data.GeometryVertexBuffer.Resource->Map(0, &ReadRange, (PVOID *)&Dx12Data.GeometryVertexBufferAddress);
+    ResourceDescription = CD3DX12_RESOURCE_DESC::Buffer(RENDER_MAX_GEOMETRY_SIZE / 3 * sizeof(ivec3));
+    Dx12CreateBuffer(&Dx12Data.GeometryIndexBuffer, &HeapProperties, D3D12_HEAP_FLAG_NONE, &ResourceDescription,
+                     D3D12_RESOURCE_STATE_INDEX_BUFFER);
+    Dx12NameObject(Dx12Data.GeometryIndexBuffer.Resource, "Geometry index buffer");
+    Dx12Data.GeometryIndexBuffer.Resource->Map(0, &ReadRange, (PVOID *)&Dx12Data.GeometryIndexBufferAddress);
+}

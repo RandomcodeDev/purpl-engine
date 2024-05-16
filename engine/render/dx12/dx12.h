@@ -185,6 +185,11 @@ typedef struct DIRECTX12_DATA
 
     UINT16 TextureCount;
     UINT16 UniformBufferCount;
+
+    DIRECTX12_BUFFER GeometryVertexBuffer;
+    PMESH_VERTEX GeometryVertexBufferAddress;
+    DIRECTX12_BUFFER GeometryIndexBuffer;
+    ivec3 *GeometryIndexBufferAddress;
 } DIRECTX12_DATA, *PDIRECTX12_DATA;
 
 extern DIRECTX12_DATA Dx12Data;
@@ -236,6 +241,9 @@ extern VOID Dx12CreateRenderTargetViews(VOID);
 
 /// @brief Create the root signature (defines what shaders receive as parameters)
 extern VOID Dx12CreateRootSignature(VOID);
+
+/// @brief Create the buffers for RdrDrawGeometry
+extern VOID Dx12CreateGeometryBuffers(VOID);
 
 /// @brief Create the pipeline state object for a shader
 ///
@@ -329,5 +337,10 @@ extern VOID Dx12InitializeObject(_In_z_ PCSTR Name, _Inout_ PRENDER_OBJECT_DATA 
 
 /// @brief Destroy object data
 extern VOID Dx12DestroyObject(_Inout_ PRENDER_OBJECT_DATA Data);
+
+/// @brief Draw geometry
+extern VOID Dx12DrawGeometry(_In_ PCMESH_VERTEX Vertices, _In_ SIZE_T VertexCount, _In_opt_ CONST ivec3 *CONST Indices,
+                             _In_ SIZE_T IndexCount, _In_ RENDER_HANDLE Shader, _In_opt_ mat4 CONST Transform,
+                             _In_ BOOLEAN Project);
 
 END_EXTERN_C

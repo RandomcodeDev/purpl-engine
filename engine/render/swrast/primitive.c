@@ -5,7 +5,7 @@ static BOOLEAN IsPointOnScreen(_In_ UINT32 X, _In_ UINT32 Y)
     return X < SwrsData.Framebuffer->Width && Y < SwrsData.Framebuffer->Height;
 }
 
-VOID SwrsProjectVertex(_Inout_ PBASIC_VERTEX Vertex, _In_ mat4 Transform)
+VOID SwrsProjectVertex(_Inout_ PMESH_VERTEX Vertex, _In_ mat4 Transform)
 {
     vec4 Position;
 
@@ -51,7 +51,7 @@ static PFLOAT Interpolate(_In_ FLOAT I0, _In_ FLOAT I1, _In_ FLOAT D0, _In_ FLOA
     return Values;
 }
 
-VOID SwrsDrawLine(_In_ BASIC_VERTEX Start, _In_ BASIC_VERTEX End, _In_opt_ CONST mat4 Transform,
+VOID SwrsDrawLine(_In_ MESH_VERTEX Start, _In_ MESH_VERTEX End, _In_opt_ CONST mat4 Transform,
                   _In_ BOOLEAN Project)
 {
     vec4 StartReal;
@@ -114,7 +114,7 @@ VOID SwrsDrawLine(_In_ BASIC_VERTEX Start, _In_ BASIC_VERTEX End, _In_opt_ CONST
     stbds_arrfree(Values);
 }
 
-VOID SwrsDrawTriangle(_In_ CONST BASIC_VERTEX First, _In_ CONST BASIC_VERTEX Second, _In_ CONST BASIC_VERTEX Third,
+VOID SwrsDrawTriangle(_In_ CONST MESH_VERTEX First, _In_ CONST MESH_VERTEX Second, _In_ CONST MESH_VERTEX Third,
                       _In_ BOOLEAN Filled)
 {
     if (Filled)

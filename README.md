@@ -67,7 +67,7 @@ chmod +x tools/<platform</<arch>/*
 
 # Build the tools first
 pushd support
-xmake f -P . -p <windows or linux> --toolchain=<msvc or clang> -m release # xmake defaults to release, but just in case that changes, this command doesn't hurt
+xmake config -P . -p <windows or linux> --toolchain=<msvc or clang> -m release # xmake defaults to release, but just in case that changes, this command doesn't hurt
 xmake build -P .
 popd
 
@@ -75,10 +75,10 @@ popd
 python3 support/tools/build_assets.py
 
 # To build for the GDK, run this before building
-xmake f -p gdk --toolchain=msvc --as=llvm-as --vs=2022
+xmake config -p gdk --toolchain=msvc --as=llvm-as --vs=2022
 
 # To build for Linux
-xmake f -p linux --toolchain=clang
+xmake config -p linux --toolchain=clang
 
 # xmake automatically uses the number of cores you have
 xmake build

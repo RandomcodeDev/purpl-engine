@@ -15,14 +15,12 @@ VOID Spin(_In_ ecs_iter_t *Iterator)
 {
     PROTATION Rotation = ecs_field(Iterator, ROTATION, 2);
 
-    for (UINT32 i = 0; i < Iterator->count; i++)
+    for (INT32 i = 0; i < Iterator->count; i++)
     {
-        // Only on Y
-        if (Rotation[i].Value[1] >= 1.0)
-        {
-            Rotation[i].Value[3] += 30 * Iterator->delta_time;
-        }
+        MthRotateQuaternion(Rotation[i].Value, 30 * Iterator->delta_time);
     }
+
+    RdrDrawLine((vec3){0.0, 0.0, 0.0}, (vec3){1.0, 1.0, 0.0}, (vec4){1.0, 1.0, 1.0, 1.0}, NULL, FALSE);
 }
 
 // #define PURPL_TESTING_IN_MAIN
@@ -45,50 +43,50 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_entity_t CameraEntity = EcsCreateEntity("camera");
     CamAddPerspective(CameraEntity, CONFIGVAR_GET_FLOAT("cam_fov"), FALSE, 0.1, 1000.0);
     ecs_set(EcsGetWorld(), CameraEntity, POSITION, {{0.0, 2.0, 2.0}});
-    ecs_set(EcsGetWorld(), CameraEntity, ROTATION, {{1.0, 0.0, 0.0, 45.0}});
+    ECS_SET_ROTATION(CameraEntity, 45.0, 1.0, 0.0, 0.0);
     EngSetMainCamera(CameraEntity);
 
     ecs_entity_t TestEntity = EcsCreateEntity("test");
     RENDER_HANDLE TestTexture = RdrLoadTexture("chief.ptex");
     MATERIAL TestMaterial = {0};
-    RdrCreateMaterial(&TestMaterial, TestTexture, "main");
+    PURPL_ASSERT(RdrCreateMaterial(&TestMaterial, TestTexture, "main_lit_textured"));
     MODEL TestModel = {0};
-    RdrLoadModel(&TestModel, "chief.pmdl", &TestMaterial);
+    PURPL_ASSERT(RdrLoadModel(&TestModel, "chief.pmdl", &TestMaterial));
     ecs_set_ptr(EcsGetWorld(), TestEntity, MODEL, &TestModel);
     RENDER_OBJECT_DATA TestObject = {0};
     RdrInitializeObject("test", &TestObject, &TestModel);
     ecs_set_ptr(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA, &TestObject);
     ecs_set(EcsGetWorld(), TestEntity, POSITION, {{-1.0, 0.0, 0.0}});
-    ecs_set(EcsGetWorld(), TestEntity, ROTATION, {{0.0, 1.0, 0.0, 270.0}});
+    ECS_SET_ROTATION(TestEntity, 270.0, 0.0, 1.0, 0.0);
     ecs_set(EcsGetWorld(), TestEntity, SCALE, {{1.0, 1.0, 1.0}});
 
     ecs_entity_t Test2Entity = EcsCreateEntity("test2");
     RENDER_HANDLE Test2Texture = RdrLoadTexture("chief_alt.ptex");
     MATERIAL Test2Material = {0};
-    RdrCreateMaterial(&Test2Material, Test2Texture, "main");
+    PURPL_ASSERT(RdrCreateMaterial(&Test2Material, Test2Texture, "main_lit_textured"));
     MODEL Test2Model = {0};
-    RdrLoadModel(&Test2Model, "chief.pmdl", &Test2Material);
+    PURPL_ASSERT(RdrLoadModel(&Test2Model, "chief.pmdl", &Test2Material));
     ecs_set_ptr(EcsGetWorld(), Test2Entity, MODEL, &Test2Model);
     RENDER_OBJECT_DATA Test2Object = {0};
     RdrInitializeObject("test2", &Test2Object, &Test2Model);
     ecs_set_ptr(EcsGetWorld(), Test2Entity, RENDER_OBJECT_DATA, &Test2Object);
     ecs_set(EcsGetWorld(), Test2Entity, POSITION, {{1.0, 0.0, 0.0}});
-    ecs_set(EcsGetWorld(), Test2Entity, ROTATION, {{0.0, 1.0, 0.0, -270.0}});
+    ECS_SET_ROTATION(Test2Entity, -270.0, 0.0, 1.0, 0.0);
     ecs_set(EcsGetWorld(), Test2Entity, SCALE, {{1.0, 1.0, 1.0}});
 
     ecs_entity_t GroundEntity = EcsCreateEntity("ground");
     RENDER_HANDLE GroundTexture = RdrLoadTexture("ground.ptex");
     MATERIAL GroundMaterial = {0};
-    RdrCreateMaterial(&GroundMaterial, GroundTexture, "main");
+    PURPL_ASSERT(RdrCreateMaterial(&GroundMaterial, GroundTexture, "main_lit_textured"));
     MODEL GroundModel = {0};
-    RdrLoadModel(&GroundModel, "ground.pmdl", &GroundMaterial);
+    PURPL_ASSERT(RdrLoadModel(&GroundModel, "ground.pmdl", &GroundMaterial));
     ecs_set_ptr(EcsGetWorld(), GroundEntity, MODEL, &GroundModel);
     RENDER_OBJECT_DATA GroundObject = {0};
     RdrInitializeObject("ground", &GroundObject, &GroundModel);
     ecs_set_ptr(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA, &GroundObject);
 
     ecs_set(EcsGetWorld(), GroundEntity, POSITION, {{0.0, -0.5, 0.0}});
-    ecs_set(EcsGetWorld(), GroundEntity, ROTATION, {{1.0, 0.0, 0.0, 90.0}});
+    ECS_SET_ROTATION(GroundEntity, 0.0, 0.0, 0.0, 0.0);
     ecs_set(EcsGetWorld(), GroundEntity, SCALE, {{1.0, 1.0, 1.0}});
 
     CONFIGVAR_SET_INT("rdr_clear_colour", 0x000000FF);

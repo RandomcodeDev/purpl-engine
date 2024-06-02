@@ -32,21 +32,59 @@ VOID CamAddOrthographic(_In_ ecs_entity_t Entity)
 }
 
 // These are to reduce branches
-
-static void (*LookAt)(vec3, vec3, vec3, mat4);
-static void (*Perspective)(FLOAT, FLOAT, FLOAT, FLOAT, mat4);
-static void (*Orthographic)(FLOAT, FLOAT, FLOAT, FLOAT, FLOAT, FLOAT, mat4);
-static FLOAT Up;
+PURPL_MAKE_TAG(struct, CAMERA_FUNCS, {
+    void (*LookAt)(vec3, vec3, vec3, mat4);
+    void (*Perspective)(FLOAT, FLOAT, FLOAT, FLOAT, mat4);
+    void (*Orthographic)(FLOAT, FLOAT, FLOAT, FLOAT, FLOAT, FLOAT, mat4);
+    FLOAT UpSign;
+});
+static CONST CAMERA_FUNCS CameraFuncs[RenderApiCount] = {
+    // Vulkan
+    {glm_lookat_lh, glm_perspective_lh_no, glm_ortho_lh_no, 1.0},
+    // DX 12
+    {glm_lookat_lh, glm_perspective_lh_no, glm_ortho_lh_no, 1.0},
+    // DX 9
+    {glm_lookat_lh, glm_perspective_lh_no, glm_ortho_lh_no, 1.0},
+    // OpenGL
+    {glm_lookat_rh, glm_perspective_rh_zo, glm_ortho_rh_zo, -1.0},
+};
+static PCCAMERA_FUNCS CurrentCameraFuncs;
 
 VOID CamDefineVariables(VOID)
 {
     CONFIGVAR_DEFINE_FLOAT("cam_fov", 78.0, FALSE, ConfigVarSideClientOnly, FALSE, FALSE);
 }
 
+VOID CamGetVectors(_In_ ecs_entity_t Camera, _Out_opt_ vec3 Forward, _Out_opt_ vec3 Up)
+{
+    mat4 RotationMatrix = {0};
+    PCROTATION Rotation = ecs_get(EcsGetWorld(), Camera, ROTATION);
+    if (Rotation)
+    {
+        glm_euler_zyx(Rotation->Value, RotationMatrix);
+    }
+    else
+    {
+        glm_mat4_identity(RotationMatrix);
+    }
+
+    if (Forward)
+    {
+        glm_vec3_copy((vec3){0.0, 0.0, 1.0}, Forward);
+        glm_mat4_mulv3(RotationMatrix, Forward, 1.0, Forward);
+    }
+
+    if (Up)
+    {
+        glm_vec3_copy((vec3){0.0, CurrentCameraFuncs->UpSign, 0.0}, Up);
+        glm_mat4_mulv3(RotationMatrix, Up, 1.0, Up);
+    }
+}
+
 VOID CamUpdate(_In_ ecs_iter_t *Iterator)
 {
     PCAMERA Camera = ecs_field(Iterator, CAMERA, 1);
-    PPOSITION Position = ecs_field(Iterator, POSITION, 2);
+    PCPOSITION Position = ecs_field(Iterator, POSITION, 2);
 
     for (INT32 i = 0; i < Iterator->count; i++)
     {
@@ -55,17 +93,24 @@ VOID CamUpdate(_In_ ecs_iter_t *Iterator)
             Camera[i].FieldOfView = glm_rad(CONFIGVAR_GET_FLOAT("cam_fov"));
         }
 
-        LookAt(Position[i].Value, (vec3){0.0, 0.0, 0.0}, (vec3){0.0, Up, 0.0}, Camera[i].View);
+        vec3 Forward = {0};
+        vec3 Up = {0};
+        CamGetVectors(Iterator->entities[i], Forward, Up);
+
+        vec3 Center = {0};
+        glm_vec3_add(Position[i].Value, Forward, Center);
+        CurrentCameraFuncs->LookAt(Position[i].Value, Center, Up, Camera[i].View);
 
         if (Camera[i].Perspective)
         {
-            Perspective((FLOAT)Camera[i].FieldOfView, (FLOAT)((DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight()),
-                        (FLOAT)Camera[i].NearClip, (FLOAT)Camera[i].FarClip, Camera[i].Projection);
+            CurrentCameraFuncs->Perspective((FLOAT)Camera[i].FieldOfView,
+                                            (FLOAT)((DOUBLE)RdrGetWidth() / (DOUBLE)RdrGetHeight()),
+                                            (FLOAT)Camera[i].NearClip, (FLOAT)Camera[i].FarClip, Camera[i].Projection);
         }
         else
         {
-            Orthographic(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera[i].NearClip, (FLOAT)Camera[i].FarClip,
-                         Camera[i].Projection);
+            CurrentCameraFuncs->Orthographic(0.0, RdrGetWidth(), RdrGetHeight(), 0.0, (FLOAT)Camera[i].NearClip,
+                                             (FLOAT)Camera[i].FarClip, Camera[i].Projection);
         }
     }
 }
@@ -75,20 +120,7 @@ VOID CameraImport(_In_ ecs_world_t *World)
 {
     LogTrace("Importing Camera ECS module");
 
-    if (CONFIGVAR_GET_INT("rdr_api") == RenderApiOpenGL)
-    {
-        LookAt = glm_lookat_rh;
-        Perspective = glm_perspective_rh_no;
-        Orthographic = glm_ortho_rh_no;
-        Up = -1.0;
-    }
-    else
-    {
-        LookAt = glm_lookat_lh;
-        Perspective = glm_perspective_lh_no;
-        Orthographic = glm_ortho_lh_no;
-        Up = 1.0;
-    }
+    CurrentCameraFuncs = &CameraFuncs[CONFIGVAR_GET_INT("rdr_api")];
 
     ECS_MODULE(World, Camera);
 

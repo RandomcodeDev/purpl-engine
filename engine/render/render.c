@@ -82,8 +82,8 @@ static VOID LoadShaders(VOID)
     if (Backend.LoadShader)
     {
 #define LOAD(Name) stbds_shput(RdrShaders, Name, Backend.LoadShader(Name))
-        LOAD("main_lit");
-        LOAD("main_textured");
+        //LOAD("main_lit");
+        //LOAD("main_textured");
         LOAD("main_lit_textured");
 #undef LOAD
     }

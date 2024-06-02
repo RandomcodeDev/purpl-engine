@@ -38,8 +38,11 @@ extern VOID CamAddPerspective(_In_ ecs_entity_t Entity, _In_ DOUBLE FieldOfView,
 
 /// @brief Add a perspective camera to the given entity
 ///
-/// @param[in] Entity      The entity to add the camera to.
-/// @param[out] Camera   The camera to initialize.
+/// @param[in] Entity The entity to add the camera to.
+/// @param[out] Camera The camera to initialize.
 extern VOID CamAddOrthographic(_In_ ecs_entity_t Entity);
+
+/// @brief Get the up and forward vectors of a camera
+extern VOID CamGetVectors(_In_ ecs_entity_t Camera, _Out_opt_ vec3 Forward, _Out_opt_ vec3 Up);
 
 extern ECS_SYSTEM_DECLARE(CamUpdate);

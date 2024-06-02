@@ -11,39 +11,35 @@
 
 #include "engine/engine.h"
 
-VOID Spin(_In_ ecs_iter_t *Iterator)
+VOID CameraControl(_In_ ecs_iter_t* Iterator)
 {
-    PROTATION Rotation = ecs_field(Iterator, ROTATION, 2);
+    PCCAMERA Camera = ecs_field(Iterator, CAMERA, 1);
+    PPOSITION Position = ecs_field(Iterator, POSITION, 2);
+    PROTATION Rotation = ecs_field(Iterator, ROTATION, 3);
 
-    for (INT32 i = 0; i < Iterator->count; i++)
-    {
-        MthRotateQuaternion(Rotation[i].Value, 30 * Iterator->delta_time);
-    }
+    vec3 Forward = {0};
+    CamGetVectors(Iterator->entities[0], Forward, NULL);
+    glm_vec3_mul(Forward, (vec3){InState.LeftAxis[0], 0.0, InState.LeftAxis[1]}, Forward);
+    printf("\r%f %f %f %f %f", InState.LeftAxis[0], InState.LeftAxis[1], Forward[0], Forward[1], Forward[2]);
 
-    RdrDrawLine((vec3){0.0, 0.0, 0.0}, (vec3){1.0, 1.0, 0.0}, (vec4){1.0, 1.0, 1.0, 1.0}, NULL, FALSE);
+    glm_vec3_add(Position[0].Value, Forward, Position[0].Value);
+
+    Rotation[0].Value[0] += InState.RightAxis[1];
+    Rotation[0].Value[1] += InState.RightAxis[0];
 }
-
-// #define PURPL_TESTING_IN_MAIN
 
 INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
 {
-#ifdef PURPL_TESTING_IN_MAIN
-    PPACKFILE Pack = PackLoad("test");
-    UINT64 Size = 0;
-    PVOID Data = PackReadFile(Pack, "test.bin", 0, 0, &Size, 0);
-
-    return 0;
-#else
     EngDefineVariables();
     CmnInitialize(Arguments, ArgumentCount);
     EngInitialize();
 
-    ECS_SYSTEM(EcsGetWorld(), Spin, EcsOnUpdate, MODEL, ROTATION);
+    ECS_SYSTEM(EcsGetWorld(), CameraControl, EcsOnUpdate, CAMERA, POSITION, ROTATION);
 
     ecs_entity_t CameraEntity = EcsCreateEntity("camera");
     CamAddPerspective(CameraEntity, CONFIGVAR_GET_FLOAT("cam_fov"), FALSE, 0.1, 1000.0);
-    ecs_set(EcsGetWorld(), CameraEntity, POSITION, {{0.0, 2.0, 2.0}});
-    ECS_SET_ROTATION(CameraEntity, 45.0, 1.0, 0.0, 0.0);
+    ecs_set(EcsGetWorld(), CameraEntity, POSITION, {{0.0, 3.0, 3.0}});
+    ecs_set(EcsGetWorld(), CameraEntity, ROTATION, {{0.0, 0.0, 0.0}});
     EngSetMainCamera(CameraEntity);
 
     ecs_entity_t TestEntity = EcsCreateEntity("test");
@@ -57,7 +53,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     RdrInitializeObject("test", &TestObject, &TestModel);
     ecs_set_ptr(EcsGetWorld(), TestEntity, RENDER_OBJECT_DATA, &TestObject);
     ecs_set(EcsGetWorld(), TestEntity, POSITION, {{-1.0, 0.0, 0.0}});
-    ECS_SET_ROTATION(TestEntity, 270.0, 0.0, 1.0, 0.0);
+    ecs_set(EcsGetWorld(), TestEntity, ROTATION, {{0.0, glm_rad(270.0), 0.0}});
     ecs_set(EcsGetWorld(), TestEntity, SCALE, {{1.0, 1.0, 1.0}});
 
     ecs_entity_t Test2Entity = EcsCreateEntity("test2");
@@ -71,7 +67,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     RdrInitializeObject("test2", &Test2Object, &Test2Model);
     ecs_set_ptr(EcsGetWorld(), Test2Entity, RENDER_OBJECT_DATA, &Test2Object);
     ecs_set(EcsGetWorld(), Test2Entity, POSITION, {{1.0, 0.0, 0.0}});
-    ECS_SET_ROTATION(Test2Entity, -270.0, 0.0, 1.0, 0.0);
+    ecs_set(EcsGetWorld(), Test2Entity, ROTATION, {{0.0, glm_rad(-270.0), 0.0}});
     ecs_set(EcsGetWorld(), Test2Entity, SCALE, {{1.0, 1.0, 1.0}});
 
     ecs_entity_t GroundEntity = EcsCreateEntity("ground");
@@ -86,7 +82,7 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     ecs_set_ptr(EcsGetWorld(), GroundEntity, RENDER_OBJECT_DATA, &GroundObject);
 
     ecs_set(EcsGetWorld(), GroundEntity, POSITION, {{0.0, -0.5, 0.0}});
-    ECS_SET_ROTATION(GroundEntity, 0.0, 0.0, 0.0, 0.0);
+    ecs_set(EcsGetWorld(), GroundEntity, ROTATION, {{0.0, 0.0, 0.0}});
     ecs_set(EcsGetWorld(), GroundEntity, SCALE, {{1.0, 1.0, 1.0}});
 
     CONFIGVAR_SET_INT("rdr_clear_colour", 0x000000FF);
@@ -113,5 +109,4 @@ INT PurplMain(_In_ PCHAR *Arguments, _In_ UINT ArgumentCount)
     CmnShutdown();
 
     return 0;
-#endif
 }

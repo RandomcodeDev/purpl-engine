@@ -1,24 +1,25 @@
 ## Purpl Engine
 
-This is a game engine I'm making.
+This is a game engine I was making. [Now I'm making this one, it doesn't do much yet](https://github.com/RandomcodeDev/chifir-engine).
 
-### Screenshots
+### Demo
 
-Master Chief model/texture for testing, this is the DirectX 12 backend:
-<img src="images/chief-textured-lit-dx12.png">
+This is the Vulkan backend running on the Nintendo Switch:
+
+![Master Chief and recolored Master Chief spinning on a gray cube thing, this would be a great screensaver in 2003](purpl_switch.gif)
 
 ### Features
 
 - Written in portable, modular C11
-- xmake as the build system, it's like if CMake didn't suck (except the docs are worse)
-- Diffuse lit ~~textured~~ 3D models using custom simple formats about as efficient (storage-wise, also probably more efficient to parse) as OBJ and PNG
+- xmake as the build system, it's like if CMake didn't suck (except the docs are worse because they're probably Google Translated from Chinese)
+- Diffuse lit textured 3D models using custom simple formats about as efficient (storage-wise, also possibly more efficient to parse) as FBX and PNG
 - Tools for converting to the engine's formats
-- Decent Vulkan backend (still being reorganized, can't render yet)
-- DirectX 12 and OpenGL backends that can do untextured lit models
-- No DLL shenanigans (yet)
+- Vulkan, DirectX 12, and OpenGL backends that all have the same features
+- No DLL shenanigans (yet), everything is statically linked
 
 ### Interesting stuff I guess
 
+I used the coding style used in the Windows NT kernel for this, because I think it's pretty cool.
 The engine is made of these components (some have prefixes, like NT, others don't, like Win32):
 
 - [`engine`](engine) (Eng) - Currently contains a camera structure and function, a transform structure, Discord rich presence, and some ECS stuff.
@@ -34,12 +35,6 @@ The support libraries include the following:
 - [`texture`](util/texture) (no prefix) - Texture format library. ZSTD compression, basically a header and pixels in ~~RGB~~, RGBA, or ~~depth
 (32-bit float)~~ formats.
 - [`model`](util/model) (no prefix) - Model format library. Extremely primitive, like the texture format.
-
-Other stuff:
-
-- I use xmake, which is a really neat build system
-- I heard that Doom Eternal uses thread jobs for everything so I hope to figure out how to do something like that.
-- Everything is statically linked because DLL shenanigans are cool but not necessary.
 
 ### Cloning
 
@@ -122,6 +117,9 @@ You need [xmake](https://github.com/xmake-io/xmake).
 
 - __macOS__:
   This will probably also use GLFW. I want to add Metal rendering if I port to macOS.
+
+- __Nintendo Switch__:
+  It builds for Switch, you just need the SDK. It even builds on Linux through a wrapper script using Wine.
 
 - __Console homebrew (PSP, Xbox 360, etc)__:
   This might happen eventually if I really feel like it. It should be possible.

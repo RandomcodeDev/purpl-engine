@@ -6,7 +6,7 @@ This is a game engine I was making. [Now I'm making this one, it doesn't do much
 
 This is the Vulkan backend running on the Nintendo Switch:
 
-![Master Chief and recolored Master Chief spinning on a gray cube thing, this would be a great screensaver in 2003](purpl_switch.gif)
+![Master Chief and recolored Master Chief spinning on a gray cube thing, this would be a great screensaver in 2003](purpl_switch.mp4)
 
 ### Features
 
